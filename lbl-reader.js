@@ -6,6 +6,12 @@ class LblReader extends HTMLElement {
     this.studentInfo = { nickname: '', number: '' };
     this.score = 0;
     this.answeredCount = 0;
+
+    // Playback state
+    this.isPlayingAll = false;
+    this.playbackIndex = 0;
+    this.isPaused = false;
+    this.playbackUtterance = null;
   }
 
   connectedCallback() {
@@ -73,6 +79,7 @@ class LblReader extends HTMLElement {
         }
         span.onclick = (e) => {
           e.stopPropagation();
+          if (this.isPlayingAll) this.stopFullPlayback();
           this._speak(word.replace(/[.,!?;:]/g, ''), langOrg);
         };
         originalText.appendChild(span);
@@ -82,6 +89,7 @@ class LblReader extends HTMLElement {
       playBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
       playBtn.classList.add('voice-btn');
       playBtn.onclick = () => {
+        if (this.isPlayingAll) this.stopFullPlayback();
         this._speak(lineData.original, langOrg);
       };
 
@@ -120,7 +128,7 @@ class LblReader extends HTMLElement {
     this.updateProgress();
   }
 
-  _speak(text, lang) {
+  _speak(text, lang, onEnd = null) {
     if (!window.speechSynthesis) {
       alert("Text-to-speech is not supported in this browser. Please try Chrome or Safari.");
       return;
@@ -128,7 +136,106 @@ class LblReader extends HTMLElement {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
+    if (onEnd) {
+      utterance.onend = onEnd;
+    }
     window.speechSynthesis.speak(utterance);
+    return utterance;
+  }
+
+  toggleFullPlayback() {
+    if (this.isPlayingAll) {
+      if (this.isPaused) {
+        this.resumeFullPlayback();
+      } else {
+        this.pauseFullPlayback();
+      }
+    } else {
+      this.startFullPlayback();
+    }
+  }
+
+  startFullPlayback() {
+    if (this.playbackIndex >= this.data.length) {
+      this.playbackIndex = 0;
+    }
+    this.isPlayingAll = true;
+    this.isPaused = false;
+    this.updatePlaybackUI();
+    this.playLine(this.playbackIndex);
+  }
+
+  pauseFullPlayback() {
+    this.isPaused = true;
+    window.speechSynthesis.pause();
+    this.updatePlaybackUI();
+  }
+
+  resumeFullPlayback() {
+    this.isPaused = false;
+    window.speechSynthesis.resume();
+    this.updatePlaybackUI();
+  }
+
+  stopFullPlayback() {
+    window.speechSynthesis.cancel();
+    this.isPlayingAll = false;
+    this.isPaused = false;
+    this.playbackIndex = 0;
+    this.clearPlaybackHighlights();
+    this.updatePlaybackUI();
+  }
+
+  playLine(index) {
+    if (!this.isPlayingAll || this.isPaused) return;
+
+    if (index >= this.data.length) {
+      this.stopFullPlayback();
+      return;
+    }
+
+    this.playbackIndex = index;
+    const lineData = this.data[index];
+    const langOrg = this.getAttribute('lang-original') || 'en';
+
+    this.highlightCard(index);
+    this.playbackUtterance = this._speak(lineData.original, langOrg, () => {
+      if (this.isPlayingAll && !this.isPaused) {
+        this.playLine(index + 1);
+      }
+    });
+  }
+
+  highlightCard(index) {
+    this.clearPlaybackHighlights();
+    const cards = this.shadowRoot.querySelectorAll('.card');
+    const activeCard = cards[index];
+    if (activeCard) {
+      activeCard.classList.add('playing');
+      activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  clearPlaybackHighlights() {
+    this.shadowRoot.querySelectorAll('.card').forEach(c => c.classList.remove('playing'));
+  }
+
+  updatePlaybackUI() {
+    const playPauseBtn = this.shadowRoot.querySelector('#play-pause-btn');
+    if (!playPauseBtn) return;
+
+    if (!this.isPlayingAll) {
+      playPauseBtn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> <span>Play Story</span>`;
+    } else if (this.isPaused) {
+      playPauseBtn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> <span>Resume</span>`;
+    } else {
+      playPauseBtn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> <span>Pause</span>`;
+    }
+
+    const stopBtn = this.shadowRoot.querySelector('#stop-btn');
+    if (stopBtn) {
+      stopBtn.style.display = this.isPlayingAll ? 'flex' : 'none';
+    }
   }
 
   _shouldShowAudioControls() {
@@ -293,18 +400,67 @@ class LblReader extends HTMLElement {
           position: relative;
         }
 
-        .progress-text {
+        .sticky-bar {
           position: sticky;
           top: 0;
           background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(10px);
+          padding: 0.8em 1.2em;
+          border-radius: 1em;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+          z-index: 100;
+          margin-bottom: 1.5em;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .playback-controls {
+          display: flex;
+          gap: 0.5em;
+          align-items: center;
+        }
+
+        .control-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.5em;
           padding: 0.5em 1em;
-          border-radius: 0.5em;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-          z-index: 10;
-          margin-bottom: 1em;
-          text-align: right;
+          font-size: 0.9em;
           font-weight: 600;
+          border-radius: 0.6em;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          color: #475569;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
           color: #2563eb;
+        }
+
+        #play-pause-btn {
+          background: #2563eb;
+          color: white;
+          border-color: #1d4ed8;
+        }
+
+        #play-pause-btn:hover {
+          background: #1d4ed8;
+        }
+
+        #stop-btn {
+          display: none; /* Shown via JS */
+        }
+
+        .progress-text {
+          font-weight: 700;
+          color: #2563eb;
+          font-size: 1.1em;
         }
 
         .story-container {
@@ -352,6 +508,14 @@ class LblReader extends HTMLElement {
         .card.failed {
           border-color: #ef4444;
           background: #fef2f2;
+        }
+
+        .card.playing {
+          border-color: #2563eb;
+          background: #eff6ff;
+          opacity: 1;
+          transform: scale(1.02);
+          box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.2);
         }
 
         .card-header {
@@ -620,7 +784,19 @@ class LblReader extends HTMLElement {
           text-decoration: underline;
         }
       </style>
-      <div class="progress-text">Progress: 0 / 0</div>
+      <div class="sticky-bar">
+        <div class="playback-controls">
+          <button class="control-btn" id="play-pause-btn">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 
+            <span>Play Story</span>
+          </button>
+          <button class="control-btn" id="stop-btn" title="Stop Playback">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>
+            <span>Stop</span>
+          </button>
+        </div>
+        <div class="progress-text">Results: 0 / 0</div>
+      </div>
       <div class="story-container"></div>
       <div class="form-overlay">
         <div class="form-container">
@@ -644,6 +820,8 @@ class LblReader extends HTMLElement {
     `;
 
     this.shadowRoot.querySelector('.generate-btn').onclick = () => this.generateReport();
+    this.shadowRoot.querySelector('#play-pause-btn').onclick = () => this.toggleFullPlayback();
+    this.shadowRoot.querySelector('#stop-btn').onclick = () => this.stopFullPlayback();
   }
 }
 
