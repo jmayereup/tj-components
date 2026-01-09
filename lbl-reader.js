@@ -11,6 +11,7 @@ class LblReader extends HTMLElement {
   connectedCallback() {
     this.render();
     this.loadData();
+    this.checkBrowserSupport();
   }
 
   loadData() {
@@ -120,11 +121,75 @@ class LblReader extends HTMLElement {
   }
 
   _speak(text, lang) {
-    if (!window.speechSynthesis) return;
+    if (!window.speechSynthesis) {
+      alert("Text-to-speech is not supported in this browser. Please try Chrome or Safari.");
+      return;
+    }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
     window.speechSynthesis.speak(utterance);
+  }
+
+  _shouldShowAudioControls() {
+    const ua = navigator.userAgent.toLowerCase();
+
+    // 1. Block known in-app browsers and WebViews
+    if (ua.includes("wv") || ua.includes("webview") ||
+      ua.includes("instagram") || ua.includes("facebook") ||
+      ua.includes("line")) {
+      return false;
+    }
+
+    // Also check if TTS is available
+    if (!window.speechSynthesis) {
+      return false;
+    }
+
+    return true;
+  }
+
+  _getAndroidIntentLink() {
+    const isAndroid = /android/i.test(navigator.userAgent);
+    if (!isAndroid) return '';
+
+    const lessonId = this.getAttribute('lesson-id');
+    const url = new URL(window.location.href);
+    if (lessonId) {
+      url.searchParams.set('lesson', lessonId);
+    }
+
+    const urlString = url.toString();
+    const urlNoScheme = urlString.replace(/^https?:\/\//, '');
+    const scheme = window.location.protocol.replace(':', '');
+
+    return `intent://${urlNoScheme}#Intent;scheme=${scheme};package=com.android.chrome;end`;
+  }
+
+  checkBrowserSupport() {
+    if (!this._shouldShowAudioControls()) {
+      const overlay = this.shadowRoot.querySelector('.browser-prompt-overlay');
+      if (overlay) {
+        overlay.style.display = 'flex';
+
+        const androidLink = this._getAndroidIntentLink();
+        const actionBtn = this.shadowRoot.querySelector('.browser-action-btn');
+
+        if (androidLink) {
+          actionBtn.href = androidLink;
+          actionBtn.textContent = 'Open in Chrome';
+        } else {
+          // Likely iOS in-app browser or no TTS support
+          actionBtn.onclick = (e) => {
+            if (!actionBtn.href || actionBtn.href === 'javascript:void(0)') {
+              e.preventDefault();
+              alert('Please open this page in Safari or Chrome for the best experience with audio features.');
+            }
+          };
+          actionBtn.textContent = 'Use Safari / Chrome';
+        }
+      }
+    }
   }
 
   handleSelection(cardIndex, selectedIndex, correctIndex, button, card) {
@@ -489,6 +554,71 @@ class LblReader extends HTMLElement {
           from { opacity: 0; }
           to { opacity: 1; }
         }
+
+        .browser-prompt-overlay {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(15, 23, 42, 0.9);
+          backdrop-filter: blur(8px);
+          display: none;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          color: white;
+          padding: 2em;
+          text-align: center;
+        }
+
+        .browser-prompt-card {
+          background: white;
+          color: #1e293b;
+          padding: 2.5em;
+          border-radius: 1.5em;
+          max-width: 400px;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .browser-prompt-card h2 {
+          margin-top: 0;
+          color: #1e293b;
+          font-size: 1.5em;
+        }
+
+        .browser-prompt-card p {
+          color: #64748b;
+          line-height: 1.6;
+          margin-bottom: 2em;
+        }
+
+        .browser-action-btn {
+          display: inline-block;
+          background: #2563eb;
+          color: white;
+          text-decoration: none;
+          padding: 1em 2em;
+          border-radius: 0.75em;
+          font-weight: 600;
+          transition: background 0.2s;
+          cursor: pointer;
+          border: none;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .browser-action-btn:hover {
+          background: #1d4ed8;
+        }
+        
+        .close-prompt {
+          margin-top: 1.5em;
+          background: transparent;
+          border: none;
+          color: #94a3b8;
+          cursor: pointer;
+          font-size: 0.9em;
+          text-decoration: underline;
+        }
       </style>
       <div class="progress-text">Progress: 0 / 0</div>
       <div class="story-container"></div>
@@ -501,6 +631,15 @@ class LblReader extends HTMLElement {
           <button class="generate-btn">Generate Report Card</button>
         </div>
         <div class="report-area"></div>
+      </div>
+
+      <div class="browser-prompt-overlay">
+        <div class="browser-prompt-card">
+          <h2>Better in a Browser</h2>
+          <p>It looks like you're using an in-app browser. For the best experience (including audio features), please open this page in <b>Chrome</b> or <b>Safari</b>.</p>
+          <a class="browser-action-btn" href="javascript:void(0)">Open Browser</a>
+          <button class="close-prompt" onclick="this.parentElement.parentElement.style.display='none'">Continue anyway</button>
+        </div>
       </div>
     `;
 
