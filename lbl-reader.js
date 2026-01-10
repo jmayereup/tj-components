@@ -147,6 +147,7 @@ class LblReader extends HTMLElement {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
+    utterance.rate = 0.7;
     if (onEnd) {
       utterance.onend = onEnd;
     }
@@ -391,6 +392,16 @@ class LblReader extends HTMLElement {
     const title = document.createElement('h3');
     title.textContent = "Unscramble the Sentence";
     unscrambleCard.appendChild(title);
+
+    const langOrg = this.getAttribute('lang-original') || 'en';
+    const playBtn = document.createElement('button');
+    playBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+    playBtn.classList.add('voice-btn');
+    playBtn.style.margin = "0 auto 1em auto";
+    playBtn.onclick = () => {
+      this._speak(challenge.original, langOrg);
+    };
+    unscrambleCard.appendChild(playBtn);
 
     const translation = document.createElement('div');
     translation.classList.add('full-translation');
@@ -969,6 +980,8 @@ class LblReader extends HTMLElement {
         .unscramble-actions {
           display: flex;
           gap: 1em;
+          font-size: 0.8em;
+          padding: 0.5em;
           justify-content: center;
         }
 
