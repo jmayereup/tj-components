@@ -1,4 +1,4 @@
-class TjDeathByGrammar extends HTMLElement {
+class GrammarHearts extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -76,7 +76,7 @@ class TjDeathByGrammar extends HTMLElement {
       this.prepRound();
       this.innerHTML = ''; // Only clear after successful parse
     } catch (e) {
-      console.error('Failed to parse JSON for tj-death-by-grammar', e);
+      console.error('Failed to parse JSON for grammar-hearts', e);
       this.shadowRoot.innerHTML = `<div class="error-msg">Error loading grammar data. Please use a &lt;script type="application/json"&gt; tag for your questions.</div>`;
     }
   }
@@ -685,4 +685,4 @@ class TjDeathByGrammar extends HTMLElement {
   }
 }
 
-customElements.define('tj-death-by-grammar', TjDeathByGrammar);
+customElements.define('grammar-hearts', GrammarHearts);
