@@ -13,6 +13,7 @@ class GrammarHearts extends HTMLElement {
     this.score = 0;
     this.grammarHint = { summary: '', content: '' };
     this.studentInfo = { nickname: '', number: '' };
+    this.title = 'Grammar Practice';
 
     // Activity state
     this.gameState = 'hint'; // hint, playing, gameover, report
@@ -78,6 +79,10 @@ class GrammarHearts extends HTMLElement {
       // If data is an array, take the first element (common format for other extensions)
       if (Array.isArray(data)) {
         data = data[0];
+      }
+
+      if (data.title) {
+        this.title = data.title;
       }
 
       if (data.hint) {
@@ -561,7 +566,7 @@ class GrammarHearts extends HTMLElement {
         <div class="card">
           <h2>Grammar Focus: ${this.grammarHint.summary}</h2>
           <div class="hint-content">${this.parseMD(this.grammarHint.content)}</div>
-          <button class="btn" onclick="this.getRootNode().host.startPlaying()">I'm Ready!</button>
+          <button class="btn" onclick="this.getRootNode().host.startPlaying()">Start Game!</button>
         </div>
       `;
     } else if (this.gameState === 'playing') {
@@ -581,7 +586,7 @@ class GrammarHearts extends HTMLElement {
 
         <div class="card ${this.isAnswered ? 'answered' : ''}">
           <div class="instruction">${this.getInstruction(q)}</div>
-          ${q.question ? `<h2>${this.parseMD(q.question)}</h2>` : ''}
+          ${this.renderMainText(q)}
           ${this.renderQuestion(q)}
           
           ${this.isAnswered ? `
@@ -628,7 +633,7 @@ class GrammarHearts extends HTMLElement {
     } else if (this.gameState === 'report') {
       content = `
         <div class="report-card">
-          <h2>Grammar Report</h2>
+          <h2>${this.title}</h2>
           <p><strong>Student:</strong> ${this.studentInfo.nickname} (${this.studentInfo.number})</p>
           <div class="report-stat">${this.score} / ${this.currentPool.length}</div>
           <p>Take a screenshot and send it to your teacher!</p>
@@ -646,7 +651,20 @@ class GrammarHearts extends HTMLElement {
     `;
   }
 
+  renderMainText(q) {
+    const text = q.question || q.sentence || (q.type === 'multiple-choice' ? '' : '___');
+    if (!text) return '';
+
+    const processedText = q.type === 'fill-in-the-blank'
+      ? text.replace('___', '<span style="text-decoration: underline; font-weight: 700;">' + (this.isAnswered ? q.answer : '______') + '</span>')
+      : text;
+
+    return `<h2>${this.parseMD(processedText)}</h2>`;
+  }
+
   renderQuestion(q) {
+    if (!q) return '<div class="error-msg">Missing question data.</div>';
+
     if (q.type === 'multiple-choice') {
       return q.options.map((opt, i) => {
         let className = 'option-btn';
@@ -658,7 +676,6 @@ class GrammarHearts extends HTMLElement {
       }).join('');
     } else if (q.type === 'fill-in-the-blank') {
       return `
-        <p>${q.sentence.replace('___', '<span style="text-decoration: underline; font-weight: 700;">' + (this.isAnswered ? q.answer : '______') + '</span>')}</p>
         <input type="text" class="input-field" id="fib-answer" placeholder="Type your answer here..." 
           ${this.isAnswered ? 'disabled' : ''} 
           value="${this.isAnswered ? this.userAnswer : ''}"
@@ -666,7 +683,8 @@ class GrammarHearts extends HTMLElement {
         ${!this.isAnswered ? `<button class="btn" onclick="this.getRootNode().host.handleAnswer(this.parentElement.querySelector('#fib-answer').value)">Submit</button>` : ''}
       `;
     } else if (q.type === 'scramble') {
-      const words = q.sentence.trim().split(/\s+/);
+      const sentence = q.sentence || q.question || '';
+      const words = sentence.trim().split(/\s+/);
       if (this.scrambledWords.length === 0) {
         this.scrambledWords = [...words].sort(() => 0.5 - Math.random());
       }

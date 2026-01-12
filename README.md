@@ -49,9 +49,10 @@ A gamified grammar practice component with multiple-choice, fill-in-the-blank, a
 ```html
 <script src="path/to/grammar-hearts.js" defer></script>
 
-<grammar-hearts hearts="3" round-size="15">
+<grammar-hearts hearts="3" round-size="10">
 [
 {
+  "title": "Daily Routines Quiz",
   "hint": {
     "summary": "Present Simple vs Present Continuous",
     "content": "Use **Present Simple** for habits. Use **Present Continuous** for actions happening now."
