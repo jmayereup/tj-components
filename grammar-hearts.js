@@ -39,9 +39,12 @@ class GrammarHearts extends HTMLElement {
       document.head.appendChild(script);
     }
 
-    this.loadData();
-    this.ensureMarked();
-    this.render();
+    // Use setTimeout to ensure children are parsed
+    setTimeout(() => {
+      this.loadData();
+      this.ensureMarked();
+      this.render();
+    }, 0);
   }
 
   ensureMarked() {
@@ -59,11 +62,23 @@ class GrammarHearts extends HTMLElement {
       const scriptTag = this.querySelector('script[type="application/json"]');
       let jsonText = scriptTag ? scriptTag.textContent : this.textContent.trim();
 
-      // If we used the whole textContent, we need to be careful if it wasn't in a script tag
-      // because the innerHTML version earlier might have been cleared.
-      // But connectedCallback runs once.
+      if (!jsonText) {
+        // If empty, maybe it's not ready yet or really empty
+        return;
+      }
 
-      const data = JSON.parse(jsonText);
+      // Pre-process: escape literal newlines inside JSON strings
+      // This happens when CMS/Blog platforms wrap long JSON text
+      const sanitized = jsonText.replace(/"((?:\\.|[^"\\])*)"/gs, (match, p1) => {
+        return '"' + p1.replace(/\n/g, '\\n').replace(/\r/g, '\\r') + '"';
+      });
+
+      let data = JSON.parse(sanitized);
+
+      // If data is an array, take the first element (common format for other extensions)
+      if (Array.isArray(data)) {
+        data = data[0];
+      }
 
       if (data.hint) {
         this.grammarHint = data.hint;
@@ -77,7 +92,7 @@ class GrammarHearts extends HTMLElement {
       this.innerHTML = ''; // Only clear after successful parse
     } catch (e) {
       console.error('Failed to parse JSON for grammar-hearts', e);
-      this.shadowRoot.innerHTML = `<div class="error-msg">Error loading grammar data. Please use a &lt;script type="application/json"&gt; tag for your questions.</div>`;
+      this.shadowRoot.innerHTML = `<div class="error-msg">Error loading grammar data. Please ensure your JSON is correctly formatted.</div>`;
     }
   }
 
@@ -124,7 +139,9 @@ class GrammarHearts extends HTMLElement {
     } else if (q.type === 'fill-in-the-blank') {
       correct = (answer.trim().toLowerCase() === q.answer.toLowerCase());
     } else if (q.type === 'scramble') {
-      correct = (answer === q.sentence);
+      const canonicalTarget = q.sentence.trim().split(/\s+/).join(' ');
+      const canonicalUser = answer.trim().split(/\s+/).join(' ');
+      correct = (canonicalUser === canonicalTarget);
     }
 
     this.isAnswered = true;
@@ -193,6 +210,16 @@ class GrammarHearts extends HTMLElement {
     this.studentInfo = { nickname, number };
     this.gameState = 'report';
     this.render();
+  }
+
+  getInstruction(q) {
+    if (q.instruction) return q.instruction;
+    switch (q.type) {
+      case 'multiple-choice': return 'Choose the correct form:';
+      case 'fill-in-the-blank': return 'Fill in the blank:';
+      case 'scramble': return 'Unscramble the sentence:';
+      default: return 'Practice:';
+    }
   }
 
   render() {
@@ -289,6 +316,15 @@ class GrammarHearts extends HTMLElement {
           background: linear-gradient(135deg, #1e293b, #3b82f6);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
+        }
+
+        .instruction {
+          font-size: 0.9em;
+          font-weight: 600;
+          color: #64748b;
+          margin-bottom: 0.5em;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
         }
 
         .hint-content {
@@ -544,7 +580,8 @@ class GrammarHearts extends HTMLElement {
         </div>
 
         <div class="card ${this.isAnswered ? 'answered' : ''}">
-          <h2>${this.parseMD(q.question || 'Practice')}</h2>
+          <div class="instruction">${this.getInstruction(q)}</div>
+          ${q.question ? `<h2>${this.parseMD(q.question)}</h2>` : ''}
           ${this.renderQuestion(q)}
           
           ${this.isAnswered ? `
@@ -629,12 +666,10 @@ class GrammarHearts extends HTMLElement {
         ${!this.isAnswered ? `<button class="btn" onclick="this.getRootNode().host.handleAnswer(this.parentElement.querySelector('#fib-answer').value)">Submit</button>` : ''}
       `;
     } else if (q.type === 'scramble') {
-      const words = q.sentence.split(' ');
+      const words = q.sentence.trim().split(/\s+/);
       if (this.scrambledWords.length === 0) {
         this.scrambledWords = [...words].sort(() => 0.5 - Math.random());
       }
-
-      const currentText = this.selectedScrambleIndices.map(i => this.scrambledWords[i]).join(' ');
 
       return `
         <div class="scramble-target" style="${this.isAnswered ? 'border-style: solid; border-color: ' + (this.isCorrect ? '#10b981' : '#ef4444') : ''}">
@@ -651,7 +686,7 @@ class GrammarHearts extends HTMLElement {
           </div>
           <div style="display: flex; gap: 0.5em;">
               <button class="btn" style="flex: 1; background: #64748b;" onclick="this.getRootNode().host.resetScramble()">Reset</button>
-              <button class="btn" style="flex: 2;" onclick="this.getRootNode().host.handleAnswer('${currentText}')">Check Answer</button>
+              <button class="btn" style="flex: 2;" onclick="this.getRootNode().host.handleScrambleSubmit()">Check Answer</button>
           </div>
         ` : ''}
       `;
@@ -662,6 +697,12 @@ class GrammarHearts extends HTMLElement {
   handleMultipleChoice(index) {
     this.userAnswer = index;
     this.handleAnswer(index);
+  }
+
+  handleScrambleSubmit() {
+    const answer = this.selectedScrambleIndices.map(i => this.scrambledWords[i]).join(' ');
+    this.userAnswer = answer;
+    this.handleAnswer(answer);
   }
 
   pickWord(idx) {
