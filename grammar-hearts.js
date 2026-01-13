@@ -142,10 +142,11 @@ class GrammarHearts extends HTMLElement {
     if (q.type === 'multiple-choice') {
       correct = (answer === q.correctIndex);
     } else if (q.type === 'fill-in-the-blank') {
+      const userAnswer = (answer || '').trim().toLowerCase();
       if (Array.isArray(q.answer)) {
-        correct = q.answer.some(a => a.trim().toLowerCase() === answer.trim().toLowerCase());
-      } else {
-        correct = (answer.trim().toLowerCase() === q.answer.toLowerCase());
+        correct = q.answer.some(a => (typeof a === 'string' ? a : String(a)).trim().toLowerCase() === userAnswer);
+      } else if (typeof q.answer === 'string') {
+        correct = (userAnswer === q.answer.toLowerCase());
       }
     } else if (q.type === 'scramble') {
       const canonicalTarget = q.sentence.trim().split(/\s+/).join(' ');

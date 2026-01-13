@@ -42,7 +42,13 @@ class LblReader extends HTMLElement {
 
       const jsonText = this.rawJson;
       if (jsonText) {
-        this.data = JSON.parse(jsonText).map(item => {
+        // Pre-process: escape literal newlines inside JSON strings
+        const sanitized = jsonText.replace(/"((?:\\.|[^"\\])*)"/gs, (match, p1) => {
+          return '"' + p1.replace(/\n/g, '\\n').replace(/\r/g, '\\r') + '"';
+        });
+
+        const data = JSON.parse(sanitized);
+        this.data = (Array.isArray(data) ? data : [data]).map(item => {
           const options = [...item.translationOptions];
           const correctWord = item.translationOptions[item.correctTranslationIndex];
           // Shuffle options

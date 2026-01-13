@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test LBL Reader Sanitization</title>
+</head>
+
+<body>
+    <lbl-reader lang-original="en" lang-translation="th" story-title="Newline Test">
+        [
+        {
+        "original": "I wake up
+        at 7 AM.",
+        "fullTranslation": "ฉันตื่นนอน
+        ตอน 7 โมง",
+        "translationOptions": ["ตื่นนอน", "นอนหลับ"],
+        "correctTranslationIndex": 0,
+        "highlightIndex": 1
+        }
+        ]
+    </lbl-reader>
+    <script src="lbl-reader.js"></script>
+</body>
+
+</html>
