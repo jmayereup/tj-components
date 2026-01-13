@@ -657,7 +657,15 @@ class GrammarHearts extends HTMLElement {
   }
 
   renderMainText(q) {
-    const text = q.question || q.sentence || (q.type === 'multiple-choice' ? '' : '___');
+    let text = q.question || (q.type === 'multiple-choice' ? '' : (q.type === 'scramble' ? '' : '___'));
+
+    // For scramble, if we're answered, show the target sentence
+    if (q.type === 'scramble' && this.isAnswered) {
+      text = q.sentence;
+    } else if (q.type !== 'scramble') {
+      text = q.question || q.sentence || (q.type === 'multiple-choice' ? '' : '___');
+    }
+
     if (!text) return '';
 
     const processedText = q.type === 'fill-in-the-blank'
