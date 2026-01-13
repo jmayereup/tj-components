@@ -232,14 +232,21 @@ class TjSpeedReview extends HTMLElement {
         .header {
           display: flex;
           justify-content: space-between;
+          align-items: flex-start;
           margin-bottom: 2em;
           border-bottom: 1px solid rgba(255,255,255,0.1);
           padding-bottom: 1em;
+          gap: 1em;
+        }
+        .title-area {
+          flex: 1;
+          min-width: 0;
         }
         .title-area h1 {
           margin: 0;
           font-size: 1.5em;
           color: #e2e8f0;
+          overflow-wrap: break-word;
         }
         .best-score {
           font-size: 0.7em;
@@ -248,11 +255,14 @@ class TjSpeedReview extends HTMLElement {
         }
         .score-display {
           text-align: right;
+          flex-shrink: 0;
         }
         .score-val {
           font-size: 2em;
           font-weight: 800;
           color: #22d3ee;
+          white-space: nowrap;
+          line-height: 1;
         }
         .timer-bar {
           width: 100%;
