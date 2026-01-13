@@ -70,8 +70,8 @@ A gamified grammar practice component with multiple-choice, fill-in-the-blank, a
       "type": "fill-in-the-blank",
       "instruction": "Fill in the blank:",
       "question": "I ___ to school right now.",
-      "answer": "am walking",
-      "explanation": "Action happening **right now**."
+      "answer": ["am walking", "'m walking"],
+      "explanation": "Action happening **right now**. Both full and contracted forms are accepted."
     },
     {
       "type": "scramble",
@@ -88,6 +88,9 @@ A gamified grammar practice component with multiple-choice, fill-in-the-blank, a
 #### Attributes
 - `hearts`: Number of lives before game over (default: 3).
 - `round-size`: Number of questions per round (default: 5).
+
+> [!TIP]
+> **Multiple Answers**: For `fill-in-the-blank` questions, you can provide an array of strings for the `answer` field (e.g., `["is not", "isn't"]`) to accept multiple correct forms. It is backward compatible with single strings.
 
 ### Speed Review (`tj-speed-review`)
 

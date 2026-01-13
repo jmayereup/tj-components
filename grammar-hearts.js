@@ -142,7 +142,11 @@ class GrammarHearts extends HTMLElement {
     if (q.type === 'multiple-choice') {
       correct = (answer === q.correctIndex);
     } else if (q.type === 'fill-in-the-blank') {
-      correct = (answer.trim().toLowerCase() === q.answer.toLowerCase());
+      if (Array.isArray(q.answer)) {
+        correct = q.answer.some(a => a.trim().toLowerCase() === answer.trim().toLowerCase());
+      } else {
+        correct = (answer.trim().toLowerCase() === q.answer.toLowerCase());
+      }
     } else if (q.type === 'scramble') {
       const canonicalTarget = q.sentence.trim().split(/\s+/).join(' ');
       const canonicalUser = answer.trim().split(/\s+/).join(' ');
@@ -656,7 +660,7 @@ class GrammarHearts extends HTMLElement {
     if (!text) return '';
 
     const processedText = q.type === 'fill-in-the-blank'
-      ? text.replace('___', '<span style="text-decoration: underline; font-weight: 700;">' + (this.isAnswered ? q.answer : '______') + '</span>')
+      ? text.replace('___', '<span style="text-decoration: underline; font-weight: 700;">' + (this.isAnswered ? (Array.isArray(q.answer) ? q.answer.join(' / ') : q.answer) : '______') + '</span>')
       : text;
 
     return `<h2>${this.parseMD(processedText)}</h2>`;
