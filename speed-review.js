@@ -521,7 +521,7 @@ class TjSpeedReview extends HTMLElement {
         <div class="header">
           <div class="title-area">
             <h1>${this.title}</h1>
-            <div class="player-tag">${this.nickname} — #${this.studentNumber}</div>
+            <div class="player-tag">${this.nickname} — ${this.studentNumber}</div>
             <div class="best-score">Best: ${this.bestScore}</div>
           </div>
           <div class="score-display">
@@ -563,7 +563,7 @@ class TjSpeedReview extends HTMLElement {
         <div class="end-screen">
           <h1>Quiz Complete!</h1>
           <div class="result-identity">
-            Player: <strong>${this.nickname}</strong> (#${this.studentNumber})
+            Player: <strong>${this.nickname}</strong> (${this.studentNumber})
           </div>
           <p>Your final score:</p>
           <div class="final-score">${this.score}</div>
