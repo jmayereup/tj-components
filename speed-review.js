@@ -15,6 +15,11 @@ class TjSpeedReview extends HTMLElement {
     this.title = 'Speed Review';
     this.questionsPerRound = 10;
 
+    // Identity state
+    this.nickname = '';
+    this.studentNumber = '';
+    this.identityLocked = false;
+
     // Activity state
     this.gameState = 'start'; // start, playing, gameover
     this.isAnswered = false;
@@ -33,7 +38,7 @@ class TjSpeedReview extends HTMLElement {
   connectedCallback() {
     this.timeLimit = parseInt(this.getAttribute('time-limit')) || 15;
     this.questionsPerRound = parseInt(this.getAttribute('round-size')) || 10;
-    this.bestScore = localStorage.getItem('tj-speed-best-score') || 0;
+    this.bestScore = 0; // Always start fresh
 
     // Load external libraries
     this.loadLibrary('marked', 'https://cdn.jsdelivr.net/npm/marked/marked.min.js');
@@ -114,6 +119,23 @@ class TjSpeedReview extends HTMLElement {
   }
 
   startGame() {
+    if (!this.identityLocked) {
+      const nickInput = this.shadowRoot.querySelector('#nickname');
+      const idInput = this.shadowRoot.querySelector('#student-number');
+
+      const nickname = nickInput ? nickInput.value.trim() : '';
+      const studentNumber = idInput ? idInput.value.trim() : '';
+
+      if (!nickname || !studentNumber) {
+        alert('Please enter both nickname and student number to begin.');
+        return;
+      }
+
+      this.nickname = nickname;
+      this.studentNumber = studentNumber;
+      this.identityLocked = true;
+    }
+
     this.score = 0;
     this.currentIndex = 0;
     const shuffled = [...this.questions].sort(() => 0.5 - Math.random());
@@ -205,7 +227,6 @@ class TjSpeedReview extends HTMLElement {
     this.gameState = 'gameover';
     if (this.score > this.bestScore) {
       this.bestScore = this.score;
-      localStorage.setItem('tj-speed-best-score', this.bestScore);
     }
     this.render();
   }
@@ -393,6 +414,75 @@ class TjSpeedReview extends HTMLElement {
           color: #94a3b8;
         }
         .error-msg { color: #ef4444; text-align: center; padding: 2em; }
+        
+        /* Identity Form Styles */
+        .identity-form {
+          margin: 1.5em 0;
+          text-align: left;
+          background: rgba(255,255,255,0.05);
+          padding: 1.5em;
+          border-radius: 1em;
+          border: 1px solid rgba(255,255,255,0.1);
+        }
+        .input-group {
+          margin-bottom: 1em;
+        }
+        .input-group:last-child {
+          margin-bottom: 0;
+        }
+        .input-group label {
+          display: block;
+          font-size: 0.8em;
+          color: #94a3b8;
+          margin-bottom: 0.4em;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+        .input-field {
+          width: 100%;
+          background: #334155;
+          border: 1px solid #475569;
+          color: white;
+          padding: 0.8em;
+          border-radius: 0.5em;
+          font-size: 1em;
+          box-sizing: border-box;
+          outline: none;
+          transition: border-color 0.2s;
+        }
+        .input-field:focus {
+          border-color: #22d3ee;
+        }
+        .locked-identity {
+          margin: 1.5em 0;
+          padding: 1em;
+          background: rgba(16, 185, 129, 0.1);
+          border: 1px solid rgba(16, 185, 129, 0.2);
+          border-radius: 1em;
+          color: #10b981;
+          font-size: 0.95em;
+        }
+        .locked-identity strong {
+          color: #34d399;
+        }
+        .player-tag {
+          font-size: 0.8em;
+          color: #22d3ee;
+          background: rgba(34, 211, 238, 0.1);
+          padding: 0.2em 0.6em;
+          border-radius: 4px;
+          display: inline-block;
+          margin-top: 0.4em;
+          font-weight: 600;
+        }
+        .result-identity {
+          font-size: 1.1em;
+          color: #94a3b8;
+          margin-bottom: 0.5em;
+        }
+        .result-identity strong {
+          color: #f1f5f9;
+        }
       </style>
     `;
 
@@ -404,6 +494,24 @@ class TjSpeedReview extends HTMLElement {
           <h1>${this.title} 🏎️</h1>
           <p>Think fast! Points based on speed.</p>
           <div class="best-score-badge">Best Score: ${this.bestScore}</div>
+          
+          ${!this.identityLocked ? `
+            <div class="identity-form">
+              <div class="input-group">
+                <label for="nickname">Nickname</label>
+                <input type="text" id="nickname" class="input-field" placeholder="e.g. Jake">
+              </div>
+              <div class="input-group">
+                <label for="student-number">Student Number</label>
+                <input type="text" id="student-number" class="input-field" placeholder="e.g. 01">
+              </div>
+            </div>
+          ` : `
+            <div class="locked-identity">
+              Playing as: <strong>${this.nickname}</strong> (${this.studentNumber})
+            </div>
+          `}
+
           <button class="btn-large" onclick="this.getRootNode().host.startGame()">Start Game!</button>
         </div>
       `;
@@ -413,6 +521,7 @@ class TjSpeedReview extends HTMLElement {
         <div class="header">
           <div class="title-area">
             <h1>${this.title}</h1>
+            <div class="player-tag">${this.nickname} — #${this.studentNumber}</div>
             <div class="best-score">Best: ${this.bestScore}</div>
           </div>
           <div class="score-display">
@@ -453,6 +562,9 @@ class TjSpeedReview extends HTMLElement {
       content = `
         <div class="end-screen">
           <h1>Quiz Complete!</h1>
+          <div class="result-identity">
+            Player: <strong>${this.nickname}</strong> (#${this.studentNumber})
+          </div>
           <p>Your final score:</p>
           <div class="final-score">${this.score}</div>
           ${this.score >= this.bestScore && this.score > 0 ? `<p style="color: #fbbf24; font-weight: 800;">🎉 NEW HIGH SCORE! 🎉</p>` : ''}
