@@ -1039,13 +1039,65 @@ class LblReader extends HTMLElement {
         <button class="try-again-btn">Try Again</button>
       </div>
     `;
+
+    // Display individual recordings for spot checking
+    if (this.recordedBlobs.size > 0) {
+      const recordingsSection = document.createElement('div');
+      recordingsSection.classList.add('recordings-section');
+
+      const sectionTitle = document.createElement('h4');
+      sectionTitle.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="#2563eb"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg> Student Recordings`;
+      recordingsSection.appendChild(sectionTitle);
+
+      const recordingsList = document.createElement('div');
+      recordingsList.classList.add('recordings-list');
+
+      // Sort recordings by index so they appear in story order
+      const sortedIndices = Array.from(this.recordedBlobs.keys()).sort((a, b) => a - b);
+
+      sortedIndices.forEach(idx => {
+        const lineData = this.data[idx];
+        const item = document.createElement('div');
+        item.classList.add('recording-item');
+
+        const playBtn = document.createElement('button');
+        playBtn.classList.add('recording-play-btn');
+        playBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+        playBtn.title = "Play Recording";
+        playBtn.onclick = () => this.playRecordedAudio(idx);
+
+        const text = document.createElement('div');
+        text.classList.add('recording-text');
+        text.textContent = lineData.original;
+
+        item.appendChild(playBtn);
+        item.appendChild(text);
+        recordingsList.appendChild(item);
+      });
+
+      recordingsSection.appendChild(recordingsList);
+      reportArea.appendChild(recordingsSection);
+    }
+
     this.shadowRoot.querySelector('.form-container').style.display = 'none';
 
     reportArea.querySelector('.try-again-btn').onclick = () => {
       this.shadowRoot.querySelector('.form-overlay').style.display = 'none';
       this.shadowRoot.querySelector('.report-area').innerHTML = '';
       this.shadowRoot.querySelector('.form-container').style.display = 'block';
+
+      // Persist recordings on "Try Again" as requested by user
+      const currentRecordedBlobs = new Map(this.recordedBlobs);
+      const currentRecordedSentences = new Set(this.recordedSentences);
+
       this.loadData(); // Re-shuffles and resets cards
+
+      // Restore the recordings after loadData
+      this.recordedBlobs = currentRecordedBlobs;
+      this.recordedSentences = currentRecordedSentences;
+
+      // Re-render the line buttons to show the recording playback buttons in the story view
+      this.data.forEach((_, idx) => this.renderLineButtons(idx));
     };
   }
 
@@ -1764,6 +1816,79 @@ class LblReader extends HTMLElement {
           font-size: 3em;
           margin-bottom: 0.5em;
           text-align: center;
+        }
+
+        .recordings-section {
+          margin-top: 1.5em;
+          background: white;
+          padding: 1.5em;
+          border-radius: 1em;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+          max-width: 500px;
+          width: 100%;
+          box-sizing: border-box;
+          animation: fadeIn 0.5s ease;
+        }
+
+        .recordings-section h4 {
+          margin-top: 0;
+          margin-bottom: 1em;
+          color: #1e293b;
+          border-bottom: 1px solid #e2e8f0;
+          padding-bottom: 0.5em;
+          display: flex;
+          align-items: center;
+          gap: 0.5em;
+        }
+
+        .recordings-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.8em;
+        }
+
+        .recording-item {
+          display: flex;
+          align-items: center;
+          gap: 1em;
+          padding: 0.6em;
+          border-radius: 0.5em;
+          background: #f8fafc;
+          transition: background 0.2s;
+        }
+
+        .recording-item:hover {
+          background: #f1f5f9;
+        }
+
+        .recording-play-btn {
+          background: #2563eb;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          flex-shrink: 0;
+          transition: transform 0.1s;
+        }
+
+        .recording-play-btn:active {
+          transform: scale(0.9);
+        }
+
+        .recording-text {
+          font-size: 0.9em;
+          color: #475569;
+          line-height: 1.4;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
 
         @media (max-width: 600px) {
