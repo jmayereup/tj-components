@@ -998,6 +998,9 @@ class LblReader extends HTMLElement {
   }
 
   showFinalForm() {
+    const stickyBar = this.shadowRoot.querySelector('.sticky-bar');
+    if (stickyBar) stickyBar.style.display = 'none';
+
     const formOverlay = this.shadowRoot.querySelector('.form-overlay');
     formOverlay.style.display = 'flex';
 
@@ -1104,6 +1107,9 @@ class LblReader extends HTMLElement {
     this.shadowRoot.querySelector('.form-container').style.display = 'none';
 
     reportArea.querySelector('.try-again-btn').onclick = () => {
+      const stickyBar = this.shadowRoot.querySelector('.sticky-bar');
+      if (stickyBar) stickyBar.style.display = 'flex';
+
       this.shadowRoot.querySelector('.form-overlay').style.display = 'none';
       this.shadowRoot.querySelector('.report-area').innerHTML = '';
       this.shadowRoot.querySelector('.form-container').style.display = 'block';
