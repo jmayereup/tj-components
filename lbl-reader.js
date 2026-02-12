@@ -763,7 +763,7 @@ class LblReader extends HTMLElement {
     unscrambleCard.classList.add('card', 'unscramble-card', 'playing');
 
     const title = document.createElement('h3');
-    title.innerHTML = `Unscramble the Sentence <span style="font-size: 0.8em; color: #64748b; font-weight: normal; margin-left: 0.5em;">(${this.currentUnscrambleIndex + 1} / ${this.unscrambleTotal})</span>`;
+    title.innerHTML = `Unscramble the Sentence <span style="font-size: 0.8em; color: #64748b; font-weight: normal; margin-left: 0.5em; white-space: nowrap;">(${this.currentUnscrambleIndex + 1} / ${this.unscrambleTotal})</span>`;
     unscrambleCard.appendChild(title);
 
     const langOrg = this.getAttribute('lang-original') || 'en';
@@ -1331,6 +1331,7 @@ class LblReader extends HTMLElement {
           font-weight: 700;
           color: #2563eb;
           font-size: 1.1em;
+          white-space: nowrap;
         }
 
         .story-container {
