@@ -99,7 +99,7 @@ class LblReader extends HTMLElement {
         });
         this.displayAllLines();
         this.matchingGamesCompleted = 0;
-        this.startUnscrambleActivity();
+        this.startUnscrambleActivity(false);
         this.startMemoryGame();
         this.updateProgress();
       }
@@ -687,7 +687,7 @@ class LblReader extends HTMLElement {
     }
   }
 
-  startUnscrambleActivity() {
+  startUnscrambleActivity(shouldScroll = true) {
     this.shadowRoot.querySelector('#scramble-section').style.display = 'block';
     this.unscrambleData = [];
     this.currentUnscrambleIndex = 0;
@@ -748,12 +748,12 @@ class LblReader extends HTMLElement {
       return;
     }
 
-    this.renderUnscrambleChallenge();
+    this.renderUnscrambleChallenge(shouldScroll);
     this.updateProgress();
   }
 
 
-  renderUnscrambleChallenge() {
+  renderUnscrambleChallenge(shouldScroll = true) {
     const container = this.shadowRoot.querySelector('.scramble-container');
     container.innerHTML = '';
 
@@ -878,7 +878,9 @@ class LblReader extends HTMLElement {
     unscrambleCard.appendChild(actions);
 
     container.appendChild(unscrambleCard);
-    unscrambleCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (shouldScroll) {
+      unscrambleCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 
   startMemoryGame() {
