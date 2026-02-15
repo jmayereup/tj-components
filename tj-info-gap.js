@@ -101,7 +101,7 @@ class TjInfoGap extends HTMLElement {
         this.totalQuestions = 0;
         this.activityData.blocks.forEach(block => {
             block.questions.forEach(q => {
-                if (q.asker_id === this.currentPlayerId) {
+                if (q.asker_id === this.currentPlayerId || this.isSinglePlayer) {
                     this.totalQuestions++;
                 }
             });
@@ -114,6 +114,7 @@ class TjInfoGap extends HTMLElement {
 
         let myTextsHtml = '';
         let myQuestionsHtml = '';
+        let partnerQuestionsHtml = '';
 
         // Parse the blocks to separate what the player reads vs. what they ask
         data.blocks.forEach((block, blockIndex) => {
@@ -122,7 +123,7 @@ class TjInfoGap extends HTMLElement {
                 myTextsHtml += `<div class="info-card"><p>${block.text}</p></div>`;
             }
 
-            // 2. Check if this player needs to ask any questions from this block
+            // 2. Separate questions
             block.questions.forEach((q, qIndex) => {
                 if (q.asker_id === playerId) {
                     const questionId = `q_${blockIndex}_${qIndex}`;
@@ -156,6 +157,28 @@ class TjInfoGap extends HTMLElement {
               </div>
             </div>
           `;
+                } else if (this.isSinglePlayer) {
+                    // This is a question the partner (Computer) is asking the human player
+                    const questionId = `q_verbal_${blockIndex}_${qIndex}`;
+                    partnerQuestionsHtml += `
+                        <div class="question-card partner-question">
+                            <div class="question-header">
+                                <p class="question-text"><strong>Partner asks:</strong> (Listen and answer out loud)</p>
+                                <button class="tts-btn" data-text="${q.question}" title="Hear Question">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                                    </svg>
+                                    Hear Question
+                                </button>
+                            </div>
+                            <div class="verbal-row">
+                                <label class="verbal-check-label">
+                                    <input type="checkbox" class="verbal-check" data-qid="${questionId}">
+                                    I answered this verbally
+                                </label>
+                            </div>
+                        </div>
+                    `;
                 }
             });
         });
@@ -185,6 +208,17 @@ class TjInfoGap extends HTMLElement {
         
         <div class="section-title">Your Questions (Ask others)</div>
         ${myQuestionsHtml || '<p class="empty-state">You have no questions to ask right now.</p>'}
+
+        ${this.isSinglePlayer && partnerQuestionsHtml ? `
+            <div class="section-title">Partner's Questions (For you)</div>
+            <div class="instruction-banner">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                </svg>
+                Listen to your partner's questions and answer them using your information.
+            </div>
+            ${partnerQuestionsHtml}
+        ` : ''}
 
         <div id="footer-actions" class="footer-actions" style="display: ${this.answeredCount === this.totalQuestions && this.totalQuestions > 0 ? 'flex' : 'none'}">
             <button id="complete-btn" class="complete-btn">Complete & Show Score</button>
@@ -288,13 +322,30 @@ class TjInfoGap extends HTMLElement {
 
                 this.answeredCount++;
                 this.updateProgressDisplay();
-                
-                if (this.answeredCount === this.totalQuestions) {
-                    const footer = this.shadowRoot.getElementById('footer-actions');
-                    if (footer) footer.style.display = 'flex';
+                this._checkCompletion();
+            });
+        });
+
+        // Checkbox listeners for verbal answers
+        const checks = this.shadowRoot.querySelectorAll('.verbal-check');
+        checks.forEach(check => {
+            check.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    e.target.disabled = true;
+                    this.score++; 
+                    this.answeredCount++;
+                    this.updateProgressDisplay();
+                    this._checkCompletion();
                 }
             });
         });
+    }
+
+    _checkCompletion() {
+        if (this.answeredCount === this.totalQuestions && this.totalQuestions > 0) {
+            const footer = this.shadowRoot.getElementById('footer-actions');
+            if (footer) footer.style.display = 'flex';
+        }
     }
 
     updateProgressDisplay() {
@@ -439,8 +490,16 @@ class TjInfoGap extends HTMLElement {
       .mc-option.correct { background-color: #dcfce7; border-color: #22c55e; color: #166534; font-weight: bold; }
       .mc-option.correct-highlight { border: 2px dashed #22c55e; background-color: #f0fdf4; }
       .mc-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
-      .mc-option[disabled], .mc-option input[disabled] { cursor: default; }
+      .mc-option[disabled], .mc-option input[disabled], .verbal-check[disabled] { cursor: default; }
+
+      .partner-question { border-left: 4px solid #8b5cf6; }
+      .verbal-row { margin-top: 12px; }
+      .verbal-check-label { display: flex; align-items: center; gap: 8px; font-size: 0.9em; color: #4b5563; cursor: pointer; }
+      .verbal-check { width: 18px; height: 18px; cursor: pointer; }
       
+      .instruction-banner { display: flex; align-items: center; gap: 8px; background: #f5f3ff; color: #5b21b6; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9em; font-weight: 500; border: 1px solid #ddd6fe; }
+      .instruction-banner svg { flex-shrink: 0; }
+
       .footer-actions { margin-top: 30px; display: none; justify-content: center; padding-top: 20px; border-top: 1px solid #f1f5f9; }
       .complete-btn { background-color: #2563eb; color: white; border: none; padding: 12px 32px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1em; transition: background 0.2s; }
       .complete-btn:hover { background-color: #1d4ed8; }
