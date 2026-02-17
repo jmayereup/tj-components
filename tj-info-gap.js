@@ -208,7 +208,7 @@ class TjInfoGap extends HTMLElement {
         </div>
         <div class="${this.isSinglePlayer ? 'single-player-layout' : ''}">
             <div class="info-column">
-                <div class="section-title">Your Information</div>
+                <div class="section-title">Your partner will ask you questions about this passage.</div>
                 ${myTextsHtml || '<p class="empty-state">You have no texts to read. Listen to your partners.</p>'}
             </div>
 
@@ -226,7 +226,7 @@ class TjInfoGap extends HTMLElement {
             ` : ''}
         </div>
 
-        <div class="section-title">Your Questions (Ask others)</div>
+        <div class="section-title">Your partner has the answer to these questions.</div>
         ${myQuestionsHtml || '<p class="empty-state">You have no questions to ask right now.</p>'}
 
         <div id="footer-actions" class="footer-actions" style="display: ${this.answeredCount === this.totalQuestions && this.totalQuestions > 0 ? 'flex' : 'none'}">
