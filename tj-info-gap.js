@@ -8,16 +8,23 @@ class TjInfoGap extends HTMLElement {
         this.answeredCount = 0;
         this.totalQuestions = 0;
         this.isCompleted = false;
-        
+
         // TTS State
         this.isSinglePlayer = false;
         this.selectedVoiceName = null;
         this.isPlaying = false;
-        
+
         // Bind voices changed event
         if (window.speechSynthesis) {
             window.speechSynthesis.onvoiceschanged = () => this._updateVoiceList();
         }
+
+        // Recording state
+        this.recordedBlobs = new Map(); // questionId -> Blob
+        this.mediaRecorder = null;
+        this.isRecordingId = null; // null or questionId
+        this.recordingStartTime = 0;
+        this.isPlayingRecordingId = null; // null or questionId
     }
 
     connectedCallback() {
@@ -72,7 +79,7 @@ class TjInfoGap extends HTMLElement {
     `;
 
         this.shadowRoot.innerHTML = html;
-        
+
         // Mode listeners
         this.shadowRoot.getElementById('mode-multi').onclick = () => {
             this.isSinglePlayer = false;
@@ -141,7 +148,7 @@ class TjInfoGap extends HTMLElement {
                                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                                     <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                                 </svg>
-                                Partner Info
+                                Info
                             </button>
                         `;
                     }
@@ -161,21 +168,18 @@ class TjInfoGap extends HTMLElement {
                     // This is a question the partner (Computer) is asking the human player
                     const questionId = `q_verbal_${blockIndex}_${qIndex}`;
                     partnerQuestionsHtml += `
-                        <div class="question-card partner-question">
+                        <div class="question-card partner-question" data-qid="${questionId}">
                             <div class="question-header">
-                                <p class="question-text"><strong>Partner asks:</strong> (Listen and answer out loud)</p>
+                                <p class="question-text"><strong>Partner asks:</strong> (Answer out loud)</p>
                                 <button class="tts-btn" data-text="${q.question}" title="Hear Question">
                                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                                         <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                                     </svg>
-                                    Hear Question
+                                    Listen
                                 </button>
                             </div>
-                            <div class="verbal-row">
-                                <label class="verbal-check-label">
-                                    <input type="checkbox" class="verbal-check" data-qid="${questionId}">
-                                    I answered this verbally
-                                </label>
+                            <div class="recording-controls" id="rec-controls-${questionId}">
+                                ${this.renderRecordingButtons(questionId)}
                             </div>
                         </div>
                     `;
@@ -202,23 +206,28 @@ class TjInfoGap extends HTMLElement {
                 <div class="progress-info">${this.answeredCount} / ${this.totalQuestions} Answered</div>
             </div>
         </div>
-        
-        <div class="section-title">Your Information</div>
-        ${myTextsHtml || '<p class="empty-state">You have no texts to read. Listen to your partners.</p>'}
-        
+        <div class="${this.isSinglePlayer ? 'single-player-layout' : ''}">
+            <div class="info-column">
+                <div class="section-title">Your Information</div>
+                ${myTextsHtml || '<p class="empty-state">You have no texts to read. Listen to your partners.</p>'}
+            </div>
+
+            ${this.isSinglePlayer && partnerQuestionsHtml ? `
+                <div class="partner-column">
+                    <div class="section-title">Partner's Questions (For you)</div>
+                    <div class="instruction-banner">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                            <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        </svg>
+                        Listen and record your answer.
+                    </div>
+                    ${partnerQuestionsHtml}
+                </div>
+            ` : ''}
+        </div>
+
         <div class="section-title">Your Questions (Ask others)</div>
         ${myQuestionsHtml || '<p class="empty-state">You have no questions to ask right now.</p>'}
-
-        ${this.isSinglePlayer && partnerQuestionsHtml ? `
-            <div class="section-title">Partner's Questions (For you)</div>
-            <div class="instruction-banner">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                    <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                </svg>
-                Listen to your partner's questions and answer them using your information.
-            </div>
-            ${partnerQuestionsHtml}
-        ` : ''}
 
         <div id="footer-actions" class="footer-actions" style="display: ${this.answeredCount === this.totalQuestions && this.totalQuestions > 0 ? 'flex' : 'none'}">
             <button id="complete-btn" class="complete-btn">Complete & Show Score</button>
@@ -238,7 +247,7 @@ class TjInfoGap extends HTMLElement {
 
         this.shadowRoot.innerHTML = html;
         this.attachValidationListeners();
-        
+
         // Voice selection listeners
         if (this.isSinglePlayer) {
             this.shadowRoot.getElementById('voice-btn').onclick = () => this._showVoiceOverlay();
@@ -246,7 +255,7 @@ class TjInfoGap extends HTMLElement {
             this.shadowRoot.getElementById('voice-overlay').onclick = (e) => {
                 if (e.target.id === 'voice-overlay') this._hideVoiceOverlay();
             };
-            
+
             // TTS Play buttons
             this.shadowRoot.querySelectorAll('.tts-btn').forEach(btn => {
                 btn.onclick = () => this._playTTS(btn.getAttribute('data-text'));
@@ -300,7 +309,7 @@ class TjInfoGap extends HTMLElement {
                 // Find all labels in this specific question group to reset their styling
                 const groupName = e.target.name;
                 const groupRadios = this.shadowRoot.querySelectorAll(`input[name="${groupName}"]`);
-                
+
                 // One attempt limit: disable all radios in this group immediately
                 groupRadios.forEach(r => {
                     r.disabled = true;
@@ -325,20 +334,142 @@ class TjInfoGap extends HTMLElement {
                 this._checkCompletion();
             });
         });
+    }
 
-        // Checkbox listeners for verbal answers
-        const checks = this.shadowRoot.querySelectorAll('.verbal-check');
-        checks.forEach(check => {
-            check.addEventListener('change', (e) => {
-                if (e.target.checked) {
-                    e.target.disabled = true;
-                    this.score++; 
-                    this.answeredCount++;
-                    this.updateProgressDisplay();
-                    this._checkCompletion();
+    renderRecordingButtons(questionId) {
+        const isRecording = this.isRecordingId === questionId;
+        const hasRecording = this.recordedBlobs.has(questionId);
+        const isPlaying = this.isPlayingRecordingId === questionId;
+
+        let html = `
+            <div class="btn-group">
+                <button class="record-btn ${isRecording ? 'recording' : ''} ${hasRecording ? 'has-recording' : ''}" 
+                        onclick="this.getRootNode().host.${isRecording ? 'stopRecording' : 'startRecording'}('${questionId}')"
+                        title="${isRecording ? 'Stop Recording' : 'Record Answer'}">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        ${isRecording ?
+                '<rect x="6" y="6" width="12" height="12"/>' :
+                '<path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>'
+            }
+                    </svg>
+                    ${isRecording ? 'Stop' : (hasRecording ? 'Re-record' : 'Record')}
+                </button>
+        `;
+
+        if (hasRecording && !isRecording) {
+            html += `
+                <button class="play-recorded-btn ${isPlaying ? 'playing' : ''}" 
+                        onclick="this.getRootNode().host.playRecordedAudio('${questionId}')"
+                        title="${isPlaying ? 'Stop Playback' : 'Play Recording'}">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        ${isPlaying ?
+                    '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>' :
+                    '<path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>'
                 }
-            });
-        });
+                    </svg>
+                    ${isPlaying ? 'Playing...' : 'Play'}
+                </button>
+            `;
+        }
+
+        html += '</div>';
+        return html;
+    }
+
+    async startRecording(id) {
+        if (this.isRecordingId !== null) return;
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+            let mimeType = 'audio/webm';
+            if (typeof MediaRecorder.isTypeSupported === 'function') {
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    mimeType = 'audio/mp4';
+                    if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = '';
+                }
+            }
+
+            const options = mimeType ? { mimeType } : {};
+            this.mediaRecorder = new MediaRecorder(stream, options);
+            this._recordingMimeType = this.mediaRecorder.mimeType || mimeType || 'audio/webm';
+
+            let chunks = [];
+            this.mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) chunks.push(e.data);
+            };
+
+            this.mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { type: this._recordingMimeType });
+                const duration = Date.now() - this.recordingStartTime;
+
+                if (duration > 600) {
+                    const isNew = !this.recordedBlobs.has(id);
+                    this.recordedBlobs.set(id, blob);
+
+                    if (isNew) {
+                        this.score++;
+                        this.answeredCount++;
+                        this.updateProgressDisplay();
+                        this._checkCompletion();
+                    }
+                }
+
+                stream.getTracks().forEach(track => track.stop());
+                this.isRecordingId = null;
+                this.refreshRecordingUI(id);
+            };
+
+            this.recordingStartTime = Date.now();
+            this.isRecordingId = id;
+            this.mediaRecorder.start(1000);
+            this.refreshRecordingUI(id);
+        } catch (err) {
+            console.error('Error starting recording:', err);
+            alert('Could not access microphone. Please check permissions.');
+        }
+    }
+
+    stopRecording() {
+        if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+            this.mediaRecorder.stop();
+        }
+    }
+
+    playRecordedAudio(id) {
+        const blob = this.recordedBlobs.get(id);
+        if (!blob) return;
+
+        if (this._currentAudio) {
+            this._currentAudio.pause();
+            this._currentAudio = null;
+        }
+
+        if (this.isPlayingRecordingId === id) {
+            this.isPlayingRecordingId = null;
+            this.refreshRecordingUI(id);
+            return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        this._currentAudio = audio;
+        this.isPlayingRecordingId = id;
+        this.refreshRecordingUI(id);
+
+        audio.play();
+        audio.onended = () => {
+            this.isPlayingRecordingId = null;
+            this.refreshRecordingUI(id);
+            URL.revokeObjectURL(url);
+        };
+    }
+
+    refreshRecordingUI(id) {
+        const container = this.shadowRoot.getElementById(`rec-controls-${id}`);
+        if (container) {
+            container.innerHTML = this.renderRecordingButtons(id);
+        }
     }
 
     _checkCompletion() {
@@ -362,7 +493,7 @@ class TjInfoGap extends HTMLElement {
         if (voices.length === 0) return null;
 
         const langPrefix = lang.split(/[-_]/)[0].toLowerCase();
-        
+
         // 1. Filter by language
         let langVoices = voices.filter(v => v.lang.toLowerCase() === lang.toLowerCase());
         if (langVoices.length === 0) {
@@ -398,10 +529,10 @@ class TjInfoGap extends HTMLElement {
         }
 
         if (voice) utterance.voice = voice;
-        
+
         utterance.onstart = () => { this.isPlaying = true; };
         utterance.onend = () => { this.isPlaying = false; };
-        
+
         window.speechSynthesis.speak(utterance);
     }
 
@@ -434,7 +565,7 @@ class TjInfoGap extends HTMLElement {
             if (this.selectedVoiceName === voice.name || (!this.selectedVoiceName && bestVoice && voice.name === bestVoice.name)) {
                 btn.classList.add('active');
             }
-            
+
             btn.innerHTML = `<span>${voice.name}</span>`;
             if (bestVoice && voice.name === bestVoice.name) {
                 btn.innerHTML += `<span class="badge">Best</span>`;
@@ -493,9 +624,31 @@ class TjInfoGap extends HTMLElement {
       .mc-option[disabled], .mc-option input[disabled], .verbal-check[disabled] { cursor: default; }
 
       .partner-question { border-left: 4px solid #8b5cf6; }
-      .verbal-row { margin-top: 12px; }
-      .verbal-check-label { display: flex; align-items: center; gap: 8px; font-size: 0.9em; color: #4b5563; cursor: pointer; }
-      .verbal-check { width: 18px; height: 18px; cursor: pointer; }
+      .recording-controls { margin-top: 12px; }
+      
+      .btn-group { display: flex; gap: 10px; }
+      
+      .record-btn, .play-recorded-btn { 
+        display: flex; align-items: center; gap: 8px; 
+        padding: 8px 16px; border-radius: 8px; border: 1px solid #e2e8f0;
+        font-weight: 600; cursor: pointer; transition: all 0.2s;
+        font-size: 0.9em;
+      }
+      
+      .record-btn { background: white; color: #475569; }
+      .record-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+      .record-btn.recording { background: #fee2e2; border-color: #ef4444; color: #dc2626; animation: pulse 1.5s infinite; }
+      .record-btn.has-recording { border-color: #8b5cf6; color: #7c3aed; }
+      
+      .play-recorded-btn { background: #f5f3ff; color: #7c3aed; border-color: #ddd6fe; }
+      .play-recorded-btn:hover { background: #ede9fe; }
+      .play-recorded-btn.playing { background: #7c3aed; color: white; }
+
+      @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
+      }
       
       .instruction-banner { display: flex; align-items: center; gap: 8px; background: #f5f3ff; color: #5b21b6; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9em; font-weight: 500; border: 1px solid #ddd6fe; }
       .instruction-banner svg { flex-shrink: 0; }
@@ -514,6 +667,12 @@ class TjInfoGap extends HTMLElement {
       .role-grid { display: flex; gap: 12px; margin-top: 15px; }
       .role-btn { flex: 1; padding: 16px; font-size: 16px; font-weight: bold; cursor: pointer; background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; transition: all 0.2s; }
       .role-btn:hover { background-color: #e2e8f0; border-color: #94a3b8; }
+
+      .single-player-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+      @media (max-width: 768px) {
+        .single-player-layout { grid-template-columns: 1fr; gap: 0; }
+        .single-player-layout .section-title:first-child { margin-top: 12px; }
+      }
 
       /* Voice Overlay Styles */
       .voice-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
