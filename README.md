@@ -109,7 +109,6 @@ A communication-focused component for paired or single-player practice.
 A comprehensive listening lesson including vocabulary preview, dialogue playback, and comprehension quiz.
 
 #### Attributes
-- `audio-intro`: (Optional) URL to an MP3 for the introduction.
 - `audio-listening`: (Optional) URL to an MP3 for the main dialogue.
 
 #### JSON Example

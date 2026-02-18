@@ -151,26 +151,6 @@ class TjListening extends HTMLElement {
 
     _renderIntroPhase() {
         const intro = this.lessonData.intro || {};
-        const audioIntro = this.getAttribute('audio-intro');
-
-        let audioHtml = '';
-        if (audioIntro) {
-            audioHtml = `
-                <div class="audio-player">
-                    <audio controls preload="metadata" class="audio-el">
-                        <source src="${audioIntro}" type="audio/mpeg">
-                        Your browser does not support audio playback.
-                    </audio>
-                </div>
-            `;
-        } else {
-            audioHtml = `
-                <button class="tts-play-btn" id="intro-play-btn" title="Listen to introduction">
-                    <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                    <span>Listen</span>
-                </button>
-            `;
-        }
 
         return `
             <div class="intro-section">
@@ -181,7 +161,6 @@ class TjListening extends HTMLElement {
                 <div class="intro-text">
                     <p>${intro.text || 'Welcome to this listening lesson.'}</p>
                 </div>
-                ${audioHtml}
             </div>
         `;
     }
@@ -334,15 +313,6 @@ class TjListening extends HTMLElement {
         this.shadowRoot.querySelectorAll('.tts-btn, .vocab-play-btn').forEach(btn => {
             btn.onclick = () => this._playTTS(btn.getAttribute('data-text'));
         });
-
-        // Intro play button (TTS)
-        const introPlayBtn = this.shadowRoot.getElementById('intro-play-btn');
-        if (introPlayBtn) {
-            introPlayBtn.onclick = () => {
-                const text = this.lessonData.intro?.text || '';
-                this._playTTS(text);
-            };
-        }
 
         // Listening play button (TTS)
         const listeningPlayBtn = this.shadowRoot.getElementById('listening-play-btn');
