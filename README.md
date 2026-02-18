@@ -118,12 +118,24 @@ A fast-paced review activity with a countdown timer. Points are awarded based on
 ]
 ```
 
+## CDN & Quick Start
+
+You can use these components directly without downloading them by linking to the GitHub Pages CDN:
+
+```html
+<!-- Components -->
+<script src="https://jmayereup.github.io/tj-components/lbl-reader.js" defer></script>
+<script src="https://jmayereup.github.io/tj-components/grammar-hearts.js" defer></script>
+<script src="https://jmayereup.github.io/tj-components/tj-info-gap.js" defer></script>
+<script src="https://jmayereup.github.io/tj-components/tj-listening.js" defer></script>
+<script src="https://jmayereup.github.io/tj-components/speed-review.js" defer></script>
+
+<!-- Required Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+```
+
 ## How to use in a Blog (WordPress, Blogger, etc.)
 
-1.  **Upload the JavaScript files**: Host `lbl-reader.js` and `grammar-hearts.js` on your server or a CDN.
-2.  **Add the Script Tags**: Add the script tags to your blog post (using a "Custom HTML" block).
-3.  **Embed the Component**: Paste the HTML for the component and your JSON data directly into the post.
-4.  **Fonts**: These components look best with the 'Outfit' and 'Inter' fonts. You can add them with:
-    ```html
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    ```
+1.  **Add the Script Tags**: Add the CDN script tags above to your blog post (using a "Custom HTML" block).
+2.  **Embed the Component**: Paste the HTML for the component and your JSON data directly into the post.
+3.  **Fonts**: Ensure the Google Fonts link is included in your post or theme header.
