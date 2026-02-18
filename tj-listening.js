@@ -480,12 +480,6 @@ class TjListening extends HTMLElement {
     <div class="score-actions">
         <button class="role-btn" id="restart-btn">Try Again</button>
         ${isLast ? `<button class="report-btn" id="report-btn">📄 See Report Card</button>` : ''}
-        <button class="share-btn" id="share-quiz-score-btn">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
-            </svg>
-            Share as Quiz
-        </button>
     </div>
     ${combinedHtml}
   </div>
@@ -538,9 +532,6 @@ class TjListening extends HTMLElement {
                 }
             });
         }
-
-        const shareQuizScoreBtn = this.shadowRoot.getElementById('share-quiz-score-btn');
-        if (shareQuizScoreBtn) shareQuizScoreBtn.onclick = () => this._shareAsQuiz();
     }
 
     _showReportOverlay() {
@@ -725,10 +716,8 @@ class TjListening extends HTMLElement {
         const voices = window.speechSynthesis.getVoices();
         const lang = this._getLang();
         const langPrefix = lang.split(/[-_]/)[0].toLowerCase();
-        let langVoices = voices.filter(v => v.lang.toLowerCase() === lang.toLowerCase());
-        if (langVoices.length === 0) {
-            langVoices = voices.filter(v => v.lang.split(/[-_]/)[0].toLowerCase() === langPrefix);
-        }
+        // Always use prefix-based matching so all variants (e.g. en-US, en-GB) appear
+        let langVoices = voices.filter(v => v.lang.split(/[-_]/)[0].toLowerCase() === langPrefix);
         const bestVoice = this._getBestVoice(lang);
 
         voiceList.innerHTML = '';
