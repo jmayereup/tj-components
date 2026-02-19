@@ -38,9 +38,10 @@ class TjQuizElement extends HTMLElement {
         this.clozeScore = 0;
         this.clozeSubmitted = false;
         this.userQuestionAnswers = {}; // map questionIndex -> selected value (for MC questions)
-        this.quizUnlocked = false; // track whether students completed the info gate
+        this.quizUnlocked = true; // No longer blocking on student info
         this.autoSubmissionInProgress = false;
         this.scoreSubmitted = false;
+        this.scoreSentToServer = false; // Track if actually POSTed successfully
         this.ttsPaused = false; // explicitly track paused state for robustness
     }
 
@@ -78,7 +79,13 @@ class TjQuizElement extends HTMLElement {
             this.parseContent();
             this.setupEventListeners();
             this.generateQuiz();
-            this.lockQuizContent();
+            this.unlockQuizContent();
+            
+            // Restore state if available
+            const savedData = this.loadFromLocalStorage();
+            if (savedData) {
+                this.restoreQuizState(savedData);
+            }
         }, 0);
     }
 
@@ -931,7 +938,7 @@ class TjQuizElement extends HTMLElement {
                     feedbackIcon.textContent = ' ✅';
                 } else {
                     row.classList.add('incorrect');
-                    feedbackIcon.textContent = ` ❌ (Correct: ${correctLetter})`;
+                    feedbackIcon.textContent = ' ❌';
                 }
             });
         });
@@ -980,17 +987,22 @@ class TjQuizElement extends HTMLElement {
             });
         }
 
-        quizForm.addEventListener('change', (e) => {
-            this.handleAnswer(e);
-        });
-        quizForm.addEventListener('input', (e) => {
-            this.handleClozeAnswer(e);
-            this.handleVocabAnswer(e);
-        });
-        quizForm.addEventListener('submit', (e) => this.handleSubmit(e));
-        sendButton.addEventListener('click', () => this.sendScore());
-        tryAgainButton.addEventListener('click', () => this.resetQuiz());
-        themeToggle.addEventListener('click', () => this.toggleTheme());
+        const retrySendButton = this.shadowRoot.getElementById('retrySendButton');
+
+        if (quizForm) {
+            quizForm.addEventListener('change', (e) => {
+                this.handleAnswer(e);
+            });
+            quizForm.addEventListener('input', (e) => {
+                this.handleClozeAnswer(e);
+                this.handleVocabAnswer(e);
+            });
+            quizForm.addEventListener('submit', (e) => this.handleSubmit(e));
+        }
+        if (sendButton) sendButton.addEventListener('click', () => this.sendScore());
+        if (tryAgainButton) tryAgainButton.addEventListener('click', () => this.resetQuiz());
+        if (retrySendButton) retrySendButton.addEventListener('click', () => this.sendScore(false, true));
+        if (themeToggle) themeToggle.addEventListener('click', () => this.toggleTheme());
         if (startQuizButton) {
             startQuizButton.addEventListener('click', () => this.handleStartQuiz());
         }
@@ -1397,6 +1409,65 @@ class TjQuizElement extends HTMLElement {
         ].filter(Boolean);
     }
 
+    getTeacherCodeInput() {
+        return this.shadowRoot.getElementById('teacherCode');
+    }
+
+    getStorageKey() {
+        const titleSlug = (this.title || 'untitled-quiz').toLowerCase().replace(/[^a-z0-9]/g, '-');
+        return `tj-quiz-result-${titleSlug}`;
+    }
+
+    saveToLocalStorage(data) {
+        try {
+            const key = this.getStorageKey();
+            localStorage.setItem(key, JSON.stringify({
+                ...data,
+                timestamp: new Date().toISOString()
+            }));
+        } catch (e) {
+            console.warn('Failed to save to localStorage:', e);
+        }
+    }
+
+    loadFromLocalStorage() {
+        try {
+            const key = this.getStorageKey();
+            const saved = localStorage.getItem(key);
+            if (!saved) return null;
+            return JSON.parse(saved);
+        } catch (e) {
+            console.warn('Failed to load from localStorage:', e);
+            return null;
+        }
+    }
+
+    clearLocalStorage() {
+        try {
+            const key = this.getStorageKey();
+            localStorage.removeItem(key);
+        } catch (e) {
+            console.warn('Failed to clear localStorage:', e);
+        }
+    }
+
+    restoreQuizState(data) {
+        const nickname = this.shadowRoot.getElementById('nickname');
+        const homeroom = this.shadowRoot.getElementById('homeroom');
+        const studentId = this.shadowRoot.getElementById('studentId');
+
+        if (nickname) nickname.value = data.nickname || '';
+        if (homeroom) homeroom.value = data.homeroom || '';
+        if (studentId) studentId.value = data.studentId || '';
+
+        this.vocabScore = data.vocabScore || 0;
+        this.clozeScore = data.clozeScore || 0;
+        this.score = data.score || 0;
+        this.scoreSentToServer = data.scoreSentToServer || false;
+
+        this.showFinalScore();
+    }
+
     showStudentInfoAlert(message = '', type = '') {
         const alert = this.shadowRoot.getElementById('studentInfoAlert');
         if (!alert) return;
@@ -1430,36 +1501,21 @@ class TjQuizElement extends HTMLElement {
     }
 
     lockQuizContent() {
+        // Content is always unlocked now, but we can use this to hide/show for resets if needed
         const quizContent = this.shadowRoot.getElementById('quizContent');
-        const startButton = this.shadowRoot.getElementById('startQuizButton');
-        if (quizContent) quizContent.classList.add('hidden');
-        if (startButton) startButton.classList.remove('hidden');
-        this.quizUnlocked = false;
-        this.showStudentInfoAlert();
+        if (quizContent) quizContent.classList.remove('hidden');
+        this.quizUnlocked = true;
     }
 
     unlockQuizContent() {
         const quizContent = this.shadowRoot.getElementById('quizContent');
-        const startButton = this.shadowRoot.getElementById('startQuizButton');
         if (quizContent) quizContent.classList.remove('hidden');
-        if (startButton) startButton.classList.add('hidden');
         this.quizUnlocked = true;
     }
 
     handleStartQuiz() {
-        if (!this.validateStudentInfoFields({ showAlert: true })) return;
+        // No longer used as quiz is visible immediately
         this.unlockQuizContent();
-        this.showStudentInfoAlert('Information saved! Scroll down to begin the quiz.', 'success');
-        const dynamicContent = this.shadowRoot.getElementById('dynamicContent');
-        try {
-            if (dynamicContent) {
-                dynamicContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } else {
-                this.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        } catch (e) {
-            this.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
     }
 
     checkInitialCompletion() {
@@ -1502,19 +1558,20 @@ class TjQuizElement extends HTMLElement {
                     label.appendChild(feedbackIcon);
                 }
 
-                if (radio.value === questionData.a) {
-                    label.classList.add('correct');
-                    feedbackIcon.textContent = '✅';
-                }
-                if (userAnswer && radio.value === userAnswer && userAnswer !== questionData.a) {
-                    label.classList.add('incorrect');
-                    feedbackIcon.textContent = '❌';
+                if (userAnswer === radio.value) {
+                    if (userAnswer === questionData.a) {
+                        label.classList.add('correct');
+                        feedbackIcon.textContent = '✅';
+                    } else {
+                        label.classList.add('incorrect');
+                        feedbackIcon.textContent = '❌';
+                    }
                 }
             });
 
-            // Show explanation if available
+            // Hide explanation if available (commented out or removed to satisfy "show what was wrong" requirement)
             const explanation = this.shadowRoot.getElementById(`explanation-q${i}`);
-            if (explanation) explanation.classList.remove('hidden');
+            if (explanation) explanation.classList.add('hidden');
 
             if (userAnswer === questionData.a) this.score++;
         }
@@ -1552,13 +1609,31 @@ class TjQuizElement extends HTMLElement {
 
     handleSubmit(e) {
         e.preventDefault();
-        if (!this.quizUnlocked) {
-            this.showStudentInfoAlert('Please save your student information before taking the quiz.', 'error');
-            return;
-        }
         if (!this.validateStudentInfoFields({ showAlert: true })) {
+            const infoSection = this.shadowRoot.getElementById('studentInfoSection');
+            if (infoSection) infoSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
+
+        // Save progress to local storage before showing final score
+        const totalVocabEarned = this.vocabScore;
+        const totalVocabPossible = this.getTotalVocabWords();
+        const clozeTotal = this.clozeSections.reduce((total, section) => total + section.words.length, 0);
+        const questionTotal = this.totalQuestions;
+        const totalEarned = this.vocabScore + this.clozeScore + this.score;
+
+        this.saveToLocalStorage({
+            nickname: this.shadowRoot.getElementById('nickname').value,
+            homeroom: this.shadowRoot.getElementById('homeroom').value,
+            studentId: this.shadowRoot.getElementById('studentId').value,
+            vocabScore: this.vocabScore,
+            clozeScore: this.clozeScore,
+            score: this.score,
+            totalPossible: totalVocabPossible + clozeTotal + questionTotal,
+            totalEarned: totalEarned,
+            scoreSentToServer: this.scoreSentToServer
+        });
+
         this.showFinalScore();
     }
 
@@ -1601,9 +1676,24 @@ class TjQuizElement extends HTMLElement {
         const now = new Date();
         const timestamp = now.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-        // Hide student info section
+        // Keep student info visible but maybe style it as "submitted/locked"
         if (studentInfoSection) {
-            studentInfoSection.style.display = 'none';
+            const inputs = this.getStudentInputs();
+            const teacherCode = this.getTeacherCodeInput();
+            inputs.forEach(input => { if (input) input.disabled = true; });
+            if (teacherCode) teacherCode.disabled = true;
+        }
+
+        if (postScoreActions) postScoreActions.classList.remove('hidden');
+
+        // Show retry section if score not sent to server
+        const retrySection = this.shadowRoot.getElementById('retrySubmissionSection');
+        if (retrySection) {
+            if (!this.scoreSentToServer) {
+                retrySection.classList.remove('hidden');
+            } else {
+                retrySection.classList.add('hidden');
+            }
         }
 
         // Update score display
@@ -1691,7 +1781,7 @@ class TjQuizElement extends HTMLElement {
         this.sendScore(true);
     }
 
-    async sendScore(autoTriggered = false) {
+    async sendScore(autoTriggered = false, isRetry = false) {
         if (this.autoSubmissionInProgress) {
             return;
         }
@@ -1699,6 +1789,8 @@ class TjQuizElement extends HTMLElement {
         const validationMessage = this.shadowRoot.getElementById('validationMessage');
         const sendButton = this.shadowRoot.getElementById('sendButton');
         const tryAgainButton = this.shadowRoot.getElementById('tryAgainButton');
+        const retrySection = this.shadowRoot.getElementById('retrySubmissionSection');
+        const retryButton = this.shadowRoot.getElementById('retrySendButton');
 
         const infoValid = this.validateStudentInfoFields({ showAlert: true });
         if (!infoValid) {
@@ -1713,9 +1805,23 @@ class TjQuizElement extends HTMLElement {
             return;
         }
 
-        const vocabTotal = this.getTotalVocabWords();
+        let teacherCode = '';
+        if (isRetry) {
+            const retryInput = this.shadowRoot.getElementById('retryTeacherCode');
+            teacherCode = retryInput ? retryInput.value.trim() : '';
+        } else {
+            const teacherCodeInput = this.getTeacherCodeInput();
+            teacherCode = teacherCodeInput ? teacherCodeInput.value.trim() : '';
+        }
+
+        const totalVocabEarned = this.vocabScore;
+        const totalVocabPossible = this.getTotalVocabWords();
+        const vocabTotal = totalVocabPossible;
+
         const clozeTotal = this.clozeSections.reduce((total, section) => total + section.words.length, 0);
+
         const questionTotal = this.totalQuestions;
+
         const totalPossible = vocabTotal + clozeTotal + questionTotal;
         const totalEarned = this.vocabScore + this.clozeScore + this.score;
 
@@ -1726,8 +1832,35 @@ class TjQuizElement extends HTMLElement {
             studentId: this.shadowRoot.getElementById('studentId').value,
             score: totalEarned,
             total: totalPossible,
+            teacherCode: teacherCode,
             timestamp: new Date().toISOString()
         };
+
+        // IF Teacher Code is NOT 6767 AND it's not a retry, we skip submission and just show local success
+        // If it IS a retry and code is wrong, we show error
+        if (teacherCode !== '6767') {
+            if (isRetry) {
+                if (validationMessage) {
+                    validationMessage.textContent = '❌ Invalid Teacher Code. Please try again.';
+                    validationMessage.className = 'error';
+                }
+            } else {
+                if (validationMessage) {
+                    validationMessage.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>Report card generated. Not sent to teacher (no valid code).</span>
+                    `;
+                    validationMessage.className = 'success';
+                }
+                if (retrySection) retrySection.classList.remove('hidden');
+            }
+            if (tryAgainButton) {
+                tryAgainButton.disabled = false;
+            }
+            this.scoreSubmitted = true;
+            this.autoSubmissionInProgress = false;
+            return;
+        }
 
         if (!this.submissionUrl) {
             if (validationMessage) {
@@ -1785,6 +1918,9 @@ class TjQuizElement extends HTMLElement {
                 data = { message: 'Submission received (non-JSON response)' };
             }
 
+            this.scoreSentToServer = true;
+            if (retrySection) retrySection.classList.add('hidden');
+
             if (validationMessage) {
                 const statusText = autoTriggered
                     ? 'Score automatically submitted to your teacher'
@@ -1838,7 +1974,13 @@ class TjQuizElement extends HTMLElement {
         const studentInfoSection = this.shadowRoot.getElementById('studentInfoSection');
 
         quizForm.reset();
-        if (studentInfoSection) studentInfoSection.style.display = '';
+        if (studentInfoSection) {
+            studentInfoSection.style.display = '';
+            const inputs = this.getStudentInputs();
+            const teacherCode = this.getTeacherCodeInput();
+            inputs.forEach(input => { if (input) input.disabled = false; });
+            if (teacherCode) teacherCode.disabled = false;
+        }
         if (resultArea) resultArea.classList.add('hidden');
         if (postScoreActions) postScoreActions.classList.add('hidden');
         if (checkScoreContainer) checkScoreContainer.classList.remove('hidden');
@@ -1863,7 +2005,13 @@ class TjQuizElement extends HTMLElement {
         this.clozeScore = 0;
         this.clozeSubmitted = false;
         this.scoreSubmitted = false;
+        this.scoreSentToServer = false;
         this.autoSubmissionInProgress = false;
+        this.clearLocalStorage();
+        const retrySection = this.shadowRoot.getElementById('retrySubmissionSection');
+        if (retrySection) retrySection.classList.add('hidden');
+        const retryInput = this.shadowRoot.getElementById('retryTeacherCode');
+        if (retryInput) retryInput.value = '';
 
         const allRadios = Array.from(this.shadowRoot.querySelectorAll('input[type="radio"]'));
         allRadios.forEach(radio => {

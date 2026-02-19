@@ -17,39 +17,56 @@
         </div>
 
         <form id="quizForm">
-            <div id="studentInfoSection" class="section-card">
-                <div class="section-card-header">Student Information</div>
-                <p class="student-instructions instruction">Please enter your Nickname, Homeroom, and Student ID
-                    before starting the quiz. / กรุณากรอกชื่อเล่น ห้องเรียน และรหัสนักเรียนของคุณก่อนเริ่มทำแบบทดสอบ
-                </p>
-                <div class="input-group">
-                    <label for="nickname" class="input-label">Nickname</label>
-                    <input type="text" id="nickname" name="nickname" class="form-input" placeholder="Jake">
-                </div>
-                <div class="grid-container" style="margin-top: 1rem;">
-                    <div>
-                        <label for="homeroom" class="input-label">Homeroom</label>
-                        <input type="text" id="homeroom" name="homeroom" class="form-input" placeholder="1/1">
+            <div id="quizContent" class="hidden">
+                <!-- Dynamic sections will be appended here as .section-card elements -->
+                <div id="dynamicContent"></div>
+
+                <div id="studentInfoSection" class="section-card">
+                    <div class="section-card-header">Student Information / ข้อมูลนักเรียน</div>
+                    <p class="student-instructions instruction">Enter your details to generate your report. / กรุณากรอกข้อมูลเพื่อสร้างรายงานผลการเรียน
+                    </p>
+                    <div class="input-group">
+                        <label for="nickname" class="input-label">Nickname</label>
+                        <input type="text" id="nickname" name="nickname" class="form-input" placeholder="Jake">
                     </div>
-                    <div>
-                        <label for="studentId" class="input-label">Student ID</label>
-                        <input type="text" id="studentId" name="studentId" class="form-input" placeholder="01">
+                    <div class="grid-container" style="margin-top: 1rem;">
+                        <div>
+                            <label for="homeroom" class="input-label">Homeroom</label>
+                            <input type="text" id="homeroom" name="homeroom" class="form-input" placeholder="1/1">
+                        </div>
+                        <div>
+                            <label for="studentId" class="input-label">Student ID</label>
+                            <input type="text" id="studentId" name="studentId" class="form-input" placeholder="01">
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-top: 1rem;">
+                        <label for="teacherCode" class="input-label">Teacher Code (Optional)</label>
+                        <input type="text" id="teacherCode" name="teacherCode" class="form-input" placeholder="Enter code for submission">
                     </div>
                 </div>
-                <div class="prequiz-actions">
-                    <button type="button" id="startQuizButton" class="button button-primary mt-4">Start
-                        Quiz</button>
+
+                <div id="checkScoreContainer" class="actions-container">
+                    <button type="submit" id="checkScoreButton" class="button button-primary">
+                        Check My Score
+                    </button>
                     <p id="studentInfoAlert"></p>
                 </div>
-            </div>
 
-            <div id="quizContent" class="hidden">
                 <div id="resultArea" class="result-area section-card hidden">
                     <div id="resultScore"></div>
                 </div>
 
                 <div id="postScoreActions" class="post-score-section hidden">
                     <p id="validationMessage"></p>
+                    
+                    <div id="retrySubmissionSection" class="retry-section hidden">
+                        <p class="retry-title">Want to send this to your teacher?</p>
+                        <div class="retry-controls">
+                            <input type="text" id="retryTeacherCode" class="form-input" placeholder="Teacher Code" title="Teacher Code">
+                            <button type="button" id="retrySendButton" class="button button-green">Send Now</button>
+                        </div>
+                    </div>
+
                     <div class="post-score-actions">
                         <button type="button" id="sendButton" class="button button-green hidden">
                             Resend Score to Teacher
@@ -58,15 +75,6 @@
                             Try Again
                         </button>
                     </div>
-                </div>
-
-                <!-- Dynamic sections will be appended here as .section-card elements -->
-                <div id="dynamicContent"></div>
-
-                <div id="checkScoreContainer" class="actions-container">
-                    <button type="submit" id="checkScoreButton" class="button button-primary">
-                        Check My Score
-                    </button>
                 </div>
             </div>
         </form>

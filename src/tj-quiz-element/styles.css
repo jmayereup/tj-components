@@ -435,6 +435,16 @@ fieldset>legend {
     margin-bottom: 0.25rem;
 }
 
+#teacherCode {
+    letter-spacing: 0.1em;
+    font-family: monospace;
+    font-weight: 700;
+}
+
+:host(.dark) #teacherCode {
+    background-color: #1e293b;
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: 1fr;
@@ -1190,4 +1200,39 @@ fieldset>legend {
 #voice-btn svg {
     width: 1.25rem;
     height: 1.25rem;
+}
+
+/* Retry Submission Section Styles */
+.retry-section {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1.25rem;
+    background-color: var(--input-bg-light);
+    border-radius: 0.6rem;
+    border: 1px dashed var(--border-light);
+}
+
+.retry-title {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 0.95em;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.retry-controls {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.retry-controls .form-input {
+    flex: 1;
+    margin: 0;
+}
+
+.retry-controls .button {
+    width: auto;
+    margin: 0;
+    white-space: nowrap;
 }
