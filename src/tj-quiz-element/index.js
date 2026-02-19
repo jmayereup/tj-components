@@ -1,3 +1,6 @@
+import { config } from './config.js';
+import templateHtml from './template.html?raw';
+import stylesText from './styles.css?inline';
 
 class TjQuizElement extends HTMLElement {
     static get observedAttributes() {
@@ -9,6 +12,8 @@ class TjQuizElement extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         this.questionBank = [];
         this.passages = []; // support multiple text sections
+        this.selectedVoiceName = null;
+        this.isPlayingAll = false;
         this.instructions = []; // store instruction-only sections
         this.questionGroups = []; // questions grouped by preceding text section (sectionId) or null for global
         this.orderedSections = []; // preserve original section order
@@ -21,7 +26,7 @@ class TjQuizElement extends HTMLElement {
         this.utterance = null;
         this.audioSrc = '';
         this.currentAudioButton = null; // currently-playing passage audio button (for icon state)
-        this.submissionUrl = ''; // Set via submission-url attribute
+        this.submissionUrl = config.submissionUrl || ''; // Use config file for submission URL
         this.title = '';
         this.passage = '';
         this.vocabularySections = []; // Array of vocabulary sections
@@ -36,6 +41,7 @@ class TjQuizElement extends HTMLElement {
         this.quizUnlocked = false; // track whether students completed the info gate
         this.autoSubmissionInProgress = false;
         this.scoreSubmitted = false;
+        this.ttsPaused = false; // explicitly track paused state for robustness
     }
 
     attributeChangedCallback(name, newValue) {
@@ -54,6 +60,19 @@ class TjQuizElement extends HTMLElement {
         }
 
         this.loadTemplate();
+        this.setAttribute('translate', 'no');
+
+        if (!this._shouldShowAudioControls()) {
+            const voiceBtn = this.shadowRoot.getElementById('voice-btn');
+            if (voiceBtn) voiceBtn.classList.add('hidden');
+        }
+
+        if (window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged = () => this._updateVoiceList();
+            // Initial call if voices are already loaded
+            this._updateVoiceList();
+        }
+
         this.parseContent();
         this.setupEventListeners();
         this.generateQuiz();
@@ -61,11 +80,120 @@ class TjQuizElement extends HTMLElement {
     }
 
     loadTemplate() {
-        // Inline styles and template (no external file fetching)
-        const template = document.createElement('template');
-        template.innerHTML = `<style>${this.getBaseStyles()}</style>${this.getTemplate()}`;
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        try {
+            // Create template element and add styles properly
+            const template = document.createElement('template');
+            template.innerHTML = `<style>${stylesText}</style>${templateHtml}`;
+
+            // Clear shadow root before appending if it already has children 
+            // (to prevent duplicates during hot reloads or re-attachments)
+            if (this.shadowRoot.firstChild) {
+                this.shadowRoot.innerHTML = '';
+            }
+
+            this.shadowRoot.appendChild(template.content.cloneNode(true));
+            console.log('Inlined template applied successfully');
+
+        } catch (error) {
+            console.error('Failed to apply inlined template:', error);
+            this.shadowRoot.innerHTML = `
+                <div style="padding: 2rem; text-align: center; font-family: Arial, sans-serif; background: #fee2e2; color: #dc2626; border-radius: 0.5rem; margin: 1rem;">
+                    <h2>⚠️ Template Load Error</h2>
+                    <p>Could not apply inlined template files.</p>
+                    <details style="margin-top: 1rem; text-align: left;">
+                        <summary style="cursor: pointer; font-weight: bold;">Error Details:</summary>
+                        <pre style="background: white; padding: 1rem; border-radius: 0.25rem; margin-top: 0.5rem; overflow: auto;">${error.message}</pre>
+                    </details>
+                </div>
+            `;
+        }
     }
+
+
+    _getBestVoice(lang = "en-US") {
+        if (!window.speechSynthesis) return null;
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length === 0) return null;
+
+        const langPrefix = lang.split(/[-_]/)[0].toLowerCase();
+
+        // 1. Filter by language
+        let langVoices = voices.filter(v => v.lang.toLowerCase() === lang.toLowerCase());
+        if (langVoices.length === 0) {
+            langVoices = voices.filter(v => v.lang.split(/[-_]/)[0].toLowerCase() === langPrefix);
+        }
+
+        if (langVoices.length === 0) return null;
+
+        // 2. Priority list
+        const priorities = ["natural", "google", "premium", "siri"];
+        for (const p of priorities) {
+            const found = langVoices.find(v => v.name.toLowerCase().includes(p));
+            if (found) return found;
+        }
+
+        // 3. Fallback
+        const nonRobotic = langVoices.find(v => !v.name.toLowerCase().includes("microsoft"));
+        return nonRobotic || langVoices[0];
+    }
+
+    _updateVoiceList() {
+        if (!window.speechSynthesis) return;
+        const voices = window.speechSynthesis.getVoices();
+        const voiceList = this.shadowRoot.querySelector('.voice-list');
+        if (!voiceList) return;
+
+        const lang = "en-US";
+        const langVoices = voices.filter(v => v.lang.split(/[-_]/)[0].toLowerCase() === lang.split('-')[0]);
+        const bestVoice = this._getBestVoice(lang);
+
+        voiceList.innerHTML = '';
+        langVoices.sort((a, b) => a.name.localeCompare(b.name));
+
+        langVoices.forEach(voice => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.classList.add('voice-option-btn');
+            if (this.selectedVoiceName === voice.name) btn.classList.add('active');
+
+            let innerHTML = `<span>${voice.name}</span>`;
+            if (bestVoice && voice.name === bestVoice.name) {
+                innerHTML += `<span class="badge">Best</span>`;
+            }
+            btn.innerHTML = innerHTML;
+
+            btn.onclick = () => {
+                this.selectedVoiceName = voice.name;
+                this._updateVoiceList();
+                this._hideVoiceOverlay();
+            };
+            voiceList.appendChild(btn);
+        });
+    }
+
+    _showVoiceOverlay() {
+        const overlay = this.shadowRoot.querySelector('.voice-overlay');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+            this._updateVoiceList();
+        }
+    }
+
+    _hideVoiceOverlay() {
+        const overlay = this.shadowRoot.querySelector('.voice-overlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+        }
+    }
+
+    _shouldShowAudioControls() {
+        const ua = navigator.userAgent.toLowerCase();
+        if (ua.includes("instagram") || ua.includes("facebook") || ua.includes("line")) {
+            return false;
+        }
+        return !!window.speechSynthesis;
+    }
+
 
     parseContent() {
         const content = this.originalContent || this.textContent;
@@ -124,14 +252,19 @@ class TjQuizElement extends HTMLElement {
                 const questionCount = match && match[1] ? parseInt(match[1]) : null;
                 // parseQuestions returns the full parsed bank (no truncation here)
                 const parsedQuestions = this.parseQuestions(sectionContent);
-                // If the last section was a text, attach these questions to that text's sectionId
-                if ((lastSectionType === 'text' || lastSectionType === 'instructions') && lastTextSectionId !== null) {
+
+                // Determine if these questions should be "tied" to the passage (embedded inside its card)
+                // or rendered as a standalone section. We tie them if they immediately follow a text/instruction 
+                // section or follow another questions section that was tied.
+                const isTied = (lastSectionType === 'text' || lastSectionType === 'instructions' || (lastSectionType === 'questions' && this.orderedSections.length > 0 && this.orderedSections[this.orderedSections.length - 1].tiedToPassage));
+
+                if (lastTextSectionId !== null) {
                     this.questionGroups.push({ sectionId: lastTextSectionId, questions: parsedQuestions, maxQuestions: questionCount });
-                    this.orderedSections.push({ type: 'questions', sectionId: lastTextSectionId, questions: parsedQuestions, maxQuestions: questionCount });
+                    this.orderedSections.push({ type: 'questions', sectionId: lastTextSectionId, questions: parsedQuestions, maxQuestions: questionCount, tiedToPassage: isTied });
                 } else {
                     // Global questions (not tied to a text section)
                     this.questionGroups.push({ sectionId: null, questions: parsedQuestions, maxQuestions: questionCount });
-                    this.orderedSections.push({ type: 'questions', sectionId: null, questions: parsedQuestions, maxQuestions: questionCount });
+                    this.orderedSections.push({ type: 'questions', sectionId: null, questions: parsedQuestions, maxQuestions: questionCount, tiedToPassage: false });
                 }
                 lastSectionType = 'questions';
             } else {
@@ -150,6 +283,7 @@ class TjQuizElement extends HTMLElement {
                         break;
                     case 'audio':
                         this.parseAudio(sectionContent);
+                        this.orderedSections.push({ type: 'audio', audioSrc: this.audioSrc });
                         lastSectionType = 'audio';
                         break;
                     default:
@@ -158,10 +292,10 @@ class TjQuizElement extends HTMLElement {
             }
         }
 
-        // Update the rendered content
-        this.shadowRoot.getElementById('quizTitle').textContent = this.title || 'TJ Quiz Element';
-        this.shadowRoot.getElementById('quizDescription').textContent = 'Read the passage, then answer the questions below.';
-        this.shadowRoot.getElementById('passageText').textContent = this.passage;
+        // Update the rendered content title if found
+        if (this.title) {
+            this.shadowRoot.getElementById('quizTitle').textContent = this.title;
+        }
 
         const totalQuestionsParsed = this.questionGroups.reduce((sum, g) => sum + (g.questions ? g.questions.length : 0), 0);
         console.log('Parsed:', {
@@ -542,71 +676,65 @@ class TjQuizElement extends HTMLElement {
             cardClasses: ['vocab-card']
         });
 
-        // build small table similar to global rendering
-        const table = document.createElement('div');
-        table.className = 'vocab-grid-table';
-
         const words = Object.keys(vocabulary);
-        const allDefinitions = Object.values(vocabulary);
+        // Map words to letters A, B, C...
+        const wordMap = words.map((word, i) => ({
+            letter: String.fromCharCode(65 + i), // A, B, C...
+            word: word,
+            definition: vocabulary[word]
+        }));
 
-        // shuffle definitions for inline render for variety
-        const shuffledDefs = [...allDefinitions];
-        this.shuffleArray(shuffledDefs);
+        // Word Bank
+        const bank = document.createElement('div');
+        bank.className = 'vocab-word-bank';
+        bank.innerHTML = `
+            <div class="vocab-bank-title">Word Bank</div>
+            <div class="vocab-bank-items">
+                ${wordMap.map(item => `<span class="vocab-bank-item">${item.letter}: ${item.word.toUpperCase()}</span>`).join('')}
+            </div>
+        `;
+        content.appendChild(bank);
 
-        const headerRow = document.createElement('div');
-        headerRow.className = 'vocab-grid-header';
-        const wordHeaderCell = document.createElement('div');
-        wordHeaderCell.className = 'vocab-grid-header-cell';
-        wordHeaderCell.textContent = 'Word';
-        headerRow.appendChild(wordHeaderCell);
-        shuffledDefs.forEach(def => {
-            const cell = document.createElement('div');
-            cell.className = 'vocab-grid-header-cell';
-            cell.textContent = def;
-            headerRow.appendChild(cell);
-        });
-        table.appendChild(headerRow);
+        // Matching rows (shuffled definitions)
+        const matchingContainer = document.createElement('div');
+        matchingContainer.className = 'vocab-matching-container';
 
-        words.forEach((word, wi) => {
+        const shuffledItems = [...wordMap];
+        this.shuffleArray(shuffledItems);
+
+        shuffledItems.forEach((item) => {
             const row = document.createElement('div');
-            row.className = 'vocab-grid-row';
-            const wordCell = document.createElement('div');
-            wordCell.className = 'vocab-grid-cell vocab-word-cell';
-            wordCell.textContent = word;
-            row.appendChild(wordCell);
+            row.className = 'vocab-matching-row';
 
-            // Build 4 choices per word: correct + 3 distractors
-            const correctDef = vocabulary[word];
-            const otherDefs = shuffledDefs.filter(d => d !== correctDef);
-            const choices = [correctDef, ...otherDefs.slice(0, 3)];
-            this.shuffleArray(choices);
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'vocab-matching-input-group';
 
-            choices.forEach((def, di) => {
-                const cell = document.createElement('div');
-                cell.className = 'vocab-grid-cell vocab-option-cell';
-                // show label for the definition so the mobile stacked layout
-                // isn't missing the definition text when the header is hidden
-                const radioContainer = document.createElement('div');
-                radioContainer.className = 'vocab-radio-container';
-                const radio = document.createElement('input');
-                radio.type = 'radio';
-                radio.name = `vocab-${sectionId}-${wi}`;
-                radio.value = def;
-                radio.id = `vocab-${sectionId}-${wi}-${di}`;
-                radioContainer.appendChild(radio);
-                cell.appendChild(radioContainer);
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'vocab-matching-input';
+            input.maxLength = 1;
+            input.dataset.sectionId = sectionId;
+            input.dataset.word = item.word;
+            input.dataset.correctLetter = item.letter;
+            input.autocomplete = 'off';
+            input.setAttribute('autocapitalize', 'characters');
+            input.setAttribute('autocorrect', 'off');
+            input.setAttribute('spellcheck', 'false');
+            input.inputMode = 'text';
+            input.title = 'Enter the letter for this definition';
 
-                const defLabel = document.createElement('span');
-                defLabel.className = 'vocab-def-label';
-                defLabel.textContent = def;
-                cell.appendChild(defLabel);
-                row.appendChild(cell);
-            });
+            inputGroup.appendChild(input);
+            row.appendChild(inputGroup);
 
-            table.appendChild(row);
+            const defText = document.createElement('div');
+            defText.className = 'vocab-definition-text';
+            defText.textContent = item.definition;
+            row.appendChild(defText);
+
+            matchingContainer.appendChild(row);
         });
 
-        content.appendChild(table);
+        content.appendChild(matchingContainer);
         targetContainer.appendChild(card);
     }
 
@@ -635,7 +763,7 @@ class TjQuizElement extends HTMLElement {
         words.forEach(word => {
             const regex = new RegExp(`\\*${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\*`, 'gi');
             textWithBlanks = textWithBlanks.replace(regex, () => {
-                const inputHtml = `<input type="text" class="cloze-blank" data-answer="${word.toLowerCase()}" data-section-id="${sectionId}" data-blank-index="${blankIndex}" autocomplete="off" spellcheck="false" title="Fill in the blank">`;
+                const inputHtml = `<input type="text" class="cloze-blank" data-answer="${word.toLowerCase()}" data-section-id="${sectionId}" data-blank-index="${blankIndex}" autocomplete="off" spellcheck="false" inputmode="text" autocapitalize="none" autocorrect="off" title="Fill in the blank">`;
                 blankIndex++;
                 return inputHtml;
             });
@@ -650,39 +778,38 @@ class TjQuizElement extends HTMLElement {
     }
 
     handleVocabAnswer(e) {
-        if (e.target.type !== 'radio' || !e.target.name.startsWith('vocab-')) return;
+        const target = e.target;
+        if (target.type === 'text' && target.classList.contains('vocab-matching-input')) {
+            const value = target.value.trim().toUpperCase();
 
-        const radio = e.target;
-        const nameParts = radio.name.split('-');
-        const sectionId = parseInt(nameParts[1]);
-        const wordIndex = parseInt(nameParts[2]);
-
-        // Find the vocabulary section and word
-        const vocabSection = this.vocabularySections.find(vs => vs.sectionId === sectionId);
-        if (!vocabSection || !vocabSection.vocabulary) return;
-
-        const words = Object.keys(vocabSection.vocabulary);
-        const word = words[wordIndex];
-        const selectedDefinition = radio.value;
-
-        // Store the user's choice with section-word key
-        const key = `${sectionId}-${word}`;
-        this.vocabUserChoices[key] = selectedDefinition;
-
-        // Check if all vocabulary questions are answered
-        const totalVocabWords = this.vocabularySections.reduce((total, section) =>
-            total + (section.vocabulary ? Object.keys(section.vocabulary).length : 0), 0);
-        const answeredVocabWords = Object.keys(this.vocabUserChoices).length;
-
-        if (answeredVocabWords === totalVocabWords) {
-            // Check if all sections are complete to enable score button
-            const allQuestionsAnswered = this.totalQuestions === 0 || this.checkAllQuestionsAnswered();
-            const allClozeAnswered = this.checkAllClozeAnswered();
-
-            if (allQuestionsAnswered && allClozeAnswered) {
-                const checkScoreButton = this.shadowRoot.getElementById('checkScoreButton');
-                checkScoreButton.disabled = false;
+            // Only update DOM if necessary to avoid disrupting iOS input focus/selection
+            if (target.value !== value) {
+                target.value = value;
             }
+
+            const sectionId = parseInt(target.dataset.sectionId);
+            const word = target.dataset.word;
+
+            const key = `${sectionId}-${word}`;
+            if (value) {
+                this.vocabUserChoices[key] = value;
+            } else {
+                delete this.vocabUserChoices[key];
+            }
+
+            this.updateCheckScoreButtonState();
+        }
+    }
+
+    updateCheckScoreButtonState() {
+        const vocabComplete = this.vocabularySections.length === 0 ||
+            Object.keys(this.vocabUserChoices).length === this.getTotalVocabWords();
+        const questionsComplete = this.totalQuestions === 0 || this.checkAllQuestionsAnswered();
+        const clozeComplete = this.checkAllClozeAnswered();
+
+        if (vocabComplete && questionsComplete && clozeComplete) {
+            const checkScoreButton = this.shadowRoot.getElementById('checkScoreButton');
+            if (checkScoreButton) checkScoreButton.disabled = false;
         }
     }
 
@@ -772,43 +899,40 @@ class TjQuizElement extends HTMLElement {
         // Show feedback for each vocabulary section
         this.vocabularySections.forEach((vocabSection) => {
             const { vocabulary, sectionId } = vocabSection;
-            if (!vocabulary) return; // Skip if vocabulary is undefined
+            if (!vocabulary) return;
             const words = Object.keys(vocabulary);
 
-            words.forEach((word, wordIndex) => {
+            words.forEach((word) => {
                 const key = `${sectionId}-${word}`;
-                const userDefinition = this.vocabUserChoices[key];
-                const correctDefinition = vocabulary[word];
-                const isCorrect = userDefinition === correctDefinition;
+                const userChoice = this.vocabUserChoices[key];
 
-                if (isCorrect) {
-                    this.vocabScore++;
+                // Find the input for this word
+                const input = this.shadowRoot.querySelector(`.vocab-matching-input[data-section-id="${sectionId}"][data-word="${word}"]`);
+                if (!input) return;
+
+                const correctLetter = input.dataset.correctLetter;
+                const row = input.closest('.vocab-matching-row');
+
+                input.disabled = true;
+
+                let feedbackIcon = row.querySelector('.feedback-icon');
+                if (!feedbackIcon) {
+                    feedbackIcon = document.createElement('span');
+                    feedbackIcon.className = 'feedback-icon';
+                    row.appendChild(feedbackIcon);
                 }
 
-                // Find the selected radio button and its cell
-                const radioName = `vocab-${sectionId}-${wordIndex}`;
-                const selectedRadio = this.shadowRoot.querySelector(`input[name="${radioName}"]:checked`);
-
-                if (selectedRadio) {
-                    // Disable all radio buttons for this word
-                    const allRadios = this.shadowRoot.querySelectorAll(`input[name="${radioName}"]`);
-                    allRadios.forEach(radio => {
-                        radio.disabled = true;
-                        const cell = radio.closest('.vocab-option-cell');
-
-                        if (radio.value === correctDefinition) {
-                            cell.classList.add('correct');
-                        } else if (radio.checked) {
-                            cell.classList.add('incorrect');
-                        }
-                    });
+                if (userChoice === correctLetter) {
+                    this.vocabScore++;
+                    row.classList.add('correct');
+                    feedbackIcon.textContent = ' ✅';
+                } else {
+                    row.classList.add('incorrect');
+                    feedbackIcon.textContent = ` ❌ (Correct: ${correctLetter})`;
                 }
             });
         });
 
-        const vocabScoreElement = this.shadowRoot.getElementById('vocabScore');
-        vocabScoreElement.textContent = `Vocabulary Score: ${this.vocabScore}/${totalVocab}`;
-        vocabScoreElement.classList.remove('hidden');
         this.vocabSubmitted = true;
     }
 
@@ -835,9 +959,6 @@ class TjQuizElement extends HTMLElement {
             input.disabled = true;
         });
 
-        const clozeScoreElement = this.shadowRoot.getElementById('clozeScore');
-        clozeScoreElement.textContent = `Fill in the Blanks Score: ${this.clozeScore}/${totalBlanks}`;
-        clozeScoreElement.classList.remove('hidden');
         this.clozeSubmitted = true;
     }
 
@@ -858,10 +979,10 @@ class TjQuizElement extends HTMLElement {
 
         quizForm.addEventListener('change', (e) => {
             this.handleAnswer(e);
-            this.handleVocabAnswer(e);
         });
         quizForm.addEventListener('input', (e) => {
             this.handleClozeAnswer(e);
+            this.handleVocabAnswer(e);
         });
         quizForm.addEventListener('submit', (e) => this.handleSubmit(e));
         sendButton.addEventListener('click', () => this.sendScore());
@@ -885,9 +1006,9 @@ class TjQuizElement extends HTMLElement {
         this.shadowRoot.addEventListener('click', (event) => {
             const passageAudioToggle = event.target.closest('.passage-audio-toggle');
             if (passageAudioToggle) {
-                const passageWrapper = passageAudioToggle.closest('.passage-wrapper');
-                const passageTextEl = passageWrapper ? passageWrapper.querySelector('.passage-text') : null;
-                const text = passageTextEl ? passageTextEl.textContent : '';
+                const card = passageAudioToggle.closest('.section-card');
+                const passageTexts = card ? Array.from(card.querySelectorAll('.passage-text')) : [];
+                const text = passageTexts.map(el => el.textContent).join('\n');
                 this.handlePassageTTS(passageAudioToggle, text);
                 return;
             }
@@ -895,6 +1016,21 @@ class TjQuizElement extends HTMLElement {
             const audioToggle = event.target.closest('.audio-toggle');
             if (audioToggle) {
                 this.handleAudioToggle();
+            }
+
+            const voiceBtn = event.target.closest('#voice-btn');
+            if (voiceBtn) {
+                this._showVoiceOverlay();
+            }
+
+            const closeVoiceBtn = event.target.closest('.close-voice-btn');
+            if (closeVoiceBtn) {
+                this._hideVoiceOverlay();
+            }
+
+            const voiceOverlay = event.target.closest('.voice-overlay');
+            if (voiceOverlay && !event.target.closest('.voice-card')) {
+                this._hideVoiceOverlay();
             }
         });
     }
@@ -909,8 +1045,6 @@ class TjQuizElement extends HTMLElement {
     setAudioIcon(state) {
         const playIcon = this.shadowRoot.querySelector('.play-icon');
         const pauseIcon = this.shadowRoot.querySelector('.pause-icon');
-        if (!playIcon || !pauseIcon) return;
-
         if (state === 'playing') {
             playIcon.classList.add('hidden');
             pauseIcon.classList.remove('hidden');
@@ -936,13 +1070,14 @@ class TjQuizElement extends HTMLElement {
     }
 
     stopAllAudio() {
-        if (window.speechSynthesis && (window.speechSynthesis.speaking || window.speechSynthesis.paused)) {
+        if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
         if (this.audioPlayer) {
             this.audioPlayer.pause();
             this.audioPlayer.currentTime = 0;
         }
+        this.ttsPaused = false;
         this.setAudioIcon('paused');
         // Reset any passage-specific audio button icons
         if (this.currentAudioButton) {
@@ -954,23 +1089,40 @@ class TjQuizElement extends HTMLElement {
     handleTTS() {
         if (this.audioPlayer && !this.audioPlayer.paused) this.audioPlayer.pause();
 
-        if (window.speechSynthesis.paused) {
+        if (window.speechSynthesis.speaking && this.ttsPaused) {
             window.speechSynthesis.resume();
+            this.ttsPaused = false;
             this.setAudioIcon('playing');
-        } else if (window.speechSynthesis.speaking) {
+        } else if (window.speechSynthesis.speaking && !this.ttsPaused) {
             window.speechSynthesis.pause();
+            this.ttsPaused = true;
             this.setAudioIcon('paused');
         } else {
+            this.stopAllAudio(); // Clear anything else
             this.utterance = new SpeechSynthesisUtterance(this.passage);
-            const lang = "en-US";
-            this.utterance.lang = lang;
-            const voice = this._getBestVoice(lang);
-            if (voice) this.utterance.voice = voice;
-            this.utterance.onstart = () => this.setAudioIcon('playing');
-            this.utterance.onend = () => this.setAudioIcon('paused');
+            this.utterance.lang = "en-US";
+
+            const voices = window.speechSynthesis.getVoices();
+            let selectedVoice = voices.find(v => v.name === this.selectedVoiceName);
+            if (!selectedVoice) {
+                selectedVoice = this._getBestVoice("en-US");
+            }
+            if (selectedVoice) {
+                this.utterance.voice = selectedVoice;
+            }
+
+            this.utterance.onstart = () => {
+                this.setAudioIcon('playing');
+                this.ttsPaused = false;
+            };
+            this.utterance.onend = () => {
+                this.setAudioIcon('paused');
+                this.ttsPaused = false;
+            };
             this.utterance.onerror = (e) => {
                 console.error("TTS Error:", e);
                 this.setAudioIcon('paused');
+                this.ttsPaused = false;
             };
             window.speechSynthesis.speak(this.utterance);
         }
@@ -1015,42 +1167,55 @@ class TjQuizElement extends HTMLElement {
         }
 
         // If speechSynthesis is currently speaking and the same button was used, toggle pause/resume
-        if (window.speechSynthesis && window.speechSynthesis.speaking) {
-            // If the same button triggered while speaking, pause/resume
-            if (this.currentAudioButton === button) {
-                if (window.speechSynthesis.paused) {
-                    window.speechSynthesis.resume();
-                    this.setPassageAudioIcon(button, 'playing');
-                } else {
-                    window.speechSynthesis.pause();
-                    this.setPassageAudioIcon(button, 'paused');
-                }
-                return;
+        if (window.speechSynthesis && window.speechSynthesis.speaking && this.currentAudioButton === button) {
+            if (this.ttsPaused) {
+                window.speechSynthesis.resume();
+                this.ttsPaused = false;
+                this.setPassageAudioIcon(button, 'playing');
             } else {
-                // different button - stop and continue to start new utterance
-                window.speechSynthesis.cancel();
+                window.speechSynthesis.pause();
+                this.ttsPaused = true;
+                this.setPassageAudioIcon(button, 'paused');
             }
+            return;
         }
+
+        // Otherwise stop existing and start new utterance
+        this.stopAllAudio();
 
         // Start new utterance for this passage
         try {
             this.utterance = new SpeechSynthesisUtterance(text || '');
-            const lang = "en-US";
-            this.utterance.lang = lang;
-            const voice = this._getBestVoice(lang);
-            if (voice) this.utterance.voice = voice;
+            this.utterance.lang = "en-US";
+
+            const voices = window.speechSynthesis.getVoices();
+            let selectedVoice = voices.find(v => v.name === this.selectedVoiceName);
+            if (!selectedVoice) {
+                selectedVoice = this._getBestVoice("en-US");
+            }
+            if (selectedVoice) {
+                this.utterance.voice = selectedVoice;
+            }
+
             this.utterance.onstart = () => {
                 this.setPassageAudioIcon(button, 'playing');
                 this.currentAudioButton = button;
+                this.ttsPaused = false;
             };
             this.utterance.onend = () => {
                 this.setPassageAudioIcon(button, 'paused');
-                if (this.currentAudioButton === button) this.currentAudioButton = null;
+                if (this.currentAudioButton === button) {
+                    this.currentAudioButton = null;
+                    this.ttsPaused = false;
+                }
             };
             this.utterance.onerror = (e) => {
                 console.error('Passage TTS Error:', e);
                 this.setPassageAudioIcon(button, 'paused');
-                if (this.currentAudioButton === button) this.currentAudioButton = null;
+                if (this.currentAudioButton === button) {
+                    this.currentAudioButton = null;
+                    this.ttsPaused = false;
+                }
             };
             window.speechSynthesis.speak(this.utterance);
         } catch (err) {
@@ -1086,36 +1251,26 @@ class TjQuizElement extends HTMLElement {
     }
 
     generateQuiz() {
-        const questionsSection = this.shadowRoot.getElementById('questionsSection');
-        const readingSection = this.shadowRoot.getElementById('readingSection');
         const checkScoreButton = this.shadowRoot.getElementById('checkScoreButton');
+        const dynamicContent = this.shadowRoot.getElementById('dynamicContent');
+
+        if (!dynamicContent) {
+            console.error('generateQuiz failed: dynamicContent element not found in shadow DOM');
+            return;
+        }
+
         console.log('generateQuiz called, questions total:', this.totalQuestions);
 
-        // Clear previous questions and reading content
-        questionsSection.innerHTML = '';
+        // Clear previous content
+        dynamicContent.innerHTML = '';
+
         // Reset counters and button state
         this.score = 0;
         this.questionsAnswered = 0;
         this.userQuestionAnswers = {};
         checkScoreButton.disabled = true;
 
-        // We'll render vocab and cloze inline according to orderedSections.
-        // Hide the global vocab/cloze areas to avoid duplicate rendering.
-        const vocabSectionGlobal = this.shadowRoot.getElementById('vocabSection');
-        const clozeSectionGlobal = this.shadowRoot.getElementById('clozeSection');
-        if (vocabSectionGlobal) vocabSectionGlobal.classList.add('hidden');
-        if (clozeSectionGlobal) clozeSectionGlobal.classList.add('hidden');
-
-        // Hide the reading section if there are no text passages
-        if (!this.passages || this.passages.length === 0) {
-            if (readingSection) readingSection.classList.add('hidden');
-        } else {
-            if (readingSection) readingSection.classList.remove('hidden');
-        }
-
-        // Render sections in original order using orderedSections to keep questions where they appear
-        const passageContentArea = this.shadowRoot.querySelector('.passage-content');
-        passageContentArea.innerHTML = '';
+        // Render sections in original order using orderedSections
         const orderedQuestionItems = [];
 
         // trackers for which parsed vocab/cloze section to render next
@@ -1123,16 +1278,33 @@ class TjQuizElement extends HTMLElement {
         let clozeRenderIndex = 0;
 
         this.orderedSections.forEach((sec) => {
-            if (sec.type === 'text') {
-                // render passage
+            if (sec.type === 'audio') {
+                if (!this._shouldShowAudioControls()) return;
+                // If an audio section is found, render the global play button in the header
+                const quizHeader = this.shadowRoot.querySelector('.quiz-header');
+                if (quizHeader && !quizHeader.querySelector('.audio-toggle-container')) {
+                    const audioBtnContainer = document.createElement('div');
+                    audioBtnContainer.className = 'audio-toggle-container';
+                    audioBtnContainer.style.marginTop = '1rem';
+                    audioBtnContainer.innerHTML = `
+                        <button type="button" class="audio-toggle" title="Play Overall Audio">
+                            <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                            <svg class="pause-icon hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                            <span style="margin-left: 0.5rem; font-weight: 600;">Play Lesson Audio</span>
+                        </button>
+                    `;
+                    quizHeader.appendChild(audioBtnContainer);
+                }
+            } else if (sec.type === 'text') {
+                // render passage as a card
+                const { card, content } = this.createSectionCard(sec.heading || `Reading Passage`, {
+                    cardClasses: ['passage-card']
+                });
+
                 const passageWrapper = document.createElement('div');
                 passageWrapper.className = 'passage-wrapper';
-                const passageHeader = document.createElement('h3');
-                passageHeader.className = 'passage-header';
-                const passageHeading = sec.heading || `Passage ${sec.sectionId + 1}`;
-                passageHeader.textContent = passageHeading;
 
-                // per-passage audio button
+                // Audio toggle
                 const passageAudioButton = document.createElement('button');
                 passageAudioButton.type = 'button';
                 passageAudioButton.className = 'passage-audio-toggle';
@@ -1141,123 +1313,84 @@ class TjQuizElement extends HTMLElement {
                     <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                     <svg class="pause-icon hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
                 `;
-                passageHeader.appendChild(passageAudioButton);
-                // Render passage text as separate paragraphs so blank lines create new <p> elements
-                passageWrapper.appendChild(passageHeader);
+
+                // Add header to card content
+                const cardHeader = card.querySelector('.section-card-header');
+                if (cardHeader) {
+                    cardHeader.appendChild(passageAudioButton);
+                }
+
                 const paragraphs = sec.text.split(/\n\s*\n/);
                 paragraphs.forEach(p => {
                     const passageTextEl = document.createElement('p');
                     passageTextEl.className = 'passage-text';
                     if (sec.listening) passageTextEl.classList.add('listening-hidden');
-                    // Set plain text for the paragraph (no <br> conversion)
                     passageTextEl.textContent = p.trim();
                     passageWrapper.appendChild(passageTextEl);
                 });
 
-                // container for questions that appear immediately after this text
-                const qContainer = document.createElement('div');
-                qContainer.className = 'passage-questions';
-                // If this passage has questions placed after it in the orderedSections,
-                // add the same instruction text used in the main questions section so
-                // students see guidance where the questions actually appear.
-                const hasQuestionsForThis = this.orderedSections.some(s => s.type === 'questions' && s.sectionId === sec.sectionId);
-                if (hasQuestionsForThis) {
-                    const qInstruction = document.createElement('p');
-                    qInstruction.className = 'reading-instructions';
-                    qInstruction.textContent = 'Read each question and select the best answer from the choices below.';
-                    qContainer.appendChild(qInstruction);
-                }
-                passageWrapper.appendChild(qContainer);
-                passageContentArea.appendChild(passageWrapper);
-
-                // Questions tied to this passage will be handled by the 'questions' entries
-                // in orderedSections below. We only render the passage and its question
-                // container here to preserve placement.
+                content.appendChild(passageWrapper);
+                dynamicContent.appendChild(card);
             } else if (sec.type === 'instructions') {
-                const headingText = sec.heading || `Section ${sec.sectionId + 1}`;
+                const headingText = sec.heading || `Instructions`;
                 const descriptionHtml = sec.body ? this.formatTextWithLineBreaks(sec.body) : '';
-                const { card, content } = this.createSectionCard(headingText, {
+                const { card } = this.createSectionCard(headingText, {
                     descriptionHtml,
                     cardClasses: ['instruction-card']
                 });
-                passageContentArea.appendChild(card);
-
-                const qContainer = document.createElement('div');
-                qContainer.className = 'passage-questions instruction-questions';
-                content.appendChild(qContainer);
+                dynamicContent.appendChild(card);
             } else if (sec.type === 'vocab') {
-                // Render this vocabulary section inline at this location (if available)
                 const vocabData = this.vocabularySections[vocabRenderIndex++];
                 if (vocabData) {
-                    this.renderVocabInline(vocabData, passageContentArea, vocabRenderIndex - 1);
+                    this.renderVocabInline(vocabData, dynamicContent, vocabRenderIndex - 1);
                 }
             } else if (sec.type === 'cloze') {
-                // Render this cloze section inline at this location (if available)
                 const clozeData = this.clozeSections[clozeRenderIndex++];
                 if (clozeData) {
-                    this.renderClozeInline(clozeData, passageContentArea, clozeRenderIndex - 1);
+                    this.renderClozeInline(clozeData, dynamicContent, clozeRenderIndex - 1);
                 }
             } else if (sec.type === 'questions') {
-                // if questions were placed in orderedSections (global or tied), render them where they appear
-                const targetContainer = sec.sectionId !== null ? (this.shadowRoot.querySelectorAll('.passage-questions')[sec.sectionId]) : questionsSection;
+                // Questions always rendered as a standalone card
+                const { card, content } = this.createSectionCard('Comprehension Questions', {
+                    cardClasses: ['questions-card']
+                });
+
+                const qInstruction = document.createElement('p');
+                qInstruction.className = 'reading-instructions instruction';
+                qInstruction.textContent = 'Read each question and select the best answer from the choices below.';
+                content.appendChild(qInstruction);
+
+                dynamicContent.appendChild(card);
+
                 if (sec.questions && sec.questions.length > 0) {
-                    // Apply per-section maxQuestions selection at render-time so each try picks new random subset
                     const maxForSection = sec.maxQuestions || null;
                     let questionsForSection = [...sec.questions];
                     if (maxForSection && questionsForSection.length > maxForSection) {
                         this.shuffleArray(questionsForSection);
                         questionsForSection = questionsForSection.slice(0, maxForSection);
                     }
-                    questionsForSection.forEach(q => orderedQuestionItems.push({ question: q, container: targetContainer }));
+                    questionsForSection.forEach(q => orderedQuestionItems.push({ question: q, container: content }));
                 }
             }
         });
-
-        // Note: orderedSections contains 'questions' entries for global groups as well, so do not double-append globals here
 
         // Flatten the questions for scoring and render
         this.currentQuestions = orderedQuestionItems.map(i => i.question);
         this.totalQuestions = this.currentQuestions.length;
 
-        // Determine whether any global questions (those targeting questionsSection) exist
-        const hasGlobalQuestions = orderedQuestionItems.some(i => i.container === questionsSection);
-
-        if (this.totalQuestions === 0) {
-            questionsSection.classList.add('hidden');
-        } else {
-            // Only show the global questions header/instruction if there are global questions
-            if (hasGlobalQuestions) {
-                questionsSection.classList.remove('hidden');
-                const legendEl = document.createElement('legend');
-                legendEl.textContent = 'Multiple Choice Questions';
-                questionsSection.appendChild(legendEl);
-
-                const questionsInstruction = document.createElement('p');
-                questionsInstruction.className = 'reading-instructions';
-                questionsInstruction.textContent = 'Read each question and select the best answer from the choices below.';
-                questionsSection.appendChild(questionsInstruction);
-            } else {
-                // if no globals, keep the section hidden (per-passage questions will have their own instruction)
-                questionsSection.classList.add('hidden');
-            }
-
-            // Now append question blocks into their containers (passage containers or global)
-            this.currentQuestions.forEach((q, idx) => {
-                const item = orderedQuestionItems[idx];
-                const container = item && item.container ? item.container : questionsSection;
-                // Ensure container is visible
-                if (container === questionsSection) container.classList.remove('hidden');
-                container.appendChild(this.createQuestionBlock(q, idx));
-            });
-        }
+        // Render questions into their containers
+        this.currentQuestions.forEach((q, idx) => {
+            const item = orderedQuestionItems[idx];
+            const container = item && item.container ? item.container : dynamicContent;
+            container.appendChild(this.createQuestionBlock(q, idx));
+        });
     }
 
     getStudentInputs() {
         return [
             this.shadowRoot.getElementById('nickname'),
             this.shadowRoot.getElementById('homeroom'),
-            this.shadowRoot.getElementById('studentId'),
-            this.shadowRoot.getElementById('password')
+            this.shadowRoot.getElementById('studentId')
         ].filter(Boolean);
     }
 
@@ -1274,9 +1407,6 @@ class TjQuizElement extends HTMLElement {
         let allValid = true;
 
         inputs.forEach(input => {
-            // Password is not required
-            if (input.id === 'password') return;
-
             if (input.value.trim() === '') {
                 allValid = false;
                 input.classList.add('invalid');
@@ -1317,10 +1447,10 @@ class TjQuizElement extends HTMLElement {
         if (!this.validateStudentInfoFields({ showAlert: true })) return;
         this.unlockQuizContent();
         this.showStudentInfoAlert('Information saved! Scroll down to begin the quiz.', 'success');
-        const readingSection = this.shadowRoot.getElementById('readingSection');
+        const dynamicContent = this.shadowRoot.getElementById('dynamicContent');
         try {
-            if (readingSection) {
-                readingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (dynamicContent) {
+                dynamicContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
                 this.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
@@ -1459,9 +1589,6 @@ class TjQuizElement extends HTMLElement {
         const totalPossible = vocabTotal + clozeTotal + questionTotal;
         const totalEarned = this.vocabScore + this.clozeScore + this.score;
 
-        console.log('Final scoring - Vocab total:', vocabTotal, 'Cloze total:', clozeTotal, 'Question total:', questionTotal, 'Total possible:', totalPossible);
-        console.log('Final scoring - Vocab score:', this.vocabScore, 'Cloze score:', this.clozeScore, 'Question score:', this.score, 'Total earned:', totalEarned);
-
         // Get student info
         const nickname = this.shadowRoot.getElementById('nickname').value || '-';
         const homeroom = this.shadowRoot.getElementById('homeroom').value || '-';
@@ -1476,49 +1603,45 @@ class TjQuizElement extends HTMLElement {
             studentInfoSection.style.display = 'none';
         }
 
-        // Update score display to show combined score with better formatting
+        // Update score display
         if (totalPossible > 0) {
             const percentage = Math.round((totalEarned / totalPossible) * 100);
-
-            // Determine how many sections we have
-            const sectionsPresent = [];
-            if (vocabTotal > 0) sectionsPresent.push('vocab');
-            if (clozeTotal > 0) sectionsPresent.push('cloze');
-            if (questionTotal > 0) sectionsPresent.push('questions');
 
             let breakdownHTML = '';
             if (vocabTotal > 0) {
                 breakdownHTML += `
                     <div class="score-section">
-                        <span class="score-label">Vocabulary:</span>
+                        <span class="score-label">Vocabulary</span>
                         <span class="score-value">${this.vocabScore}/${vocabTotal}</span>
                     </div>`;
             }
             if (clozeTotal > 0) {
                 breakdownHTML += `
                     <div class="score-section">
-                        <span class="score-label">Fill-in-the-blank:</span>
+                        <span class="score-label">Fill-in-the-blank</span>
                         <span class="score-value">${this.clozeScore}/${clozeTotal}</span>
                     </div>`;
             }
             if (questionTotal > 0) {
                 breakdownHTML += `
                     <div class="score-section">
-                        <span class="score-label">Questions:</span>
+                        <span class="score-label">Questions</span>
                         <span class="score-value">${this.score}/${questionTotal}</span>
                     </div>`;
             }
 
             resultScore.innerHTML = `
                 <div class="score-report-card">
+                    <div class="result-title">Performance Report</div>
                     <div class="student-details">
-                        <div><strong>Name:</strong> ${nickname}</div>
+                        <div><strong>NAME:</strong> ${nickname}</div>
                         <div><strong>ID:</strong> ${studentId}</div>
-                        <div><strong>Class:</strong> ${homeroom}</div>
-                        <div><strong>Date:</strong> ${timestamp}</div>
+                        <div><strong>CLASS:</strong> ${homeroom}</div>
+                        <div><strong>DATE:</strong> ${timestamp}</div>
                     </div>
                     <div class="score-summary">
-                        <div class="score-main-compact">${totalEarned} / ${totalPossible} (${percentage}%)</div>
+                        <div class="score-main-compact">${totalEarned} / ${totalPossible}</div>
+                        <div class="score-percentage">${percentage}% Accuracy</div>
                     </div>
                     <div class="score-breakdown-compact">
                         ${breakdownHTML}
@@ -1526,27 +1649,14 @@ class TjQuizElement extends HTMLElement {
                 </div>
             `;
         } else {
-            // Fallback for 0 total possible
-             resultScore.innerHTML = `
-                <div class="score-report-card">
-                    <div class="student-details">
-                        <div><strong>Name:</strong> ${nickname}</div>
-                        <div><strong>ID:</strong> ${studentId}</div>
-                        <div><strong>Class:</strong> ${homeroom}</div>
-                        <div><strong>Date:</strong> ${timestamp}</div>
-                    </div>
-                    <div class="score-summary">
-                        <div class="score-main-compact">0 / 0 (0%)</div>
-                    </div>
-                </div>
-            `;
+            resultScore.innerHTML = `<div class="score-report-card"><div class="score-main-compact">No score data available</div></div>`;
         }
 
         const scorePercentage = totalPossible > 0 ? totalEarned / totalPossible : 0;
         resultScore.className = '';
         // We don't need high/medium/low classes on resultScore anymore as we use custom styling inside, 
         // but we can keep them if they affect other things. 
-        
+
         // Hide the check score button once results are shown
         if (checkScoreContainer) {
             checkScoreContainer.classList.add('hidden');
@@ -1642,51 +1752,44 @@ class TjQuizElement extends HTMLElement {
             }
         }
         if (validationMessage) {
-            validationMessage.textContent = autoTriggered ? 'Submitting your score to your teacher...' : '';
+            validationMessage.innerHTML = autoTriggered
+                ? '<span>Submitting score to teacher...</span>'
+                : '';
             validationMessage.className = '';
         }
         if (tryAgainButton) {
             tryAgainButton.disabled = true;
         }
 
-        // Check for submission password
-        const passwordInput = this.shadowRoot.getElementById('password');
-        const password = passwordInput ? passwordInput.value.trim() : '';
-        const IS_REMOTE_CODE = '6767';
-
-        if (password !== IS_REMOTE_CODE) {
-            if (validationMessage) {
-                validationMessage.textContent = 'ℹ️ Local Mode: Results displayed for screenshot only.';
-                validationMessage.className = 'info';
-            }
-            if (sendButton) {
-                sendButton.textContent = 'Submission Disabled (No Password)';
-                sendButton.disabled = true;
-                sendButton.classList.remove('hidden');
-            }
-            if (tryAgainButton) {
-                tryAgainButton.disabled = false;
-            }
-            this.autoSubmissionInProgress = false;
-            return;
-        }
-
         try {
-            // Using mode: 'no-cors' and text/plain to avoid CORS preflight issues with Google Apps Script
-            // Note: Google Apps Script redirects after POST, which often fails CORS preflight
-            await fetch(this.submissionUrl, {
+            const response = await fetch(this.submissionUrl, {
                 method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'text/plain'
-                },
+                mode: 'cors',
                 body: JSON.stringify(studentData)
             });
 
-            // With no-cors, we can't actually read the response or know for sure if it succeeded.
-            // We assume success if no error was thrown during fetch.
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            let data;
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                console.warn('Non-JSON response received:', text);
+                data = { message: 'Submission received (non-JSON response)' };
+            }
+
             if (validationMessage) {
-                validationMessage.textContent = '✅ Score sent to your teacher.';
+                const statusText = autoTriggered
+                    ? 'Score automatically submitted to your teacher'
+                    : (data.message || 'Submission successful!');
+                validationMessage.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>${statusText}</span>
+                `;
                 validationMessage.className = 'success';
             }
             if (sendButton) {
@@ -1701,7 +1804,10 @@ class TjQuizElement extends HTMLElement {
         } catch (error) {
             console.error('Error:', error);
             if (validationMessage) {
-                validationMessage.textContent = '⚠️ Error: Could not submit score. Please try again.';
+                validationMessage.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    <span>Could not submit score. Please try again.</span>
+                `;
                 validationMessage.className = 'error';
             }
             if (sendButton) {
@@ -1798,1168 +1904,7 @@ class TjQuizElement extends HTMLElement {
         this.shadowRoot.querySelector('.light-icon').classList.toggle('hidden', isDark);
         this.shadowRoot.querySelector('.dark-icon').classList.toggle('hidden', !isDark);
     }
-
-    getBaseStyles() {
-        return `
-:host {
-    display: block;
-    --bg-light: #f1f5f9;
-    --text-light: #1e293b;
-    --card-bg-light: #ffffff;
-    --card-shadow-light: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --border-light: #e2e8f0;
-    --input-bg-light: #f8fafc;
-    --input-border-light: #cbd5e1;
-    --subtle-text-light: #475569;
-    --primary-color: #4f46e5;
-    --primary-hover: #4338ca;
-    --primary-text: #ffffff;
-    --green-color: #16a34a;
-    --green-hover: #15803d;
-    --green-light-bg: #dcfce7;
-    --red-color: #ef4444;
-    --red-light-bg: #fee2e2;
-    --yellow-color: #eab308;
-    --slate-color: #64748b;
-    --slate-hover: #475569;
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
-
-/* Utility: hide elements when not needed */
-.hidden {
-    display: none !important;
-}
-
-:host(.dark) {
-    --bg-light: #0f172a;
-    --text-light: #e2e8f0;
-    --card-bg-light: #1e293b;
-    --card-shadow-light: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-    --border-light: #334155;
-    --input-bg-light: #334155;
-    --input-border-light: #475569;
-    --subtle-text-light: #87abdd;
-    --green-light-bg: #14532d;
-    --red-light-bg: #7f1d1d;
-}
-
-.quiz-wrapper * {
-    box-sizing: border-box;
-}
-
-.quiz-wrapper {
-     font-family: var(--font-sans);
-     background-color: var(--bg-light);
-     color: var(--text-light);
-     line-height: 1.6;
-     transition: background-color 0.3s, color 0.3s;
-     padding: 1rem 0;
-}
-
-.quiz-wrapper p {
-    font-size: 1em; 
-    margin-bottom: 1rem;
-}
-
-.container {
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 0 1rem;
-}
-
-.quiz-card {
-    background-color: var(--card-bg-light);
-    border-radius: 0.75rem;
-    box-shadow: var(--card-shadow-light);
-    overflow: hidden;
-    transition: background-color 0.3s;
-}
-
-.quiz-header {
-    background-color: var(--primary-color);
-    color: var(--primary-text);
-    padding: 1.5rem 1.5rem 2rem 1.5rem;
-    position: relative;
-}
- .quiz-header h1 {
-    font-size: 1.5em; 
-    font-weight: 700;
-    margin: 0;
- }
- .quiz-header p {
-     margin-top: 0.5rem;
-     color: #e0e7ff;
-     opacity: 0.9;
-     font-size: 0.9375em;
- }
-
-.theme-toggle {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 9999px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid transparent;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.25em;
-}
- .theme-toggle:hover {
-     background-color: rgba(255, 255, 255, 0.2);
- }
-
-form {
-    padding: 1.5rem;
-}
-
-@media (min-width: 640px) {
-    form {
-        padding: 2rem;
-    }
-}
-
-fieldset {
-    border: none;
-    padding: 0;
-    margin: 0;
-    margin-bottom: 2rem;
-}
-
-.legend-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-    width: 100%;
-}
-
-legend {
-    font-size: 1.125em;
-    font-weight: 600;
-    color: var(--text-light);
-    border-bottom: none;
-    padding-bottom: 0;
-    margin-bottom: 0;
-    width: auto;
-}
-
-/* Make cloze and vocab section headings match the Reading Passage style */
-fieldset > legend {
-    display: block;
-    font-size: 1.125em;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.5rem;
-    color: var(--text-light);
-    border-bottom: 1px solid var(--border-light);
-}
-
-/* Add consistent spacing for section content similar to the passage card */
-#vocabSection .vocab-grid-table,
-#clozeSection .cloze-word-bank,
-#clozeSection .cloze-text {
-    margin-top: 1rem;
-}
-
-.reading-instructions {
-    font-size: 0.9em;
-    font-style: italic;
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-        
-}
-
-/* Generic instruction style used across the form to distinguish from passage paragraphs */
-.instruction {
-    font-size: 0.9em;
-    color: var(--subtle-text-light);
-    font-style: italic;
-    margin-top: 0.25rem;
-    margin-bottom: 1rem;
-    line-height: 1.45;
-}
-
-.audio-toggle {
-    cursor: pointer;
-    padding: 0.75rem;
-    border-radius: 9999px;
-    background-color: var(--primary-color);
-    border: 1px solid transparent;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary-text);
-    transition: background-color 0.2s;
-}
-.audio-toggle:hover {
-    background-color: var(--primary-hover);
-}
-.audio-toggle svg {
-    width: 1.5em;
-    height: 1.5em;
-}
-
-/* Per-passage audio button -- styled to match the top play button */
-.passage-audio-toggle {
-    cursor: pointer;
-    padding: 0.5rem 0.6rem;
-    border-radius: 0.5rem;
-    background-color: #ffffff;
-    border: 1px solid var(--border-light);
-    color: var(--text-light);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 0.5rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    transition: transform 0.12s, box-shadow 0.12s;
-}
-.passage-audio-toggle:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-}
-.passage-audio-toggle .play-icon, .passage-audio-toggle .pause-icon {
-    width: 1.1rem;
-    height: 1.1rem;
-}
-
-/* Make passage wrappers more spacious */
-.passage-wrapper {
-    padding: 1rem 1.25rem;
-    border-radius: 0.5rem;
-    background: transparent;
-    margin-bottom: 1rem;
-}
-.passage-wrapper {
-    position: relative;
-}
-.passage-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-.passage-text {
-    margin-top: 0.75rem;
-}
-
-/* Visually hide text but keep it in the DOM for TTS and accessibility */
-.listening-hidden {
-    position: absolute !important;
-    clip: rect(1px, 1px, 1px, 1px); /* IE6,7 */
-    clip-path: inset(50%); /* modern */
-    height: 1px;
-    width: 1px;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.passage-content {
-    background-color: var(--input-bg-light);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    border: 1px solid var(--border-light);
-    line-height: 1.7;
-}
-
-.section-card {
-    background-color: var(--input-bg-light);
-    border: 1px solid var(--border-light);
-    border-radius: 0.75rem;
-    padding: 1.25rem;
-    margin-bottom: 1.25rem;
-}
-
-.section-card-header {
-    font-size: 1.05em;
-    font-weight: 600;
-    color: var(--text-light);
-    margin: 0 0 0.5rem 0;
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 0.4rem;
-}
-
-.section-card-description {
-    font-size: 0.95em;
-    color: var(--subtle-text-light);
-    line-height: 1.6;
-    margin-bottom: 0.75rem;
-}
-
-.section-card-content {
-    display: block;
-}
-
-.instruction-card .section-card-content {
-    margin-top: 0.25rem;
-}
-
-.instruction-questions {
-    margin-top: 0.75rem;
-}
-
-.question-block {
-     padding-top: 1.5rem;
-     border-top: 1px solid var(--border-light);
-}
-.question-block:first-of-type {
-     border-top: none;
-     padding-top: 0;
-}
- .question-block p.question-text {
-     font-weight: 600;
-     margin-bottom: 1rem;
-     font-size: 1em;
- }
-
-.options-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem; /* slightly tighter spacing to match vocab */
-}
-.option-label {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 0.75rem; /* condensed padding */
-    background-color: var(--input-bg-light);
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.18s, border-color 0.18s;
-    border: 1px solid transparent;
-    font-size: 0.95em; /* slightly smaller text to match vocab */
-}
-.option-label:hover {
-    background-color: #eef4ff;
-}
- :host(.dark) .option-label:hover {
-    background-color: #2b3440;
-}
-
-.option-label.correct {
-    background-color: var(--green-light-bg);
-    border-color: var(--green-color);
-}
-.option-label.incorrect {
-    background-color: var(--red-light-bg);
-    border-color: var(--red-color);
-}
-.feedback-icon {
-    margin-left: auto;
-    font-size: 1.25em;
-}
-
-.explanation {
-    margin-top: 1rem;
-    padding: 1rem;
-    background-color: var(--input-bg-light);
-    border-radius: 0.5rem;
-    border-left: 4px solid var(--primary-color);
-    font-size: 0.9em;
-    line-height: 1.5;
-}
-
-.explanation-content strong {
-    color: var(--primary-color);
-}
-
-.form-radio {
-    width: 1.125em;
-    height: 1.125em;
-    margin-right: 0.75em;
-    accent-color: var(--primary-color);
-    flex-shrink: 0;
-}
- .form-radio:disabled {
-     cursor: not-allowed;
- }
-
-.form-input {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: var(--input-bg-light);
-    border: 1px solid var(--input-border-light);
-    border-radius: 0.5rem;
-    color: var(--text-light);
-    font-size: 1em;
-}
- .form-input.invalid {
-     border-color: var(--red-color);
- }
- .form-input:disabled {
-     background-color: #e2e8f0;
-     cursor: not-allowed;
- }
- :host(.dark) .form-input:disabled {
-    background-color: #334155;
- }
-
-.input-label {
-    display: block;
-    font-size: 0.875em;
-    font-weight: 500;
-    color: var(--subtle-text-light);
-    margin-bottom: 0.25rem;
-}
-
-.grid-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-}
-
-@media (min-width: 768px) {
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-.actions-container {
-     padding-top: 1.5rem;
-     border-top: 1px solid var(--border-light);
-     margin-top: 2rem;
-}
-
-.button {
-    width: 100%;
-    font-weight: 600;
-    padding: 0.875rem 1.5rem;
-    border-radius: 0.5rem;
-    font-size: 1em;
-    transition: all 0.2s ease-in-out;
-    border: none;
-    cursor: pointer;
-}
-.button:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-.button:disabled {
-    background-color: #94a3b8;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-.button-primary {
-    background-color: var(--primary-color);
-    color: var(--primary-text);
-}
- .button-primary:hover:not(:disabled) {
-     background-color: var(--primary-hover);
- }
-
-.button-green {
-    background-color: var(--green-color);
-    color: var(--primary-text);
-}
- .button-green:hover:not(:disabled) {
-     background-color: var(--green-hover);
- }
-
-.button-slate {
-    background-color: var(--slate-color);
-    color: var(--primary-text);
-}
- .button-slate:hover:not(:disabled) {
-     background-color: var(--slate-hover);
- }
-
-.post-score-actions {
-     display: flex;
-     flex-direction: column;
-     gap: 1rem;
-}
- @media (min-width: 768px) {
-     .post-score-actions {
-         flex-direction: row-reverse;
-     }
- }
-
-.prequiz-actions {
-    margin-top: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    align-items: flex-start;
-}
-
-#studentInfoAlert {
-    font-size: 0.9em;
-    font-weight: 500;
-    min-height: 1.5rem;
-}
-#studentInfoAlert.success {
-    color: var(--green-color);
-}
-#studentInfoAlert.error {
-    color: var(--red-color);
-}
-
-.result-area {
-    padding: 2rem;
-    text-align: center;
-    border-bottom: 1px solid var(--border-light);
-    margin-bottom: 2rem;
-}
-.result-area h2 {
-    font-size: 1.25em;
-    font-weight: 600;
-    margin: 0;
-}
-#resultScore {
-    text-align: center;
-    margin: 1.5rem 0;
-}
-
-.score-main {
-    font-size: 3em;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 0.5rem;
-}
-
-.score-percentage {
-    font-size: 1.5em;
-    font-weight: 600;
-    opacity: 0.8;
-    margin-bottom: 1rem;
-}
-
-.score-breakdown {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 1rem;
-}
-
-.score-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.score-label {
-    font-size: 0.9em;
-    font-weight: 500;
-    opacity: 0.7;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.score-value {
-    font-size: 1.25em;
-    font-weight: 600;
-}
-
-@media (max-width: 768px) {
-    .score-main {
-        font-size: 2.5em;
-    }
-    
-    .score-percentage {
-        font-size: 1.25em;
-    }
-    
-    .score-breakdown {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .score-section {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 1rem;
-        background-color: var(--input-bg-light);
-        border-radius: 0.5rem;
-    }
-}
-
-#resultScore.high .score-main { color: var(--green-color); }
-#resultScore.medium .score-main { color: var(--yellow-color); }
-#resultScore.low .score-main { color: var(--red-color); }
-
-#validationMessage {
-     text-align: center;
-     margin-bottom: 1rem;
-     font-weight: 500;
-     min-height: 1.5rem;
-     font-size: 0.9em;
-}
- #validationMessage.success { color: var(--green-color); }
- #validationMessage.error { color: var(--red-color); }
-
-.hidden {
-    display: none !important;
-}
-
-/* Vocabulary Grid Table Styles */
-.vocab-grid-table {
-    display: table;
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-bottom: 1.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
-.vocab-grid-header {
-    display: none; /* header definitions are replaced by inline option labels */
-}
-
-.vocab-grid-header-cell {
-    display: table-cell;
-    padding: 1rem;
-    font-weight: 600;
-    text-align: left; /* left-align header text for clarity */
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.vocab-grid-header-cell:first-child {
-    text-align: left;
-    background-color: var(--primary-color);
-}
-
-.vocab-grid-header-cell:last-child {
-    border-right: none;
-}
-
-.vocab-grid-row {
-    display: table-row;
-    background-color: var(--input-bg-light);
-}
-
-:host(.dark) .vocab-grid-row {
-    background-color: var(--input-bg-dark);
-}
-
-.vocab-grid-row:nth-child(even) {
-    background-color: rgba(0, 0, 0, 0.02);
-}
-
-:host(.dark) .vocab-grid-row:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.02);
-}
-
-.vocab-grid-cell {
-    display: table-cell;
-    padding: 1rem;
-    border-right: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-    vertical-align: middle;
-    text-align: left; /* ensure content aligns left by default */
-}
-
-.vocab-grid-cell:last-child {
-    border-right: none;
-}
-
-.vocab-grid-row:last-child .vocab-grid-cell {
-    border-bottom: none;
-}
-
-.vocab-word-cell {
-    font-weight: 600;
-    color: var(--text-primary);
-    background-color: rgba(var(--primary-color-rgb), 0.05);
-}
-
- .vocab-option-cell {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    justify-content: flex-start;
-    padding: 0.5rem 0.6rem;
-    background-color: var(--input-bg-light);
-    border-radius: 0.5rem;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: background-color 0.18s, border-color 0.18s;
-    width: 100%;
-}
-
- .vocab-radio-container {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 0.5rem;
-    order: -1; /* move radio visually to the left of the label */
-    margin-right: 0.5rem;
-}
-
-.vocab-radio-container input[type="radio"] {
-    width: 1.2rem;
-    height: 1.2rem;
-    cursor: pointer;
-}
-
-.vocab-radio-container input[type="radio"]:disabled {
-    cursor: default;
-}
-
-.vocab-option-cell.correct {
-    background-color: var(--green-light-bg);
-}
-
-.vocab-option-cell.incorrect {
-    background-color: var(--red-light-bg);
-}
-
-.vocab-option-cell.correct::after {
-    content: " ✅";
-    margin-left: 0.5rem;
-}
-
-.vocab-option-cell.incorrect::after {
-    content: " ❌";
-    margin-left: 0.5rem;
-}
-
-@media (max-width: 768px) {
-    .vocab-grid-table {
-        font-size: 0.875em;
-    }
-    
-    .vocab-grid-cell {
-        padding: 0.75rem 0.5rem;
-    }
-    
-    .vocab-grid-header-cell {
-        padding: 0.75rem 0.5rem;
-        font-size: 0.8em;
-    }
-
-    /* Make the vocab grid responsive on small screens by stacking rows */
-    .vocab-grid-table {
-        display: block;
-        overflow: visible;
-        border-radius: 0.5rem;
-    }
-
-    .vocab-grid-header {
-        display: none; /* hide the wide header on narrow screens */
-    }
-
-    .vocab-grid-row {
-        display: block;
-        margin: 0 0 0.5rem 0;
-        background: transparent;
-        border-radius: 0.375rem;
-        overflow: hidden;
-        border: 1px solid var(--border-color);
-    }
-
-    .vocab-grid-cell {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        padding: 0.5rem 0.75rem;
-        border: none;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .vocab-grid-cell:last-child {
-        border-bottom: none;
-    }
-
-    .vocab-word-cell {
-        display: block;
-        width: 100%;
-        font-weight: 600;
-        padding-right: 0.5rem;
-    }
-
-    .vocab-option-cell {
-        display: flex;
-        gap: 0.5rem;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 0.5rem 0.6rem;
-        background-color: var(--input-bg-light);
-        border-radius: 0.5rem;
-        border: 1px solid transparent;
-        cursor: pointer;
-        transition: background-color 0.18s, border-color 0.18s;
-        width: 100%;
-    }
-
-    .vocab-option-cell:hover {
-        background-color: #e8eef8;
-    }
-
-    /* Put the radio to the left visually */
-    .vocab-radio-container {
-        order: -1;
-        margin-right: 0.5rem;
-    }
-
-    .vocab-def-label {
-        flex: 1 1 auto;
-        white-space: normal;
-        word-break: break-word;
-        color: var(--text-light);
-        font-size: 0.95em;
-    }
-}
-
-.vocab-grid-header-cell {
-    display: table-cell;
-    padding: 1rem;
-    font-weight: 600;
-    text-align: center;
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
-    font-size: 0.8em;
-}
-
-/* Definition label shown inline on mobile stacked layout, hidden on desktop */
-.vocab-def-label {
-    display: inline-block;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal;
-    color: var(--text-light);
-    font-size: 0.95em;
-}
-
-@media (max-width: 768px) {
-    .vocab-def-label {
-        display: inline-block;
-        white-space: normal;
-        max-width: 60%;
-    }
-}
-
-.cloze-word-bank {
-    background-color: var(--input-bg-light);
-    border: 1px solid var(--border-light);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin-bottom: 1.25rem;
-}
-
-:host(.dark) .cloze-word-bank {
-    background-color: var(--input-bg-dark);
-}
-
-.cloze-bank-title {
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: var(--subtle-text-light);
-    font-size: 0.9em;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.cloze-bank-words {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.cloze-bank-word {
-    background-color: var(--primary-color);
-    color: var(--primary-text);
-    padding: 0.45rem 0.75rem;
-    border-radius: 0.375rem;
-    font-size: 0.9em;
-    font-weight: 600;
-    cursor: default;
-    user-select: none;
-    box-shadow: 0 2px 6px rgba(79,70,229,0.08);
-}
-
-.cloze-text {
-    line-height: 1.8;
-    font-size: 1.05em;
-    color: var(--text-light);
-}
-
-.cloze-blank {
-    display: inline-block;
-    min-width: 6.5ch; /* slightly narrower blanks to fit inline */
-    max-width: 12ch;
-    margin: 0 0.35rem;
-    padding: 0.15rem 0.4rem;
-    border: none;
-    border-bottom: 2px solid var(--border-light);
-    background: transparent;
-    font-size: inherit;
-    font-family: inherit;
-    color: var(--text-light);
-    text-align: center;
-    vertical-align: baseline;
-    transition: border-color 0.18s, background-color 0.18s;
-}
-
-.cloze-blank:focus {
-    outline: none;
-    border-bottom-color: var(--primary-color);
-    background: rgba(79,70,229,0.03);
-    border-radius: 0.25rem;
-}
-
-.cloze-blank.correct {
-    border-bottom-color: var(--green-color);
-    background-color: var(--green-light-bg);
-}
-
-.cloze-blank.correct {
-    border-bottom-color: var(--green-color);
-    background-color: var(--green-light-bg);
-    border-radius: 0.25rem;
-}
-.cloze-blank.incorrect {
-    border-bottom-color: var(--red-color);
-    background-color: var(--red-light-bg);
-    border-radius: 0.25rem;
-}
-
-.cloze-score {
-    text-align: center;
-    font-weight: 600;
-    margin-top: 1rem;
-    font-size: 1.1em;
-}
-
-@media (max-width: 768px) {
-    .cloze-bank-words {
-        gap: 0.375rem;
-    }
-    
-    .cloze-bank-word {
-        padding: 0.375rem 0.5rem;
-        font-size: 0.8em;
-    }
-    .cloze-blank { min-width: 5.5ch; }
-    
-    .cloze-text {
-        font-size: 1em;
-    }
-    
-    .cloze-blank {
-        min-width: 80px;
-        padding: 0.25em 0.375em;
-    }
-}
-
-/* Section headers for multiple vocab/cloze sections */
-.vocab-section-header,
-.cloze-section-header {
-    margin: 1.5rem 0 1rem 0;
-    font-size: 1.1em;
-    font-weight: 600;
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 0.5rem;
-}
-
-.cloze-section-wrapper {
-    margin-bottom: 2rem;
-}
-
-.cloze-section-wrapper:last-child {
-    margin-bottom: 0;
-}
-
-/* Compact Score Report Styles */
-.score-report-card {
-    background-color: var(--card-bg-light);
-    border: 1px solid var(--border-light);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    text-align: left;
-}
-
-.student-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 0.5rem;
-}
-
-.student-details div {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.score-summary {
-    text-align: center;
-    margin-bottom: 0.5rem;
-}
-
-.score-main-compact {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--primary-color);
-}
-
-.score-breakdown-compact {
-    font-size: 0.9rem;
-}
-
-.score-breakdown-compact .score-section {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.25rem;
-}
-
-
-`;
-    }
-
-    getTemplate() {
-        return `
-<div class="quiz-wrapper">
-        <div class="container">
-            <div class="quiz-card">
-                <div class="quiz-header">
-                    <span class="theme-toggle" title="Toggle Light/Dark Mode">
-                        <span class="light-icon">☀️</span>
-                        <span class="dark-icon hidden">🌙</span>
-                    </span>
-                    <h1 id="quizTitle">Interactive Reading</h1>
-                    <p id="quizDescription">Read the passage, then answer the questions below.</p>
-                </div>
-
-                <form id="quizForm">
-                    <fieldset id="studentInfoSection">
-                        <legend>Student Information</legend>
-                        <p class="student-instructions instruction">Please enter your Nickname, Homeroom, and Student ID before starting the quiz. / กรุณากรอกชื่อเล่น ห้องเรียน และรหัสนักเรียนของคุณก่อนเริ่มทำแบบทดสอบ</p>
-                        <div>
-                            <label for="nickname" class="input-label">Nickname</label>
-                            <input type="text" id="nickname" name="nickname" class="form-input">
-                        </div>
-                        <div class="grid-container" style="margin-top: 1rem;">
-                            <div>
-                                <label for="homeroom" class="input-label">Homeroom</label>
-                                <input type="text" id="homeroom" name="homeroom" class="form-input">
-                            </div>
-                            <div>
-                                <label for="studentId" class="input-label">Student ID</label>
-                                <input type="text" id="studentId" name="studentId" class="form-input">
-                            </div>
-                        </div>
-                        <div class="grid-container" style="margin-top: 1rem;">
-                            <div>
-                                <label for="password" class="input-label">Submission Password (Optional)</label>
-                                <input type="password" id="password" name="password" class="form-input" placeholder="Enter code to submit">
-                            </div>
-                            <div></div> <!-- Spacer for grid balance -->
-                        </div>
-                        <div class="prequiz-actions">
-                            <button type="button" id="startQuizButton" class="button button-primary mt-4">Start Quiz</button>
-                            <p id="studentInfoAlert"></p>
-                        </div>
-                    </fieldset>
-
-                    <div id="quizContent" class="hidden">
-                        <div id="resultArea" class="result-area hidden">
-                            <h2 id="resultTitle">Your Score:</h2>
-                            <div id="resultScore"></div>
-                            <p id="resultMessage">Your score has been sent to your teacher automatically. Use Try Again if you want a new set of questions.</p>
-                        </div>
-
-                        <div id="postScoreActions" class="hidden" style="margin-bottom: 2rem;">
-                            <p class="postscore-instructions instruction">Scores are sent automatically when you check them. If there is a problem you can resend below or click Try Again for another attempt. / ผลคะแนนจะถูกส่งอัตโนมัติเมื่อคุณกดตรวจคะแนน หากมีปัญหาคุณสามารถส่งอีกครั้งหรือกดลองอีกครั้งได้</p>
-                            <p id="validationMessage"></p>
-                            <div class="post-score-actions">
-                                <button type="button" id="sendButton" class="button button-green hidden">
-                                    Resend Score to Teacher
-                                </button>
-                                <button type="button" id="tryAgainButton" class="button button-slate">
-                                    Try Again
-                                </button>
-                            </div>
-                        </div>
-
-                        <fieldset id="readingSection">
-                            <div class="legend-container">
-                                <legend>Reading Passage</legend>
-                            </div>
-                            <p class="reading-instructions instruction">Click the play button to hear the passage, then read along and answer the questions below.</p>
-                            <div class="passage-content">
-                                <p id="passageText"></p>
-                            </div>
-                        </fieldset>
-
-                        <fieldset id="vocabSection" class="hidden">
-                            <legend>Vocabulary Matching</legend>
-                            <p class="reading-instructions instruction">Select the correct definition for each vocabulary word.</p>
-                            <div id="vocabGrid" class="vocab-grid-table"></div>
-                            <div id="vocabScore" class="vocab-score hidden"></div>
-                        </fieldset>
-
-                        <fieldset id="clozeSection" class="hidden">
-                            <legend>Fill in the Blanks</legend>
-                            <p class="reading-instructions instruction">Type the missing words from the word bank below.</p>
-                            <div id="clozeContainer"></div>
-                            <div id="clozeScore" class="cloze-score hidden"></div>
-                        </fieldset>
-
-                        <fieldset id="questionsSection">
-                            <legend>Comprehension Questions</legend>
-                            <p class="reading-instructions instruction">Read each question and select the best answer from the choices below.</p>
-                        </fieldset>
-
-                        <div id="checkScoreContainer" class="actions-container">
-                            <button type="submit" id="checkScoreButton" class="button button-primary">
-                                Check My Score
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-`};
-   
-
-
-    // ── TTS LOGIC (consistent with TTS_GUIDE 1.3) ──────────────────
-    _getBestVoice(lang) {
-        if (!window.speechSynthesis) return null;
-        const voices = window.speechSynthesis.getVoices();
-        if (voices.length === 0) return null;
-
-        const langPrefix = lang.split(/[-_]/)[0].toLowerCase();
-
-        // 1. Filter by language
-        let langVoices = voices.filter(v => v.lang.toLowerCase() === lang.toLowerCase());
-        if (langVoices.length === 0) {
-            langVoices = voices.filter(v => v.lang.split(/[-_]/)[0].toLowerCase() === langPrefix);
-        }
-
-        if (langVoices.length === 0) return null;
-
-        // 2. Priority list
-        const priorities = ["natural", "google", "premium", "siri"];
-        for (const p of priorities) {
-            const found = langVoices.find(v => v.name.toLowerCase().includes(p));
-            if (found) return found;
-        }
-
-        // 3. Fallback
-        const nonRobotic = langVoices.find(v => !v.name.toLowerCase().includes("microsoft"));
-        return nonRobotic || langVoices[0];
-    }
-};
 
 // Register the custom element
 customElements.define('tj-quiz-element', TjQuizElement);
