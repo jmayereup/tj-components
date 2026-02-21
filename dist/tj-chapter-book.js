@@ -1050,6 +1050,7 @@ class g extends HTMLElement {
     o.offsetHeight, o.classList.add("quiz-hidden-checked"), e && (e.classList.add("translation-hidden-checked"), e.open = !1), r && (r.innerHTML = "Results Hidden"), console.log(`Hidden checked quiz for chapter ${t.id}`);
   }
   render(t) {
+    if (!t) return;
     if (this.hasAnyTranslations = g.bookHasAnyTranslations(t), this.absoluteTotalQuestions = 0, t.chapters && t.chapters.forEach((r) => {
       r.quiz && (this.absoluteTotalQuestions += r.quiz.length);
     }), t.language ? (this.language = t.language, this.originalLanguage = t.language) : this.originalLanguage = this.language, t.translationLanguage ? (this.translationLanguage = t.translationLanguage, this.originalTranslationLanguage = t.translationLanguage) : (this.translationLanguage = this.language.startsWith("en") ? "th-TH" : "en-US", this.originalTranslationLanguage = this.translationLanguage), !document.getElementById("tj-chapter-book-styles")) {
@@ -1088,7 +1089,7 @@ class g extends HTMLElement {
             </header>
 
             <div class="chapters-container" translate="no">
-                ${t.chapters.map((r, a) => this.renderChapter(r, a)).join("")}
+                ${t.chapters ? t.chapters.map((r, a) => this.renderChapter(r, a)).join("") : "<p>No chapters found.</p>"}
             </div>
 
             <footer class="book-footer">

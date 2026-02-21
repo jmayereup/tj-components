@@ -1,8 +1,40 @@
 <div class="pronunciation-wrapper" translate="no">
-    <div class="header">
-        <h1 class="title" id="pronunciationTitle">Pronunciation Practice</h1>
-        <p class="instructions" id="pronunciationInstructions" style="display: none;"></p>
+    <div class="tj-sticky-bar">
+        <div class="header-main">
+            <h1 class="tj-h3" id="pronunciationTitle" style="margin: 0;">Pronunciation Practice</h1>
+            <p class="instructions tj-text-muted" id="pronunciationInstructions" style="display: none; margin: 0; font-size: 0.9em;"></p>
+        </div>
+        <div class="tj-flex-center" style="gap: 1em;">
+            <div class="progress-text">0 / 0</div>
+            <button id="voice-btn" class="tj-icon-btn" title="Choose Voice">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z"/>
+                </svg>
+            </button>
+        </div>
     </div>
-    <div class="activities-container" id="activitiesContainer">
+    <div class="activities-wrapper" id="activitiesContainer">
+    </div>
+
+    <!-- Voice Selection Overlay -->
+    <div class="tj-overlay" id="voice-overlay">
+        <div class="tj-card voice-card" style="width: 90%; max-width: 450px;">
+            <div class="voice-card-header tj-flex-between" style="margin-bottom: 1em;">
+                <h3 class="tj-h3" style="margin: 0;">Choose Voice</h3>
+                <button class="tj-icon-btn close-voice-btn" id="close-voice-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            <div class="voice-list" id="voice-list"></div>
+        </div>
+    </div>
+
+    <div class="tj-overlay" id="browser-prompt-overlay" style="padding: 1rem;">
+        <div class="tj-card" style="max-width: 400px; text-align: center;">
+            <h2 class="tj-h2">Better in a Browser</h2>
+            <p class="tj-text-muted" style="margin-bottom: 2em; line-height: 1.6;">It looks like you're using an in-app browser. For the best experience (including audio features), please open this page in <b>Chrome</b> or <b>Safari</b>.</p>
+            <a id="browser-action-btn" class="tj-btn tj-btn-primary" style="width: 100%; text-decoration: none;" href="javascript:void(0)">Open Browser</a>
+            <button class="tj-btn tj-btn-secondary" style="width: 100%; margin-top: 1em; border: none; background: transparent; text-decoration: underline;" onclick="this.closest('.tj-overlay').classList.remove('active')">Continue anyway</button>
+        </div>
     </div>
 </div>

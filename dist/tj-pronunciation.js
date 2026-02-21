@@ -1,101 +1,140 @@
-const p = '@import"https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";:host{--tj-bg-color: #f8fafc;--tj-text-color: #1e293b;--tj-card-bg: #ffffff;--tj-accent-color: #0ea5e9;--tj-subtitle-color: #64748b;--tj-card-border: #e2e8f0;--tj-btn-bg: #f1f5f9;--tj-btn-text: #475569;--tj-btn-hover: #e2e8f0;--tj-shadow: rgba(0, 0, 0, .05);--tj-success-color: #10b981;--tj-error-color: #ef4444;display:block;box-sizing:border-box;font-family:Lato,sans-serif;background-color:var(--tj-bg-color);color:var(--tj-text-color);padding:1rem;max-width:800px;margin:0 auto}*{box-sizing:border-box}.header{text-align:center;margin-bottom:2rem}.title{font-size:2rem;color:var(--tj-accent-color);margin-bottom:.5rem}.instructions{color:var(--tj-subtitle-color);font-size:1.1rem}.activity-card{background:var(--tj-card-bg);border:1px solid var(--tj-card-border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 4px 6px -1px var(--tj-shadow)}.activity-title{font-size:1.25rem;font-weight:700;margin-bottom:1.5rem;color:var(--tj-text-color);display:flex;align-items:center;gap:.5rem}.play-audio-btn{background:var(--tj-accent-color);color:#fff;border:none;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s,background-color .2s;flex-shrink:0}.play-audio-btn:hover{transform:scale(1.05);background-color:#0284c7}.play-audio-btn.playing{animation:pulse 1s infinite alternate}@keyframes pulse{0%{transform:scale(1);box-shadow:0 0 #0ea5e966}to{transform:scale(1.05);box-shadow:0 0 0 10px #0ea5e900}}.lr-container{display:flex;flex-direction:column;align-items:center;gap:1.5rem}.lr-target-word{font-size:2rem;font-weight:700;text-align:center}.lr-phonetic{font-size:1.25rem;color:var(--tj-subtitle-color);font-family:monospace;margin-top:.5rem}.lr-translation{color:var(--tj-subtitle-color);font-style:italic;margin-top:.5rem;font-size:.95rem}.lr-controls{display:flex;gap:2rem;align-items:center;justify-content:center;width:100%;margin-top:1rem}.lr-control-group{display:flex;flex-direction:column;align-items:center;gap:.5rem}.lr-label{font-size:.875rem;font-weight:600;color:var(--tj-subtitle-color);text-transform:uppercase;letter-spacing:.05em}.record-btn{background:#fff;border:2px solid var(--tj-error-color);color:var(--tj-error-color);border-radius:50%;width:64px;height:64px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}.record-btn:hover{background:#fef2f2}.record-btn.recording{background:var(--tj-error-color);color:#fff;animation:pulse-record 1.5s infinite}@keyframes pulse-record{0%{box-shadow:0 0 #ef444466}70%{box-shadow:0 0 0 15px #ef444400}to{box-shadow:0 0 #ef444400}}.playback-btn{background:var(--tj-success-color);color:#fff;border:none;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.5;pointer-events:none;transition:all .2s}.playback-btn.ready{opacity:1;pointer-events:auto}.playback-btn.ready:hover{transform:scale(1.05);background:#059669}.translation-toggle{background:none;border:none;color:var(--tj-accent-color);cursor:pointer;font-size:.9rem;text-decoration:underline;margin-top:.5rem}.mp-container{display:flex;flex-direction:column;align-items:center;gap:1.5rem}.mp-options{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;width:100%;margin-top:1rem}.mp-option-btn{background:var(--tj-btn-bg);border:2px solid var(--tj-card-border);color:var(--tj-text-color);padding:1rem 2rem;border-radius:9999px;font-size:1.25rem;font-weight:700;cursor:pointer;transition:all .2s;min-width:120px}.mp-option-btn.highlight{border-color:var(--tj-accent-color);background:#0ea5e91a;transform:scale(1.05)}.mp-option-btn:hover:not(:disabled){border-color:var(--tj-accent-color);background:#fff}.mp-option-btn.correct{background:var(--tj-success-color);color:#fff;border-color:var(--tj-success-color);box-shadow:0 0 10px #10b98166}.mp-option-btn.wrong{background:var(--tj-error-color);color:#fff;border-color:var(--tj-error-color)}.mp-option-btn:disabled{cursor:not-allowed;opacity:.8}.mp-focus{font-size:.9rem;color:var(--tj-subtitle-color);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:.5rem}.mp-instr{font-size:.95rem;color:var(--tj-subtitle-color);font-style:italic;margin-bottom:1rem}.feedback-msg{min-height:1.5rem;font-weight:700;font-size:1.1rem;margin-top:.5rem}.feedback-msg.correct{color:var(--tj-success-color)}.feedback-msg.wrong{color:var(--tj-error-color)}.scramble-container{display:flex;flex-direction:column;align-items:center;gap:1.5rem}.scramble-dropzone{min-height:60px;width:100%;border:2px dashed var(--tj-card-border);border-radius:12px;padding:.5rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center;background:var(--tj-bg-color);transition:background-color .2s}.scramble-dropzone.drag-over{background:var(--tj-btn-hover);border-color:var(--tj-accent-color)}.scramble-dropzone.success{border-color:var(--tj-success-color);background:#ecfdf5}.scramble-bank{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;width:100%}.scramble-word{background:#fff;border:1px solid var(--tj-card-border);padding:.5rem 1rem;border-radius:8px;font-weight:600;cursor:pointer;-webkit-user-select:none;user-select:none;box-shadow:0 1px 3px var(--tj-shadow);transition:all .2s}.scramble-word:hover{border-color:var(--tj-accent-color);transform:translateY(-2px);box-shadow:0 4px 6px var(--tj-shadow)}.scramble-word.in-dropzone{background:var(--tj-btn-bg);border-color:var(--tj-accent-color);color:var(--tj-accent-color)}.scramble-controls{display:flex;gap:1rem;width:100%;justify-content:center}.scramble-btn{background:var(--tj-btn-bg);color:var(--tj-btn-text);border:1px solid var(--tj-card-border);padding:.5rem 1.5rem;border-radius:9999px;font-weight:700;cursor:pointer;transition:all .2s}.scramble-btn:hover{background:var(--tj-btn-hover)}.scramble-btn.primary{background:var(--tj-accent-color);color:#fff;border-color:var(--tj-accent-color)}.scramble-btn.primary:hover{background:#0284c7}', h = `<div class="pronunciation-wrapper" translate="no">
-    <div class="header">
-        <h1 class="title" id="pronunciationTitle">Pronunciation Practice</h1>
-        <p class="instructions" id="pronunciationInstructions" style="display: none;"></p>
+const b = ":host{--tj-primary-color: #2563eb;--tj-primary-hover: #1d4ed8;--tj-primary-light: #eff6ff;--tj-primary-border: #bfdbfe;--tj-success-color: #22c55e;--tj-success-hover: #16a34a;--tj-success-light: #f0fdf4;--tj-success-border: #bbf7d0;--tj-error-color: #ef4444;--tj-error-hover: #dc2626;--tj-error-light: #fef2f2;--tj-error-border: #fecaca;--tj-text-main: #1e293b;--tj-text-muted: #64748b;--tj-text-light: #94a3b8;--tj-bg-main: ghostwhite;--tj-bg-card: rgba(255, 255, 255, .95);--tj-bg-alt: #f8fafc;--tj-border-light: #f1f5f9;--tj-border-main: #e2e8f0;--tj-border-dark: #cbd5e1;--tj-font-family: inherit;--tj-font-size-base: 16px;--tj-border-radius-sm: .5em;--tj-border-radius-md: .8em;--tj-border-radius-lg: 1.2em;--tj-border-radius-full: 50%;--tj-shadow-sm: 0 1px 3px rgba(0,0,0,.1);--tj-shadow-md: 0 4px 12px rgba(0,0,0,.05);--tj-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, .1);--tj-shadow-glass: 0 4px 20px rgba(0,0,0,.05);--tj-backdrop-blur: blur(10px);--tj-transition-fast: all .2s cubic-bezier(.4, 0, .2, 1);--tj-transition-normal: all .3s ease;display:block;font-family:var(--tj-font-family);color:var(--tj-text-main);background-color:var(--tj-bg-main);position:relative;box-sizing:border-box}:host *{box-sizing:border-box}.tj-card{background:var(--tj-bg-card);-webkit-backdrop-filter:var(--tj-backdrop-blur);backdrop-filter:var(--tj-backdrop-blur);border-radius:var(--tj-border-radius-lg);padding:1.5em;box-shadow:var(--tj-shadow-md);border:1px solid var(--tj-border-main);transition:var(--tj-transition-normal)}.tj-btn{font-family:inherit;font-size:1em;padding:.6em 1.2em;font-weight:600;cursor:pointer;border-radius:var(--tj-border-radius-md);transition:var(--tj-transition-fast);outline:none;display:inline-flex;align-items:center;justify-content:center;gap:.5em}.tj-btn-primary{background:var(--tj-primary-color);color:#fff;border:1px solid var(--tj-primary-hover);box-shadow:var(--tj-shadow-sm)}.tj-btn-primary:hover:not(:disabled){background:var(--tj-primary-hover);transform:translateY(-1px);box-shadow:var(--tj-shadow-md)}.tj-btn-secondary{background:var(--tj-bg-alt);color:#475569;border:1px solid var(--tj-border-main)}.tj-btn-secondary:hover:not(:disabled){background:var(--tj-border-light);border-color:var(--tj-border-dark);color:var(--tj-primary-color)}.tj-btn-success{background:var(--tj-success-color);color:#fff;border:1px solid var(--tj-success-hover)}.tj-btn-error{background:var(--tj-error-color);color:#fff;border:1px solid var(--tj-error-hover)}.tj-icon-btn{background:var(--tj-bg-alt);border:1px solid var(--tj-border-light);padding:.5em;border-radius:var(--tj-border-radius-full);width:3.5em;height:3.5em;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--tj-transition-fast);color:var(--tj-text-muted);flex-shrink:0}.tj-icon-btn:hover{background:var(--tj-primary-light);color:var(--tj-primary-color);border-color:var(--tj-primary-border);transform:scale(1.1)}.tj-input{width:100%;padding:1em;border:1px solid var(--tj-border-main);border-radius:var(--tj-border-radius-sm);font-size:1em;outline:none;transition:var(--tj-transition-fast)}.tj-input:focus{border-color:var(--tj-primary-color);box-shadow:0 0 0 3px var(--tj-primary-light)}.tj-sticky-bar{position:sticky;top:0;background:#ffffffe6;-webkit-backdrop-filter:var(--tj-backdrop-blur);backdrop-filter:var(--tj-backdrop-blur);padding:.8em 1.2em;border-radius:var(--tj-border-radius-md);box-shadow:var(--tj-shadow-glass);z-index:100;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(226,232,240,.8)}.tj-h2{font-size:1.5em;color:var(--tj-text-main);margin-top:0;margin-bottom:1em}.tj-h3{font-size:1.2em;color:var(--tj-primary-color);margin-top:0;margin-bottom:.5em}.tj-text-muted{color:var(--tj-text-muted)}.tj-flex-center{display:flex;align-items:center;justify-content:center}.tj-flex-between{display:flex;align-items:center;justify-content:space-between}.tj-divider{border:none;border-top:2px dashed var(--tj-border-main);margin:2em 0;position:relative}.tj-divider:after{content:attr(data-label);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:0 1em;color:var(--tj-text-light);font-weight:600;font-size:.9em;text-transform:uppercase;letter-spacing:.1em}.tj-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172acc;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000;animation:tj-fadeIn .3s ease}.tj-overlay.active{display:flex}@keyframes tj-fadeIn{0%{opacity:0}to{opacity:1}}@keyframes tj-shake{0%,to{transform:translate(0)}25%{transform:translate(-5px)}75%{transform:translate(5px)}}@keyframes tj-bounce{0%,to{transform:scale(1)}50%{transform:scale(1.1)}}.tj-anim-shake{animation:tj-shake .4s ease}.tj-anim-bounce{animation:tj-bounce .4s ease}", u = '@import"https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap";:host{display:block;max-width:80em;margin:1em auto;font-family:Outfit,sans-serif}.activities-wrapper{display:flex;flex-direction:column;gap:2em;padding:1em 1em 5em}.header-main{flex:1}.progress-text{font-weight:700;color:var(--tj-primary-color);font-size:1.1em;white-space:nowrap}.play-audio-btn.playing{animation:pulse 1s infinite alternate}@keyframes pulse{0%{transform:scale(1);box-shadow:0 0 #2563eb66}to{transform:scale(1.05);box-shadow:0 0 0 10px #2563eb00}}.lr-container{display:flex;flex-direction:column;align-items:center;gap:1.5rem}.lr-target-word{font-size:2em;font-family:Inter,sans-serif;font-weight:500;text-align:center;margin-bottom:.5rem;color:var(--tj-text-main)}.lr-phonetic{font-size:1.25em;color:var(--tj-text-muted);font-family:monospace;margin-top:.2rem}.lr-translation{color:var(--tj-text-muted);font-style:italic;margin-top:.8rem;font-size:1.5em}.lr-controls{display:flex;gap:2rem;align-items:center;justify-content:center;width:100%;margin-top:1rem}.lr-control-group{display:flex;flex-direction:column;align-items:center;gap:.5rem}.lr-label{font-size:.75em;font-weight:700;color:var(--tj-text-muted);text-transform:uppercase;letter-spacing:.05em}.record-btn{color:var(--tj-error-color)}.record-btn:hover{background:var(--tj-error-light);color:var(--tj-error-hover);border-color:var(--tj-error-border)}.record-btn.recording{background:var(--tj-error-color);color:#fff;border-color:var(--tj-error-hover);animation:pulse-record 1.5s infinite}@keyframes pulse-record{0%{box-shadow:0 0 #ef444466;transform:scale(1)}70%{box-shadow:0 0 0 15px #ef444400;transform:scale(1.05)}to{box-shadow:0 0 #ef444400;transform:scale(1)}}.playback-btn.ready{color:var(--tj-success-color)}.playback-btn.ready:hover{background:var(--tj-success-light);color:var(--tj-success-hover);border-color:var(--tj-success-border)}.playback-btn.playing{background:var(--tj-success-color);color:#fff;animation:pulse-success 1s infinite alternate}@keyframes pulse-success{0%{transform:scale(1);box-shadow:0 0 #22c55e66}to{transform:scale(1.05);box-shadow:0 0 0 10px #22c55e00}}.mp-container{display:flex;flex-direction:column;align-items:center;gap:1.5rem}.mp-options{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;width:100%}.mp-option-btn{padding:.8rem 1.5rem;min-width:120px}.mp-option-btn.highlight{border-color:var(--tj-primary-color);background:var(--tj-primary-light);transform:translateY(-2px)}.mp-focus{font-size:1.2em;color:var(--tj-text-muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700}.mp-instr{font-size:1.2em;color:var(--tj-text-muted);font-style:italic}.feedback-msg{min-height:1.2em;font-weight:700;font-size:1.1em}.feedback-msg.correct{color:var(--tj-success-color)}.feedback-msg.wrong{color:var(--tj-error-color)}.scramble-container{display:flex;flex-direction:column;align-items:center;gap:1.5rem;width:100%}.scramble-dropzone{min-height:80px;width:100%;border:2px dashed var(--tj-border-main);border-radius:var(--tj-border-radius-lg);padding:1rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center;background:var(--tj-bg-alt);transition:var(--tj-transition-fast)}.scramble-dropzone.success{border-color:var(--tj-success-color);background:var(--tj-success-light)}.scramble-bank{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;width:100%}.scramble-word{background:#fff;border:1px solid var(--tj-border-main);padding:.6rem 1.2rem;border-radius:var(--tj-border-radius-md);font-weight:600;cursor:pointer;-webkit-user-select:none;user-select:none;box-shadow:var(--tj-shadow-sm);transition:var(--tj-transition-fast)}.scramble-word:hover{border-color:var(--tj-primary-color);transform:translateY(-2px);box-shadow:var(--tj-shadow-md);color:var(--tj-primary-color)}.scramble-word.in-dropzone{background:var(--tj-primary-light);border-color:var(--tj-primary-border);color:var(--tj-primary-color)}.scramble-controls{display:flex;gap:1rem}.voice-card{max-height:80vh;display:flex;flex-direction:column}.voice-list{padding:.5rem;overflow-y:auto;flex:1}.voice-option-btn{width:100%;text-align:left;padding:.8rem 1.2rem;margin-bottom:.5rem;border:1px solid var(--tj-border-main);border-radius:var(--tj-border-radius-md);background:#fff;color:var(--tj-text-main);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:var(--tj-transition-fast)}.voice-option-btn:hover{background-color:var(--tj-bg-alt);border-color:var(--tj-primary-color);color:var(--tj-primary-color)}.voice-option-btn.active{background:var(--tj-primary-light);border-color:var(--tj-primary-color);color:var(--tj-primary-color);font-weight:700}.badge{background:var(--tj-primary-color);color:#fff;font-size:.7em;padding:.2rem .6rem;border-radius:var(--tj-border-radius-full);font-weight:800;text-transform:uppercase}.close-voice-btn{padding:0;width:2em;height:2em;display:flex;align-items:center;justify-content:center}.tj-card.completed{border-color:var(--tj-success-color);background:var(--tj-success-light);box-shadow:var(--tj-shadow-md),0 0 0 1px var(--tj-success-border)}', g = `<div class="pronunciation-wrapper" translate="no">
+    <div class="tj-sticky-bar">
+        <div class="header-main">
+            <h1 class="tj-h3" id="pronunciationTitle" style="margin: 0;">Pronunciation Practice</h1>
+            <p class="instructions tj-text-muted" id="pronunciationInstructions" style="display: none; margin: 0; font-size: 0.9em;"></p>
+        </div>
+        <div class="tj-flex-center" style="gap: 1em;">
+            <div class="progress-text">0 / 0</div>
+            <button id="voice-btn" class="tj-icon-btn" title="Choose Voice">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z"/>
+                </svg>
+            </button>
+        </div>
     </div>
-    <div class="activities-container" id="activitiesContainer">
+    <div class="activities-wrapper" id="activitiesContainer">
+    </div>
+
+    <!-- Voice Selection Overlay -->
+    <div class="tj-overlay" id="voice-overlay">
+        <div class="tj-card voice-card" style="width: 90%; max-width: 450px;">
+            <div class="voice-card-header tj-flex-between" style="margin-bottom: 1em;">
+                <h3 class="tj-h3" style="margin: 0;">Choose Voice</h3>
+                <button class="tj-icon-btn close-voice-btn" id="close-voice-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            <div class="voice-list" id="voice-list"></div>
+        </div>
+    </div>
+
+    <div class="tj-overlay" id="browser-prompt-overlay" style="padding: 1rem;">
+        <div class="tj-card" style="max-width: 400px; text-align: center;">
+            <h2 class="tj-h2">Better in a Browser</h2>
+            <p class="tj-text-muted" style="margin-bottom: 2em; line-height: 1.6;">It looks like you're using an in-app browser. For the best experience (including audio features), please open this page in <b>Chrome</b> or <b>Safari</b>.</p>
+            <a id="browser-action-btn" class="tj-btn tj-btn-primary" style="width: 100%; text-decoration: none;" href="javascript:void(0)">Open Browser</a>
+            <button class="tj-btn tj-btn-secondary" style="width: 100%; margin-top: 1em; border: none; background: transparent; text-decoration: underline;" onclick="this.closest('.tj-overlay').classList.remove('active')">Continue anyway</button>
+        </div>
     </div>
 </div>
-`, l = {
-  play: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>',
-  mic: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>',
+`, d = {
+  play: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+  mic: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>',
   headphones: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>'
 };
-class m extends HTMLElement {
+class f extends HTMLElement {
   constructor() {
-    super(), this.attachShadow({ mode: "open" }), this.synth = window.speechSynthesis, this.language = "en-US", this.mediaRecorder = null, this.audioChunks = [], this.recordings = /* @__PURE__ */ new Map();
+    super(), this.attachShadow({ mode: "open" }), this.synth = window.speechSynthesis, this.language = "en-US", this.mediaRecorder = null, this.audioChunks = [], this.recordings = /* @__PURE__ */ new Map(), this.selectedVoiceName = localStorage.getItem("tj-pronunciation-voice"), this.isPlaying = !1, this.synth && (this.synth.onvoiceschanged = () => this._updateVoiceList());
   }
   connectedCallback() {
-    const e = this.getAttribute("src");
-    e ? this.loadData(e) : setTimeout(() => {
+    const t = this.getAttribute("src");
+    t ? this.loadData(t) : setTimeout(() => {
       try {
-        const t = JSON.parse(this.textContent.trim());
-        this.render(t);
-      } catch (t) {
-        console.error("Error parsing inline JSON data", t), this.shadowRoot.innerHTML = '<p style="color: red;">Error loading pronunciation data: Invalid JSON.</p>';
+        const e = JSON.parse(this.textContent.trim());
+        this.render(e);
+      } catch (e) {
+        console.error("Error parsing inline JSON data", e), this.shadowRoot.innerHTML = '<p style="color: red;">Error loading pronunciation data: Invalid JSON.</p>';
       }
     }, 0);
   }
-  async loadData(e) {
+  async loadData(t) {
     try {
-      const o = await (await fetch(e)).json();
-      this.render(o);
-    } catch (t) {
-      console.error("Error loading pronunciation data:", t), this.shadowRoot.innerHTML = '<p style="color: red;">Error loading pronunciation data.</p>';
+      const i = await (await fetch(t)).json();
+      this.render(i);
+    } catch (e) {
+      console.error("Error loading pronunciation data:", e), this.shadowRoot.innerHTML = '<p style="color: red;">Error loading pronunciation data.</p>';
     }
   }
-  render(e) {
-    e.language && (this.language = e.language);
-    const t = document.createElement("template");
-    if (t.innerHTML = `<style>${p}</style>${h}`, this.shadowRoot.firstChild && (this.shadowRoot.innerHTML = ""), this.shadowRoot.appendChild(t.content.cloneNode(!0)), e.title && (this.shadowRoot.getElementById("pronunciationTitle").textContent = e.title), e.instructions) {
+  render(t) {
+    t.language && (this.language = t.language);
+    const e = document.createElement("template");
+    if (e.innerHTML = `<style>${b}</style><style>${u}</style>${g}`, this.shadowRoot.firstChild && (this.shadowRoot.innerHTML = ""), this.shadowRoot.appendChild(e.content.cloneNode(!0)), t.title && (this.shadowRoot.getElementById("pronunciationTitle").textContent = t.title), t.instructions) {
       const r = this.shadowRoot.getElementById(
         "pronunciationInstructions"
       );
-      r.textContent = e.instructions, r.style.display = "block";
+      r.textContent = t.instructions, r.style.display = "block";
     }
-    let o = "";
-    e.activities && Array.isArray(e.activities) && (o = e.activities.map((r, a) => this.renderActivity(r, a)).join("")), this.shadowRoot.getElementById("activitiesContainer").innerHTML = o, this.attachEventListeners();
+    let i = "";
+    if (t.activities && Array.isArray(t.activities) && (i = t.activities.map((r, s) => this.renderActivity(r, s)).join("")), this.shadowRoot.getElementById("activitiesContainer").innerHTML = i, this.updateProgress(), this.attachEventListeners(), this._updateVoiceList(), !this._shouldShowAudioControls()) {
+      const r = this.shadowRoot.getElementById("voice-btn");
+      r && (r.style.display = "none"), this.checkBrowserSupport();
+    }
   }
-  renderActivity(e, t) {
-    switch (e.type) {
+  renderActivity(t, e) {
+    switch (t.type) {
       case "listen_record":
-        return this.renderListenRecord(e, t);
+        return this.renderListenRecord(t, e);
       case "minimal_pair":
-        return this.renderMinimalPair(e, t);
+        return this.renderMinimalPair(t, e);
       case "stress_match":
-        return '<div class="activity-card"><h2 class="activity-title">Stress Match Activity (Coming Soon)</h2></div>';
+        return '<div class="tj-card"><h2 class="tj-h3">Stress Match Activity (Coming Soon)</h2></div>';
       case "scramble":
-        return this.renderScramble(e, t);
+        return this.renderScramble(t, e);
       case "odd_one_out":
-        return '<div class="activity-card"><h2 class="activity-title">Odd One Out Activity (Coming Soon)</h2></div>';
+        return '<div class="tj-card"><h2 class="tj-h3">Odd One Out Activity (Coming Soon)</h2></div>';
       default:
-        return `<div class="activity-card"><p>Unknown activity type: ${e.type}</p></div>`;
+        return `<div class="tj-card"><p>Unknown activity type: ${t.type}</p></div>`;
     }
   }
-  renderListenRecord(e, t) {
+  updateProgress() {
+    const t = this.shadowRoot.querySelectorAll(".tj-card[id^='act-']").length, e = this.shadowRoot.querySelectorAll(".tj-card.completed").length, i = this.shadowRoot.querySelector(".progress-text");
+    i && (i.textContent = `${e} / ${t}`);
+  }
+  renderListenRecord(t, e) {
     return `
-            <div class="activity-card" id="act-${t}">
-                <div class="activity-title">${l.headphones} Listen & Record</div>
+            <div class="tj-card" id="act-${e}">
+                <div class="activity-title tj-h3">${d.headphones} Listen & Record</div>
                 <div class="lr-container">
                     <div style="text-align: center;">
-                        <div class="lr-target-word">${e.targetText}</div>
-                        ${e.phoneticHint ? `<div class="lr-phonetic">/[${e.phoneticHint}]/</div>` : ""}
+                        <div class="lr-target-word">${t.targetText}</div>
+                        ${t.phoneticHint ? `<div class="lr-phonetic">/[${t.phoneticHint}]/</div>` : ""}
                         
-                        ${e.translation ? `
-                            <button class="translation-toggle" data-index="${t}">Show Translation</button>
-                            <div class="lr-translation hidden" id="trans-${t}" style="display: none;">${e.translation}</div>
+                        ${t.translation ? `
+                            <button class="tj-btn tj-btn-secondary translation-toggle" data-index="${e}" style="margin-top: 1em;">Show Translation</button>
+                            <div class="lr-translation hidden" id="trans-${e}" style="display: none;">${t.translation}</div>
                         ` : ""}
                     </div>
 
                     <div class="lr-controls">
                         <div class="lr-control-group">
                             <span class="lr-label">Listen</span>
-                            <button class="play-audio-btn" data-action="play" data-text="${e.targetText.replace(/"/g, "&quot;")}">
-                                ${l.play}
+                            <button class="tj-icon-btn play-audio-btn" data-action="play" data-text="${t.targetText.replace(/"/g, "&quot;")}">
+                                ${d.play}
                             </button>
                         </div>
 
                         <div class="lr-control-group">
                             <span class="lr-label">Record</span>
-                            <button class="record-btn" data-action="record" data-index="${t}">
-                                ${l.mic}
+                            <button class="tj-icon-btn record-btn" data-action="record" data-index="${e}">
+                                ${d.mic}
                             </button>
                         </div>
 
                         <div class="lr-control-group">
                             <span class="lr-label">Playback</span>
-                            <button class="playback-btn" id="playback-${t}" data-action="playback" data-index="${t}">
-                                ${l.play}
+                            <button class="tj-icon-btn playback-btn" id="playback-${e}" data-action="playback" data-index="${e}">
+                                ${d.play}
                             </button>
                         </div>
                     </div>
@@ -103,225 +142,297 @@ class m extends HTMLElement {
             </div>
         `;
   }
-  renderMinimalPair(e, t) {
-    return e.options && Array.isArray(e.options) ? `
-            <div class="activity-card" id="act-${t}">
-                <div class="activity-title">
+  renderMinimalPair(t, e) {
+    return !t.options || !Array.isArray(t.options) ? `<div class="tj-card"><p>Error: Minimal Pair requires 'options' array.</p></div>` : `
+            <div class="tj-card" id="act-${e}">
+                <div class="activity-title tj-h3">
                     <span style="display:inline-block; margin-right: 0.5rem;">⚖️</span> Minimal Pair
                 </div>
                 <div class="mp-container">
-                    ${e.focus ? `<div class="mp-focus">Focus: ${e.focus}</div>` : ""}
+                    ${t.focus ? `<div class="mp-focus">Focus: ${t.focus}</div>` : ""}
                     <div class="mp-instr">Click on the last word that you hear.</div>
                     
-                    <button class="play-audio-btn" data-action="play-mp" data-index="${t}" 
-                            data-options="${e.options.join(",").replace(/"/g, "&quot;")}" 
-                            data-answer="${e.correctAnswer.replace(/"/g, "&quot;")}">
-                        ${l.play}
+                    <button class="tj-icon-btn play-audio-btn" data-action="play-mp" data-index="${e}" 
+                            data-options="${t.options.join(",").replace(/"/g, "&quot;")}" 
+                            data-answer="${t.correctAnswer.replace(/"/g, "&quot;")}">
+                        ${d.play}
                     </button>
 
                     <div class="mp-options">
-                        ${e.options.map(
-      (r) => `
-                            <button class="mp-option-btn" data-action="mp-guess" data-index="${t}" data-correct="${e.correctAnswer === r}">${r}</button>
+                        ${t.options.map(
+      (i) => `
+                            <button class="tj-btn tj-btn-secondary mp-option-btn" data-action="mp-guess" data-index="${e}" data-correct="${t.correctAnswer === i}">${i}</button>
                         `
     ).join("")}
                     </div>
-                    <div class="feedback-msg" id="feedback-${t}"></div>
+                    <div class="feedback-msg" id="feedback-${e}"></div>
                 </div>
             </div>
-        ` : `<div class="activity-card"><p>Error: Minimal Pair requires 'options' array.</p></div>`;
+        `;
   }
-  renderScramble(e, t) {
-    if (!e.words || !Array.isArray(e.words))
-      return `<div class="activity-card"><p>Error: Scramble requires 'words' array.</p></div>`;
-    let o = [...e.words];
-    e.distractors && Array.isArray(e.distractors) && (o = o.concat(e.distractors));
-    for (let r = o.length - 1; r > 0; r--) {
-      const a = Math.floor(Math.random() * (r + 1));
-      [o[r], o[a]] = [o[a], o[r]];
+  renderScramble(t, e) {
+    if (!t.words || !Array.isArray(t.words))
+      return `<div class="tj-card"><p>Error: Scramble requires 'words' array.</p></div>`;
+    let i = [...t.words];
+    t.distractors && Array.isArray(t.distractors) && (i = i.concat(t.distractors));
+    for (let r = i.length - 1; r > 0; r--) {
+      const s = Math.floor(Math.random() * (r + 1));
+      [i[r], i[s]] = [i[s], i[r]];
     }
     return `
-            <div class="activity-card" id="act-${t}">
-                <div class="activity-title">
+            <div class="tj-card" id="act-${e}">
+                <div class="activity-title tj-h3">
                     <span style="display:inline-block; margin-right: 0.5rem;">🧩</span> Dictation Scramble
                 </div>
                 <div class="scramble-container">
-                    <button class="play-audio-btn" data-action="play" data-text="${e.audioText.replace(/"/g, "&quot;")}">
-                        ${l.play}
+                    <button class="tj-icon-btn play-audio-btn" data-action="play" data-text="${t.audioText.replace(/"/g, "&quot;")}">
+                        ${d.play}
                     </button>
 
                     <!-- Hidden data store for correct answer -->
-                    <div id="scramble-ans-${t}" style="display:none;" data-answer="${e.words.join(" ").replace(/"/g, "&quot;")}"></div>
+                    <div id="scramble-ans-${e}" style="display:none;" data-answer="${t.words.join(" ").replace(/"/g, "&quot;")}"></div>
 
-                    <div class="scramble-dropzone" id="dropzone-${t}">
+                    <div class="scramble-dropzone" id="dropzone-${e}">
                         <!-- Words dropped here -->
                     </div>
 
-                    <div class="scramble-bank" id="bank-${t}">
-                        ${o.map(
-      (r, a) => `
-                            <div class="scramble-word" data-action="scramble-move" data-index="${t}" data-word-id="${a}">${r}</div>
+                    <div class="scramble-bank" id="bank-${e}">
+                        ${i.map(
+      (r, s) => `
+                            <div class="scramble-word" data-action="scramble-move" data-index="${e}" data-word-id="${s}">${r}</div>
                         `
     ).join("")}
                     </div>
 
                     <div class="scramble-controls">
-                        <button class="scramble-btn" data-action="scramble-reset" data-index="${t}">Reset</button>
-                        <button class="scramble-btn primary" data-action="scramble-check" data-index="${t}">Check</button>
+                        <button class="tj-btn tj-btn-secondary scramble-btn" data-action="scramble-reset" data-index="${e}">Reset</button>
+                        <button class="tj-btn tj-btn-primary scramble-btn" data-action="scramble-check" data-index="${e}">Check</button>
                     </div>
                     
-                    <div class="feedback-msg" id="feedback-${t}"></div>
+                    <div class="feedback-msg" id="feedback-${e}"></div>
                 </div>
             </div>
         `;
   }
   attachEventListeners() {
-    this.shadowRoot.querySelectorAll(".translation-toggle").forEach((e) => {
-      e.addEventListener("click", (t) => {
-        const o = t.target.dataset.index, r = this.shadowRoot.querySelector("#trans-" + o);
-        r.style.display === "none" ? (r.style.display = "block", t.target.textContent = "Hide Translation") : (r.style.display = "none", t.target.textContent = "Show Translation");
+    const t = this.shadowRoot.getElementById("voice-btn"), e = this.shadowRoot.getElementById("close-voice-btn"), i = this.shadowRoot.getElementById("voice-overlay");
+    t && (t.onclick = () => this._showVoiceOverlay()), e && (e.onclick = () => this._hideVoiceOverlay()), i && (i.onclick = (r) => {
+      r.target === i && this._hideVoiceOverlay();
+    }), this.shadowRoot.querySelectorAll(".translation-toggle").forEach((r) => {
+      r.addEventListener("click", (s) => {
+        const o = s.target.dataset.index, a = this.shadowRoot.querySelector("#trans-" + o);
+        a.style.display === "none" ? (a.style.display = "block", s.target.textContent = "Hide Translation") : (a.style.display = "none", s.target.textContent = "Show Translation");
       });
-    }), this.shadowRoot.querySelectorAll('button[data-action="play"]').forEach((e) => {
-      e.addEventListener("click", (t) => {
-        const o = t.target.closest("button"), r = o.dataset.text;
-        this.playTTS(r, o);
+    }), this.shadowRoot.querySelectorAll('button[data-action="play"]').forEach((r) => {
+      r.addEventListener("click", (s) => {
+        const o = s.target.closest("button"), a = o.dataset.text;
+        this.playTTS(a, o);
       });
-    }), this.shadowRoot.querySelectorAll('button[data-action="play-mp"]').forEach((e) => {
-      e.addEventListener("click", (t) => {
-        const o = t.target.closest("button"), r = o.dataset.options.split(","), a = o.dataset.answer;
-        this.playMinimalPairSequence(r, a, o);
+    }), this.shadowRoot.querySelectorAll('button[data-action="play-mp"]').forEach((r) => {
+      r.addEventListener("click", (s) => {
+        const o = s.target.closest("button"), a = o.dataset.options.split(","), n = o.dataset.answer;
+        this.playMinimalPairSequence(a, n, o);
       });
-    }), this.shadowRoot.querySelectorAll('button[data-action="record"]').forEach((e) => {
-      e.addEventListener("click", async (t) => {
-        const o = t.target.closest("button"), r = o.dataset.index;
-        await this.toggleRecording(o, r);
+    }), this.shadowRoot.querySelectorAll('button[data-action="record"]').forEach((r) => {
+      r.addEventListener("click", async (s) => {
+        const o = s.target.closest("button"), a = o.dataset.index;
+        await this.toggleRecording(o, a);
       });
-    }), this.shadowRoot.querySelectorAll('button[data-action="playback"]').forEach((e) => {
-      e.addEventListener("click", (t) => {
-        const o = t.target.closest("button");
+    }), this.shadowRoot.querySelectorAll('button[data-action="playback"]').forEach((r) => {
+      r.addEventListener("click", (s) => {
+        const o = s.target.closest("button");
         if (o.classList.contains("ready")) {
-          const r = o.dataset.index;
-          this.playRecording(r, o);
+          const a = o.dataset.index;
+          this.playRecording(a, o);
         }
       });
-    }), this.shadowRoot.querySelectorAll('button[data-action="mp-guess"]').forEach((e) => {
-      e.addEventListener("click", (t) => {
-        const o = t.target.closest("button"), r = o.dataset.correct === "true", a = o.dataset.index, s = this.shadowRoot.querySelector(
-          "#feedback-" + a
-        ), i = o.closest(".mp-options");
-        i.querySelectorAll("button").forEach((n) => n.disabled = !0), r ? (o.classList.add("correct"), s.textContent = "Correct! 🎉", s.className = "feedback-msg correct") : (o.classList.add("wrong"), s.textContent = "Incorrect.", s.className = "feedback-msg wrong", i.querySelectorAll("button").forEach((n) => {
-          n.dataset.correct === "true" && n.classList.add("correct");
-        }));
+    }), this.shadowRoot.querySelectorAll('button[data-action="mp-guess"]').forEach((r) => {
+      r.addEventListener("click", (s) => {
+        const o = s.target.closest("button"), a = o.dataset.correct === "true", n = o.dataset.index, c = this.shadowRoot.querySelector(
+          "#feedback-" + n
+        ), h = o.closest(".mp-options");
+        if (h.querySelectorAll("button").forEach((l) => l.disabled = !0), a) {
+          o.classList.add("tj-btn-success"), o.classList.remove("tj-btn-secondary"), c.textContent = "Correct! 🎉", c.className = "feedback-msg correct";
+          const l = o.closest(".tj-card");
+          l && (l.classList.add("completed"), this.updateProgress());
+        } else
+          o.classList.add("tj-btn-error"), o.classList.remove("tj-btn-secondary"), c.textContent = "Incorrect.", c.className = "feedback-msg wrong", h.querySelectorAll("button").forEach((l) => {
+            l.dataset.correct === "true" && (l.classList.add("tj-btn-success"), l.classList.remove("tj-btn-secondary"));
+          });
       });
-    }), this.shadowRoot.querySelectorAll('.scramble-word[data-action="scramble-move"]').forEach((e) => {
-      e.addEventListener("click", (t) => {
-        const o = t.target.dataset.index, r = this.shadowRoot.querySelector("#dropzone-" + o), a = this.shadowRoot.querySelector("#bank-" + o), s = this.shadowRoot.querySelector(
+    }), this.shadowRoot.querySelectorAll('.scramble-word[data-action="scramble-move"]').forEach((r) => {
+      r.addEventListener("click", (s) => {
+        const o = s.target.dataset.index, a = this.shadowRoot.querySelector("#dropzone-" + o), n = this.shadowRoot.querySelector("#bank-" + o), c = this.shadowRoot.querySelector(
           "#feedback-" + o
         );
-        s && (s.textContent = "", s.className = "feedback-msg"), r.classList.remove("success"), t.target.parentElement === a ? (r.appendChild(t.target), t.target.classList.add("in-dropzone")) : (a.appendChild(t.target), t.target.classList.remove("in-dropzone"));
+        c && (c.textContent = "", c.className = "feedback-msg"), a.classList.remove("success"), s.target.parentElement === n ? (a.appendChild(s.target), s.target.classList.add("in-dropzone")) : (n.appendChild(s.target), s.target.classList.remove("in-dropzone"));
       });
-    }), this.shadowRoot.querySelectorAll('button[data-action="scramble-reset"]').forEach((e) => {
-      e.addEventListener("click", (t) => {
-        const o = t.target.dataset.index, r = this.shadowRoot.querySelector("#dropzone-" + o), a = this.shadowRoot.querySelector("#bank-" + o), s = this.shadowRoot.querySelector(
+    }), this.shadowRoot.querySelectorAll('button[data-action="scramble-reset"]').forEach((r) => {
+      r.addEventListener("click", (s) => {
+        const o = s.target.dataset.index, a = this.shadowRoot.querySelector("#dropzone-" + o), n = this.shadowRoot.querySelector("#bank-" + o), c = this.shadowRoot.querySelector(
           "#feedback-" + o
         );
-        s && (s.textContent = "", s.className = "feedback-msg"), r.classList.remove("success"), r.querySelectorAll(".scramble-word").forEach((n) => {
-          a.appendChild(n), n.classList.remove("in-dropzone");
+        c && (c.textContent = "", c.className = "feedback-msg"), a.classList.remove("success"), a.querySelectorAll(".scramble-word").forEach((l) => {
+          n.appendChild(l), l.classList.remove("in-dropzone");
         });
       });
-    }), this.shadowRoot.querySelectorAll('button[data-action="scramble-check"]').forEach((e) => {
-      e.addEventListener("click", (t) => {
-        const o = t.target.dataset.index, r = this.shadowRoot.querySelector("#dropzone-" + o), a = this.shadowRoot.querySelector(
+    }), this.shadowRoot.querySelectorAll('button[data-action="scramble-check"]').forEach((r) => {
+      r.addEventListener("click", (s) => {
+        const o = s.target.dataset.index, a = this.shadowRoot.querySelector("#dropzone-" + o), n = this.shadowRoot.querySelector(
           "#feedback-" + o
-        ), i = this.shadowRoot.querySelector(
+        ), h = this.shadowRoot.querySelector(
           "#scramble-ans-" + o
-        ).dataset.answer, n = Array.from(
-          r.querySelectorAll(".scramble-word")
-        ).map((d) => d.textContent), c = n.join(" ");
-        if (n.length === 0) {
-          a.textContent = "Please construct a sentence first.", a.className = "feedback-msg";
+        ).dataset.answer, l = Array.from(
+          a.querySelectorAll(".scramble-word")
+        ).map((p) => p.textContent), m = l.join(" ");
+        if (l.length === 0) {
+          n.textContent = "Please construct a sentence first.", n.className = "feedback-msg";
           return;
         }
-        c === i ? (a.textContent = "Correct! 🎉", a.className = "feedback-msg correct", r.classList.add("success")) : (a.textContent = "Incorrect. Try again!", a.className = "feedback-msg wrong");
+        if (m === h) {
+          n.textContent = "Correct! 🎉", n.className = "feedback-msg correct", a.classList.add("success");
+          const p = s.target.closest(".tj-card");
+          p && (p.classList.add("completed"), this.updateProgress());
+        } else
+          n.textContent = "Incorrect. Try again!", n.className = "feedback-msg wrong";
       });
     });
   }
-  playTTS(e, t) {
-    return this.synth ? new Promise((o, r) => {
+  playTTS(t, e) {
+    return !this.synth || !this._shouldShowAudioControls() ? Promise.resolve() : new Promise((i, r) => {
       this.synth.cancel();
-      const a = new SpeechSynthesisUtterance(e);
-      a.lang = this.language;
-      const s = this.synth.getVoices(), i = this.language.split(/[-_]/)[0].toLowerCase(), n = s.filter(
-        (c) => c.lang.split(/[-_]/)[0].toLowerCase() === i
-      );
-      if (n.length > 0) {
-        const c = n.find(
-          (d) => d.name.toLowerCase().includes("google") || d.name.toLowerCase().includes("natural") || d.name.toLowerCase().includes("siri")
-        ) || n[0];
-        a.voice = c;
-      }
-      a.onstart = () => {
-        t.classList.add("playing");
-      }, a.onend = () => {
-        t.classList.remove("playing"), o();
-      }, a.onerror = (c) => {
-        t.classList.remove("playing"), r(c);
-      }, this.synth.speak(a);
-    }) : Promise.resolve();
+      const s = new SpeechSynthesisUtterance(t);
+      s.lang = this.language, s.rate = 0.9;
+      let a = this.synth.getVoices().find((n) => n.name === this.selectedVoiceName);
+      a || (a = this._getBestVoice(this.language)), a && (s.voice = a), s.onstart = () => {
+        e.classList.add("playing"), this.isPlaying = !0;
+      }, s.onend = () => {
+        e.classList.remove("playing"), this.isPlaying = !1, i();
+      }, s.onerror = (n) => {
+        e.classList.remove("playing"), this.isPlaying = !1, r(n);
+      }, this.synth.speak(s);
+    });
   }
-  async playMinimalPairSequence(e, t, o) {
-    if (o.classList.contains("playing")) return;
-    const a = o.closest(".mp-container").querySelectorAll(".mp-option-btn");
-    try {
-      for (let s = 0; s < 2; s++) {
-        for (const i of e) {
-          const n = Array.from(a).find(
-            (c) => c.textContent.trim() === i.trim()
-          );
-          n && n.classList.add("highlight"), await this.playTTS(i, o), n && n.classList.remove("highlight"), await new Promise((c) => setTimeout(c, 600));
-        }
-        await new Promise((i) => setTimeout(i, 400));
+  // TTS Guide 1.3 Methods
+  _getBestVoice(t) {
+    if (!this.synth) return null;
+    const e = this.synth.getVoices();
+    if (e.length === 0) return null;
+    const i = t.split(/[-_]/)[0].toLowerCase();
+    let r = e.filter(
+      (a) => a.lang.toLowerCase() === t.toLowerCase()
+    );
+    if (r.length === 0 && (r = e.filter(
+      (a) => a.lang.split(/[-_]/)[0].toLowerCase() === i
+    )), r.length === 0) return null;
+    const s = ["natural", "google", "premium", "siri"];
+    for (const a of s) {
+      const n = r.find((c) => c.name.toLowerCase().includes(a));
+      if (n) return n;
+    }
+    return r.find(
+      (a) => !a.name.toLowerCase().includes("microsoft")
+    ) || r[0];
+  }
+  _showVoiceOverlay() {
+    const t = this.shadowRoot.getElementById("voice-overlay");
+    t && (t.style.display = "flex", this._updateVoiceList());
+  }
+  _hideVoiceOverlay() {
+    const t = this.shadowRoot.getElementById("voice-overlay");
+    t && (t.style.display = "none");
+  }
+  _updateVoiceList() {
+    const t = this.shadowRoot.getElementById("voice-list");
+    if (!t) return;
+    const e = this.synth.getVoices(), i = this.language.split(/[-_]/)[0].toLowerCase(), r = e.filter(
+      (o) => o.lang.split(/[-_]/)[0].toLowerCase() === i
+    ), s = this._getBestVoice(this.language);
+    t.innerHTML = "", r.sort((o, a) => o.name.localeCompare(a.name)), r.forEach((o) => {
+      const a = document.createElement("button");
+      a.classList.add("voice-option-btn"), (this.selectedVoiceName === o.name || !this.selectedVoiceName && s && o.name === s.name) && a.classList.add("active"), a.innerHTML = `<span>${o.name}</span>`, s && o.name === s.name && (a.innerHTML += '<span class="badge">Best</span>'), a.onclick = () => {
+        this.selectedVoiceName = o.name, localStorage.setItem("tj-pronunciation-voice", o.name), this._updateVoiceList(), this._hideVoiceOverlay();
+      }, t.appendChild(a);
+    });
+  }
+  _shouldShowAudioControls() {
+    const t = navigator.userAgent.toLowerCase();
+    return t.includes("wv") || t.includes("webview") || t.includes("instagram") || t.includes("facebook") || t.includes("line") ? !1 : !!window.speechSynthesis;
+  }
+  _getAndroidIntentLink() {
+    if (!/android/i.test(navigator.userAgent)) return "";
+    const i = new URL(window.location.href).toString().replace(/^https?:\/\//, ""), r = window.location.protocol.replace(":", "");
+    return `intent://${i}#Intent;scheme=${r};package=com.android.chrome;end`;
+  }
+  checkBrowserSupport() {
+    if (!this._shouldShowAudioControls()) {
+      const t = this.shadowRoot.getElementById("browser-prompt-overlay");
+      if (t) {
+        t.classList.add("active");
+        const e = this._getAndroidIntentLink(), i = this.shadowRoot.getElementById("browser-action-btn");
+        e ? (i.href = e, i.textContent = "Open in Chrome") : (i.onclick = (r) => {
+          (!i.href || i.href === "javascript:void(0)") && (r.preventDefault(), alert(
+            "Please open this page in Safari or Chrome for the best experience with audio features."
+          ));
+        }, i.textContent = "Use Safari / Chrome");
       }
-      await new Promise((s) => setTimeout(s, 500)), await this.playTTS(t, o);
-    } catch (s) {
-      console.error("Audio sequence error:", s), o.classList.remove("playing"), a.forEach((i) => i.classList.remove("highlight"));
     }
   }
-  async toggleRecording(e, t) {
-    if (e.classList.contains("recording"))
-      this.mediaRecorder && this.mediaRecorder.state !== "inactive" && this.mediaRecorder.stop(), e.classList.remove("recording");
+  async playMinimalPairSequence(t, e, i) {
+    if (i.classList.contains("playing")) return;
+    const s = i.closest(".mp-container").querySelectorAll(".mp-option-btn");
+    try {
+      for (let o = 0; o < 2; o++) {
+        for (const a of t) {
+          const n = Array.from(s).find(
+            (c) => c.textContent.trim() === a.trim()
+          );
+          n && n.classList.add("highlight"), await this.playTTS(a, i), n && n.classList.remove("highlight"), await new Promise((c) => setTimeout(c, 600));
+        }
+        await new Promise((a) => setTimeout(a, 400));
+      }
+      await new Promise((o) => setTimeout(o, 500)), await this.playTTS(e, i);
+    } catch (o) {
+      console.error("Audio sequence error:", o), i.classList.remove("playing"), s.forEach((a) => a.classList.remove("highlight"));
+    }
+  }
+  async toggleRecording(t, e) {
+    if (t.classList.contains("recording"))
+      this.mediaRecorder && this.mediaRecorder.state !== "inactive" && this.mediaRecorder.stop(), t.classList.remove("recording");
     else
       try {
-        const o = await navigator.mediaDevices.getUserMedia({
+        const i = await navigator.mediaDevices.getUserMedia({
           audio: !0
         });
-        this.audioChunks = [], this.mediaRecorder = new MediaRecorder(o), this.mediaRecorder.ondataavailable = (r) => {
+        this.audioChunks = [], this.mediaRecorder = new MediaRecorder(i), this.mediaRecorder.ondataavailable = (r) => {
           r.data.size > 0 && this.audioChunks.push(r.data);
         }, this.mediaRecorder.onstop = () => {
-          const r = new Blob(this.audioChunks, { type: "audio/webm" }), a = URL.createObjectURL(r);
-          this.recordings.has(t) && URL.revokeObjectURL(this.recordings.get(t)), this.recordings.set(t, a);
-          const s = this.shadowRoot.querySelector(
-            `#playback-${t}`
+          const r = new Blob(this.audioChunks, { type: "audio/webm" }), s = URL.createObjectURL(r);
+          this.recordings.has(e) && URL.revokeObjectURL(this.recordings.get(e)), this.recordings.set(e, s);
+          const o = this.shadowRoot.querySelector(
+            `#playback-${e}`
           );
-          s && s.classList.add("ready"), o.getTracks().forEach((i) => i.stop());
-        }, this.mediaRecorder.start(), e.classList.add("recording");
-      } catch (o) {
-        console.error("Error accessing microphone:", o), alert(
+          o && o.classList.add("ready");
+          const a = t.closest(".tj-card");
+          a && !a.classList.contains("completed") && (a.classList.add("completed"), this.updateProgress()), i.getTracks().forEach((n) => n.stop());
+        }, this.mediaRecorder.start(), t.classList.add("recording");
+      } catch (i) {
+        console.error("Error accessing microphone:", i), alert(
           "Could not access microphone. Please ensure you have granted permission."
         );
       }
   }
-  playRecording(e, t) {
-    const o = this.recordings.get(e);
-    if (!o) return;
-    const r = new Audio(o);
+  playRecording(t, e) {
+    const i = this.recordings.get(t);
+    if (!i) return;
+    const r = new Audio(i);
     r.onplay = () => {
-      t.classList.add("playing");
+      e.classList.add("playing");
     }, r.onended = () => {
-      t.classList.remove("playing");
-    }, r.play().catch((a) => {
-      console.error("Error playing recording:", a), t.classList.remove("playing");
+      e.classList.remove("playing");
+    }, r.play().catch((s) => {
+      console.error("Error playing recording:", s), e.classList.remove("playing");
     });
   }
 }
-customElements.define("tj-pronunciation", m);
+customElements.define("tj-pronunciation", f);

@@ -1183,6 +1183,7 @@ class TjChapterBook extends HTMLElement {
     }
 
     render(data) {
+        if (!data) return;
         this.hasAnyTranslations = TjChapterBook.bookHasAnyTranslations(data);
 
         // Calculate absolute total questions
@@ -1254,7 +1255,7 @@ class TjChapterBook extends HTMLElement {
             </header>
 
             <div class="chapters-container" translate="no">
-                ${data.chapters.map((chapter, index) => this.renderChapter(chapter, index)).join('')}
+                ${data.chapters ? data.chapters.map((chapter, index) => this.renderChapter(chapter, index)).join('') : '<p>No chapters found.</p>'}
             </div>
 
             <footer class="book-footer">

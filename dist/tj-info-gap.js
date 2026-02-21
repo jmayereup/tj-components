@@ -1,9 +1,117 @@
-var x = Object.defineProperty;
-var w = (b, e, t) => e in b ? x(b, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : b[e] = t;
-var v = (b, e, t) => w(b, typeof e != "symbol" ? e + "" : e, t);
-const h = class h extends HTMLElement {
+var k = Object.defineProperty;
+var R = (h, e, t) => e in h ? k(h, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : h[e] = t;
+var w = (h, e, t) => R(h, typeof e != "symbol" ? e + "" : e, t);
+const I = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-apple-system,sans-serif;max-width:800px;margin:0 auto;margin-bottom:2rem;background-color:transparent!important;--tj-primary: #22d3ee;--tj-bg-color: #0f172a;--tj-card-bg: #1e293b;--tj-text-color: #f1f5f9;--tj-text-muted: #94a3b8;--tj-border-color: rgba(255, 255, 255, .1);--tj-accent-color: #22d3ee}.container,.container *,.container *:before,.container *:after{box-sizing:border-box;background-color:transparent}.container{border:1px solid var(--tj-border-color, #e2e8f0);padding:24px;border-radius:8px;background-color:var(--tj-card-bg, #ffffff)!important;box-shadow:0 4px 6px -1px #0000001a;color:var(--tj-text-color, #1e293b);position:relative;overflow:hidden}.header-row{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #f1f5f9;margin-bottom:10px;padding-bottom:10px}.header-info h2{margin:0;color:var(--tj-primary, #1e293b);font-family:Outfit,sans-serif}.mode-badge{font-size:.8em;color:#64748b;font-weight:600;text-transform:uppercase;margin-top:4px}.header-controls{display:flex;align-items:center;gap:12px}.progress-info{background:#f1f5f9;padding:6px 14px;border-radius:12px;font-size:.9em;font-weight:600;color:#64748b;white-space:nowrap}.icon-btn{background:none;border:1px solid #e2e8f0;padding:8px;border-radius:8px;cursor:pointer;color:#475569;transition:all .2s}.icon-btn:hover{background-color:#f1f5f9;color:#2563eb;border-color:#2563eb}.scenario{color:#475569;font-style:italic;margin-bottom:24px}.section-title{font-size:1.1em;font-weight:700;color:#0f172a;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid #e2e8f0}.mode-selection{margin-bottom:24px;padding:16px;background:#ffffff08;border-radius:8px;border:1px solid var(--tj-border-color);color:var(--tj-text-color)}.mode-buttons{display:flex;gap:12px;margin-top:10px}.mode-btn{flex:1;padding:12px;border:2px solid var(--tj-border-color);border-radius:6px;background:#ffffff0d;color:var(--tj-text-color);cursor:pointer;font-weight:600;transition:all .2s}.mode-btn.active{border-color:var(--tj-primary);background:#22d3ee1a;color:var(--tj-primary)}.info-card{background-color:#f0f9ff;border-left:4px solid #0284c7;padding:12px 16px;margin-bottom:12px;border-radius:0 4px 4px 0;color:#0369a1;font-weight:500}.question-card{background-color:#f8fafc;border:1px solid #e2e8f0;padding:16px;margin-bottom:16px;border-radius:6px}.question-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:10px}.question-text{margin:0;color:#1e293b;line-height:1.4}.tts-btn{display:flex;align-items:center;gap:6px;background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:.85em;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap}.tts-btn:hover{background:#1d4ed8}.tts-btn svg{width:16px;height:16px}.options-group{display:flex;flex-direction:column;gap:8px}.mc-option{display:flex;align-items:center;padding:10px 12px;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;transition:all .2s;background-color:#fff}.mc-option:hover:not(.correct):not(.incorrect):not(.correct-highlight){background-color:#f1f5f9}.mc-option input{margin-right:12px;cursor:pointer}.mc-option.correct{background-color:#dcfce7;border-color:#22c55e;color:#166534;font-weight:700}.mc-option.correct-highlight{border:2px dashed #22c55e;background-color:#f0fdf4}.mc-option.incorrect{background-color:#fee2e2;border-color:#ef4444;color:#991b1b}.mc-option[disabled],.mc-option input[disabled],.verbal-check[disabled]{cursor:default}.partner-question{border-left:4px solid #8b5cf6}.recording-controls{margin-top:12px}.btn-group{display:flex;gap:10px}.record-btn,.play-recorded-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;border:1px solid #e2e8f0;font-weight:600;cursor:pointer;transition:all .2s;font-size:.9em}.record-btn{background:#fff;color:#475569}.record-btn:hover{background:#f8fafc;border-color:#cbd5e1}.record-btn.recording{background:#fee2e2;border-color:#ef4444;color:#dc2626;animation:pulse 1.5s infinite}.record-btn.has-recording{border-color:#8b5cf6;color:#7c3aed}.play-recorded-btn{background:#f5f3ff;color:#7c3aed;border-color:#ddd6fe}.play-recorded-btn:hover{background:#ede9fe}.play-recorded-btn.playing{background:#7c3aed;color:#fff}@keyframes pulse{0%{opacity:1}50%{opacity:.7}to{opacity:1}}.instruction-banner{display:flex;align-items:center;gap:8px;background:#f5f3ff;color:#5b21b6;padding:10px 14px;border-radius:6px;margin-bottom:16px;font-size:.9em;font-weight:500;border:1px solid #ddd6fe}.instruction-banner svg{flex-shrink:0}.footer-actions{margin-top:30px;display:none;justify-content:center;padding-top:20px;border-top:1px solid #f1f5f9}.complete-btn{background-color:#2563eb;color:#fff;border:none;padding:12px 32px;border-radius:6px;font-weight:700;cursor:pointer;font-size:1.1em;transition:background .2s}.complete-btn:hover{background-color:#1d4ed8}.score-screen{text-align:center;padding:40px}.score-circle{width:150px;height:150px;border-radius:50%;background:#ffffff0d;border:8px solid var(--tj-primary);margin:0 auto 30px;display:flex;flex-direction:column;justify-content:center;align-items:center}.score-value{font-size:2em;font-weight:800;color:var(--tj-text-color)}.score-percent{font-size:1.2em;font-weight:600;color:var(--tj-primary)}.score-actions{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:8px}.empty-state{color:#94a3b8;font-style:italic}.role-grid{display:flex;gap:12px;margin-top:15px}.role-btn{flex:1;padding:16px;font-size:16px;font-weight:700;cursor:pointer;background-color:#f1f5f9;border:2px solid #cbd5e1;border-radius:8px;transition:all .2s}.role-btn:hover{background-color:#e2e8f0;border-color:#94a3b8}.report-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.report-btn:hover{background:#1d4ed8}.report-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172acc;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1000}.report-modal{background:var(--tj-card-bg);color:var(--tj-text-color);width:92%;max-width:420px;padding:28px 24px;border-radius:16px;box-shadow:0 25px 50px -12px #00000080;text-align:center;max-height:90vh;overflow-y:auto;border:1px solid var(--tj-border-color)}.report-modal h2{margin:8px 0 4px;color:var(--tj-primary)}.report-modal p{color:var(--tj-text-muted);margin:0 0 16px;font-size:.95em}.report-icon{font-size:2.5em;margin-bottom:4px}.report-modal input{display:block;width:100%;box-sizing:border-box;padding:12px 14px;margin-bottom:12px;border:1px solid #e2e8f0;border-radius:8px;font-size:1em;outline:none;transition:border-color .2s}.report-modal input:focus{border-color:#2563eb}.generate-btn{width:100%;padding:13px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s;margin-bottom:8px}.generate-btn:hover{background:#1d4ed8}.cancel-btn{background:none;border:none;color:#94a3b8;font-size:.9em;cursor:pointer;text-decoration:underline}.report-area{text-align:left}.rc-header{text-align:center;margin-bottom:16px}.rc-icon{font-size:2em}.rc-title{font-size:1.3em;font-weight:800;color:var(--tj-text-color);margin:4px 0 2px}.rc-activity{font-size:.9em;color:var(--tj-text-muted)}.rc-student{display:flex;justify-content:space-between;align-items:center;background:#ffffff0d;border:1px solid var(--tj-border-color);border-radius:8px;padding:10px 14px;margin-bottom:16px}.rc-label{font-size:.8em;font-weight:700;color:var(--tj-text-muted);text-transform:uppercase}.rc-value{font-weight:700;color:var(--tj-text-color)}.rc-number{color:var(--tj-text-muted);font-weight:400}.rc-score-row{display:flex;align-items:center;gap:16px;margin-bottom:10px}.rc-score-circle{width:80px;height:80px;border-radius:50%;background:#ffffff0d;border:6px solid var(--tj-primary);display:flex;flex-direction:column;justify-content:center;align-items:center;flex-shrink:0}.rc-score-val{font-size:1.1em;font-weight:800;color:var(--tj-text-color);line-height:1.1}.rc-score-pct{font-size:.85em;font-weight:700;color:var(--tj-primary)}.rc-score-label{font-size:1.1em;font-weight:700;color:var(--tj-text-color)}.rc-bar-track{height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}.rc-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:4px;transition:width .6s ease}.rc-details{border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:16px}.rc-detail-row{display:flex;justify-content:space-between;padding:9px 14px;font-size:.9em;border-bottom:1px solid #f1f5f9}.rc-detail-row:last-child{border-bottom:none}.rc-detail-row span:first-child{color:#64748b}.rc-detail-row span:last-child{font-weight:600;color:#1e293b}.rc-combined{background:linear-gradient(135deg,#f0f9ff,#eff6ff);border:1px solid #bae6fd;border-radius:10px;padding:14px 16px;margin-bottom:16px;text-align:center}.rc-combined-title{font-size:.95em;font-weight:700;color:#0c4a6e;margin-bottom:8px}.rc-combined-score{font-size:1.4em;font-weight:800;color:#1e293b;margin-bottom:8px}.rc-combined-pct{color:#2563eb}.rc-actions{margin-top:16px}.rc-close-btn{width:100%;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.rc-close-btn:hover{background:#16a34a}.single-player-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}@media (max-width: 768px){.single-player-layout{grid-template-columns:1fr;gap:0}.single-player-layout .section-title:first-child{margin-top:12px}}.voice-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ab3;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000}.voice-card{background:var(--tj-card-bg);color:var(--tj-text-color);width:90%;max-width:400px;max-height:80vh;border-radius:1.2em;box-shadow:0 20px 25px -5px #0006;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--tj-border-color)}.voice-card-header{padding:16px 20px;border-bottom:1px solid var(--tj-border-color);display:flex;justify-content:space-between;align-items:center}.voice-card-header h3{margin:0;font-size:1.2em;color:var(--tj-primary)}.close-voice-btn{background:none;border:none;font-size:24px;cursor:pointer;color:var(--tj-text-muted)}.voice-list{padding:10px;overflow-y:auto;flex:1}.voice-option-btn{width:100%;text-align:left;padding:12px 16px;margin-bottom:6px;border:1px solid var(--tj-border-color);border-radius:8px;background:#ffffff08;color:var(--tj-text-color);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .2s}.voice-option-btn:hover{background-color:#ffffff14;border-color:var(--tj-primary)}.voice-option-btn.active{background:#22d3ee1a;border-color:var(--tj-primary);color:var(--tj-primary);font-weight:600}.badge{background:#dcfce7;color:#166534;font-size:.7em;padding:2px 8px;border-radius:10px;font-weight:700}.combined-score{margin-top:30px;padding:20px 24px;background:#ffffff08;border:1px solid var(--tj-border-color);border-radius:12px;text-align:center}.combined-header{font-size:1.1em;font-weight:700;color:var(--tj-primary);margin-bottom:12px}.combined-stats{display:flex;justify-content:center;gap:24px;margin-bottom:12px}.combined-value{font-size:1.8em;font-weight:800;color:#1e293b}.combined-percent{font-size:1.8em;font-weight:800;color:#2563eb}.combined-bar-track{height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden}.combined-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:5px;transition:width .6s ease}.combined-pending{background:#ffffff05;border-color:var(--tj-border-color)}.combined-note{color:#64748b;font-size:.9em;margin:0}", S = `<div class="container">
+  <!-- Selection Screen -->
+  <div id="selection-screen" style="display: none;">
+    <h2 id="topic-title"></h2>
+    <p class="scenario" id="scenario-desc"></p>
+
+    <div class="mode-selection">
+      <p><strong>Step 1: Choose Game Mode</strong></p>
+      <div class="mode-buttons">
+        <button class="mode-btn" id="mode-multi">Collaborative (Multi-device)</button>
+        <button class="mode-btn" id="mode-single">Single Player (TTS Partners)</button>
+      </div>
+    </div>
+
+    <div class="player-selection">
+      <p><strong>Step 2: Select your player number:</strong></p>
+      <div class="role-grid" id="button-container"></div>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game-screen" style="display: none;">
+    <div class="header-row">
+      <div class="header-info">
+        <h2 id="game-topic"></h2>
+        <div class="mode-badge" id="mode-badge"></div>
+      </div>
+      <div class="header-controls">
+        <button id="voice-btn" class="icon-btn" title="Choose Voice" style="display: none;">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z" />
+          </svg>
+        </button>
+        <div class="progress-info" id="progress-info">0 / 0 Answered</div>
+      </div>
+    </div>
+
+    <div id="layout-container">
+      <div class="info-column">
+        <div class="section-title">Your partner will ask you questions about this passage.</div>
+        <div id="my-texts"></div>
+      </div>
+
+      <div id="partner-column" class="partner-column" style="display: none;">
+        <div class="section-title">Partner's Questions (For you)</div>
+        <div class="instruction-banner">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+          </svg>
+          Listen and record your answer.
+        </div>
+        <div id="partner-questions"></div>
+      </div>
+    </div>
+
+    <div class="section-title">Your partner has the answer to these questions.</div>
+    <div id="my-questions"></div>
+
+    <div id="footer-actions" class="footer-actions">
+      <button id="complete-btn" class="complete-btn">Complete & Show Score</button>
+    </div>
+  </div>
+
+  <!-- Score Screen -->
+  <div id="score-screen" style="display: none;" class="score-screen">
+    <div class="score-circle">
+      <div class="score-value" id="final-score"></div>
+      <div class="score-percent" id="final-percent"></div>
+    </div>
+    <h2 id="score-msg"></h2>
+    <p id="score-details"></p>
+    <div class="score-actions">
+      <button class="role-btn" id="restart-btn">Try Again / Switch Player</button>
+      <button class="report-btn" id="report-btn" style="display: none;">📄 See Report Card</button>
+    </div>
+    <div id="combined-score-area"></div>
+  </div>
+</div>
+
+<!-- Voice Overlay -->
+<div class="voice-overlay" id="voice-overlay" style="display: none;">
+  <div class="voice-card">
+    <div class="voice-card-header">
+      <h3>Choose Voice</h3>
+      <button class="close-voice-btn" id="close-voice-btn">×</button>
+    </div>
+    <div class="voice-list" id="voice-list"></div>
+  </div>
+</div>
+
+<!-- Report Overlay -->
+<div class="report-overlay" id="report-overlay" style="display: none;">
+  <div class="report-modal">
+    <div class="initial-form" id="initial-form">
+      <div class="report-icon">📄</div>
+      <h2>Report Card</h2>
+      <p>Enter your details to generate your report.</p>
+      <input type="text" id="nickname-input" placeholder="Your Nickname" autocomplete="off">
+      <input type="text" id="number-input" placeholder="Student Number" autocomplete="off" inputmode="numeric">
+      <button class="generate-btn" id="generate-btn">Generate Report Card</button>
+      <button class="cancel-btn" id="cancel-btn">Cancel</button>
+    </div>
+    <div class="report-area" id="report-area" style="display: none;"></div>
+  </div>
+</div>
+`, p = class p extends HTMLElement {
   constructor() {
-    super(), this.attachShadow({ mode: "open" }), this.activityData = null, this.currentPlayerId = null, this.score = 0, this.answeredCount = 0, this.totalQuestions = 0, this.isCompleted = !1, this.studentInfo = { nickname: "", number: "" }, this.isSinglePlayer = !1, this.selectedVoiceName = null, this.isPlaying = !1, h._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList()), this.recordedBlobs = /* @__PURE__ */ new Map(), this.mediaRecorder = null, this.isRecordingId = null, this.recordingStartTime = 0, this.isPlayingRecordingId = null;
+    super(), this.attachShadow({ mode: "open" }), this.activityData = null, this.currentPlayerId = null, this.score = 0, this.answeredCount = 0, this.totalQuestions = 0, this.isCompleted = !1, this.studentInfo = { nickname: "", number: "" }, this.isSinglePlayer = !1, this.selectedVoiceName = null, this.isPlaying = !1, p._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList()), this.recordedBlobs = /* @__PURE__ */ new Map(), this.mediaRecorder = null, this.isRecordingId = null, this.recordingStartTime = 0, this.isPlayingRecordingId = null, this.shadowRoot.innerHTML = `
+          <style>${I}</style>
+          ${S}
+        `;
   }
   connectedCallback() {
     setTimeout(() => {
@@ -17,45 +125,24 @@ const h = class h extends HTMLElement {
     }, 0);
   }
   render() {
-    this.currentPlayerId === null ? this.renderSelectionScreen() : this.isCompleted ? this.renderScoreScreen() : this.renderGameScreen();
+    this.shadowRoot.getElementById("selection-screen").style.display = "none", this.shadowRoot.getElementById("game-screen").style.display = "none", this.shadowRoot.getElementById("score-screen").style.display = "none", this.currentPlayerId === null ? this.renderSelectionScreen() : this.isCompleted ? this.renderScoreScreen() : this.renderGameScreen();
   }
   renderSelectionScreen() {
-    const e = this.activityData.player_count;
-    let t = `
-      <style>${this.getBaseStyles()}</style>
-      <div class="container">
-        <h2>${this.activityData.topic}</h2>
-        <p class="scenario">${this.activityData.scenario_description}</p>
-        
-        <div class="mode-selection">
-            <p><strong>Step 1: Choose Game Mode</strong></p>
-            <div class="mode-buttons">
-                <button class="mode-btn ${this.isSinglePlayer ? "" : "active"}" id="mode-multi">
-                    Collaborative (Multi-device)
-                </button>
-                <button class="mode-btn ${this.isSinglePlayer ? "active" : ""}" id="mode-single">
-                    Single Player (TTS Partners)
-                </button>
-            </div>
-        </div>
-
-        <div class="player-selection">
-            <p><strong>Step 2: Select your player number:</strong></p>
-            <div class="role-grid" id="button-container"></div>
-        </div>
-      </div>
-    `;
-    this.shadowRoot.innerHTML = t, this.shadowRoot.getElementById("mode-multi").onclick = () => {
+    const e = this.activityData, t = this.shadowRoot.getElementById("selection-screen");
+    t.style.display = "block", this.shadowRoot.getElementById("topic-title").textContent = e.topic, this.shadowRoot.getElementById("scenario-desc").textContent = e.scenario_description;
+    const o = this.shadowRoot.getElementById("mode-multi"), r = this.shadowRoot.getElementById("mode-single");
+    o.classList.toggle("active", !this.isSinglePlayer), r.classList.toggle("active", this.isSinglePlayer), o.onclick = () => {
       this.isSinglePlayer = !1, this.render();
-    }, this.shadowRoot.getElementById("mode-single").onclick = () => {
+    }, r.onclick = () => {
       this.isSinglePlayer = !0, this.render();
     };
-    const o = this.shadowRoot.getElementById("button-container");
-    for (let r = 1; r <= e; r++) {
-      const i = document.createElement("button");
-      i.className = "role-btn", i.textContent = `Player ${r}`, i.onclick = () => {
-        this.currentPlayerId = r, this.calculateTotalQuestions(), this.render();
-      }, o.appendChild(i);
+    const i = this.shadowRoot.getElementById("button-container");
+    i.innerHTML = "";
+    for (let s = 1; s <= e.player_count; s++) {
+      const n = document.createElement("button");
+      n.className = "role-btn", n.textContent = `Player ${s}`, n.onclick = () => {
+        this.currentPlayerId = s, this.calculateTotalQuestions(), this.render();
+      }, i.appendChild(n);
     }
   }
   calculateTotalQuestions() {
@@ -66,210 +153,123 @@ const h = class h extends HTMLElement {
     });
   }
   renderGameScreen() {
-    const e = this.activityData, t = this.currentPlayerId;
-    let o = "", r = "", i = "";
-    e.blocks.forEach((a, d) => {
-      a.text_holder_id === t && (o += `<div class="info-card"><p>${a.text}</p></div>`), a.questions.forEach((c, l) => {
-        if (c.asker_id === t) {
-          const p = `q_${d}_${l}`;
-          let y = c.options.map((f, m) => `
-            <label class="mc-option" id="label_${p}_${m}">
-              <input type="radio" name="${p}" value="${f}" data-correct="${c.correct_answer}" data-label-id="label_${p}_${m}">
-              ${f}
-            </label>
-          `).join(""), u = "";
-          this.isSinglePlayer && (u = `
-                            <button class="tts-btn" data-text="${a.text}" title="Listen to Partner">
+    const e = this.activityData, t = this.currentPlayerId, o = this.shadowRoot.getElementById("game-screen");
+    o.style.display = "block", this.shadowRoot.getElementById("game-topic").textContent = `${e.topic} - Player ${t}`, this.shadowRoot.getElementById("mode-badge").textContent = this.isSinglePlayer ? "Single Player" : "Collaborative", this.shadowRoot.getElementById("progress-info").textContent = `${this.answeredCount} / ${this.totalQuestions} Answered`;
+    const r = this.shadowRoot.getElementById("voice-btn");
+    this.isSinglePlayer ? (r.style.display = "block", r.onclick = () => this._showVoiceOverlay()) : r.style.display = "none";
+    let i = "", s = "", n = "";
+    e.blocks.forEach((c, l) => {
+      c.text_holder_id === t && (i += `<div class="info-card"><p>${c.text}</p></div>`), c.questions.forEach((g, u) => {
+        const f = `q_${l}_${u}`;
+        if (g.asker_id === t) {
+          let b = g.options.map((y, x) => `
+                        <label class="mc-option" id="label_${f}_${x}">
+                          <input type="radio" name="${f}" value="${y}" data-correct="${g.correct_answer}" data-label-id="label_${f}_${x}">
+                          ${y}
+                        </label>
+                    `).join(""), v = "";
+          this.isSinglePlayer && (v = `
+                            <button class="tts-btn" data-text="${c.text}" title="Listen to Partner">
                                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                                     <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                                 </svg>
                                 Info
                             </button>
-                        `), r += `
-            <div class="question-card">
-              <div class="question-header">
-                <p class="question-text"><strong>Ask:</strong> "${c.question}"</p>
-                ${u}
-              </div>
-              <div class="options-group">
-                ${y}
-              </div>
-            </div>
-          `;
+                        `), s += `
+                        <div class="question-card">
+                          <div class="question-header">
+                            <p class="question-text"><strong>Ask:</strong> "${g.question}"</p>
+                            ${v}
+                          </div>
+                          <div class="options-group">
+                            ${b}
+                          </div>
+                        </div>
+                    `;
         } else if (this.isSinglePlayer) {
-          const p = `q_verbal_${d}_${l}`;
-          i += `
-                        <div class="question-card partner-question" data-qid="${p}">
+          const b = `q_verbal_${l}_${u}`;
+          n += `
+                        <div class="question-card partner-question" data-qid="${b}">
                             <div class="question-header">
                                 <p class="question-text"><strong>Partner asks:</strong> (Answer out loud)</p>
-                                <button class="tts-btn" data-text="${c.question}" title="Hear Question">
+                                <button class="tts-btn" data-text="${g.question}" title="Hear Question">
                                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                                         <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                                     </svg>
                                     Listen
                                 </button>
                             </div>
-                            <div class="recording-controls" id="rec-controls-${p}">
-                                ${this.renderRecordingButtons(p)}
+                            <div class="recording-controls" id="rec-controls-${b}">
+                                ${this.renderRecordingButtons(b)}
                             </div>
                         </div>
                     `;
         }
       });
-    });
-    let s = `
-      <style>${this.getBaseStyles()}</style>
-      <div class="container">
-        <div class="header-row">
-            <div class="header-info">
-                <h2>${e.topic} - Player ${t}</h2>
-                <div class="mode-badge">${this.isSinglePlayer ? "Single Player" : "Collaborative"}</div>
-            </div>
-            <div class="header-controls">
-                ${this.isSinglePlayer ? `
-                    <button id="voice-btn" class="icon-btn" title="Choose Voice">
-                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                            <path d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z"/>
-                        </svg>
-                    </button>
-                ` : ""}
-                <div class="progress-info">${this.answeredCount} / ${this.totalQuestions} Answered</div>
-            </div>
-        </div>
-        <div class="${this.isSinglePlayer ? "single-player-layout" : ""}">
-            <div class="info-column">
-                <div class="section-title">Your partner will ask you questions about this passage.</div>
-                ${o || '<p class="empty-state">You have no texts to read. Listen to your partners.</p>'}
-            </div>
-
-            ${this.isSinglePlayer && i ? `
-                <div class="partner-column">
-                    <div class="section-title">Partner's Questions (For you)</div>
-                    <div class="instruction-banner">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                            <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                        </svg>
-                        Listen and record your answer.
-                    </div>
-                    ${i}
-                </div>
-            ` : ""}
-        </div>
-
-        <div class="section-title">Your partner has the answer to these questions.</div>
-        ${r || '<p class="empty-state">You have no questions to ask right now.</p>'}
-
-        <div id="footer-actions" class="footer-actions" style="display: ${this.answeredCount === this.totalQuestions && this.totalQuestions > 0 ? "flex" : "none"}">
-            <button id="complete-btn" class="complete-btn">Complete & Show Score</button>
-        </div>
-      </div>
-
-      <div class="voice-overlay" id="voice-overlay" style="display: none;">
-        <div class="voice-card">
-            <div class="voice-card-header">
-                <h3>Choose Voice</h3>
-                <button class="close-voice-btn" id="close-voice-btn">×</button>
-            </div>
-            <div class="voice-list" id="voice-list"></div>
-        </div>
-      </div>
-    `;
-    this.shadowRoot.innerHTML = s, this.attachValidationListeners(), this.isSinglePlayer && (this.shadowRoot.getElementById("voice-btn").onclick = () => this._showVoiceOverlay(), this.shadowRoot.getElementById("close-voice-btn").onclick = () => this._hideVoiceOverlay(), this.shadowRoot.getElementById("voice-overlay").onclick = (a) => {
-      a.target.id === "voice-overlay" && this._hideVoiceOverlay();
-    }, this.shadowRoot.querySelectorAll(".tts-btn").forEach((a) => {
-      a.onclick = () => this._playTTS(a.getAttribute("data-text"));
-    }));
-    const n = this.shadowRoot.getElementById("complete-btn");
-    n && n.addEventListener("click", () => {
+    }), this.shadowRoot.getElementById("my-texts").innerHTML = i || '<p class="empty-state">You have no texts to read. Listen to your partners.</p>', this.shadowRoot.getElementById("my-questions").innerHTML = s || '<p class="empty-state">You have no questions to ask right now.</p>';
+    const a = this.shadowRoot.getElementById("partner-column"), d = this.shadowRoot.getElementById("layout-container");
+    this.isSinglePlayer && n ? (a.style.display = "block", this.shadowRoot.getElementById("partner-questions").innerHTML = n, d.classList.add("single-player-layout")) : (a.style.display = "none", d.classList.remove("single-player-layout")), this.shadowRoot.getElementById("footer-actions").style.display = this.answeredCount === this.totalQuestions && this.totalQuestions > 0 ? "flex" : "none", this.attachValidationListeners(), this.shadowRoot.querySelectorAll(".tts-btn").forEach((c) => {
+      c.onclick = () => this._playTTS(c.getAttribute("data-text"));
+    }), this.shadowRoot.getElementById("complete-btn").onclick = () => {
       this.isCompleted = !0, this.render();
-    });
+    }, this.shadowRoot.getElementById("close-voice-btn").onclick = () => this._hideVoiceOverlay(), this.shadowRoot.getElementById("voice-overlay").onclick = (c) => {
+      c.target.id === "voice-overlay" && this._hideVoiceOverlay();
+    };
   }
   _isLastInstance() {
-    const e = h._instances;
+    const e = p._instances;
     return e.length > 1 && e[e.length - 1] === this;
   }
   _getCombinedScore() {
-    const e = h._instances;
+    const e = p._instances;
     let t = 0, o = 0, r = !0;
     return e.forEach((i) => {
       t += i.score, o += i.totalQuestions, i.isCompleted || (r = !1);
     }), { totalScore: t, totalQuestions: o, allDone: r, count: e.length };
   }
   renderScoreScreen() {
-    const e = Math.round(this.score / this.totalQuestions * 100) || 0;
-    let t = "🎉";
-    e < 50 ? t = "💪" : e < 80 && (t = "👍");
-    let o = "";
-    if (this._isLastInstance()) {
-      const s = this._getCombinedScore();
-      if (s.allDone) {
-        const n = Math.round(s.totalScore / s.totalQuestions * 100) || 0;
-        let a = "🏆";
-        n < 50 ? a = "💪" : n < 80 && (a = "⭐"), o = `
+    const e = this.shadowRoot.getElementById("score-screen");
+    e.style.display = "block";
+    const t = Math.round(this.score / this.totalQuestions * 100) || 0;
+    let o = "🎉";
+    t < 50 ? o = "💪" : t < 80 && (o = "👍"), this.shadowRoot.getElementById("final-score").textContent = `${this.score}/${this.totalQuestions}`, this.shadowRoot.getElementById("final-percent").textContent = `${t}%`, this.shadowRoot.getElementById("score-msg").textContent = `${o} ${t >= 80 ? "Excellent!" : t >= 50 ? "Good effort!" : "Keep practicing!"}`, this.shadowRoot.getElementById("score-details").textContent = `You completed the "${this.activityData.topic}" activity as Player ${this.currentPlayerId}.`;
+    const r = this._isLastInstance(), i = this.shadowRoot.getElementById("report-btn");
+    r ? (i.style.display = "inline-flex", i.onclick = () => this._showReportOverlay()) : i.style.display = "none";
+    const s = this.shadowRoot.getElementById("combined-score-area");
+    if (s.innerHTML = "", r) {
+      const n = this._getCombinedScore();
+      if (n.allDone) {
+        const a = Math.round(n.totalScore / n.totalQuestions * 100) || 0;
+        let d = "🏆";
+        a < 50 ? d = "💪" : a < 80 && (d = "⭐"), s.innerHTML = `
                     <div class="combined-score">
-                        <div class="combined-header">${a} Combined Score — All ${s.count} Activities</div>
+                        <div class="combined-header">${d} Combined Score — All ${n.count} Activities</div>
                         <div class="combined-stats">
-                            <div class="combined-value">${s.totalScore} / ${s.totalQuestions}</div>
-                            <div class="combined-percent">${n}%</div>
+                            <div class="combined-value">${n.totalScore} / ${n.totalQuestions}</div>
+                            <div class="combined-percent">${a}%</div>
                         </div>
                         <div class="combined-bar-track">
-                            <div class="combined-bar-fill" style="width: ${n}%"></div>
+                            <div class="combined-bar-fill" style="width: ${a}%"></div>
                         </div>
                     </div>
                 `;
-      } else
-        o = `
+      } else {
+        const a = p._instances.filter((d) => d.isCompleted).length;
+        s.innerHTML = `
                     <div class="combined-score combined-pending">
                         <div class="combined-header">📋 Activity Progress</div>
-                        <p class="combined-note">${h._instances.filter((a) => a.isCompleted).length} of ${s.count} activities completed. Finish all to see your combined score.</p>
+                        <p class="combined-note">${a} of ${n.count} activities completed. Finish all to see your combined score.</p>
                     </div>
                 `;
+      }
     }
-    const r = this._isLastInstance();
-    let i = `
-      <style>${this.getBaseStyles()}</style>
-      <div class="container score-screen">
-        <div class="score-circle">
-            <div class="score-value">${this.score}/${this.totalQuestions}</div>
-            <div class="score-percent">${e}%</div>
-        </div>
-        <h2>${t} ${e >= 80 ? "Excellent!" : e >= 50 ? "Good effort!" : "Keep practicing!"}</h2>
-        <p>You completed the "${this.activityData.topic}" activity as Player ${this.currentPlayerId}.</p>
-        <div class="score-actions">
-            <button class="role-btn" id="restart-btn">Try Again / Switch Player</button>
-            ${r ? '<button class="report-btn" id="report-btn">📄 See Report Card</button>' : ""}
-        </div>
-        ${o}
-      </div>
-
-      ${r ? `
-      <div class="report-overlay" id="report-overlay" style="display:none;">
-        <div class="report-modal">
-          <div class="initial-form" id="initial-form">
-            <div class="report-icon">📄</div>
-            <h2>Report Card</h2>
-            <p>Enter your details to generate your report.</p>
-            <input type="text" id="nickname-input" placeholder="Your Nickname" autocomplete="off">
-            <input type="text" id="number-input" placeholder="Student Number" autocomplete="off" inputmode="numeric">
-            <button class="generate-btn" id="generate-btn">Generate Report Card</button>
-            <button class="cancel-btn" id="cancel-btn">Cancel</button>
-          </div>
-          <div class="report-area" id="report-area" style="display:none;"></div>
-        </div>
-      </div>
-      ` : ""}
-`;
-    this.shadowRoot.innerHTML = i, this.scrollIntoView({ behavior: "smooth", block: "start" }), this.shadowRoot.getElementById("restart-btn").addEventListener("click", () => {
+    this.scrollIntoView({ behavior: "smooth", block: "start" }), this.shadowRoot.getElementById("restart-btn").onclick = () => {
       this.score = 0, this.answeredCount = 0, this.isCompleted = !1, this.currentPlayerId = null, this.render();
-    }), r && (this.shadowRoot.getElementById("report-btn").addEventListener("click", () => {
-      this._showReportOverlay();
-    }), this.shadowRoot.getElementById("generate-btn").addEventListener("click", () => {
-      this._generateReport();
-    }), this.shadowRoot.getElementById("cancel-btn").addEventListener("click", () => {
+    }, r && (this.shadowRoot.getElementById("generate-btn").onclick = () => this._generateReport(), this.shadowRoot.getElementById("cancel-btn").onclick = () => {
       this.shadowRoot.getElementById("report-overlay").style.display = "none";
-    }), this.shadowRoot.getElementById("report-overlay").addEventListener("click", (s) => {
-      s.target.id === "report-overlay" && (this.shadowRoot.getElementById("report-overlay").style.display = "none");
-    }));
+    }, this.shadowRoot.getElementById("report-overlay").onclick = (n) => {
+      n.target.id === "report-overlay" && (this.shadowRoot.getElementById("report-overlay").style.display = "none");
+    });
   }
   _showReportOverlay() {
     const e = this.shadowRoot.getElementById("report-overlay");
@@ -458,171 +458,8 @@ const h = class h extends HTMLElement {
       }, e.appendChild(n);
     });
   }
-  getBaseStyles() {
-    return `
-      :host { display: block; font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; margin-bottom: 2rem; }
-      .container { border: 1px solid #e2e8f0; padding: 24px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-      
-      .header-row { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f1f5f9; margin-bottom: 10px; padding-bottom: 10px; }
-      .header-info h2 { margin: 0; color: #1e293b; }
-      .mode-badge { font-size: 0.8em; color: #64748b; font-weight: 600; text-transform: uppercase; margin-top: 4px; }
-      
-      .header-controls { display: flex; align-items: center; gap: 12px; }
-      .progress-info { background: #f1f5f9; padding: 6px 14px; border-radius: 12px; font-size: 0.9em; font-weight: 600; color: #64748b; white-space: nowrap; }
-      
-      .icon-btn { background: none; border: 1px solid #e2e8f0; padding: 8px; border-radius: 8px; cursor: pointer; color: #475569; transition: all 0.2s; }
-      .icon-btn:hover { background-color: #f1f5f9; color: #2563eb; border-color: #2563eb; }
-
-      .scenario { color: #475569; font-style: italic; margin-bottom: 24px; }
-      .section-title { font-size: 1.1em; font-weight: bold; color: #0f172a; margin: 24px 0 12px 0; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; }
-      
-      .mode-selection { margin-bottom: 24px; padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
-      .mode-buttons { display: flex; gap: 12px; margin-top: 10px; }
-      .mode-btn { flex: 1; padding: 12px; border: 2px solid #cbd5e1; border-radius: 6px; background: white; cursor: pointer; font-weight: 600; transition: all 0.2s; }
-      .mode-btn.active { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
-
-      .info-card { background-color: #f0f9ff; border-left: 4px solid #0284c7; padding: 12px 16px; margin-bottom: 12px; border-radius: 0 4px 4px 0; color: #0369a1; font-weight: 500;}
-      
-      .question-card { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; margin-bottom: 16px; border-radius: 6px; }
-      .question-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 10px; }
-      .question-text { margin: 0; color: #1e293b; line-height: 1.4; }
-      
-      .tts-btn { display: flex; align-items: center; gap: 6px; background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
-      .tts-btn:hover { background: #1d4ed8; }
-      .tts-btn svg { width: 16px; height: 16px; }
-
-      .options-group { display: flex; flex-direction: column; gap: 8px; }
-      .mc-option { display: flex; align-items: center; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; transition: all 0.2s; background-color: white; }
-      .mc-option:hover:not(.correct):not(.incorrect):not(.correct-highlight) { background-color: #f1f5f9; }
-      .mc-option input { margin-right: 12px; cursor: pointer; }
-      
-      .mc-option.correct { background-color: #dcfce7; border-color: #22c55e; color: #166534; font-weight: bold; }
-      .mc-option.correct-highlight { border: 2px dashed #22c55e; background-color: #f0fdf4; }
-      .mc-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
-      .mc-option[disabled], .mc-option input[disabled], .verbal-check[disabled] { cursor: default; }
-
-      .partner-question { border-left: 4px solid #8b5cf6; }
-      .recording-controls { margin-top: 12px; }
-      
-      .btn-group { display: flex; gap: 10px; }
-      
-      .record-btn, .play-recorded-btn { 
-        display: flex; align-items: center; gap: 8px; 
-        padding: 8px 16px; border-radius: 8px; border: 1px solid #e2e8f0;
-        font-weight: 600; cursor: pointer; transition: all 0.2s;
-        font-size: 0.9em;
-      }
-      
-      .record-btn { background: white; color: #475569; }
-      .record-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
-      .record-btn.recording { background: #fee2e2; border-color: #ef4444; color: #dc2626; animation: pulse 1.5s infinite; }
-      .record-btn.has-recording { border-color: #8b5cf6; color: #7c3aed; }
-      
-      .play-recorded-btn { background: #f5f3ff; color: #7c3aed; border-color: #ddd6fe; }
-      .play-recorded-btn:hover { background: #ede9fe; }
-      .play-recorded-btn.playing { background: #7c3aed; color: white; }
-
-      @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.7; }
-        100% { opacity: 1; }
-      }
-      
-      .instruction-banner { display: flex; align-items: center; gap: 8px; background: #f5f3ff; color: #5b21b6; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9em; font-weight: 500; border: 1px solid #ddd6fe; }
-      .instruction-banner svg { flex-shrink: 0; }
-
-      .footer-actions { margin-top: 30px; display: none; justify-content: center; padding-top: 20px; border-top: 1px solid #f1f5f9; }
-      .complete-btn { background-color: #2563eb; color: white; border: none; padding: 12px 32px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1em; transition: background 0.2s; }
-      .complete-btn:hover { background-color: #1d4ed8; }
-
-      .score-screen { text-align: center; padding: 40px; }
-      .score-circle { width: 150px; height: 150px; border-radius: 50%; background: #f1f5f9; border: 8px solid #2563eb; margin: 0 auto 30px auto; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-      .score-value { font-size: 2em; font-weight: 800; color: #1e293b; }
-      .score-percent { font-size: 1.2em; font-weight: 600; color: #2563eb; }
-      .score-actions { display: flex; flex-direction: column; gap: 12px; align-items: center; margin-top: 8px; }
-      
-      .empty-state { color: #94a3b8; font-style: italic; }
-      
-      .role-grid { display: flex; gap: 12px; margin-top: 15px; }
-      .role-btn { flex: 1; padding: 16px; font-size: 16px; font-weight: bold; cursor: pointer; background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; transition: all 0.2s; }
-      .role-btn:hover { background-color: #e2e8f0; border-color: #94a3b8; }
-      .report-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-      .report-btn:hover { background: #1d4ed8; }
-
-      /* Report Overlay */
-      .report-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-      .report-modal { background: white; width: 92%; max-width: 420px; padding: 28px 24px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); text-align: center; max-height: 90vh; overflow-y: auto; }
-      .report-modal h2 { margin: 8px 0 4px; color: #1e293b; }
-      .report-modal p { color: #64748b; margin: 0 0 16px; font-size: 0.95em; }
-      .report-icon { font-size: 2.5em; margin-bottom: 4px; }
-      .report-modal input { display: block; width: 100%; box-sizing: border-box; padding: 12px 14px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1em; outline: none; transition: border-color 0.2s; }
-      .report-modal input:focus { border-color: #2563eb; }
-      .generate-btn { width: 100%; padding: 13px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background 0.2s; margin-bottom: 8px; }
-      .generate-btn:hover { background: #1d4ed8; }
-      .cancel-btn { background: none; border: none; color: #94a3b8; font-size: 0.9em; cursor: pointer; text-decoration: underline; }
-
-      /* Report Card */
-      .report-area { text-align: left; }
-      .rc-header { text-align: center; margin-bottom: 16px; }
-      .rc-icon { font-size: 2em; }
-      .rc-title { font-size: 1.3em; font-weight: 800; color: #1e293b; margin: 4px 0 2px; }
-      .rc-activity { font-size: 0.9em; color: #64748b; }
-      .rc-student { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
-      .rc-label { font-size: 0.8em; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
-      .rc-value { font-weight: 700; color: #1e293b; }
-      .rc-number { color: #64748b; font-weight: 400; }
-      .rc-score-row { display: flex; align-items: center; gap: 16px; margin-bottom: 10px; }
-      .rc-score-circle { width: 80px; height: 80px; border-radius: 50%; background: #f1f5f9; border: 6px solid #2563eb; display: flex; flex-direction: column; justify-content: center; align-items: center; flex-shrink: 0; }
-      .rc-score-val { font-size: 1.1em; font-weight: 800; color: #1e293b; line-height: 1.1; }
-      .rc-score-pct { font-size: 0.85em; font-weight: 700; color: #2563eb; }
-      .rc-score-label { font-size: 1.1em; font-weight: 700; color: #1e293b; }
-      .rc-bar-track { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
-      .rc-bar-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #22c55e); border-radius: 4px; transition: width 0.6s ease; }
-      .rc-details { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
-      .rc-detail-row { display: flex; justify-content: space-between; padding: 9px 14px; font-size: 0.9em; border-bottom: 1px solid #f1f5f9; }
-      .rc-detail-row:last-child { border-bottom: none; }
-      .rc-detail-row span:first-child { color: #64748b; }
-      .rc-detail-row span:last-child { font-weight: 600; color: #1e293b; }
-      .rc-combined { background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%); border: 1px solid #bae6fd; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; text-align: center; }
-      .rc-combined-title { font-size: 0.95em; font-weight: 700; color: #0c4a6e; margin-bottom: 8px; }
-      .rc-combined-score { font-size: 1.4em; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
-      .rc-combined-pct { color: #2563eb; }
-      .rc-actions { margin-top: 16px; }
-      .rc-close-btn { width: 100%; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-      .rc-close-btn:hover { background: #16a34a; }
-
-      .single-player-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
-      @media (max-width: 768px) {
-        .single-player-layout { grid-template-columns: 1fr; gap: 0; }
-        .single-player-layout .section-title:first-child { margin-top: 12px; }
-      }
-
-      /* Voice Overlay Styles */
-      .voice-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-      .voice-card { background: white; width: 90%; max-width: 400px; max-height: 80vh; border-radius: 1.2em; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; overflow: hidden; }
-      .voice-card-header { padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-      .voice-card-header h3 { margin: 0; font-size: 1.2em; color: #1e293b; }
-      .close-voice-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; }
-      .voice-list { padding: 10px; overflow-y: auto; flex: 1; }
-      .voice-option-btn { width: 100%; text-align: left; padding: 12px 16px; margin-bottom: 6px; border: 1px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
-      .voice-option-btn:hover { background-color: #f8fafc; border-color: #cbd5e1; }
-      .voice-option-btn.active { background: #eff6ff; border-color: #3b82f6; color: #2563eb; font-weight: 600; }
-      .badge { background: #dcfce7; color: #166534; font-size: 0.7em; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
-
-      /* Combined Score */
-      .combined-score { margin-top: 30px; padding: 20px 24px; background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%); border: 1px solid #bae6fd; border-radius: 12px; text-align: center; }
-      .combined-header { font-size: 1.1em; font-weight: 700; color: #0c4a6e; margin-bottom: 12px; }
-      .combined-stats { display: flex; justify-content: center; gap: 24px; margin-bottom: 12px; }
-      .combined-value { font-size: 1.8em; font-weight: 800; color: #1e293b; }
-      .combined-percent { font-size: 1.8em; font-weight: 800; color: #2563eb; }
-      .combined-bar-track { height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; }
-      .combined-bar-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #22c55e); border-radius: 5px; transition: width 0.6s ease; }
-      .combined-pending { background: #f8fafc; border-color: #e2e8f0; }
-      .combined-note { color: #64748b; font-size: 0.9em; margin: 0; }
-    `;
-  }
 };
 // Static registry of all instances on the page
-v(h, "_instances", []);
-let g = h;
-customElements.define("tj-info-gap", g);
+w(p, "_instances", []);
+let m = p;
+customElements.define("tj-info-gap", m);

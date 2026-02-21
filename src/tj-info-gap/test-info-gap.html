@@ -5,14 +5,71 @@
     <meta charset="UTF-8">
     <title>Info Gap: Reading & Multiple Choice</title>
     <script src="./index.js" type="module"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --tj-primary: #22d3ee;
+            --tj-bg-color: #0f172a;
+            --tj-card-bg: #1e293b;
+            --tj-text-color: #f1f5f9;
+            --tj-text-muted: #94a3b8;
+            --tj-border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--tj-bg-color);
+            color: var(--tj-text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: var(--tj-card-bg);
+            border-bottom: 1px solid var(--tj-border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            color: var(--tj-primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
         tj-info-gap:not(:defined) {
             display: none;
         }
     </style>
 </head>
 
-<body style="background-color: #f8fafc; padding: 40px;">
+<body>
+    <div class="header">
+        <h2>Info Gap Demo</h2>
+        <a href="/" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Home
+        </a>
+    </div>
+
+    <div class="container">
 
     <tj-info-gap>
         {
@@ -54,7 +111,7 @@
         }
 
     </tj-info-gap>
-
+    </div>
 </body>
 
 </html>
