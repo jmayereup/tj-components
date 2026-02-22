@@ -113,9 +113,8 @@ const styles = `
     }
 
     .chapters-container {
-        max-width: 48em;
         margin: 0 auto;
-        padding: 2em 1em;
+        padding: 1em 1em;
     }
 
     .chapters-container > * + * {
