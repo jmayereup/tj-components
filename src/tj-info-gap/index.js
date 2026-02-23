@@ -409,8 +409,9 @@ class TjInfoGap extends HTMLElement {
         const reportHtml = `
             <div class="rc-header">
                 <div class="rc-icon">📄</div>
-                <div class="rc-title">Report Card</div>
-                <div class="rc-activity">Info Gap — All ${combined.count} Activities</div>
+                <div class="rc-title">${this.activityData.topic || 'Info Gap Activity'}</div>
+                <div class="rc-subtitle">Report Card</div>
+                <div class="rc-activity">All ${combined.count} Activities</div>
             </div>
             <div class="rc-student">
                 <span class="rc-label">Student</span>

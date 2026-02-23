@@ -1747,7 +1747,8 @@ class TjQuizElement extends HTMLElement {
 
             resultScore.innerHTML = `
                 <div class="score-report-card">
-                    <div class="result-title">Performance Report</div>
+                    <div class="result-title">${this.title}</div>
+                    <div class="result-subtitle">Performance Report</div>
                     <div class="student-details">
                         <div><strong>NAME:</strong> ${nickname}</div>
                         <div><strong>ID:</strong> ${studentId}</div>

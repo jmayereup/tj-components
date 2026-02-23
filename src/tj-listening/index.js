@@ -608,8 +608,9 @@ class TjListening extends HTMLElement {
         const reportHtml = `
             <div class="rc-header">
                 <div class="rc-icon">📄</div>
-                <div class="rc-title">Report Card</div>
-                <div class="rc-activity">Listening — All ${combined.count} Lessons</div>
+                <div class="rc-title">${this.lessonData.title || 'Listening Practice'}</div>
+                <div class="rc-subtitle">Report Card</div>
+                <div class="rc-activity">All ${combined.count} Lessons</div>
             </div>
             <div class="rc-student">
                 <span class="rc-label">Student</span>
@@ -917,7 +918,8 @@ class TjListening extends HTMLElement {
   .rc-header { text-align: center; margin-bottom: 16px; }
   .rc-icon { font-size: 2em; }
   .rc-title { font-size: 1.3em; font-weight: 800; color: #1e293b; margin: 4px 0 2px; }
-  .rc-activity { font-size: 0.9em; color: #64748b; }
+  .rc-subtitle { font-size: 0.9em; font-weight: 600; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .rc-activity { font-size: 0.85em; color: #94a3b8; }
   .rc-student { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
   .rc-label { font-size: 0.8em; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
   .rc-value { font-weight: 700; color: #1e293b; }

@@ -580,6 +580,15 @@
   margin: 4px 0 2px;
 }
 
+.rc-subtitle {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--tj-text-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .rc-activity {
   font-size: 0.9em;
   color: var(--tj-text-muted);

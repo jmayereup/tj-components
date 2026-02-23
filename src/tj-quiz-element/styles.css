@@ -960,9 +960,18 @@ fieldset>legend {
     font-size: 1.5em;
     font-weight: 800;
     color: var(--primary-color);
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+}
+
+.result-subtitle {
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--subtle-text-light);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .student-details {
