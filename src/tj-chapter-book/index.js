@@ -1,4 +1,5 @@
 import { getBestVoice } from '../audio-utils.js';
+import { config } from '../tj-config.js';
 
 const styles = `
     @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
@@ -516,103 +517,125 @@ const styles = `
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         display: flex;
         flex-direction: column;
-        overflow: hidden;
+        overflow: auto;
         border: 1px solid var(--tj-card-border);
         position: relative;
     }
 
-    .report-header {
-        padding: 1.5em;
+    /* Report Card Content */
+    .rc-header { text-align: center; margin-bottom: 24px; }
+    .rc-icon { font-size: 2.5em; margin-bottom: 8px; }
+    .rc-title { font-size: 1.4em; font-weight: 700; color: var(--tj-accent-color); margin-bottom: 4px; }
+    .rc-subtitle { color: var(--tj-subtitle-color); font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.05em; }
+    .rc-student { background: var(--tj-card-bg); border: 1px solid var(--tj-card-border); border-radius: 12px; padding: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .rc-label { color: var(--tj-subtitle-color); font-size: 0.9em; font-weight: 600; }
+    .rc-value { font-weight: 700; color: var(--tj-text-color); text-align: right; }
+    .rc-number { color: var(--tj-subtitle-color); font-weight: 500; font-size: 0.9em; display: block; }
+    .rc-score-row { display: flex; align-items: center; gap: 20px; margin-bottom: 16px; }
+    .rc-score-circle { width: 80px; height: 80px; border-radius: 50%; background: var(--tj-btn-bg); color: var(--tj-accent-color); display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid var(--tj-accent-color); flex-shrink: 0; }
+    .rc-score-val { font-size: 1.5em; font-weight: 800; line-height: 1; }
+    .rc-score-pct { font-size: 0.85em; font-weight: 700; margin-top: 2px; }
+    .rc-score-label { font-size: 1.1em; font-weight: 700; color: var(--tj-text-color); }
+    .rc-bar-track { height: 8px; background: var(--tj-btn-bg); border-radius: 4px; overflow: hidden; }
+    .rc-bar-fill { height: 100%; background: var(--tj-accent-color); border-radius: 4px; }
+    .rc-details { background: var(--tj-btn-bg); padding: 16px; border-radius: 12px; margin-bottom: 24px; font-size: 0.9em; }
+    .rc-detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .rc-detail-row:last-child { margin-bottom: 0; }
+    .rc-detail-row span:first-child { color: var(--tj-subtitle-color); font-weight: 500; }
+    .rc-detail-row span:last-child { font-weight: 600; color: var(--tj-text-color); }
+    .rc-close-btn:hover { background: var(--tj-btn-bg); }
+
+    /* Official Submission Refinements */
+    .rc-submission-box {
+        margin-top: 20px;
+        padding: 20px;
         background: var(--tj-btn-bg);
-        border-bottom: 1px solid var(--tj-card-border);
-        text-align: center;
-    }
-
-    .report-header h2 {
-        color: var(--tj-accent-color);
-        margin: 0;
-        font-size: 1.5em;
-    }
-
-    .report-body {
-        padding: 2em;
-        overflow-y: auto;
-        color: var(--tj-text-color);
-    }
-
-    .report-info-grid {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 10px 20px;
-        margin-bottom: 2em;
-        font-size: 1em;
-    }
-
-    .report-info-label {
-        font-weight: bold;
-        color: var(--tj-subtitle-color);
-    }
-
-    .report-score-box {
-        background: var(--tj-quiz-bg);
-        padding: 1.5em;
         border-radius: 12px;
-        text-align: center;
-        margin-bottom: 2em;
         border: 1px solid var(--tj-card-border);
+        text-align: left;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
-    .report-score-value {
-        font-size: 2.5em;
-        font-weight: bold;
-        color: var(--tj-accent-color);
-        display: block;
-    }
-
-    .report-wrong-list {
-        margin-top: 1.5em;
-    }
-
-    .report-wrong-item {
-        padding: 12px;
-        border-bottom: 1px solid var(--tj-card-border);
-        font-size: 0.95em;
-    }
-
-    .report-wrong-item:last-child {
-        border-bottom: none;
-    }
-
-    .report-wrong-chapter {
-        font-size: 0.8em;
+    .rc-submission-header {
+        margin: 0 0 12px 0;
+        font-size: 0.85em;
         color: var(--tj-subtitle-color);
-        display: block;
-        margin-bottom: 4px;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
 
-    .close-report-btn {
-        margin: 1.5em auto;
-        display: block;
-        padding: 0.75em 2em;
+    .rc-teacher-code-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 16px;
+        border: 2px solid var(--tj-card-border);
+        border-radius: 10px;
+        font-size: 1em;
+        margin-bottom: 8px;
+        background: var(--tj-card-bg);
+        transition: all 0.2s ease;
+        outline: none;
+        font-family: inherit;
+        color: var(--tj-text-color);
+    }
+
+    .rc-teacher-code-input:focus {
+        border-color: var(--tj-accent-color);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    .rc-help-text {
+        margin: 4px 0 0 0;
+        font-size: 0.85em;
+        color: var(--tj-subtitle-color);
+        line-height: 1.4;
+    }
+
+    .rc-submit-btn {
+        width: 100%;
+        padding: 16px;
         background: var(--tj-accent-color);
         color: white;
         border: none;
-        border-radius: 9999px;
-        font-weight: bold;
+        border-radius: 12px;
+        font-size: 1.1em;
+        font-weight: 700;
         cursor: pointer;
-        width: fit-content;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        margin-bottom: 8px;
     }
 
-    .sticky-report.visible {
-        display: block;
-        animation: slideIn 0.3s ease-out;
+    .rc-submit-btn:hover:not(:disabled) {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
     }
 
-    @keyframes slideIn {
-        from { transform: translateY(100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
+    .rc-submit-btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+        background: var(--tj-subtitle-color);
+        box-shadow: none;
+    }
+
+    .rc-secondary-btn {
+        width: 100%;
+        padding: 14px;
+        background: lightgrey;
+        color: var(--tj-text-color);
+        border: 2px solid var(--tj-card-border);
+        border-radius: 12px;
+        font-size: 1em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .rc-secondary-btn:hover {
+        background: var(--tj-btn-bg);
+        border-color: var(--tj-subtitle-color);
     }
 
     /* Print Styles */
@@ -1000,6 +1023,9 @@ class TjChapterBook extends HTMLElement {
         this.currentUtterance = null;
         this.currentButtonId = null;
         this.isTextSwapped = false;
+        this.studentInfo = { nickname: '', number: '', homeroom: '', teacherCode: '' };
+        this.submissionUrl = config?.submissionUrl || 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
+        this.isSubmitting = false;
         this.ttsState = {
             status: 'idle',
             activeButtonId: null,
@@ -1263,8 +1289,9 @@ class TjChapterBook extends HTMLElement {
                     Score: <span id="score-tally">0</span> / <span id="total-tally">${this.absoluteTotalQuestions}</span>
                 </div>
                 <div class="student-inputs">
-                    <input type="text" id="student-name" placeholder="Student Name" required>
-                    <input type="text" id="student-id" placeholder="Student ID" required>
+                    <input type="text" id="student-name" placeholder="Jake" required>
+                    <input type="text" id="student-id" placeholder="01" required>
+                    <input type="text" id="student-homeroom" placeholder="1/1" required>
                 </div>
                 <div class="report-actions">
                     <button class="generate-btn" id="generate-report">Generate Report Card</button>
@@ -1273,14 +1300,8 @@ class TjChapterBook extends HTMLElement {
             </div>
 
             <div class="report-overlay">
-                <div class="report-modal">
-                    <div class="report-header">
-                        <h2>Chapter Book Report Card</h2>
-                    </div>
-                    <div class="report-body">
-                        <div id="report-content"></div>
-                        <button class="close-report-btn">Close Report</button>
-                    </div>
+                <div class="report-modal" style="padding: 24px; border-radius: 16px;">
+                    <div id="report-content" class="report-area"></div>
                 </div>
             </div>
 
@@ -2105,8 +2126,10 @@ class TjChapterBook extends HTMLElement {
     showReportCard() {
         const nameInput = this.querySelector('#student-name');
         const idInput = this.querySelector('#student-id');
+        const homeroomInput = this.querySelector('#student-homeroom');
         const name = nameInput.value.trim();
         const studentId = idInput.value.trim();
+        const homeroom = homeroomInput.value.trim();
 
         if (!name || !studentId) {
             alert("Please enter both Student Name and Student ID before generating a report card.");
@@ -2115,9 +2138,12 @@ class TjChapterBook extends HTMLElement {
             return;
         }
 
+        this.studentInfo = { ...this.studentInfo, nickname: name, number: studentId, homeroom };
+
         // Lock inputs
         nameInput.disabled = true;
         idInput.disabled = true;
+        if (homeroomInput) homeroomInput.disabled = true;
 
         const overlay = this.querySelector('.report-overlay');
         const content = this.querySelector('#report-content');
@@ -2128,43 +2154,64 @@ class TjChapterBook extends HTMLElement {
         const bookTitle = this.querySelector('.book-title').innerText;
         const percentage = this.absoluteTotalQuestions > 0 ? Math.round((this.totalScore / this.absoluteTotalQuestions) * 100) : 0;
 
-        let wrongListHtml = '';
-        if (this.wrongQuestions.length > 0) {
-            wrongListHtml = `
-                <div class="report-wrong-list">
-                    <h3 style="font-size: 1.1em; color: #ef4444; margin-bottom: 0.5em;">Needs Review:</h3>
-                    ${this.wrongQuestions.map(item => `
-                        <div class="report-wrong-item">
-                            <span class="report-wrong-chapter">${item.chapter}</span>
-                            ${item.question}
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        } else if (this.absoluteTotalQuestions > 0) {
-            wrongListHtml = `<p style="color: #10b981; font-weight: bold; text-align: center; margin-top: 2em;">Excellent! No incorrect answers.</p>`;
-        }
+        const emoji = percentage >= 80 ? '🏆' : percentage >= 50 ? '⭐' : '💪';
+        const feedback = percentage >= 80 ? 'Excellent!' : percentage >= 50 ? 'Good effort!' : 'Keep practicing!';
 
         content.innerHTML = `
-            <div class="report-info-grid">
-                <span class="report-info-label">Student:</span>
-                <span>${name}</span>
-                <span class="report-info-label">ID:</span>
-                <span>${studentId}</span>
-                <span class="report-info-label">Book:</span>
-                <span>${bookTitle}</span>
-                <span class="report-info-label">Date:</span>
-                <span>${dateStr} at ${timeStr}</span>
+            <div class="rc-header">
+                <div class="rc-icon">📄</div>
+                <div class="rc-title">${bookTitle}</div>
+                <div class="rc-subtitle">Report Card</div>
+            </div>
+            <div class="rc-student">
+                <span class="rc-label">Student</span>
+                <span class="rc-value">${name} <span class="rc-number">(${studentId}) ${homeroom ? `- ${homeroom}` : ''}</span></span>
+            </div>
+            <div class="rc-score-row">
+                <div class="rc-score-circle">
+                    <div class="rc-score-val">${percentage}%</div>
+                    <div class="rc-score-pct">Overall</div>
+                </div>
+                <div class="rc-score-label">${emoji} ${feedback}</div>
+            </div>
+            <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${percentage}%"></div></div>
+            <div class="rc-details">
+                <div class="rc-detail-row"><span>Total Score</span><span>${this.totalScore} / ${this.absoluteTotalQuestions}</span></div>
+                <div class="rc-detail-row"><span>Date</span><span>${dateStr}</span></div>
+                <div class="rc-detail-row"><span>Time</span><span>${timeStr}</span></div>
             </div>
 
-            <div class="report-score-box">
-                <span class="report-info-label" style="display: block; margin-bottom: 0.5em;">Final Score</span>
-                <span class="report-score-value">${this.totalScore} / ${this.absoluteTotalQuestions}</span>
-                <span style="font-weight: bold; color: var(--tj-accent-color); font-size: 1.25em;">${percentage}%</span>
+            ${this.wrongQuestions.length > 0 ? `
+                <div class="report-wrong-list" style="margin-bottom: 20px;">
+                    <h3 style="font-size: 1em; color: var(--tj-error-color); margin-bottom: 10px; font-weight: 700;">Needs Review:</h3>
+                    <div style="max-height: 200px; overflow-y: auto; background: var(--tj-btn-bg); border-radius: 8px; border: 1px solid var(--tj-card-border);">
+                    ${this.wrongQuestions.map(item => `
+                        <div class="report-wrong-item" style="padding: 10px; border-bottom: 1px solid var(--tj-card-border);">
+                            <span class="report-wrong-chapter" style="font-size: 0.75em; color: var(--tj-subtitle-color); text-transform: uppercase;">${item.chapter}</span>
+                            <div style="font-size: 0.9em;">${item.question}</div>
+                        </div>
+                    `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            <div class="rc-submission-box">
+                <p class="rc-submission-header">Official Submission</p>
+                <input type="text" id="report-teacher-code" class="rc-teacher-code-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ''}">
+                <p class="rc-help-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
             </div>
 
-            ${wrongListHtml}
+            <div class="rc-actions" style="margin-top: 16px;">
+                <button class="rc-submit-btn" id="submit-score-btn">Submit Score Online</button>
+                <button class="rc-secondary-btn close-report-btn">Close Report</button>
+            </div>
         `;
+
+        const submitBtn = content.querySelector('#submit-score-btn');
+        if (submitBtn) submitBtn.onclick = () => this._submitScore();
+
+        const closeBtn = content.querySelector('.close-report-btn');
+        if (closeBtn) closeBtn.onclick = () => this.hideReportCard();
 
         overlay.classList.add('visible');
     }
@@ -2172,6 +2219,62 @@ class TjChapterBook extends HTMLElement {
     hideReportCard() {
         const overlay = this.querySelector('.report-overlay');
         overlay.classList.remove('visible');
+    }
+
+    async _submitScore() {
+        const reportTeacherCodeInput = this.querySelector('#report-teacher-code');
+        const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : this.studentInfo.teacherCode;
+        
+        // Cache for reuse
+        this.studentInfo.teacherCode = currentTeacherCode;
+
+        if (currentTeacherCode !== '6767') {
+            alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
+            return;
+        }
+
+        if (this.isSubmitting) return;
+
+        const submitBtn = this.querySelector('#submit-score-btn');
+        if (!submitBtn) return;
+        const originalText = submitBtn.textContent;
+        
+        this.isSubmitting = true;
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+
+        const bookTitle = this.querySelector('.book-title').innerText;
+        const percentage = this.absoluteTotalQuestions > 0 ? Math.round((this.totalScore / this.absoluteTotalQuestions) * 100) : 0;
+
+        const payload = {
+            nickname: this.studentInfo.nickname,
+            homeroom: this.studentInfo.homeroom || '',
+            studentId: this.studentInfo.number,
+            quizName: 'Book- ' + bookTitle,
+            score: percentage,
+            total: 100
+        };
+
+        try {
+            await fetch(this.submissionUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            alert('Score successfully submitted!');
+            submitBtn.textContent = 'Submitted ✓';
+            submitBtn.style.background = 'var(--tj-subtitle-color)';
+        } catch (err) {
+            console.error('Error submitting score:', err);
+            alert('There was an error submitting your score. Please try again.');
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            this.isSubmitting = false;
+        }
     }
 
     resetApp(skipConfirmation = false) {

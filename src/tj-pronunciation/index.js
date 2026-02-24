@@ -105,14 +105,6 @@ class TjPronunciation extends HTMLElement {
         data.title;
     }
 
-    if (data.instructions) {
-      const instrEl = this.shadowRoot.getElementById(
-        "pronunciationInstructions",
-      );
-      instrEl.textContent = data.instructions;
-      instrEl.style.display = "block";
-    }
-
     let activitiesHtml = "";
     if (data.activities && Array.isArray(data.activities)) {
       activitiesHtml = data.activities

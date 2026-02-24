@@ -1,5 +1,6 @@
 import stylesText from './styles.css?inline';
 import templateHtml from './template.html?raw';
+import { config } from '../tj-config.js';
 import { getBestVoice, shouldShowAudioControls, startAudioRecording, getAndroidIntentLink } from '../audio-utils.js';
 
 class TjReader extends HTMLElement {
@@ -12,7 +13,9 @@ class TjReader extends HTMLElement {
     `;
 
     this.data = [];
-    this.studentInfo = { nickname: '', number: '' };
+    this.studentInfo = { nickname: '', number: '', homeroom: '', teacherCode: '' };
+    this.submissionUrl = config?.submissionUrl || 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
+    this.isSubmitting = false;
     this.score = 0;
     this.answeredCount = 0;
 
@@ -1036,15 +1039,16 @@ class TjReader extends HTMLElement {
   }
 
   generateReport() {
-    const nickname = this.shadowRoot.querySelector('#nickname').value;
-    const number = this.shadowRoot.querySelector('#student-number').value;
+    const nickname = this.shadowRoot.querySelector('#nickname').value.trim();
+    const number = this.shadowRoot.querySelector('#student-number').value.trim();
+    const homeroom = this.shadowRoot.querySelector('#homeroom').value.trim();
 
     if (!nickname || !number) {
       alert('Please enter both nickname and student number.');
       return;
     }
 
-    this.studentInfo = { nickname, number };
+    this.studentInfo = { ...this.studentInfo, nickname, number, homeroom };
     const storyTitle = this.getAttribute('story-title') || 'Story Practice';
     const timestamp = new Date().toLocaleString();
 
@@ -1072,24 +1076,43 @@ class TjReader extends HTMLElement {
     const totalScoreWithRec = (selectionRatio * (weightSelection / 2)) + (recordingRatio * (weightSelection / 2)) + (scrambleRatio * weightScramble) + (memoryRatio * weightMemory);
 
     const reportArea = this.shadowRoot.querySelector('.report-area');
+    const emoji = totalScoreNoRec >= 80 ? '🏆' : totalScoreNoRec >= 50 ? '⭐' : '💪';
+    const feedback = totalScoreNoRec >= 80 ? 'Excellent!' : totalScoreNoRec >= 50 ? 'Good effort!' : 'Keep practicing!';
+
     reportArea.innerHTML = `
-      <div class="report-card">
-        <div class="report-icon">📄</div>
-        <h3>Report Card: ${storyTitle}</h3>
-        <p><strong>Student:</strong> ${nickname} (${number})</p>
-        <p><strong>Overall Score:</strong> ${Math.round(totalScoreNoRec)}%</p>
-        <p><strong>Score (with recordings):</strong> ${Math.round(totalScoreWithRec)}%</p>
-        <hr style="margin: 1em 0; border: none; border-top: 1px solid #eee;">
-        <p><strong>Translation Score:</strong> ${this.score} / ${this.data.length}</p>
-        <p><strong>Sentences Recorded:</strong> ${this.recordedSentences.size} / ${this.data.length}</p>
-        ${unscrambleTotal > 0 ? `<p><strong>Unscramble Score:</strong> ${this.unscrambleScore} / ${unscrambleTotal}</p>` : ''}
-        <p><strong>Matching Pairs:</strong> ${this.matchedPairsCount} / ${memoryTotal}</p>
-        <p><strong>Completed On:</strong> ${timestamp}</p>
-        
-        <div class="report-actions">
-          <button class="return-btn">Return to Story</button>
-          <button class="reset-all-btn">Reset All Progress</button>
-        </div>
+      <div class="rc-header">
+          <div class="rc-icon">📄</div>
+          <div class="rc-title">${storyTitle}</div>
+          <div class="rc-subtitle">Report Card</div>
+      </div>
+      <div class="rc-student">
+          <span class="rc-label">Student</span>
+          <span class="rc-value">${nickname} <span class="rc-number">(${number}) ${homeroom ? `- ${homeroom}` : ''}</span></span>
+      </div>
+      <div class="rc-score-row">
+          <div class="rc-score-circle">
+              <div class="rc-score-val">${Math.round(totalScoreNoRec)}%</div>
+              <div class="rc-score-pct">Overall</div>
+          </div>
+          <div class="rc-score-label">${emoji} ${feedback}</div>
+      </div>
+      <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${totalScoreNoRec}%"></div></div>
+      <div class="rc-details">
+          <div class="rc-detail-row"><span>Translation Score</span><span>${this.score} / ${this.data.length}</span></div>
+          <div class="rc-detail-row"><span>Sentences Recorded</span><span>${this.recordedSentences.size} / ${this.data.length}</span></div>
+          ${unscrambleTotal > 0 ? `<div class="rc-detail-row"><span>Unscramble Score</span><span>${this.unscrambleScore} / ${unscrambleTotal}</span></div>` : ''}
+          <div class="rc-detail-row"><span>Matching Pairs</span><span>${this.matchedPairsCount} / ${memoryTotal}</span></div>
+          <div class="rc-detail-row"><span>Completed On</span><span>${timestamp}</span></div>
+      </div>
+      <div class="rc-submission-box">
+          <p class="rc-submission-header">Official Submission</p>
+          <input type="text" id="report-teacher-code" class="rc-teacher-code-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ''}">
+          <p class="rc-help-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+      </div>
+      <div class="rc-actions" style="margin-top: 16px;">
+          <button class="rc-submit-btn" id="submit-score-btn">Submit Score Online</button>
+          <button class="rc-secondary-btn return-btn">Return to Story</button>
+          <button class="reset-all-btn" style="background: var(--tj-error-color); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.85em; margin-top: 8px;">Reset All Progress</button>
       </div>
     `;
 
@@ -1140,6 +1163,9 @@ class TjReader extends HTMLElement {
       if (stickyBar) stickyBar.style.display = 'flex';
     };
 
+    const submitBtn = reportArea.querySelector('#submit-score-btn');
+    if (submitBtn) submitBtn.onclick = () => this._submitScore();
+
     reportArea.querySelector('.reset-all-btn').onclick = () => {
       if (confirm('Are you sure you want to reset all progress? This will delete all your scores and recordings.')) {
         this.completedIndices.clear();
@@ -1162,6 +1188,78 @@ class TjReader extends HTMLElement {
         this.loadData();
       }
     };
+  }
+
+  async _submitScore() {
+    const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
+    const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : this.studentInfo.teacherCode;
+    
+    // Cache for reuse
+    this.studentInfo.teacherCode = currentTeacherCode;
+
+    if (currentTeacherCode !== '6767') {
+        alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
+        return;
+    }
+
+    if (this.isSubmitting) return;
+
+    const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
+    const originalText = submitBtn.textContent;
+    
+    this.isSubmitting = true;
+    submitBtn.textContent = 'Submitting...';
+    submitBtn.disabled = true;
+
+    const storyTitle = this.getAttribute('story-title') || 'Story Practice';
+    
+    // Calculate final score
+    const selectionRatio = this.data.length > 0 ? this.score / this.data.length : 0;
+    const unscrambleTotal = this.unscrambleData.length || this.unscrambleTotal;
+    const scrambleRatio = unscrambleTotal > 0 ? this.unscrambleScore / unscrambleTotal : 0;
+    const memoryTotal = (this.memoryGameData.length / 2) || this.memoryTotal;
+    const memoryRatio = memoryTotal > 0 ? (this.matchedPairsCount / memoryTotal) : 0;
+
+    let weightSelection = 85;
+    let weightScramble = 10;
+    let weightMemory = 5;
+
+    if (this.unscrambleData.length === 0) {
+      weightSelection += weightScramble;
+      weightScramble = 0;
+    }
+
+    const totalScore = (selectionRatio * weightSelection) + (scrambleRatio * weightScramble) + (memoryRatio * weightMemory);
+
+    const payload = {
+        nickname: this.studentInfo.nickname,
+        homeroom: this.studentInfo.homeroom || '',
+        studentId: this.studentInfo.number,
+        quizName: 'Read- ' + storyTitle,
+        score: Math.round(totalScore),
+        total: 100
+    };
+
+    try {
+        await fetch(this.submissionUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+        
+        alert('Score successfully submitted!');
+        submitBtn.textContent = 'Submitted ✓';
+        submitBtn.style.background = 'var(--tj-text-muted)';
+    } catch (err) {
+        console.error('Error submitting score:', err);
+        alert('There was an error submitting your score. Please try again.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        this.isSubmitting = false;
+    }
   }
 
   swapLanguages() {

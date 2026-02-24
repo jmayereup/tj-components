@@ -1,4 +1,5 @@
 import { getBestVoice } from '../audio-utils.js';
+import { config } from '../tj-config.js';
 
 class TjListening extends HTMLElement {
     // Static registry of all instances on the page
@@ -15,7 +16,9 @@ class TjListening extends HTMLElement {
         this.isCompleted = false;
 
         // Student info for report card
-        this.studentInfo = { nickname: '', number: '' };
+        this.studentInfo = { nickname: '', number: '', homeroom: '', teacherCode: '' };
+        this.submissionUrl = config?.submissionUrl || 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
+        this.isSubmitting = false;
 
         // TTS State
         this.selectedVoiceName = null;
@@ -524,12 +527,13 @@ class TjListening extends HTMLElement {
         <div class="report-icon">📄</div>
         <h2>Report Card</h2>
         <p>Enter your details to generate your report.</p>
-        <input type="text" id="nickname-input" placeholder="Your Nickname" autocomplete="off">
-        <input type="text" id="number-input" placeholder="Student Number" autocomplete="off" inputmode="numeric">
+        <input type="text" id="nickname-input" placeholder="Jake" autocomplete="off">
+        <input type="text" id="number-input" placeholder="01" autocomplete="off" inputmode="numeric">
+        <input type="text" id="homeroom-input" placeholder="1/1" autocomplete="off">
         <button class="generate-btn" id="generate-btn">Generate Report Card</button>
         <button class="cancel-btn" id="cancel-btn">Cancel</button>
       </div>
-      <div class="report-area" id="report-area" style="display:none;"></div>
+      <div id="report-area" style="display:none;"></div>
     </div>
   </div>
   ` : ''}
@@ -589,15 +593,17 @@ class TjListening extends HTMLElement {
     _generateReport() {
         const nicknameInput = this.shadowRoot.getElementById('nickname-input');
         const numberInput = this.shadowRoot.getElementById('number-input');
+        const homeroomInput = this.shadowRoot.getElementById('homeroom-input');
         const nickname = nicknameInput ? nicknameInput.value.trim() : this.studentInfo.nickname;
         const number = numberInput ? numberInput.value.trim() : this.studentInfo.number;
+        const homeroom = homeroomInput ? homeroomInput.value.trim() : this.studentInfo.homeroom;
 
         if (!nickname || !number) {
             alert('Please enter both nickname and student number.');
             return;
         }
 
-        this.studentInfo = { nickname, number };
+        this.studentInfo = { ...this.studentInfo, nickname, number, homeroom };
 
         const combined = this._getCombinedScore();
         const combinedPct = Math.round((combined.totalScore / combined.totalQuestions) * 100) || 0;
@@ -616,7 +622,7 @@ class TjListening extends HTMLElement {
             </div>
             <div class="rc-student">
                 <span class="rc-label">Student</span>
-                <span class="rc-value">${nickname} <span class="rc-number">(${number})</span></span>
+                <span class="rc-value">${nickname} <span class="rc-number">(${number}) ${homeroom ? `- ${homeroom}` : ''}</span></span>
             </div>
             <div class="rc-score-row">
                 <div class="rc-score-circle">
@@ -630,8 +636,16 @@ class TjListening extends HTMLElement {
                 <div class="rc-detail-row"><span>Total Correct</span><span>${combined.totalScore} / ${combined.totalQuestions}</span></div>
                 <div class="rc-detail-row"><span>Completed On</span><span>${timestamp}</span></div>
             </div>
-            <div class="rc-actions">
-                <button class="rc-close-btn" id="rc-close-btn">↩ Return to Activity</button>
+
+            <div class="rc-submission-box">
+                <p class="rc-submission-header">Official Submission</p>
+                <input type="text" id="report-teacher-code" class="rc-teacher-code-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ''}">
+                <p class="rc-help-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+            </div>
+
+            <div class="rc-actions" style="margin-top: 16px;">
+                <button class="rc-submit-btn" id="submit-score-btn">Submit Score Online</button>
+                <button class="rc-secondary-btn" id="rc-close-btn" style="margin-top: 8px;">↩ Return to Activity</button>
             </div>
         `;
 
@@ -643,9 +657,68 @@ class TjListening extends HTMLElement {
             reportArea.innerHTML = reportHtml;
         }
 
+        const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
+        if (submitBtn) submitBtn.onclick = () => this._submitScore();
+
         this.shadowRoot.getElementById('rc-close-btn').addEventListener('click', () => {
             this.shadowRoot.getElementById('report-overlay').style.display = 'none';
         });
+    }
+
+    async _submitScore() {
+        const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
+        const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : this.studentInfo.teacherCode;
+        
+        // Cache for reuse
+        this.studentInfo.teacherCode = currentTeacherCode;
+
+        if (currentTeacherCode !== '6767') {
+            alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
+            return;
+        }
+
+        if (this.isSubmitting) return;
+
+        const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
+        if (!submitBtn) return;
+        const originalText = submitBtn.textContent;
+        
+        this.isSubmitting = true;
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+
+        const combined = this._getCombinedScore();
+        const combinedPct = Math.round((combined.totalScore / combined.totalQuestions) * 100) || 0;
+
+        const payload = {
+            nickname: this.studentInfo.nickname,
+            homeroom: this.studentInfo.homeroom || '',
+            studentId: this.studentInfo.number,
+            quizName: 'Listening- ' + (this.lessonData.title || 'Lesson'),
+            score: combinedPct,
+            total: 100
+        };
+
+        try {
+            await fetch(this.submissionUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            alert('Score successfully submitted!');
+            submitBtn.textContent = 'Submitted ✓';
+            submitBtn.style.background = '#64748b';
+        } catch (err) {
+            console.error('Error submitting score:', err);
+            alert('There was an error submitting your score. Please try again.');
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            this.isSubmitting = false;
+        }
     }
 
     // ─── TTS LOGIC ─────────────────────────────────────────
@@ -762,7 +835,7 @@ class TjListening extends HTMLElement {
 
     getBaseStyles() {
         return `
-      :host { display: block; font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; margin-bottom: 2rem; }
+      :host { display: block; font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; margin-bottom: 2rem; color: black; background-color: white; }
       .container { border: 1px solid #e2e8f0; padding: 24px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 
       /* Header */
@@ -925,6 +998,107 @@ class TjListening extends HTMLElement {
   .rc-actions { margin-top: 16px; }
   .rc-close-btn { width: 100%; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background 0.2s; }
   .rc-close-btn:hover { background: #16a34a; }
+
+  /* Official Submission Refinements */
+  .rc-submission-box {
+      margin-top: 20px;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      text-align: left;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  .rc-submission-header {
+      margin: 0 0 12px 0;
+      font-size: 0.85em;
+      color: #64748b;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+  }
+
+  .rc-teacher-code-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1em;
+      margin-bottom: 8px;
+      background: white;
+      transition: all 0.2s ease;
+      outline: none;
+      font-family: inherit;
+      color: #1e293b;
+  }
+
+  .rc-teacher-code-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  }
+
+  .rc-teacher-code-input::placeholder {
+      color: #94a3b8;
+  }
+
+  .rc-help-text {
+      margin: 4px 0 0 0;
+      font-size: 0.85em;
+      color: #64748b;
+      line-height: 1.4;
+  }
+
+  .rc-submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: lightgreen;
+      color: #1e293b;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-bottom: 8px;
+  }
+
+  .rc-submit-btn:hover:not(:disabled) {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
+  }
+
+  .rc-submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+  }
+
+  .rc-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+      background: #94a3b8;
+      box-shadow: none;
+  }
+
+  .rc-secondary-btn {
+      width: 100%;
+      padding: 14px;
+      background: lightgrey;
+      color: #1e293b;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+  }
+
+  .rc-secondary-btn:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+  }
 
       /* Footer Actions */
       .footer-actions { margin-top: 30px; display: none; justify-content: center; padding-top: 20px; border-top: 1px solid #f1f5f9; }
