@@ -1,3 +1,4 @@
+import { config } from "./config.js";
 import sharedStyles from "../tj-shared.css?inline";
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
@@ -17,8 +18,12 @@ class TjPronunciation extends HTMLElement {
     this.mediaRecorder = null;
     this.audioChunks = [];
     this.recordings = new Map(); // Store blob URLs by activity index
+    this.lrState = new Map(); // Track listen/record/playback state per activity
     this.selectedVoiceName = localStorage.getItem("tj-pronunciation-voice");
     this.isPlaying = false;
+    this.submissionUrl = config?.submissionUrl || "https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec"; // Use config or fallback
+    this.studentInfo = { nickname: '', number: '', homeroom: '' };
+    this.isSubmitting = false;
 
     // Listen for voice loading
     if (this.synth) {
@@ -147,11 +152,28 @@ class TjPronunciation extends HTMLElement {
   }
 
   updateProgress() {
-    const total = this.shadowRoot.querySelectorAll(".tj-card[id^='act-']").length;
-    const completed = this.shadowRoot.querySelectorAll(".tj-card.completed").length;
+    const totalCards = this.shadowRoot.querySelectorAll(".tj-card[id^='act-']");
+    const total = totalCards.length;
+    let completed = 0;
+    
+    totalCards.forEach(card => {
+        if (card.classList.contains("completed")) {
+            completed++;
+        }
+    });
+
     const progressText = this.shadowRoot.querySelector(".progress-text");
     if (progressText) {
       progressText.textContent = `${completed} / ${total}`;
+    }
+
+    const showReportBtn = this.shadowRoot.getElementById('show-report-btn');
+    if (showReportBtn) {
+       if (total > 0) {
+           showReportBtn.style.display = 'inline-flex';
+       } else {
+           showReportBtn.style.display = 'none';
+       }
     }
   }
 
@@ -177,21 +199,21 @@ class TjPronunciation extends HTMLElement {
                     <div class="lr-controls">
                         <div class="lr-control-group">
                             <span class="lr-label">Listen</span>
-                            <button class="tj-icon-btn play-audio-btn" data-action="play" data-text="${activity.targetText.replace(/"/g, "&quot;")}">
+                            <button class="tj-icon-btn play-audio-btn" data-action="play" data-index="${index}" data-text="${activity.targetText.replace(/"/g, "&quot;")}">
                                 ${icons.play}
                             </button>
                         </div>
 
                         <div class="lr-control-group">
                             <span class="lr-label">Record</span>
-                            <button class="tj-icon-btn record-btn" data-action="record" data-index="${index}">
+                            <button class="tj-icon-btn record-btn" data-action="record" data-index="${index}" disabled style="opacity: 0.5; cursor: not-allowed;">
                                 ${icons.mic}
                             </button>
                         </div>
 
                         <div class="lr-control-group">
                             <span class="lr-label">Playback</span>
-                            <button class="tj-icon-btn playback-btn" id="playback-${index}" data-action="playback" data-index="${index}">
+                            <button class="tj-icon-btn playback-btn" id="playback-${index}" data-action="playback" data-index="${index}" disabled style="opacity: 0.5; cursor: not-allowed;">
                                 ${icons.play}
                             </button>
                         </div>
@@ -215,8 +237,7 @@ class TjPronunciation extends HTMLElement {
                     <div class="mp-instr">Click on the last word that you hear.</div>
                     
                     <button class="tj-icon-btn play-audio-btn" data-action="play-mp" data-index="${index}" 
-                            data-options="${activity.options.join(",").replace(/"/g, "&quot;")}" 
-                            data-answer="${activity.correctAnswer.replace(/"/g, "&quot;")}">
+                            data-options="${activity.options.join(",").replace(/"/g, "&quot;")}">
                         ${icons.play}
                     </button>
 
@@ -224,7 +245,7 @@ class TjPronunciation extends HTMLElement {
                         ${activity.options
                           .map(
                             (opt) => `
-                            <button class="tj-btn tj-btn-secondary mp-option-btn" data-action="mp-guess" data-index="${index}" data-correct="${activity.correctAnswer === opt}">${opt}</button>
+                            <button class="tj-btn tj-btn-secondary mp-option-btn" data-action="mp-guess" data-index="${index}">${opt}</button>
                         `,
                           )
                           .join("")}
@@ -303,6 +324,25 @@ class TjPronunciation extends HTMLElement {
       };
     }
 
+    // Report Card and Submit
+    const showReportBtn = this.shadowRoot.getElementById('show-report-btn');
+    const reportOverlay = this.shadowRoot.getElementById('report-overlay');
+    const cancelReportBtn = this.shadowRoot.getElementById('cancel-report-btn');
+    const generateBtn = this.shadowRoot.getElementById('generate-btn');
+    const rcCloseBtn = this.shadowRoot.getElementById('rc-close-btn');
+    const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
+
+    if (showReportBtn) showReportBtn.onclick = () => this._showReportOverlay();
+    if (cancelReportBtn) cancelReportBtn.onclick = () => this._hideReportOverlay();
+    if (reportOverlay) {
+        reportOverlay.onclick = (e) => {
+            if (e.target === reportOverlay) this._hideReportOverlay();
+        };
+    }
+    if (rcCloseBtn) rcCloseBtn.onclick = () => this._hideReportOverlay();
+    if (generateBtn) generateBtn.onclick = () => this._generateReport();
+    if (submitBtn) submitBtn.onclick = () => this._submitScore();
+
     // Translation toggles
     this.shadowRoot.querySelectorAll(".translation-toggle").forEach((btn) => {
       btn.addEventListener("click", (e) => {
@@ -325,7 +365,17 @@ class TjPronunciation extends HTMLElement {
         btn.addEventListener("click", (e) => {
           const button = e.target.closest("button");
           const text = button.dataset.text;
-          this.playTTS(text, button);
+          const index = button.dataset.index;
+          this.playTTS(text, button).then(() => {
+              if (index !== undefined) {
+                  const recordBtn = this.shadowRoot.querySelector(`button[data-action="record"][data-index="${index}"]`);
+                  if (recordBtn) {
+                      recordBtn.disabled = false;
+                      recordBtn.style.opacity = "1";
+                      recordBtn.style.cursor = "pointer";
+                  }
+              }
+          });
         });
       });
 
@@ -336,7 +386,25 @@ class TjPronunciation extends HTMLElement {
         btn.addEventListener("click", (e) => {
           const button = e.target.closest("button");
           const options = button.dataset.options.split(",");
-          const answer = button.dataset.answer;
+          const index = button.dataset.index;
+          
+          // Randomly select answer
+          const answer = options[Math.floor(Math.random() * options.length)];
+          const container = button.closest(".mp-container");
+          container.dataset.currentAnswer = answer;
+
+          // Reset options if playing again
+          container.querySelectorAll("button[data-action='mp-guess']").forEach(b => {
+             b.disabled = false;
+             b.classList.remove('tj-btn-success', 'tj-btn-error');
+             b.classList.add('tj-btn-secondary');
+          });
+          const feedbackDiv = this.shadowRoot.querySelector("#feedback-" + index);
+          if (feedbackDiv) {
+              feedbackDiv.textContent = "";
+              feedbackDiv.className = "feedback-msg";
+          }
+
           this.playMinimalPairSequence(options, answer, button);
         });
       });
@@ -371,16 +439,22 @@ class TjPronunciation extends HTMLElement {
       .forEach((btn) => {
         btn.addEventListener("click", (e) => {
           const button = e.target.closest("button");
-          const isCorrect = button.dataset.correct === "true";
           const index = button.dataset.index;
-          const feedbackDiv = this.shadowRoot.querySelector(
-            "#feedback-" + index,
-          );
-          const container = button.closest(".mp-options");
+          const container = button.closest(".mp-container");
+          const correctAnswer = container.dataset.currentAnswer;
+          const feedbackDiv = this.shadowRoot.querySelector("#feedback-" + index);
+
+          if (!correctAnswer) {
+              feedbackDiv.textContent = "Please listen to the audio first.";
+              feedbackDiv.className = "feedback-msg";
+              return;
+          }
+
+          const isCorrect = button.textContent.trim() === correctAnswer.trim();
 
           // Disable all buttons in this container
           container
-            .querySelectorAll("button")
+            .querySelectorAll("button[data-action='mp-guess']")
             .forEach((b) => (b.disabled = true));
 
           if (isCorrect) {
@@ -400,8 +474,8 @@ class TjPronunciation extends HTMLElement {
             feedbackDiv.className = "feedback-msg wrong";
 
             // Highlight the correct one
-            container.querySelectorAll("button").forEach((b) => {
-              if (b.dataset.correct === "true") {
+            container.querySelectorAll("button[data-action='mp-guess']").forEach((b) => {
+              if (b.textContent.trim() === correctAnswer.trim()) {
                 b.classList.add("tj-btn-success");
                 b.classList.remove("tj-btn-secondary");
               }
@@ -498,17 +572,196 @@ class TjPronunciation extends HTMLElement {
             feedbackDiv.textContent = "Correct! 🎉";
             feedbackDiv.className = "feedback-msg correct";
             dropzone.classList.add("success");
+
+            // Hide controls and play button immediately
+            const scrambleContainer = e.target.closest(".scramble-container");
+            const controls = scrambleContainer.querySelector(".scramble-controls");
+            const playBtn = scrambleContainer.querySelector(".play-audio-btn");
+            if (controls) controls.style.display = 'none';
+            if (playBtn) playBtn.style.display = 'none';
+            if (dropzone) dropzone.style.display = 'none';
+
             const card = e.target.closest(".tj-card");
             if (card) {
                 card.classList.add("completed");
                 this.updateProgress();
             }
+
+            // Hide results after a short delay to reduce copying
+            setTimeout(() => {
+                feedbackDiv.textContent = "Activity Completed ✓";
+                // Hide words in the dropzone
+                const words = dropzone.querySelectorAll(".scramble-word");
+                words.forEach(w => w.style.display = 'none');
+                
+                // Hide any remaining words in the bank
+                const bank = this.shadowRoot.querySelector("#bank-" + index);
+                if (bank) {
+                    const bankWords = bank.querySelectorAll(".scramble-word");
+                    bankWords.forEach(w => w.style.display = 'none');
+                }
+            }, 3000);
+
           } else {
             feedbackDiv.textContent = "Incorrect. Try again!";
             feedbackDiv.className = "feedback-msg wrong";
           }
         });
       });
+  }
+
+  _showReportOverlay() {
+      const overlay = this.shadowRoot.getElementById('report-overlay');
+      if (overlay) overlay.style.display = 'flex';
+
+      // Pre-fill if already entered
+      if (this.studentInfo.nickname) {
+          const nicknameInput = this.shadowRoot.getElementById('nickname-input');
+          const numberInput = this.shadowRoot.getElementById('number-input');
+          const homeroomInput = this.shadowRoot.getElementById('homeroom-input');
+          if (nicknameInput) nicknameInput.value = this.studentInfo.nickname;
+          if (numberInput) numberInput.value = this.studentInfo.number;
+          if (homeroomInput) homeroomInput.value = this.studentInfo.homeroom;
+          this._generateReport();
+      } else {
+          const initialForm = this.shadowRoot.getElementById('initial-form');
+          const reportArea = this.shadowRoot.getElementById('report-area');
+          const submitActions = this.shadowRoot.getElementById('submit-actions');
+          if (initialForm) initialForm.style.display = 'block';
+          if (reportArea) reportArea.style.display = 'none';
+          if (submitActions) submitActions.style.display = 'none';
+      }
+  }
+
+  _hideReportOverlay() {
+      const overlay = this.shadowRoot.getElementById('report-overlay');
+      if (overlay) overlay.style.display = 'none';
+  }
+
+  _generateReport() {
+      const nicknameInput = this.shadowRoot.getElementById('nickname-input');
+      const numberInput = this.shadowRoot.getElementById('number-input');
+      const homeroomInput = this.shadowRoot.getElementById('homeroom-input');
+      const teacherCodeInput = this.shadowRoot.getElementById('teacher-code-input');
+      
+      const nickname = nicknameInput ? nicknameInput.value.trim() : this.studentInfo.nickname;
+      const number = numberInput ? numberInput.value.trim() : this.studentInfo.number;
+      const homeroom = homeroomInput ? homeroomInput.value.trim() : this.studentInfo.homeroom;
+      const teacherCode = teacherCodeInput ? teacherCodeInput.value.trim() : '';
+
+      if (!nickname || !number) {
+          alert('Please enter both nickname and student number.');
+          return;
+      }
+
+      this.studentInfo = { nickname, number, homeroom, teacherCode };
+
+      const total = this.shadowRoot.querySelectorAll(".tj-card[id^='act-']").length;
+      const completed = this.shadowRoot.querySelectorAll(".tj-card.completed").length;
+      const pct = Math.round((completed / total) * 100) || 0;
+      const timestamp = new Date().toLocaleString();
+
+      let emoji = '🏆';
+      if (pct < 50) emoji = '💪';
+      else if (pct < 80) emoji = '⭐';
+
+      const titleText = this.shadowRoot.getElementById("pronunciationTitle").textContent || 'Pronunciation Practice';
+
+      const reportHtml = `
+          <div class="rc-header">
+              <div class="rc-icon">📄</div>
+              <div class="rc-title">${titleText}</div>
+              <div class="rc-subtitle">Report Card</div>
+          </div>
+          <div class="rc-student">
+              <span class="rc-label">Student</span>
+              <span class="rc-value">${nickname} <span class="rc-number">(${number}) ${homeroom ? `- ${homeroom}` : ''}</span></span>
+          </div>
+          <div class="rc-score-row">
+              <div class="rc-score-circle">
+                  <div class="rc-score-val">${completed}/${total}</div>
+                  <div class="rc-score-pct">${pct}%</div>
+              </div>
+              <div class="rc-score-label">${emoji} ${pct >= 80 ? 'Excellent!' : pct >= 50 ? 'Good effort!' : 'Keep practicing!'}</div>
+          </div>
+          <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${pct}%"></div></div>
+          <div class="rc-details">
+              <div class="rc-detail-row"><span>Total Completed</span><span>${completed} / ${total} activities</span></div>
+              <div class="rc-detail-row"><span>Completed On</span><span>${timestamp}</span></div>
+          </div>
+          <div style="margin-top: 16px; padding: 12px; background: var(--tj-bg-alt); border-radius: 8px; border: 1px dashed var(--tj-border-main); text-align: left;">
+              <p style="margin: 0 0 8px 0; font-size: 0.85em; color: var(--tj-text-muted); font-weight: 600; text-transform: uppercase;">Official Submission</p>
+              <input type="text" id="report-teacher-code" placeholder="Enter Teacher Code" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--tj-border-main); border-radius: 6px; font-size: 0.9em; margin-bottom: 4px;" value="${teacherCode}">
+              <p style="margin: 4px 0 0 0; font-size: 0.8em; color: var(--tj-text-muted);">Enter the teacher code to submit, or take a screenshot of this page.</p>
+          </div>
+      `;
+
+      const initialForm = this.shadowRoot.getElementById('initial-form');
+      const reportArea = this.shadowRoot.getElementById('report-area');
+      const submitActions = this.shadowRoot.getElementById('submit-actions');
+      
+      if (initialForm) initialForm.style.display = 'none';
+      if (reportArea) {
+          reportArea.style.display = 'block';
+          reportArea.innerHTML = reportHtml;
+      }
+      if (submitActions) submitActions.style.display = 'block';
+  }
+
+  async _submitScore() {
+      const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
+      const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : this.studentInfo.teacherCode;
+      
+      const isTeacherCodeCorrect = currentTeacherCode === '6767';
+
+      if (!isTeacherCodeCorrect) {
+          alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
+          return;
+      }
+
+      if (this.isSubmitting) return;
+
+      const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
+      const originalText = submitBtn.textContent;
+      
+      this.isSubmitting = true;
+      submitBtn.textContent = 'Submitting...';
+      submitBtn.disabled = true;
+
+      const total = this.shadowRoot.querySelectorAll(".tj-card[id^='act-']").length;
+      const completed = this.shadowRoot.querySelectorAll(".tj-card.completed").length;
+      const titleText = this.shadowRoot.getElementById("pronunciationTitle").textContent || 'Pronunciation Practice';
+
+      const payload = {
+          nickname: this.studentInfo.nickname,
+          homeroom: this.studentInfo.homeroom || '',
+          studentId: this.studentInfo.number,
+          quizName: 'Pron- ' + titleText,
+          score: completed,
+          total: total
+      };
+
+      try {
+          // Send request with no-cors to avoid CORS issues from Google Apps Script if not properly configured on their end
+          await fetch(this.submissionUrl, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(payload)
+          });
+          
+          alert('Score successfully submitted!');
+          submitBtn.textContent = 'Submitted ✓';
+          submitBtn.style.background = 'var(--tj-text-muted)';
+      } catch (err) {
+          console.error('Error submitting score:', err);
+          alert('There was an error submitting your score. Please try again.');
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+          this.isSubmitting = false;
+      }
   }
 
   playTTS(text, button) {
@@ -761,13 +1014,9 @@ class TjPronunciation extends HTMLElement {
           );
           if (playbackBtn) {
             playbackBtn.classList.add("ready");
-          }
-
-          // Mark activity as completed when recorded
-          const card = btn.closest(".tj-card");
-          if (card && !card.classList.contains("completed")) {
-              card.classList.add("completed");
-              this.updateProgress();
+            playbackBtn.disabled = false;
+            playbackBtn.style.opacity = "1";
+            playbackBtn.style.cursor = "pointer";
           }
 
           // Stop tracks to release microphone
@@ -797,6 +1046,12 @@ class TjPronunciation extends HTMLElement {
 
     audio.onended = () => {
       btn.classList.remove("playing");
+      // Mark activity as completed when fully played back
+      const card = btn.closest(".tj-card");
+      if (card && !card.classList.contains("completed")) {
+          card.classList.add("completed");
+          this.updateProgress();
+      }
     };
 
     audio.play().catch((e) => {
