@@ -169,7 +169,7 @@ class TjPronunciation extends HTMLElement {
 
     const showReportBtn = this.shadowRoot.getElementById('show-report-btn');
     if (showReportBtn) {
-       if (total > 0 && completed === total) {
+       if (total > 0) {
            showReportBtn.style.display = 'inline-flex';
        } else {
            showReportBtn.style.display = 'none';
@@ -572,6 +572,15 @@ class TjPronunciation extends HTMLElement {
             feedbackDiv.textContent = "Correct! 🎉";
             feedbackDiv.className = "feedback-msg correct";
             dropzone.classList.add("success");
+
+            // Hide controls and play button immediately
+            const scrambleContainer = e.target.closest(".scramble-container");
+            const controls = scrambleContainer.querySelector(".scramble-controls");
+            const playBtn = scrambleContainer.querySelector(".play-audio-btn");
+            if (controls) controls.style.display = 'none';
+            if (playBtn) playBtn.style.display = 'none';
+            if (dropzone) dropzone.style.display = 'none';
+
             const card = e.target.closest(".tj-card");
             if (card) {
                 card.classList.add("completed");
@@ -580,7 +589,7 @@ class TjPronunciation extends HTMLElement {
 
             // Hide results after a short delay to reduce copying
             setTimeout(() => {
-                feedbackDiv.textContent = "";
+                feedbackDiv.textContent = "Activity Completed ✓";
                 // Hide words in the dropzone
                 const words = dropzone.querySelectorAll(".scramble-word");
                 words.forEach(w => w.style.display = 'none');
@@ -645,12 +654,7 @@ class TjPronunciation extends HTMLElement {
           return;
       }
 
-      if (teacherCode !== '6767') {
-          alert('Invalid Teacher Code. Please try again.');
-          return;
-      }
-
-      this.studentInfo = { nickname, number, homeroom };
+      this.studentInfo = { nickname, number, homeroom, teacherCode };
 
       const total = this.shadowRoot.querySelectorAll(".tj-card[id^='act-']").length;
       const completed = this.shadowRoot.querySelectorAll(".tj-card.completed").length;
@@ -685,6 +689,11 @@ class TjPronunciation extends HTMLElement {
               <div class="rc-detail-row"><span>Total Completed</span><span>${completed} / ${total} activities</span></div>
               <div class="rc-detail-row"><span>Completed On</span><span>${timestamp}</span></div>
           </div>
+          <div style="margin-top: 16px; padding: 12px; background: var(--tj-bg-alt); border-radius: 8px; border: 1px dashed var(--tj-border-main); text-align: left;">
+              <p style="margin: 0 0 8px 0; font-size: 0.85em; color: var(--tj-text-muted); font-weight: 600; text-transform: uppercase;">Official Submission</p>
+              <input type="text" id="report-teacher-code" placeholder="Enter Teacher Code" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--tj-border-main); border-radius: 6px; font-size: 0.9em; margin-bottom: 4px;" value="${teacherCode}">
+              <p style="margin: 4px 0 0 0; font-size: 0.8em; color: var(--tj-text-muted);">Enter the teacher code to submit, or take a screenshot of this page.</p>
+          </div>
       `;
 
       const initialForm = this.shadowRoot.getElementById('initial-form');
@@ -700,6 +709,16 @@ class TjPronunciation extends HTMLElement {
   }
 
   async _submitScore() {
+      const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
+      const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : this.studentInfo.teacherCode;
+      
+      const isTeacherCodeCorrect = currentTeacherCode === '6767';
+
+      if (!isTeacherCodeCorrect) {
+          alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
+          return;
+      }
+
       if (this.isSubmitting) return;
 
       const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
