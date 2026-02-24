@@ -16,6 +16,32 @@
     <div class="activities-wrapper" id="activitiesContainer">
     </div>
 
+    <div style="text-align: center; width: 100%; margin-bottom: 2rem;">
+        <button class="report-btn" id="show-report-btn" style="display: none;">📄 See Report Card</button>
+    </div>
+
+    <!-- Report Card Overlay -->
+    <div class="report-overlay" id="report-overlay" style="display:none;">
+        <div class="report-modal">
+            <div class="initial-form" id="initial-form">
+                <div class="report-icon">📄</div>
+                <h2>Report Card</h2>
+                <p>Enter your details to generate your report.</p>
+                <input type="text" id="nickname-input" placeholder="Your Nickname" autocomplete="off">
+                <input type="text" id="number-input" placeholder="Student Number" autocomplete="off" inputmode="numeric">
+                <input type="text" id="homeroom-input" placeholder="Homeroom" autocomplete="off">
+                <input type="text" id="teacher-code-input" placeholder="Teacher Code" autocomplete="off" inputmode="numeric">
+                <button class="generate-btn" id="generate-btn">Generate Report</button>
+                <button class="cancel-btn" id="cancel-report-btn">Cancel</button>
+            </div>
+            <div class="report-area" id="report-area" style="display:none;"></div>
+            <div id="submit-actions" style="display:none; margin-top: 1em;">
+                <button class="generate-btn" id="submit-score-btn" style="background: var(--tj-success-color);">Submit Score</button>
+                <button class="cancel-btn" id="rc-close-btn">↩ Return to Activity</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Voice Selection Overlay -->
     <div class="tj-overlay" id="voice-overlay">
         <div class="tj-card voice-card" style="width: 90%; max-width: 450px;">
