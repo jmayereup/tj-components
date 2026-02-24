@@ -1,3 +1,5 @@
+import { getBestVoice } from '../audio-utils.js';
+
 class TjListening extends HTMLElement {
     // Static registry of all instances on the page
     static _instances = [];
@@ -649,27 +651,7 @@ class TjListening extends HTMLElement {
     // ─── TTS LOGIC ─────────────────────────────────────────
 
     _getBestVoice(lang) {
-        if (!window.speechSynthesis) return null;
-        const voices = window.speechSynthesis.getVoices();
-        if (voices.length === 0) return null;
-
-        const langPrefix = lang.split(/[-_]/)[0].toLowerCase();
-
-        let langVoices = voices.filter(v => v.lang.toLowerCase() === lang.toLowerCase());
-        if (langVoices.length === 0) {
-            langVoices = voices.filter(v => v.lang.split(/[-_]/)[0].toLowerCase() === langPrefix);
-        }
-
-        if (langVoices.length === 0) return null;
-
-        const priorities = ["natural", "google", "premium", "siri"];
-        for (const p of priorities) {
-            const found = langVoices.find(v => v.name.toLowerCase().includes(p));
-            if (found) return found;
-        }
-
-        const nonRobotic = langVoices.find(v => !v.name.toLowerCase().includes("microsoft"));
-        return nonRobotic || langVoices[0];
+        return getBestVoice(window.speechSynthesis, lang);
     }
 
     _playTTS(text) {

@@ -1,11 +1,12 @@
 var f = Object.defineProperty;
 var u = (h, e, t) => e in h ? f(h, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : h[e] = t;
 var g = (h, e, t) => u(h, typeof e != "symbol" ? e + "" : e, t);
-const p = class p extends HTMLElement {
+import { g as m } from "./chunks/audio-utils-BQ4R88Cf.js";
+const l = class l extends HTMLElement {
   constructor() {
     super(), this.attachShadow({ mode: "open" }), this.lessonData = null, this.currentPhase = 0, this.score = 0, this.answeredCount = 0, this.totalQuestions = 0, this.isCompleted = !1, this.studentInfo = { nickname: "", number: "" }, this.selectedVoiceName = null, this.isPlaying = !1, this._currentAudioEl = null;
     const e = new URLSearchParams(window.location.search);
-    this.isQuizMode = e.get("quiz") === "1", p._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList());
+    this.isQuizMode = e.get("quiz") === "1", l._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList());
   }
   connectedCallback() {
     requestAnimationFrame(() => {
@@ -39,7 +40,7 @@ const p = class p extends HTMLElement {
     const e = this.lessonData, t = ["Introduction", "Vocabulary", "Listening"];
     let o = "";
     this.currentPhase === 0 ? o = this._renderIntroPhase() : this.currentPhase === 1 ? o = this._renderVocabPhase() : o = this._renderListeningPhase();
-    const s = `
+    const r = `
       <style>${this.getBaseStyles()}</style>
       <div class="container">
         <div class="header-row">
@@ -48,10 +49,11 @@ const p = class p extends HTMLElement {
                 <div class="phase-badge">${t[this.currentPhase]}</div>
             </div>
             <div class="header-controls">
-                <button id="share-quiz-btn" class="icon-btn" title="Share as Quiz (no transcript)">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <button id="share-quiz-btn" class="share-btn" title="Share as Quiz (no transcript)">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                         <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
                     </svg>
+                    <span>Share Quiz</span>
                 </button>
                 <button id="voice-btn" class="icon-btn" title="Choose Voice">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -64,12 +66,12 @@ const p = class p extends HTMLElement {
 
         <!-- Phase Progress Dots -->
         <div class="phase-dots">
-            ${t.map((r, n) => `
-                <div class="phase-dot-group ${n === this.currentPhase ? "active" : ""} ${n < this.currentPhase ? "completed" : ""}">
-                    <div class="phase-dot">${n < this.currentPhase ? "✓" : n + 1}</div>
-                    <span class="phase-dot-label">${r}</span>
+            ${t.map((n, i) => `
+                <div class="phase-dot-group ${i === this.currentPhase ? "active" : ""} ${i < this.currentPhase ? "completed" : ""}">
+                    <div class="phase-dot">${i < this.currentPhase ? "✓" : i + 1}</div>
+                    <span class="phase-dot-label">${n}</span>
                 </div>
-                ${n < t.length - 1 ? '<div class="phase-dot-line"></div>' : ""}
+                ${i < t.length - 1 ? '<div class="phase-dot-line"></div>' : ""}
             `).join("")}
         </div>
 
@@ -101,7 +103,7 @@ const p = class p extends HTMLElement {
         </div>
       </div>
     `;
-    this.shadowRoot.innerHTML = s, this._attachListeners();
+    this.shadowRoot.innerHTML = r, this._attachListeners();
   }
   // ─── PHASE RENDERERS ───────────────────────────────────
   _renderIntroPhase() {
@@ -128,7 +130,7 @@ const p = class p extends HTMLElement {
                 Review the vocabulary before listening. Tap the speaker to hear each word.
             </div>
             <div class="vocab-grid">
-                ${e.map((o, s) => `
+                ${e.map((o, r) => `
             <div class="vocab-card">
                 <div class="vocab-header">
                     <h3 class="vocab-word">${o.word}</h3>
@@ -161,8 +163,8 @@ const p = class p extends HTMLElement {
                     <span>Play Dialogue</span>
                 </button>
             `;
-    let s = "";
-    e.transcript && !this.isQuizMode && (s = `
+    let r = "";
+    e.transcript && !this.isQuizMode && (r = `
                 <div class="transcript-box">
                     <div class="transcript-header">
                         <span class="transcript-label">Transcript</span>
@@ -170,30 +172,30 @@ const p = class p extends HTMLElement {
                     </div>
                     <div class="transcript-body" id="transcript-body" style="display: none;">
                         ${e.transcript.split(`
-`).filter((i) => i.trim()).map((i) => `<p class="transcript-line">${i}</p>`).join("")}
+`).filter((s) => s.trim()).map((s) => `<p class="transcript-line">${s}</p>`).join("")}
                     </div>
                 </div>
             `);
-    let r = "";
-    return e.questions && e.questions.length > 0 && (r = e.questions.map((n, i) => {
-      const a = `q_${i}`, d = n.options.map((c, l) => `
-                    <label class="mc-option" id="label_${a}_${l}">
-                        <input type="radio" name="${a}" value="${c}" data-correct="${n.correct}" data-label-id="label_${a}_${l}">
+    let n = "";
+    return e.questions && e.questions.length > 0 && (n = e.questions.map((i, s) => {
+      const a = `q_${s}`, p = i.options.map((c, d) => `
+                    <label class="mc-option" id="label_${a}_${d}">
+                        <input type="radio" name="${a}" value="${c}" data-correct="${i.correct}" data-label-id="label_${a}_${d}">
                         ${c}
                     </label>
                 `).join("");
       return `
                     <div class="question-card">
                         <div class="question-header">
-                            <p class="question-text"><strong>Q${i + 1}.</strong> ${n.question}</p>
-                            <button class="tts-btn" data-text="${n.question}" title="Listen to question">
+                            <p class="question-text"><strong>Q${s + 1}.</strong> ${i.question}</p>
+                            <button class="tts-btn" data-text="${i.question}" title="Listen to question">
                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                                     <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                                 </svg>
                             </button>
                         </div>
                         <div class="options-group">
-                            ${d}
+                            ${p}
                         </div>
                     </div>
                 `;
@@ -206,9 +208,9 @@ const p = class p extends HTMLElement {
                     Listen to the dialogue, then answer the comprehension questions below.
                 </div>
                 ${o}
-                ${s}
-                <div class="section-title">Comprehension Questions</div>
                 ${r}
+                <div class="section-title">Comprehension Questions</div>
+                ${n}
                 <div id="footer-actions" class="footer-actions" style="display: ${this.answeredCount === this.totalQuestions && this.totalQuestions > 0 ? "flex" : "none"}">
                     <button id="complete-btn" class="complete-btn">See My Score</button>
                 </div>
@@ -220,24 +222,24 @@ const p = class p extends HTMLElement {
     const e = this.shadowRoot.getElementById("prev-btn"), t = this.shadowRoot.getElementById("next-btn");
     e && (e.onclick = () => this._navigatePhase(-1)), t && (t.onclick = () => this._navigatePhase(1));
     const o = this.shadowRoot.getElementById("share-quiz-btn");
-    o && (o.onclick = () => this._shareAsQuiz()), this.shadowRoot.getElementById("voice-btn").onclick = () => this._showVoiceOverlay(), this.shadowRoot.getElementById("close-voice-btn").onclick = () => this._hideVoiceOverlay(), this.shadowRoot.getElementById("voice-overlay").onclick = (i) => {
-      i.target.id === "voice-overlay" && this._hideVoiceOverlay();
-    }, this.shadowRoot.querySelectorAll(".tts-btn, .vocab-play-btn").forEach((i) => {
-      i.onclick = () => this._playTTS(i.getAttribute("data-text"));
+    o && (o.onclick = () => this._shareAsQuiz()), this.shadowRoot.getElementById("voice-btn").onclick = () => this._showVoiceOverlay(), this.shadowRoot.getElementById("close-voice-btn").onclick = () => this._hideVoiceOverlay(), this.shadowRoot.getElementById("voice-overlay").onclick = (s) => {
+      s.target.id === "voice-overlay" && this._hideVoiceOverlay();
+    }, this.shadowRoot.querySelectorAll(".tts-btn, .vocab-play-btn").forEach((s) => {
+      s.onclick = () => this._playTTS(s.getAttribute("data-text"));
     });
-    const s = this.shadowRoot.getElementById("listening-play-btn");
-    s && (s.onclick = () => {
-      var a;
-      const i = ((a = this.lessonData.listening) == null ? void 0 : a.transcript) || "";
-      this._playTTS(i);
-    });
-    const r = this.shadowRoot.getElementById("transcript-toggle");
+    const r = this.shadowRoot.getElementById("listening-play-btn");
     r && (r.onclick = () => {
-      const i = this.shadowRoot.getElementById("transcript-body");
-      i.style.display === "none" ? (i.style.display = "block", r.textContent = "Hide") : (i.style.display = "none", r.textContent = "Show");
-    }), this._attachValidationListeners();
-    const n = this.shadowRoot.getElementById("complete-btn");
+      var a;
+      const s = ((a = this.lessonData.listening) == null ? void 0 : a.transcript) || "";
+      this._playTTS(s);
+    });
+    const n = this.shadowRoot.getElementById("transcript-toggle");
     n && (n.onclick = () => {
+      const s = this.shadowRoot.getElementById("transcript-body");
+      s.style.display === "none" ? (s.style.display = "block", n.textContent = "Hide") : (s.style.display = "none", n.textContent = "Show");
+    }), this._attachValidationListeners();
+    const i = this.shadowRoot.getElementById("complete-btn");
+    i && (i.onclick = () => {
       this.isCompleted = !0, this.render();
     });
   }
@@ -248,13 +250,13 @@ const p = class p extends HTMLElement {
   _attachValidationListeners() {
     this.shadowRoot.querySelectorAll('input[type="radio"]').forEach((t) => {
       t.addEventListener("change", (o) => {
-        const s = o.target.value, r = o.target.getAttribute("data-correct"), n = o.target.getAttribute("data-label-id"), i = this.shadowRoot.getElementById(n), a = o.target.name, d = this.shadowRoot.querySelectorAll(`input[name="${a}"]`);
-        d.forEach((c) => {
+        const r = o.target.value, n = o.target.getAttribute("data-correct"), i = o.target.getAttribute("data-label-id"), s = this.shadowRoot.getElementById(i), a = o.target.name, p = this.shadowRoot.querySelectorAll(`input[name="${a}"]`);
+        p.forEach((c) => {
           c.disabled = !0;
-        }), s === r ? (i.classList.add("correct"), this.score++) : (i.classList.add("incorrect"), d.forEach((c) => {
+        }), r === n ? (s.classList.add("correct"), this.score++) : (s.classList.add("incorrect"), p.forEach((c) => {
           if (c.value === c.getAttribute("data-correct")) {
-            const l = c.getAttribute("data-label-id");
-            this.shadowRoot.getElementById(l).classList.add("correct-highlight");
+            const d = c.getAttribute("data-label-id");
+            this.shadowRoot.getElementById(d).classList.add("correct-highlight");
           }
         })), this.answeredCount++, this._updateProgress(), this._checkCompletion();
       });
@@ -271,15 +273,15 @@ const p = class p extends HTMLElement {
     }
   }
   _isLastInstance() {
-    const e = p._instances;
+    const e = l._instances;
     return e.length > 1 && e[e.length - 1] === this;
   }
   _getCombinedScore() {
-    const e = p._instances;
-    let t = 0, o = 0, s = !0;
-    return e.forEach((r) => {
-      t += r.score, o += r.totalQuestions, r.isCompleted || (s = !1);
-    }), { totalScore: t, totalQuestions: o, allDone: s, count: e.length };
+    const e = l._instances;
+    let t = 0, o = 0, r = !0;
+    return e.forEach((n) => {
+      t += n.score, o += n.totalQuestions, n.isCompleted || (r = !1);
+    }), { totalScore: t, totalQuestions: o, allDone: r, count: e.length };
   }
   renderScoreScreen() {
     const e = Math.round(this.score / this.totalQuestions * 100) || 0;
@@ -287,19 +289,19 @@ const p = class p extends HTMLElement {
     e < 50 ? t = "💪" : e < 80 && (t = "👍");
     let o = "";
     if (this._isLastInstance()) {
-      const n = this._getCombinedScore();
-      if (n.allDone) {
-        const i = Math.round(n.totalScore / n.totalQuestions * 100) || 0;
+      const i = this._getCombinedScore();
+      if (i.allDone) {
+        const s = Math.round(i.totalScore / i.totalQuestions * 100) || 0;
         let a = "🏆";
-        i < 50 ? a = "💪" : i < 80 && (a = "⭐"), o = `
+        s < 50 ? a = "💪" : s < 80 && (a = "⭐"), o = `
                     <div class="combined-score">
-                        <div class="combined-header">${a} Combined Score — All ${n.count} Lessons</div>
+                        <div class="combined-header">${a} Combined Score — All ${i.count} Lessons</div>
                         <div class="combined-stats">
-                            <div class="combined-value">${n.totalScore} / ${n.totalQuestions}</div>
-                            <div class="combined-percent">${i}%</div>
+                            <div class="combined-value">${i.totalScore} / ${i.totalQuestions}</div>
+                            <div class="combined-percent">${s}%</div>
                         </div>
                         <div class="combined-bar-track">
-                            <div class="combined-bar-fill" style="width: ${i}%"></div>
+                            <div class="combined-bar-fill" style="width: ${s}%"></div>
                         </div>
                     </div>
                 `;
@@ -307,11 +309,11 @@ const p = class p extends HTMLElement {
         o = `
                     <div class="combined-score combined-pending">
                         <div class="combined-header">📋 Lesson Progress</div>
-                        <p class="combined-note">${p._instances.filter((a) => a.isCompleted).length} of ${n.count} lessons completed. Finish all to see your combined score.</p>
+                        <p class="combined-note">${l._instances.filter((a) => a.isCompleted).length} of ${i.count} lessons completed. Finish all to see your combined score.</p>
                     </div>
                 `;
     }
-    const s = this._isLastInstance(), r = `
+    const r = this._isLastInstance(), n = `
   <style>${this.getBaseStyles()}</style>
   <div class="container score-screen">
     <div class="score-circle">
@@ -322,12 +324,12 @@ const p = class p extends HTMLElement {
     <p>You completed the "${this.lessonData.title || "Listening Lesson"}" activity.</p>
     <div class="score-actions">
         <button class="role-btn" id="restart-btn">Try Again</button>
-        ${s ? '<button class="report-btn" id="report-btn">📄 See Report Card</button>' : ""}
+        ${r ? '<button class="report-btn" id="report-btn">📄 See Report Card</button>' : ""}
     </div>
     ${o}
   </div>
 
-  ${s ? `
+  ${r ? `
   <div class="report-overlay" id="report-overlay" style="display:none;">
     <div class="report-modal">
       <div class="initial-form" id="initial-form">
@@ -344,16 +346,16 @@ const p = class p extends HTMLElement {
   </div>
   ` : ""}
 `;
-    this.shadowRoot.innerHTML = r, this.scrollIntoView({ behavior: "smooth", block: "start" }), this.shadowRoot.getElementById("restart-btn").addEventListener("click", () => {
+    this.shadowRoot.innerHTML = n, this.scrollIntoView({ behavior: "smooth", block: "start" }), this.shadowRoot.getElementById("restart-btn").addEventListener("click", () => {
       this.score = 0, this.answeredCount = 0, this.isCompleted = !1, this.currentPhase = 0, this.render();
-    }), s && (this.shadowRoot.getElementById("report-btn").addEventListener("click", () => {
+    }), r && (this.shadowRoot.getElementById("report-btn").addEventListener("click", () => {
       this._showReportOverlay();
     }), this.shadowRoot.getElementById("generate-btn").addEventListener("click", () => {
       this._generateReport();
     }), this.shadowRoot.getElementById("cancel-btn").addEventListener("click", () => {
       this.shadowRoot.getElementById("report-overlay").style.display = "none";
-    }), this.shadowRoot.getElementById("report-overlay").addEventListener("click", (n) => {
-      n.target.id === "report-overlay" && (this.shadowRoot.getElementById("report-overlay").style.display = "none");
+    }), this.shadowRoot.getElementById("report-overlay").addEventListener("click", (i) => {
+      i.target.id === "report-overlay" && (this.shadowRoot.getElementById("report-overlay").style.display = "none");
     }));
   }
   _showReportOverlay() {
@@ -367,67 +369,57 @@ const p = class p extends HTMLElement {
     }
   }
   _generateReport() {
-    const e = this.shadowRoot.getElementById("nickname-input"), t = this.shadowRoot.getElementById("number-input"), o = e ? e.value.trim() : this.studentInfo.nickname, s = t ? t.value.trim() : this.studentInfo.number;
-    if (!o || !s) {
+    const e = this.shadowRoot.getElementById("nickname-input"), t = this.shadowRoot.getElementById("number-input"), o = e ? e.value.trim() : this.studentInfo.nickname, r = t ? t.value.trim() : this.studentInfo.number;
+    if (!o || !r) {
       alert("Please enter both nickname and student number.");
       return;
     }
-    this.studentInfo = { nickname: o, number: s };
-    const r = this._getCombinedScore(), n = Math.round(r.totalScore / r.totalQuestions * 100) || 0, i = (/* @__PURE__ */ new Date()).toLocaleString();
+    this.studentInfo = { nickname: o, number: r };
+    const n = this._getCombinedScore(), i = Math.round(n.totalScore / n.totalQuestions * 100) || 0, s = (/* @__PURE__ */ new Date()).toLocaleString();
     let a = "🏆";
-    n < 50 ? a = "💪" : n < 80 && (a = "⭐");
-    const d = `
+    i < 50 ? a = "💪" : i < 80 && (a = "⭐");
+    const p = `
             <div class="rc-header">
                 <div class="rc-icon">📄</div>
-                <div class="rc-title">Report Card</div>
-                <div class="rc-activity">Listening — All ${r.count} Lessons</div>
+                <div class="rc-title">${this.lessonData.title || "Listening Practice"}</div>
+                <div class="rc-subtitle">Report Card</div>
+                <div class="rc-activity">All ${n.count} Lessons</div>
             </div>
             <div class="rc-student">
                 <span class="rc-label">Student</span>
-                <span class="rc-value">${o} <span class="rc-number">(${s})</span></span>
+                <span class="rc-value">${o} <span class="rc-number">(${r})</span></span>
             </div>
             <div class="rc-score-row">
                 <div class="rc-score-circle">
-                    <div class="rc-score-val">${r.totalScore}/${r.totalQuestions}</div>
-                    <div class="rc-score-pct">${n}%</div>
+                    <div class="rc-score-val">${n.totalScore}/${n.totalQuestions}</div>
+                    <div class="rc-score-pct">${i}%</div>
                 </div>
-                <div class="rc-score-label">${a} ${n >= 80 ? "Excellent!" : n >= 50 ? "Good effort!" : "Keep practicing!"}</div>
+                <div class="rc-score-label">${a} ${i >= 80 ? "Excellent!" : i >= 50 ? "Good effort!" : "Keep practicing!"}</div>
             </div>
-            <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${n}%"></div></div>
+            <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${i}%"></div></div>
             <div class="rc-details">
-                <div class="rc-detail-row"><span>Total Correct</span><span>${r.totalScore} / ${r.totalQuestions}</span></div>
-                <div class="rc-detail-row"><span>Completed On</span><span>${i}</span></div>
+                <div class="rc-detail-row"><span>Total Correct</span><span>${n.totalScore} / ${n.totalQuestions}</span></div>
+                <div class="rc-detail-row"><span>Completed On</span><span>${s}</span></div>
             </div>
             <div class="rc-actions">
                 <button class="rc-close-btn" id="rc-close-btn">↩ Return to Activity</button>
             </div>
-        `, c = this.shadowRoot.getElementById("initial-form"), l = this.shadowRoot.getElementById("report-area");
-    c && (c.style.display = "none"), l && (l.style.display = "block", l.innerHTML = d), this.shadowRoot.getElementById("rc-close-btn").addEventListener("click", () => {
+        `, c = this.shadowRoot.getElementById("initial-form"), d = this.shadowRoot.getElementById("report-area");
+    c && (c.style.display = "none"), d && (d.style.display = "block", d.innerHTML = p), this.shadowRoot.getElementById("rc-close-btn").addEventListener("click", () => {
       this.shadowRoot.getElementById("report-overlay").style.display = "none";
     });
   }
   // ─── TTS LOGIC ─────────────────────────────────────────
   _getBestVoice(e) {
-    if (!window.speechSynthesis) return null;
-    const t = window.speechSynthesis.getVoices();
-    if (t.length === 0) return null;
-    const o = e.split(/[-_]/)[0].toLowerCase();
-    let s = t.filter((i) => i.lang.toLowerCase() === e.toLowerCase());
-    if (s.length === 0 && (s = t.filter((i) => i.lang.split(/[-_]/)[0].toLowerCase() === o)), s.length === 0) return null;
-    const r = ["natural", "google", "premium", "siri"];
-    for (const i of r) {
-      const a = s.find((d) => d.name.toLowerCase().includes(i));
-      if (a) return a;
-    }
-    return s.find((i) => !i.name.toLowerCase().includes("microsoft")) || s[0];
+    return m(window.speechSynthesis, e);
   }
   _playTTS(e) {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const t = new SpeechSynthesisUtterance(e), o = this._getLang();
     t.lang = o, t.rate = 0.85;
-    let r = window.speechSynthesis.getVoices().find((n) => n.name === this.selectedVoiceName);
-    r || (r = this._getBestVoice(o)), r && (t.voice = r), t.onstart = () => {
+    let n = window.speechSynthesis.getVoices().find((i) => i.name === this.selectedVoiceName);
+    n || (n = this._getBestVoice(o)), n && (t.voice = n), t.onstart = () => {
       this.isPlaying = !0;
     }, t.onend = () => {
       this.isPlaying = !1;
@@ -446,11 +438,11 @@ const p = class p extends HTMLElement {
   _showToast(e, t = !1) {
     const o = this.shadowRoot.querySelector(".toast");
     o && o.remove();
-    const s = document.createElement("div");
-    s.className = "toast", t ? (s.innerHTML = `<span>Quiz link:</span><input type="text" value="${e}" readonly class="toast-url" />`, s.querySelector(".toast-url").onclick = function() {
+    const r = document.createElement("div");
+    r.className = "toast", t ? (r.innerHTML = `<span>Quiz link:</span><input type="text" value="${e}" readonly class="toast-url" />`, r.querySelector(".toast-url").onclick = function() {
       this.select();
-    }) : s.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><span>${e}</span>`, this.shadowRoot.appendChild(s), setTimeout(() => {
-      s.parentNode && s.remove();
+    }) : r.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><span>${e}</span>`, this.shadowRoot.appendChild(r), setTimeout(() => {
+      r.parentNode && r.remove();
     }, 3e3);
   }
   _showVoiceOverlay() {
@@ -464,13 +456,13 @@ const p = class p extends HTMLElement {
   _updateVoiceList() {
     const e = this.shadowRoot.getElementById("voice-list");
     if (!e) return;
-    const t = window.speechSynthesis.getVoices(), o = this._getLang(), s = o.split(/[-_]/)[0].toLowerCase();
-    let r = t.filter((i) => i.lang.split(/[-_]/)[0].toLowerCase() === s);
-    const n = this._getBestVoice(o);
-    e.innerHTML = "", r.sort((i, a) => i.name.localeCompare(a.name)), r.forEach((i) => {
+    const t = window.speechSynthesis.getVoices(), o = this._getLang(), r = o.split(/[-_]/)[0].toLowerCase();
+    let n = t.filter((s) => s.lang.split(/[-_]/)[0].toLowerCase() === r);
+    const i = this._getBestVoice(o);
+    e.innerHTML = "", n.sort((s, a) => s.name.localeCompare(a.name)), n.forEach((s) => {
       const a = document.createElement("button");
-      a.classList.add("voice-option-btn"), (this.selectedVoiceName === i.name || !this.selectedVoiceName && n && i.name === n.name) && a.classList.add("active"), a.innerHTML = `<span>${i.name}</span>`, n && i.name === n.name && (a.innerHTML += '<span class="badge">Best</span>'), a.onclick = () => {
-        this.selectedVoiceName = i.name, this._updateVoiceList(), this._hideVoiceOverlay();
+      a.classList.add("voice-option-btn"), (this.selectedVoiceName === s.name || !this.selectedVoiceName && i && s.name === i.name) && a.classList.add("active"), a.innerHTML = `<span>${s.name}</span>`, i && s.name === i.name && (a.innerHTML += '<span class="badge">Best</span>'), a.onclick = () => {
+        this.selectedVoiceName = s.name, this._updateVoiceList(), this._hideVoiceOverlay();
       }, e.appendChild(a);
     });
   }
@@ -577,8 +569,26 @@ const p = class p extends HTMLElement {
   .role-btn:hover { background-color: #e2e8f0; border-color: #94a3b8; }
   .report-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background 0.2s; }
   .report-btn:hover { background: #1d4ed8; }
-  .share-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #475569; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-  .share-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+  .share-btn { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 8px; 
+    padding: 8px 16px; 
+    background: none; 
+    border: 1px solid #e2e8f0; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    color: #475569; 
+    transition: all 0.2s; 
+    white-space: nowrap;
+    font-size: 0.9em;
+    font-weight: 600;
+    height: 42px;
+    box-sizing: border-box;
+  }
+  .share-btn:hover { background-color: #f1f5f9; color: #2563eb; border-color: #2563eb; }
+  .share-btn svg { color: #475569; }
+  .share-btn:hover svg { color: #2563eb; }
 
   /* Report Overlay */
   .report-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
@@ -597,7 +607,8 @@ const p = class p extends HTMLElement {
   .rc-header { text-align: center; margin-bottom: 16px; }
   .rc-icon { font-size: 2em; }
   .rc-title { font-size: 1.3em; font-weight: 800; color: #1e293b; margin: 4px 0 2px; }
-  .rc-activity { font-size: 0.9em; color: #64748b; }
+  .rc-subtitle { font-size: 0.9em; font-weight: 600; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .rc-activity { font-size: 0.85em; color: #94a3b8; }
   .rc-student { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
   .rc-label { font-size: 0.8em; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
   .rc-value { font-weight: 700; color: #1e293b; }
@@ -630,9 +641,7 @@ const p = class p extends HTMLElement {
       .role-btn { padding: 16px; font-size: 16px; font-weight: bold; cursor: pointer; background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; transition: all 0.2s; }
       .role-btn:hover { background-color: #e2e8f0; border-color: #94a3b8; }
 
-      .score-actions { display: flex; gap: 12px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
-      .share-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; font-size: 15px; font-weight: 600; cursor: pointer; background: #2563eb; color: white; border: none; border-radius: 8px; transition: all 0.2s; }
-      .share-btn:hover { background: #1d4ed8; }
+
 
       /* Combined Score */
       .combined-score { margin-top: 30px; padding: 20px 24px; background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%); border: 1px solid #bae6fd; border-radius: 12px; text-align: center; }
@@ -677,6 +686,6 @@ const p = class p extends HTMLElement {
   }
 };
 // Static registry of all instances on the page
-g(p, "_instances", []);
-let b = p;
+g(l, "_instances", []);
+let b = l;
 customElements.define("tj-listening", b);

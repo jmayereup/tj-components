@@ -1,3 +1,5 @@
+import { getBestVoice } from '../audio-utils.js';
+
 const styles = `
     @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
@@ -1069,30 +1071,7 @@ class TjChapterBook extends HTMLElement {
     }
 
     _getBestVoice(lang) {
-        if (!this.synth) return null;
-        const voices = this.synth.getVoices();
-        if (voices.length === 0) return null;
-
-        const langPrefix = lang.split(/[-_]/)[0].toLowerCase();
-
-        // 1. Filter by language (exact match or prefix)
-        let langVoices = voices.filter(v => v.lang.toLowerCase() === lang.toLowerCase());
-        if (langVoices.length === 0) {
-            langVoices = voices.filter(v => v.lang.split(/[-_]/)[0].toLowerCase() === langPrefix);
-        }
-
-        if (langVoices.length === 0) return null;
-
-        // 2. Priority list for high-quality voices
-        const priorities = ["natural", "google", "premium", "siri"];
-        for (const p of priorities) {
-            const found = langVoices.find(v => v.name.toLowerCase().includes(p));
-            if (found) return found;
-        }
-
-        // 3. Fallback to first non-robotic voice
-        const nonRobotic = langVoices.find(v => !v.name.toLowerCase().includes("microsoft"));
-        return nonRobotic || langVoices[0];
+        return getBestVoice(window.speechSynthesis, lang);
     }
 
     _showVoiceOverlay() {

@@ -1,4 +1,5 @@
-const k = `
+import { g as k } from "./chunks/audio-utils-BQ4R88Cf.js";
+const S = `
     @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
     tj-chapter-book {
@@ -113,9 +114,8 @@ const k = `
     }
 
     .chapters-container {
-        max-width: 48em;
         margin: 0 auto;
-        padding: 2em 1em;
+        padding: 1em 1em;
     }
 
     .chapters-container > * + * {
@@ -1003,18 +1003,7 @@ class g extends HTMLElement {
     }
   }
   _getBestVoice(t) {
-    if (!this.synth) return null;
-    const o = this.synth.getVoices();
-    if (o.length === 0) return null;
-    const e = t.split(/[-_]/)[0].toLowerCase();
-    let r = o.filter((a) => a.lang.toLowerCase() === t.toLowerCase());
-    if (r.length === 0 && (r = o.filter((a) => a.lang.split(/[-_]/)[0].toLowerCase() === e)), r.length === 0) return null;
-    const i = ["natural", "google", "premium", "siri"];
-    for (const a of i) {
-      const l = r.find((n) => n.name.toLowerCase().includes(a));
-      if (l) return l;
-    }
-    return r.find((a) => !a.name.toLowerCase().includes("microsoft")) || r[0];
+    return k(window.speechSynthesis, t);
   }
   _showVoiceOverlay() {
     const t = this.querySelector(".voice-overlay");
@@ -1028,21 +1017,21 @@ class g extends HTMLElement {
     if (!this.synth) return;
     const t = this.synth.getVoices(), o = this.querySelector(".voice-list"), e = this.querySelector("#voice-btn");
     if (!o || !e || t.length === 0) return;
-    const r = this.language, i = r.split(/[-_]/)[0].toLowerCase(), s = t.filter((l) => l.lang.split(/[-_]/)[0].toLowerCase() === i), a = this._getBestVoice(r);
-    !this.selectedVoiceName && a && (this.selectedVoiceName = a.name), o.innerHTML = "", s.sort((l, n) => l.name.localeCompare(n.name)), s.forEach((l) => {
-      const n = document.createElement("button");
-      n.classList.add("voice-option-btn"), this.selectedVoiceName === l.name && n.classList.add("active");
-      let p = `<span>${l.name}</span>`;
-      a && l.name === a.name && (p += '<span class="badge">Best</span>'), n.innerHTML = p, n.onclick = () => {
-        this.selectedVoiceName = l.name, this.cancelTTS(), this._updateVoiceList(), this._hideVoiceOverlay();
-      }, o.appendChild(n);
+    const r = this.language, n = r.split(/[-_]/)[0].toLowerCase(), a = t.filter((s) => s.lang.split(/[-_]/)[0].toLowerCase() === n), l = this._getBestVoice(r);
+    !this.selectedVoiceName && l && (this.selectedVoiceName = l.name), o.innerHTML = "", a.sort((s, i) => s.name.localeCompare(i.name)), a.forEach((s) => {
+      const i = document.createElement("button");
+      i.classList.add("voice-option-btn"), this.selectedVoiceName === s.name && i.classList.add("active");
+      let p = `<span>${s.name}</span>`;
+      l && s.name === l.name && (p += '<span class="badge">Best</span>'), i.innerHTML = p, i.onclick = () => {
+        this.selectedVoiceName = s.name, this.cancelTTS(), this._updateVoiceList(), this._hideVoiceOverlay();
+      }, o.appendChild(i);
     });
   }
   _initVisibilityObserver() {
     this._visibilityObserver = new IntersectionObserver((t) => {
       t.forEach((o) => {
-        const e = o.target, r = e.id, i = e.querySelector(`#quiz-${r}`);
-        !o.isIntersecting && o.boundingClientRect.bottom < 0 && i && i.dataset.checked === "true" && !i.classList.contains("quiz-hidden-checked") && this._hideCheckedQuiz(e, i);
+        const e = o.target, r = e.id, n = e.querySelector(`#quiz-${r}`);
+        !o.isIntersecting && o.boundingClientRect.bottom < 0 && n && n.dataset.checked === "true" && !n.classList.contains("quiz-hidden-checked") && this._hideCheckedQuiz(e, n);
       });
     }, {
       threshold: 0,
@@ -1059,7 +1048,7 @@ class g extends HTMLElement {
       r.quiz && (this.absoluteTotalQuestions += r.quiz.length);
     }), t.language ? (this.language = t.language, this.originalLanguage = t.language) : this.originalLanguage = this.language, t.translationLanguage ? (this.translationLanguage = t.translationLanguage, this.originalTranslationLanguage = t.translationLanguage) : (this.translationLanguage = this.language.startsWith("en") ? "th-TH" : "en-US", this.originalTranslationLanguage = this.translationLanguage), !document.getElementById("tj-chapter-book-styles")) {
       const r = document.createElement("style");
-      r.id = "tj-chapter-book-styles", r.textContent = k, document.head.appendChild(r);
+      r.id = "tj-chapter-book-styles", r.textContent = S, document.head.appendChild(r);
     }
     const o = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>', e = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>';
     this.innerHTML = `
@@ -1093,7 +1082,7 @@ class g extends HTMLElement {
             </header>
 
             <div class="chapters-container" translate="no">
-                ${t.chapters ? t.chapters.map((r, i) => this.renderChapter(r, i)).join("") : "<p>No chapters found.</p>"}
+                ${t.chapters ? t.chapters.map((r, n) => this.renderChapter(r, n)).join("") : "<p>No chapters found.</p>"}
             </div>
 
             <footer class="book-footer">
@@ -1176,7 +1165,7 @@ class g extends HTMLElement {
     return !(t.includes("wv") || t.includes("webview") || t.includes("instagram") || t.includes("facebook") || t.includes("line"));
   }
   renderChapter(t, o) {
-    const e = `text-${t.id}`, r = `quiz-${t.id}`, i = `trans-${t.id}`, s = g.chapterHasTranslation(t), a = this.wrapWords(t.content ?? t.text), l = s ? this.wrapWords(t.translation) : "", n = l, p = t.quiz.map((b, f) => `
+    const e = `text-${t.id}`, r = `quiz-${t.id}`, n = `trans-${t.id}`, a = g.chapterHasTranslation(t), l = this.wrapWords(t.content ?? t.text), s = a ? this.wrapWords(t.translation) : "", i = s, p = t.quiz.map((b, f) => `
             <div class="question-block">
                 <p class="question-text">${b.question}</p>
                 ${b.options.map((v) => `
@@ -1221,16 +1210,16 @@ class g extends HTMLElement {
                 
                 ${m}
 
-                <template data-tj-template="main-original">${a}</template>
-                ${s ? `<template data-tj-template="main-translation">${l}</template>` : ""}
-                <template data-tj-template="trans-original">${a}</template>
-                ${s ? `<template data-tj-template="trans-translation">${l}</template>` : ""}
+                <template data-tj-template="main-original">${l}</template>
+                ${a ? `<template data-tj-template="main-translation">${s}</template>` : ""}
+                <template data-tj-template="trans-original">${l}</template>
+                ${a ? `<template data-tj-template="trans-translation">${s}</template>` : ""}
 
                 <div id="${e}" class="chapter-text">
-                    ${this.isTextSwapped && s ? n : a}
+                    ${this.isTextSwapped && a ? i : l}
                 </div>
 
-                ${s ? `
+                ${a ? `
                 <aside id="trans-aside-${t.id}" style="display: none;">
                 <details class="translation-details group">
                     <summary class="translation-summary">
@@ -1238,12 +1227,12 @@ class g extends HTMLElement {
                         <span class="chevron">${u}</span>
                     </summary>
                     <div style="padding: 0.5em 0.75em 0;">
-                        <button data-action="play" data-rate="1.0" data-target="${i}" data-lang="${this.translationLanguage}" id="btn-trans-${t.id}" class="audio-btn audio-btn-normal" style="font-size: 0.8em; padding: 0.25em 0.5em;">
+                        <button data-action="play" data-rate="1.0" data-target="${n}" data-lang="${this.translationLanguage}" id="btn-trans-${t.id}" class="audio-btn audio-btn-normal" style="font-size: 0.8em; padding: 0.25em 0.5em;">
                             <span class="icon-wrapper">${c}</span> Play
                         </button>
                     </div>
-                    <div id="${i}" class="translation-content">
-                        ${this.isTextSwapped ? a : l}
+                    <div id="${n}" class="translation-content">
+                        ${this.isTextSwapped ? l : s}
                     </div>
                 </details>
                 </aside>
@@ -1264,12 +1253,12 @@ class g extends HTMLElement {
     g.ensureGlobalPrintScoping();
     const t = this.querySelector("#print-toggle");
     t && t.addEventListener("click", () => {
-      document.querySelectorAll('tj-chapter-book[data-tj-print-target="true"]').forEach((n) => {
-        n.removeAttribute("data-tj-print-target");
+      document.querySelectorAll('tj-chapter-book[data-tj-print-target="true"]').forEach((i) => {
+        i.removeAttribute("data-tj-print-target");
       }), this.setAttribute("data-tj-print-target", "true"), document.documentElement.classList.add("tj-print-scope"), window.print();
-    }), this.querySelectorAll(".lang-btn").forEach((n) => {
-      n.addEventListener("click", (p) => {
-        const c = n.dataset.swap === "true";
+    }), this.querySelectorAll(".lang-btn").forEach((i) => {
+      i.addEventListener("click", (p) => {
+        const c = i.dataset.swap === "true";
         if (this.isTextSwapped !== c) {
           this.cancelTTS();
           const d = this.language;
@@ -1290,46 +1279,46 @@ class g extends HTMLElement {
       this._hideVoiceOverlay();
     });
     const r = this.querySelector(".voice-overlay");
-    r && r.addEventListener("click", (n) => {
-      n.target === r && this._hideVoiceOverlay();
+    r && r.addEventListener("click", (i) => {
+      i.target === r && this._hideVoiceOverlay();
     });
-    const i = this.querySelector("#theme-toggle");
-    i && i.addEventListener("click", () => {
+    const n = this.querySelector("#theme-toggle");
+    n && n.addEventListener("click", () => {
       this.classList.toggle("dark-theme");
-      const n = this.classList.contains("dark-theme"), p = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>', c = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
-      i.innerHTML = n ? p : c;
-    }), this.querySelectorAll('button[data-action="play"]').forEach((n) => {
-      n.addEventListener("click", (p) => {
+      const i = this.classList.contains("dark-theme"), p = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>', c = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+      n.innerHTML = i ? p : c;
+    }), this.querySelectorAll('button[data-action="play"]').forEach((i) => {
+      i.addEventListener("click", (p) => {
         const c = p.target.closest("button"), d = c.dataset.target, h = parseFloat(c.dataset.rate);
         this.playAudio(d, h, c.id);
       });
-    }), this.querySelectorAll('button[data-action="cancel-tts"]').forEach((n) => {
-      n.addEventListener("click", () => {
+    }), this.querySelectorAll('button[data-action="cancel-tts"]').forEach((i) => {
+      i.addEventListener("click", () => {
         this.cancelTTS();
       });
-    }), this.querySelectorAll('button[data-action="check-quiz"]').forEach((n) => {
-      n.addEventListener("click", (p) => {
+    }), this.querySelectorAll('button[data-action="check-quiz"]').forEach((i) => {
+      i.addEventListener("click", (p) => {
         const c = p.target.closest("button"), d = c.dataset.target;
         this.checkRadioAnswers(d, c);
       });
     });
-    const s = this.querySelector("#generate-report");
-    s && s.addEventListener("click", () => this.showReportCard());
-    const a = this.querySelector("#reset-book");
-    a && a.addEventListener("click", () => this.resetApp());
-    const l = this.querySelector(".close-report-btn");
-    l && l.addEventListener("click", () => this.hideReportCard()), this.querySelectorAll(".chapter-text, .translation-content").forEach((n) => {
-      n.addEventListener("click", (p) => {
+    const a = this.querySelector("#generate-report");
+    a && a.addEventListener("click", () => this.showReportCard());
+    const l = this.querySelector("#reset-book");
+    l && l.addEventListener("click", () => this.resetApp());
+    const s = this.querySelector(".close-report-btn");
+    s && s.addEventListener("click", () => this.hideReportCard()), this.querySelectorAll(".chapter-text, .translation-content").forEach((i) => {
+      i.addEventListener("click", (p) => {
         const c = p.target.closest(".word");
         if (c) {
           let d = this.language;
-          n.classList.contains("translation-content") && !this.isTextSwapped ? d = this.translationLanguage : n.classList.contains("chapter-text") && this.isTextSwapped ? d = this.language : n.classList.contains("translation-content") && this.isTextSwapped && (d = this.translationLanguage), this.playWord(c.innerText, d);
+          i.classList.contains("translation-content") && !this.isTextSwapped ? d = this.translationLanguage : i.classList.contains("chapter-text") && this.isTextSwapped ? d = this.language : i.classList.contains("translation-content") && this.isTextSwapped && (d = this.translationLanguage), this.playWord(c.innerText, d);
         }
       });
-    }), this.querySelectorAll(".translation-details").forEach((n) => {
-      n.addEventListener("toggle", (p) => {
-        const c = n.closest(".chapter-card");
-        c && this.handleTranslationToggle(c.id, n.open);
+    }), this.querySelectorAll(".translation-details").forEach((i) => {
+      i.addEventListener("toggle", (p) => {
+        const c = i.closest(".chapter-card");
+        c && this.handleTranslationToggle(c.id, i.open);
       });
     });
   }
@@ -1337,15 +1326,15 @@ class g extends HTMLElement {
     const o = (r) => /[\u0E00-\u0E7F]/.test(r);
     return (Array.isArray(t) ? t : [t]).map((r) => {
       if (r == null) return "";
-      const i = r.replace(/<[^>]*>/g, "");
-      return o(i) ? `<p>${r}</p>` : `<p>${i.split(/(\s+)/).map((l) => /\s+/.test(l) || l === "" ? l : `<span class="word">${l}</span>`).join("")}</p>`;
+      const n = r.replace(/<[^>]*>/g, "");
+      return o(n) ? `<p>${r}</p>` : `<p>${n.split(/(\s+)/).map((s) => /\s+/.test(s) || s === "" ? s : `<span class="word">${s}</span>`).join("")}</p>`;
     }).join("");
   }
   updateIcon(t, o) {
     const e = this.querySelector(`#${t}`);
     if (!e) return;
-    const r = e.querySelector(".icon-wrapper"), i = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>', s = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
-    o === "play" ? (r.innerHTML = i, e.classList.remove("playing")) : o === "pause" && (r.innerHTML = s, e.classList.add("playing"));
+    const r = e.querySelector(".icon-wrapper"), n = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>', a = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+    o === "play" ? (r.innerHTML = n, e.classList.remove("playing")) : o === "pause" && (r.innerHTML = a, e.classList.add("playing"));
   }
   resetAllButtons() {
     this.querySelectorAll('button[data-action="play"]').forEach((t) => {
@@ -1363,8 +1352,8 @@ class g extends HTMLElement {
     this.querySelectorAll("section.chapter-card").forEach((t) => {
       const o = t.querySelector('.chapter-text[id^="text-"]'), e = t.querySelector('.translation-content[id^="trans-"]');
       if (!o || !e) return;
-      const r = t.querySelector(this.isTextSwapped ? 'template[data-tj-template="main-translation"]' : 'template[data-tj-template="main-original"]'), i = t.querySelector(this.isTextSwapped ? 'template[data-tj-template="trans-original"]' : 'template[data-tj-template="trans-translation"]');
-      r && (o.innerHTML = r.innerHTML), i && (e.innerHTML = i.innerHTML);
+      const r = t.querySelector(this.isTextSwapped ? 'template[data-tj-template="main-translation"]' : 'template[data-tj-template="main-original"]'), n = t.querySelector(this.isTextSwapped ? 'template[data-tj-template="trans-original"]' : 'template[data-tj-template="trans-translation"]');
+      r && (o.innerHTML = r.innerHTML), n && (e.innerHTML = n.innerHTML);
     });
   }
   handleTranslationToggle(t, o) {
@@ -1375,11 +1364,11 @@ class g extends HTMLElement {
       return;
     }
     if (this.ttsState.status === "playing") {
-      const i = (() => {
-        const a = this.querySelector(`#${e}`);
-        return a && a.dataset.lang ? a.dataset.lang : this.language;
+      const n = (() => {
+        const l = this.querySelector(`#${e}`);
+        return l && l.dataset.lang ? l.dataset.lang : this.language;
       })();
-      if (this.ttsState.activeRate !== o || this.ttsState.activeLang !== i) {
+      if (this.ttsState.activeRate !== o || this.ttsState.activeLang !== n) {
         this.cancelTTS(), this.startNewSpeech(t, o, e);
         return;
       }
@@ -1387,11 +1376,11 @@ class g extends HTMLElement {
       return;
     }
     if (this.ttsState.status === "paused") {
-      const i = (() => {
-        const a = this.querySelector(`#${e}`);
-        return a && a.dataset.lang ? a.dataset.lang : this.language;
+      const n = (() => {
+        const l = this.querySelector(`#${e}`);
+        return l && l.dataset.lang ? l.dataset.lang : this.language;
       })();
-      if (this.ttsState.activeRate !== o || this.ttsState.activeLang !== i) {
+      if (this.ttsState.activeRate !== o || this.ttsState.activeLang !== n) {
         this.cancelTTS(), this.startNewSpeech(t, o, e);
         return;
       }
@@ -1415,13 +1404,13 @@ class g extends HTMLElement {
     this.ttsState.status = "playing", this.ttsState.activeButtonId = e, this.ttsState.activeElementId = t, this.ttsState.activeRate = o, this.updateIcon(e, "pause");
     try {
       this.synth && this.synth.resume();
-    } catch (i) {
-      console.warn("Speech resume() failed:", i);
+    } catch (n) {
+      console.warn("Speech resume() failed:", n);
     }
     window.setTimeout(() => {
       if (this._ttsActionSeq !== r) return;
-      const i = !!(this.synth && this.synth.paused), s = !!(this.synth && this.synth.speaking);
-      this.ttsState.status === "playing" && (i || !s) && this.startNewSpeech(t, o, e);
+      const n = !!(this.synth && this.synth.paused), a = !!(this.synth && this.synth.speaking);
+      this.ttsState.status === "playing" && (n || !a) && this.startNewSpeech(t, o, e);
     }, 650);
   }
   startNewSpeech(t, o, e) {
@@ -1430,20 +1419,20 @@ class g extends HTMLElement {
       this.showTTSError(e);
       return;
     }
-    const i = this.querySelector(`#${t}`);
-    if (!i) return;
-    const s = i.innerText, a = this.querySelector(`#${e}`), l = a && a.dataset.lang ? a.dataset.lang : this.language;
+    const n = this.querySelector(`#${t}`);
+    if (!n) return;
+    const a = n.innerText, l = this.querySelector(`#${e}`), s = l && l.dataset.lang ? l.dataset.lang : this.language;
     this._ttsActionSeq++, this._ttsUtteranceSeq++;
-    const n = this._ttsUtteranceSeq;
-    this.ttsState.status = "playing", this.ttsState.activeButtonId = e, this.ttsState.activeElementId = t, this.ttsState.activeRate = o, this.ttsState.activeLang = l;
+    const i = this._ttsUtteranceSeq;
+    this.ttsState.status = "playing", this.ttsState.activeButtonId = e, this.ttsState.activeElementId = t, this.ttsState.activeRate = o, this.ttsState.activeLang = s;
     try {
-      this.currentUtterance = new SpeechSynthesisUtterance(s);
+      this.currentUtterance = new SpeechSynthesisUtterance(a);
       let c = this.synth.getVoices().find((u) => u.name === this.selectedVoiceName);
-      const d = c ? c.lang.split(/[-_]/)[0].toLowerCase() : null, h = l.split(/[-_]/)[0].toLowerCase();
-      (!c || d !== h) && (c = this._getBestVoice(l)), c && (this.currentUtterance.voice = c), this.currentUtterance.lang = l, this.currentUtterance.rate = o, this.currentUtterance.onend = () => {
-        this._ttsUtteranceSeq === n && (this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null, this.currentButtonId = null, this.currentUtterance = null);
+      const d = c ? c.lang.split(/[-_]/)[0].toLowerCase() : null, h = s.split(/[-_]/)[0].toLowerCase();
+      (!c || d !== h) && (c = this._getBestVoice(s)), c && (this.currentUtterance.voice = c), this.currentUtterance.lang = s, this.currentUtterance.rate = o, this.currentUtterance.onend = () => {
+        this._ttsUtteranceSeq === i && (this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null, this.currentButtonId = null, this.currentUtterance = null);
       }, this.currentUtterance.onerror = (u) => {
-        this._ttsUtteranceSeq === n && (console.error("Speech error:", u), this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null, this.currentButtonId = null, u.error !== "canceled" && u.error !== "interrupted" && this.showTTSError(e));
+        this._ttsUtteranceSeq === i && (console.error("Speech error:", u), this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null, this.currentButtonId = null, u.error !== "canceled" && u.error !== "interrupted" && this.showTTSError(e));
       }, this.currentButtonId = e, this.updateIcon(e, "pause"), this.synth.speak(this.currentUtterance);
     } catch (p) {
       console.error("Speech synthesis setup error", p), this.showTTSError(e), this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null;
@@ -1455,9 +1444,9 @@ class g extends HTMLElement {
     if (!e) return;
     this.synth.cancel();
     const r = new SpeechSynthesisUtterance(e);
-    let s = this.synth.getVoices().find((n) => n.name === this.selectedVoiceName);
-    const a = s ? s.lang.split(/[-_]/)[0].toLowerCase() : null, l = (o || this.language).split(/[-_]/)[0].toLowerCase();
-    (!s || a !== l) && (s = this._getBestVoice(o || this.language)), s && (r.voice = s), r.lang = o || this.language, r.rate = 0.8, this.synth.speak(r);
+    let a = this.synth.getVoices().find((i) => i.name === this.selectedVoiceName);
+    const l = a ? a.lang.split(/[-_]/)[0].toLowerCase() : null, s = (o || this.language).split(/[-_]/)[0].toLowerCase();
+    (!a || l !== s) && (a = this._getBestVoice(o || this.language)), a && (r.voice = a), r.lang = o || this.language, r.rate = 0.8, this.synth.speak(r);
   }
   showTTSError(t) {
     const o = `
@@ -1468,11 +1457,11 @@ class g extends HTMLElement {
             </div>
         `;
     if (t) {
-      const s = this.querySelector(`#${t}`);
-      if (s) {
-        const a = s.closest(".audio-controls");
-        if (a) {
-          a.innerHTML = o;
+      const a = this.querySelector(`#${t}`);
+      if (a) {
+        const l = a.closest(".audio-controls");
+        if (l) {
+          l.innerHTML = o;
           return;
         }
       }
@@ -1496,22 +1485,22 @@ class g extends HTMLElement {
         `;
     const r = e.querySelector("button");
     r.onclick = () => e.remove();
-    const i = this.querySelector(".book-header");
-    i ? i.after(e) : this.prepend(e);
+    const n = this.querySelector(".book-header");
+    n ? n.after(e) : this.prepend(e);
   }
   checkRadioAnswers(t, o) {
-    const e = this.querySelector(`#${t}`), r = e.closest(".chapter-card"), i = e.querySelectorAll(".question-block");
-    let s = 0, a = 0, l = !0;
-    if (i.forEach((d) => {
-      d.querySelector('input[type="radio"]:checked') || (l = !1);
-    }), !l) {
+    const e = this.querySelector(`#${t}`), r = e.closest(".chapter-card"), n = e.querySelectorAll(".question-block");
+    let a = 0, l = 0, s = !0;
+    if (n.forEach((d) => {
+      d.querySelector('input[type="radio"]:checked') || (s = !1);
+    }), !s) {
       alert("Please answer all questions before checking.");
       return;
     }
-    o && (o.disabled = !0, o.textContent = "Checked", o.style.opacity = "0.7", o.style.cursor = "not-allowed"), e.dataset.checked = "true", i.forEach((d) => {
+    o && (o.disabled = !0, o.textContent = "Checked", o.style.opacity = "0.7", o.style.cursor = "not-allowed"), e.dataset.checked = "true", n.forEach((d) => {
       const h = d.querySelector('input[type="radio"]:checked'), u = d.querySelector(".feedback");
-      if (d.querySelectorAll('input[type="radio"]').forEach((m) => m.disabled = !0), a++, u.classList.remove("feedback-correct", "feedback-wrong", "feedback-neutral"), h.value === "correct")
-        u.textContent = "Correct !", u.classList.add("feedback-correct"), s++;
+      if (d.querySelectorAll('input[type="radio"]').forEach((m) => m.disabled = !0), l++, u.classList.remove("feedback-correct", "feedback-wrong", "feedback-neutral"), h.value === "correct")
+        u.textContent = "Correct !", u.classList.add("feedback-correct"), a++;
       else {
         u.textContent = "Incorrect.", u.classList.add("feedback-wrong");
         const m = r ? r.querySelector(".chapter-title").innerText : "Unknown Chapter", b = d.querySelector(".question-text").innerText;
@@ -1520,8 +1509,8 @@ class g extends HTMLElement {
           chapter: m
         });
       }
-    }), this.updateScore(s, a);
-    const n = t.replace("quiz-", ""), p = this.querySelector(`#lock-msg-${n}`), c = r.querySelector(`#trans-aside-${n}`);
+    }), this.updateScore(a, l);
+    const i = t.replace("quiz-", ""), p = this.querySelector(`#lock-msg-${i}`), c = r.querySelector(`#trans-aside-${i}`);
     c && (c.style.display = "block"), p && (p.innerHTML = "Answers and translation will disappear when you scroll past.", p.classList.add("visible"), p.style.display = "block");
   }
   updateScore(t, o) {
@@ -1536,7 +1525,7 @@ class g extends HTMLElement {
       return;
     }
     t.disabled = !0, o.disabled = !0;
-    const i = this.querySelector(".report-overlay"), s = this.querySelector("#report-content"), a = /* @__PURE__ */ new Date(), l = a.toLocaleDateString(), n = a.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), p = this.querySelector(".book-title").innerText, c = this.absoluteTotalQuestions > 0 ? Math.round(this.totalScore / this.absoluteTotalQuestions * 100) : 0;
+    const n = this.querySelector(".report-overlay"), a = this.querySelector("#report-content"), l = /* @__PURE__ */ new Date(), s = l.toLocaleDateString(), i = l.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), p = this.querySelector(".book-title").innerText, c = this.absoluteTotalQuestions > 0 ? Math.round(this.totalScore / this.absoluteTotalQuestions * 100) : 0;
     let d = "";
     this.wrongQuestions.length > 0 ? d = `
                 <div class="report-wrong-list">
@@ -1548,7 +1537,7 @@ class g extends HTMLElement {
                         </div>
                     `).join("")}
                 </div>
-            ` : this.absoluteTotalQuestions > 0 && (d = '<p style="color: #10b981; font-weight: bold; text-align: center; margin-top: 2em;">Excellent! No incorrect answers.</p>'), s.innerHTML = `
+            ` : this.absoluteTotalQuestions > 0 && (d = '<p style="color: #10b981; font-weight: bold; text-align: center; margin-top: 2em;">Excellent! No incorrect answers.</p>'), a.innerHTML = `
             <div class="report-info-grid">
                 <span class="report-info-label">Student:</span>
                 <span>${e}</span>
@@ -1557,7 +1546,7 @@ class g extends HTMLElement {
                 <span class="report-info-label">Book:</span>
                 <span>${p}</span>
                 <span class="report-info-label">Date:</span>
-                <span>${l} at ${n}</span>
+                <span>${s} at ${i}</span>
             </div>
 
             <div class="report-score-box">
@@ -1567,7 +1556,7 @@ class g extends HTMLElement {
             </div>
 
             ${d}
-        `, i.classList.add("visible");
+        `, n.classList.add("visible");
   }
   hideReportCard() {
     this.querySelector(".report-overlay").classList.remove("visible");
@@ -1577,23 +1566,23 @@ class g extends HTMLElement {
     this.totalScore = 0, this.wrongQuestions = [];
     const o = this.querySelector("#student-name"), e = this.querySelector("#student-id");
     o && (o.disabled = !1, o.value = ""), e && (e.disabled = !1, e.value = "");
-    const r = this.querySelector("#score-tally"), i = this.querySelector("#total-tally");
-    r && (r.textContent = "0"), i && (i.textContent = this.absoluteTotalQuestions), this.querySelectorAll(".chapter-card").forEach((s) => {
-      const a = `quiz-${s.id}`, l = s.querySelector(`#${a}`);
-      if (l) {
-        l.classList.remove("quiz-hidden-checked", "locked-open", "locked-delay"), delete l.dataset.checked;
-        const c = l.querySelector('button[data-action="check-quiz"]');
-        c && (c.disabled = !1, c.textContent = "Check", c.style.opacity = "1", c.style.cursor = "pointer"), l.querySelectorAll('input[type="radio"]').forEach((d) => {
+    const r = this.querySelector("#score-tally"), n = this.querySelector("#total-tally");
+    r && (r.textContent = "0"), n && (n.textContent = this.absoluteTotalQuestions), this.querySelectorAll(".chapter-card").forEach((a) => {
+      const l = `quiz-${a.id}`, s = a.querySelector(`#${l}`);
+      if (s) {
+        s.classList.remove("quiz-hidden-checked", "locked-open", "locked-delay"), delete s.dataset.checked;
+        const c = s.querySelector('button[data-action="check-quiz"]');
+        c && (c.disabled = !1, c.textContent = "Check", c.style.opacity = "1", c.style.cursor = "pointer"), s.querySelectorAll('input[type="radio"]').forEach((d) => {
           d.disabled = !1, d.checked = !1;
-        }), l.querySelectorAll(".feedback").forEach((d) => {
+        }), s.querySelectorAll(".feedback").forEach((d) => {
           d.textContent = "", d.className = "feedback";
         });
       }
-      const n = s.querySelector(".translation-details");
-      n && (n.classList.remove("translation-hidden-checked"), n.open = !1);
-      const p = s.querySelector(".quiz-lock-message");
+      const i = a.querySelector(".translation-details");
+      i && (i.classList.remove("translation-hidden-checked"), i.open = !1);
+      const p = a.querySelector(".quiz-lock-message");
       p && (p.classList.remove("visible"), p.textContent = "");
-    }), this.lockoutTimers.forEach((s) => clearInterval(s)), this.lockoutTimers.clear(), window.scrollTo({ top: 0, behavior: "smooth" });
+    }), this.lockoutTimers.forEach((a) => clearInterval(a)), this.lockoutTimers.clear(), window.scrollTo({ top: 0, behavior: "smooth" });
   }
   disconnectedCallback() {
     this.synth && this.synth.cancel(), this._visibilityObserver && this._visibilityObserver.disconnect();

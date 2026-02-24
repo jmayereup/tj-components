@@ -1,5 +1,6 @@
 import stylesText from './styles.css?inline';
 import templateHtml from './template.html?raw';
+import { getBestVoice, shouldShowAudioControls, startAudioRecording, getAndroidIntentLink } from '../audio-utils.js';
 
 class TjReader extends HTMLElement {
   constructor() {
@@ -241,26 +242,7 @@ class TjReader extends HTMLElement {
   }
 
   _getBestVoice(lang) {
-    if (!window.speechSynthesis) return null;
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length === 0) return null;
-
-    const langPrefix = lang.split(/[-_]/)[0].toLowerCase();
-    let langVoices = voices.filter(v => v.lang.toLowerCase() === lang.toLowerCase());
-    if (langVoices.length === 0) {
-      langVoices = voices.filter(v => v.lang.split(/[-_]/)[0].toLowerCase() === langPrefix);
-    }
-
-    if (langVoices.length === 0) return null;
-
-    const priorities = ["natural", "google", "premium", "siri"];
-    for (const p of priorities) {
-      const found = langVoices.find(v => v.name.toLowerCase().includes(p));
-      if (found) return found;
-    }
-
-    const nonRobotic = langVoices.find(v => !v.name.toLowerCase().includes("microsoft"));
-    return nonRobotic || langVoices[0];
+    return getBestVoice(window.speechSynthesis, lang);
   }
 
   _isMobile() {
@@ -420,54 +402,34 @@ class TjReader extends HTMLElement {
     if (this.isRecordingLine !== null) return;
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      // Determine supported MIME type (iOS Safari doesn't support webm)
-      let mimeType = 'audio/webm';
-      if (typeof MediaRecorder.isTypeSupported === 'function') {
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = 'audio/mp4';
-          if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = ''; // Let browser choose default
+      this.mediaRecorder = await startAudioRecording(
+        (e) => {
+          if (e.data.size > 0) {
+            if (!this._audioChunks) this._audioChunks = [];
+            this._audioChunks.push(e.data);
           }
-        }
-      }
+        },
+        (recordingMimeType) => {
+          const blob = new Blob(this._audioChunks, { type: recordingMimeType });
+          const duration = Date.now() - this.recordingStartTime;
 
-      const options = mimeType ? { mimeType } : {};
-      this.mediaRecorder = new MediaRecorder(stream, options);
-      this._recordingMimeType = this.mediaRecorder.mimeType || mimeType || 'audio/webm';
+          // Check if recording is long enough (e.g., > 600ms) to prevent "just clicking"
+          if (duration > 600) {
+            this.recordedBlobs.set(index, blob);
+            this.recordedSentences.add(index);
+          } else {
+            console.warn('Recording too short to be counted.');
+          }
 
-      let chunks = [];
-
-      this.mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunks.push(e.data);
-      };
-
-      this.mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: this._recordingMimeType });
-        const duration = Date.now() - this.recordingStartTime;
-
-        // Check if recording is long enough (e.g., > 600ms) to prevent "just clicking"
-        if (duration > 600) {
-          this.recordedBlobs.set(index, blob);
-          this.recordedSentences.add(index);
-        } else {
-          // Optional: handle "too short" feedback
-          console.warn('Recording too short to be counted.');
-        }
-
-        // Stop all tracks in the stream to release the mic
-        stream.getTracks().forEach(track => track.stop());
-
-        this.isRecordingLine = null;
-        this.renderLineButtons(index);
-      };
+          this.isRecordingLine = null;
+          this._audioChunks = null;
+          this.renderLineButtons(index);
+        },
+        1000
+      );
 
       this.recordingStartTime = Date.now();
       this.isRecordingLine = index;
-
-      // Use a timeslice (1000ms) - helps ensure data capture on some mobile browsers
-      this.mediaRecorder.start(1000);
       this.renderLineButtons(index);
     } catch (err) {
       console.error('Error starting recording:', err);
@@ -611,38 +573,11 @@ class TjReader extends HTMLElement {
   }
 
   _shouldShowAudioControls() {
-    const ua = navigator.userAgent.toLowerCase();
-
-    // 1. Block known in-app browsers and WebViews
-    if (ua.includes("wv") || ua.includes("webview") ||
-      ua.includes("instagram") || ua.includes("facebook") ||
-      ua.includes("line")) {
-      return false;
-    }
-
-    // Also check if TTS is available
-    if (!window.speechSynthesis) {
-      return false;
-    }
-
-    return true;
+    return shouldShowAudioControls(window.speechSynthesis);
   }
 
   _getAndroidIntentLink() {
-    const isAndroid = /android/i.test(navigator.userAgent);
-    if (!isAndroid) return '';
-
-    const lessonId = this.getAttribute('lesson-id');
-    const url = new URL(window.location.href);
-    if (lessonId) {
-      url.searchParams.set('lesson', lessonId);
-    }
-
-    const urlString = url.toString();
-    const urlNoScheme = urlString.replace(/^https?:\/\//, '');
-    const scheme = window.location.protocol.replace(':', '');
-
-    return `intent://${urlNoScheme}#Intent;scheme=${scheme};package=com.android.chrome;end`;
+    return getAndroidIntentLink();
   }
 
   checkBrowserSupport() {
