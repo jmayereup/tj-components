@@ -333,14 +333,15 @@ class TjSpeedReview extends HTMLElement {
           display: block;
           font-family: 'Inter', sans-serif;
           margin: 2em auto;
-          color: #f1f5f9;
+          color: black;
+          background: whitesmoke;
         }
         .container {
-          background: linear-gradient(135deg, #1e293b, #0f172a);
+          background: white;
           border-radius: 1.5em;
           padding: 2em;
-          box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-          border: 1px solid rgba(255,255,255,0.1);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+          border: 1px solid rgba(0,0,0,0.05);
           overflow: hidden;
           position: relative;
         }
@@ -360,12 +361,12 @@ class TjSpeedReview extends HTMLElement {
         .title-area h1 {
           margin: 0;
           font-size: 1.5em;
-          color: #e2e8f0;
+          color: black;
           overflow-wrap: break-word;
         }
         .best-score {
           font-size: 0.7em;
-          color: #94a3b8;
+          color: black;
           text-transform: uppercase;
         }
         .score-display {
@@ -375,7 +376,7 @@ class TjSpeedReview extends HTMLElement {
         .score-val {
           font-size: 2em;
           font-weight: 800;
-          color: #22d3ee;
+          color: #10b981;
           white-space: nowrap;
           line-height: 1;
         }
@@ -389,7 +390,7 @@ class TjSpeedReview extends HTMLElement {
         }
         .timer-inner {
           height: 100%;
-          background: #22d3ee;
+          background: #10b981;
           width: 100%;
           transition: width 0.1s linear, background 0.3s;
         }
@@ -416,9 +417,9 @@ class TjSpeedReview extends HTMLElement {
           .options-grid { grid-template-columns: 1fr; }
         }
         .option-btn {
-          background: #334155;
-          border: 2px solid #475569;
-          color: white;
+          background: whitesmoke;
+          border: 2px solid grey;
+          color: black;
           padding: 1em;
           border-radius: 0.8em;
           font-weight: 600;
@@ -427,9 +428,9 @@ class TjSpeedReview extends HTMLElement {
           text-align: center;
         }
         .option-btn:hover:not(:disabled) {
-          background: #475569;
+          background: #f8fafc;
           transform: translateY(-2px);
-          border-color: #22d3ee;
+          border-color: #10b981;
         }
         .option-btn:disabled {
           opacity: 0.6;
@@ -471,8 +472,8 @@ class TjSpeedReview extends HTMLElement {
           display: block;
           width: 100%;
           padding: 1.2em;
-          background: #22d3ee;
-          color: #0f172a;
+          background: #10b981;
+          color: white;
           border: none;
           border-radius: 0.8em;
           font-weight: 800;
@@ -480,10 +481,12 @@ class TjSpeedReview extends HTMLElement {
           cursor: pointer;
           transition: all 0.2s;
           margin-top: 2em;
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
         .btn-large:hover {
-          background: #06b6d4;
+          background: #059669;
           transform: scale(1.02);
+          box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
         }
         .btn-secondary {
           display: block;
@@ -517,12 +520,14 @@ class TjSpeedReview extends HTMLElement {
           margin: 0.5em 0;
         }
         .best-score-badge {
-          background: #334155;
-          padding: 0.5em 1em;
+          background: #f1f5f9;
+          padding: 0.5em 1.2em;
           border-radius: 2em;
           display: inline-block;
           font-size: 0.9em;
-          color: #94a3b8;
+          color: #64748b;
+          font-weight: 600;
+          border: 1px solid #e2e8f0;
         }
         .error-msg { color: #ef4444; text-align: center; padding: 2em; }
         
@@ -544,16 +549,16 @@ class TjSpeedReview extends HTMLElement {
         .input-group label {
           display: block;
           font-size: 0.8em;
-          color: #94a3b8;
+          color: black;
           margin-bottom: 0.4em;
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
         .input-field {
           width: 100%;
-          background: #334155;
-          border: 1px solid #475569;
-          color: white;
+          background: whitesmoke;
+          border: 1px solid #b2b2b2ff;
+          color: black;
           padding: 0.8em;
           border-radius: 0.5em;
           font-size: 1em;
@@ -562,7 +567,8 @@ class TjSpeedReview extends HTMLElement {
           transition: border-color 0.2s;
         }
         .input-field:focus {
-          border-color: #22d3ee;
+          border-color: #10b981;
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
         .locked-identity {
           margin: 1.5em 0;
@@ -578,13 +584,14 @@ class TjSpeedReview extends HTMLElement {
         }
         .player-tag {
           font-size: 0.8em;
-          color: #22d3ee;
-          background: rgba(34, 211, 238, 0.1);
-          padding: 0.2em 0.6em;
-          border-radius: 4px;
+          color: #059669;
+          background: #ecfdf5;
+          padding: 0.2em 0.8em;
+          border-radius: 6px;
           display: inline-block;
           margin-top: 0.4em;
-          font-weight: 600;
+          font-weight: 700;
+          border: 1px solid #d1fae5;
         }
         .result-identity {
           font-size: 1.1em;
@@ -608,15 +615,16 @@ class TjSpeedReview extends HTMLElement {
           box-sizing: border-box;
         }
         .report-modal {
-          background: #1e293b;
-          border: 1px solid #334155;
+          background: white;
+          border: 1px solid #e2e8f0;
           border-radius: 1.5em;
-          padding: 2em;
+          padding: 2.5em;
           max-width: 480px;
           width: 100%;
           max-height: 90vh;
           overflow-y: auto;
           position: relative;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
         .rc-close-btn {
           position: absolute;
@@ -636,9 +644,9 @@ class TjSpeedReview extends HTMLElement {
         }
         .rc-icon { font-size: 2.5em; margin-bottom: 0.25em; }
         .rc-title {
-          font-size: 1.2em;
-          font-weight: 700;
-          color: #e2e8f0;
+          font-size: 1.3em;
+          font-weight: 800;
+          color: #1e293b;
         }
         .rc-subtitle {
           font-size: 0.85em;
@@ -650,15 +658,16 @@ class TjSpeedReview extends HTMLElement {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          background: #0f172a;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 0.8em;
           padding: 0.8em 1em;
           margin-bottom: 1em;
           font-size: 0.9em;
         }
-        .rc-label { color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.8em; }
-        .rc-value { color: #f1f5f9; font-weight: 600; }
-        .rc-number { color: #94a3b8; font-size: 0.9em; }
+        .rc-label { color: #64748b; font-weight: 700; text-transform: uppercase; font-size: 0.75em; letter-spacing: 0.05em; }
+        .rc-value { color: #1e293b; font-weight: 700; }
+        .rc-number { color: #64748b; font-size: 0.9em; font-weight: 400; }
         .rc-score-row {
           display: flex;
           align-items: center;
@@ -670,13 +679,13 @@ class TjSpeedReview extends HTMLElement {
           width: 80px;
           height: 80px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #22d3ee, #0891b2);
+          background: linear-gradient(135deg, #10b981, #059669);
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          box-shadow: 0 0 20px rgba(34,211,238,0.3);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
         .rc-score-val {
           font-size: 1.3em;
@@ -692,7 +701,7 @@ class TjSpeedReview extends HTMLElement {
         .rc-score-label {
           font-size: 1em;
           font-weight: 700;
-          color: #e2e8f0;
+          color: #475569;
         }
         .rc-bar-track {
           height: 8px;
@@ -703,12 +712,13 @@ class TjSpeedReview extends HTMLElement {
         }
         .rc-bar-fill {
           height: 100%;
-          background: linear-gradient(90deg, #22d3ee, #0891b2);
+          background: linear-gradient(90deg, #10b981, #059669);
           border-radius: 4px;
           transition: width 0.5s ease;
         }
         .rc-details {
-          background: #0f172a;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 0.8em;
           padding: 1em;
           margin-bottom: 1em;
@@ -717,23 +727,23 @@ class TjSpeedReview extends HTMLElement {
           display: flex;
           justify-content: space-between;
           font-size: 0.85em;
-          color: #94a3b8;
+          color: #64748b;
           padding: 0.3em 0;
         }
-        .rc-detail-row span:last-child { color: #e2e8f0; }
+        .rc-detail-row span:last-child { color: #1e293b; font-weight: 700; }
         .rc-submission-box {
           margin-top: 1em;
-          padding: 1em;
-          background: #0f172a;
+          padding: 1.25em;
+          background: #f8fafc;
           border-radius: 0.8em;
-          border: 1px dashed #334155;
+          border: 1px dashed #cbd5e1;
           text-align: left;
         }
         .rc-submission-box p {
           margin: 0 0 8px 0;
-          font-size: 0.8em;
+          font-size: 0.75em;
           color: #64748b;
-          font-weight: 600;
+          font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
@@ -741,34 +751,39 @@ class TjSpeedReview extends HTMLElement {
           width: 100%;
           box-sizing: border-box;
           padding: 0.7em;
-          background: #1e293b;
-          border: 1px solid #475569;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 0.5em;
-          color: #f1f5f9;
+          color: #1e293b;
           font-size: 0.9em;
           margin-bottom: 4px;
           outline: none;
         }
-        .rc-teacher-input:focus { border-color: #22d3ee; }
+        .rc-teacher-input:focus { border-color: #10b981; }
         .rc-helper-text {
-          margin: 4px 0 0 0;
+          margin: 6px 0 0 0;
           font-size: 0.75em;
-          color: #64748b;
+          color: #94a3b8;
+          line-height: 1.4;
         }
         .rc-submit-btn {
           margin-top: 1em;
           width: 100%;
           padding: 0.9em;
-          background: #22d3ee;
-          color: #0f172a;
+          background: #10b981;
+          color: white;
           border: none;
           border-radius: 0.7em;
           font-weight: 800;
           font-size: 1em;
           cursor: pointer;
           transition: all 0.2s;
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
-        .rc-submit-btn:hover { background: #06b6d4; }
+        .rc-submit-btn:hover {
+          background: #059669;
+          transform: translateY(-1px);
+        }
         .rc-submit-btn:disabled { opacity: 0.6; cursor: default; }
         .best-score-highlight {
           background: rgba(251, 191, 36, 0.1);

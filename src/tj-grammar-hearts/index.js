@@ -330,10 +330,11 @@ class TjGrammarHearts extends HTMLElement {
           font-family: 'Outfit', 'Inter', sans-serif;
           margin: 2em auto;
           color: #1e293b;
+          background: whitesmoke;
         }
 
         .container {
-          background: rgba(255, 255, 255, 0.8);
+          background: white;
           backdrop-filter: blur(12px);
           border-radius: 2em;
           padding: 2em;
