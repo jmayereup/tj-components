@@ -1,3 +1,5 @@
+import { config } from '../tj-config.js';
+
 class TjGrammarHearts extends HTMLElement {
   constructor() {
     super();
@@ -11,12 +13,13 @@ class TjGrammarHearts extends HTMLElement {
     this.maxHearts = 3;
     this.questionsPerRound = 5;
     this.score = 0;
+    this.bestScore = 0;
     this.grammarHint = { summary: '', content: '' };
-    this.studentInfo = { nickname: '', number: '' };
+    this.studentInfo = { nickname: '', number: '', homeroom: '' };
     this.title = 'Grammar Practice';
 
     // Activity state
-    this.gameState = 'hint'; // hint, playing, gameover, report
+    this.gameState = 'hint'; // hint, playing, gameover, form, report
     this.isHintOpen = false;
     this.isAnswered = false;
     this.isCorrect = false;
@@ -25,6 +28,10 @@ class TjGrammarHearts extends HTMLElement {
     this.userAnswer = ''; // For fill-in-the-blank
     this.scrambledWords = []; // For scramble
     this.selectedScrambleIndices = [];
+
+    // Submission
+    this.submissionUrl = config?.submissionUrl || 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
+    this.isSubmitting = false;
   }
 
   connectedCallback() {
@@ -86,7 +93,6 @@ class TjGrammarHearts extends HTMLElement {
       if (!jsonText) return;
 
       // Pre-process: escape literal newlines inside JSON strings
-      // This happens when CMS/Blog platforms wrap long JSON text
       const sanitized = jsonText.replace(/"((?:\\.|[^"\\])*)"/gs, (match, p1) => {
         return '"' + p1.replace(/\n/g, '\\n').replace(/\r/g, '\\r') + '"';
       });
@@ -121,8 +127,7 @@ class TjGrammarHearts extends HTMLElement {
       this.prepRound();
   }
 
-  // Simple Markdown-to-HTML helper (or use a library)
-  // Since the user asked for a 3rd party tool, I'll use Marked.js
+  // Simple Markdown-to-HTML helper
   parseMD(text) {
     if (typeof window.marked !== 'undefined') {
       return window.marked.parse(text);
@@ -158,8 +163,8 @@ class TjGrammarHearts extends HTMLElement {
     return text
       .trim()
       .toLowerCase()
-      .replace(/[‘’]/g, "'")
-      .replace(/[“”]/g, '"')
+      .replace(/['']/g, "'")
+      .replace(/[""]/g, '"')
       .replace(/\s+/g, ' ');
   }
 
@@ -195,11 +200,6 @@ class TjGrammarHearts extends HTMLElement {
       this.hearts--;
       this.answerFeedback = 'Oops!';
       this.answerExplanation = q.explanation || 'Not quite right.';
-
-      if (this.hearts <= 0) {
-        // Game over will happen when they click "Next" or we can trigger it now
-        // Reference app shows the explanation then game over
-      }
 
       // Visual feedback for error
       const card = this.shadowRoot.querySelector('.card');
@@ -239,20 +239,80 @@ class TjGrammarHearts extends HTMLElement {
   }
 
   showReport() {
-    const nickname = this.shadowRoot.querySelector('#nickname').value;
-    const number = this.shadowRoot.querySelector('#student-number').value;
+    const nickname = this.shadowRoot.querySelector('#nickname')?.value?.trim() || '';
+    const number = this.shadowRoot.querySelector('#student-number')?.value?.trim() || '';
+    const homeroom = this.shadowRoot.querySelector('#homeroom')?.value?.trim() || '';
 
     if (!nickname || !number) {
       alert('Please enter both nickname and student number.');
       return;
     }
 
-    this.studentInfo = { nickname, number };
+    this.studentInfo = { nickname, number, homeroom };
+
+    // Update bestScore
+    if (this.score > this.bestScore) {
+      this.bestScore = this.score;
+    }
+
     this.gameState = 'report';
     this.render();
   }
 
+  async _submitScore() {
+    const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
+    const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : '';
+
+    if (currentTeacherCode !== '6767') {
+      alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
+      return;
+    }
+
+    if (this.isSubmitting) return;
+
+    const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
+    const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+    this.isSubmitting = true;
+    if (submitBtn) {
+      submitBtn.textContent = 'Submitting...';
+      submitBtn.disabled = true;
+    }
+
+    const payload = {
+      nickname: this.studentInfo.nickname,
+      homeroom: this.studentInfo.homeroom || '',
+      studentId: this.studentInfo.number,
+      quizName: 'Grammar- ' + this.title,
+      score: this.bestScore,
+      total: this.questionsPerRound
+    };
+
+    try {
+      await fetch(this.submissionUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      alert('Score successfully submitted!');
+      if (submitBtn) {
+        submitBtn.textContent = 'Submitted ✓';
+        submitBtn.style.background = '#64748b';
+      }
+    } catch (err) {
+      console.error('Error submitting score:', err);
+      alert('There was an error submitting your score. Please try again.');
+      if (submitBtn) {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+      this.isSubmitting = false;
+    }
+  }
+
   getInstruction(q) {
+    if (!q) return "Practice:";
     if (q.instruction) return q.instruction;
     switch (q.type) {
       case 'multiple-choice': return 'Choose the correct form:';
@@ -270,10 +330,11 @@ class TjGrammarHearts extends HTMLElement {
           font-family: 'Outfit', 'Inter', sans-serif;
           margin: 2em auto;
           color: #1e293b;
+          background: whitesmoke;
         }
 
         .container {
-          background: rgba(255, 255, 255, 0.8);
+          background: white;
           backdrop-filter: blur(12px);
           border-radius: 2em;
           padding: 2em;
@@ -474,21 +535,6 @@ class TjGrammarHearts extends HTMLElement {
           border-color: #3b82f6;
         }
 
-        .report-card {
-          text-align: center;
-          background: white;
-          padding: 2em;
-          border-radius: 1.5em;
-          box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-
-        .report-stat {
-          font-size: 2em;
-          font-weight: 800;
-          color: #3b82f6;
-          margin: 0.5em 0;
-        }
-
         .error-msg {
           color: #ef4444;
           font-weight: 600;
@@ -590,6 +636,209 @@ class TjGrammarHearts extends HTMLElement {
           font-weight: 700;
           color: #3b82f6;
         }
+
+        /* Form/Report styles */
+        .form-card {
+          text-align: center;
+          padding: 1em 0;
+        }
+        .form-card h2 {
+          margin-bottom: 0.5em;
+        }
+        .form-input-group {
+          margin-bottom: 1em;
+          text-align: left;
+        }
+        .form-label {
+          display: block;
+          font-size: 0.8em;
+          font-weight: 600;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 0.4em;
+        }
+        .form-field {
+          width: 100%;
+          padding: 0.9em;
+          border: 2px solid #e2e8f0;
+          border-radius: 0.8em;
+          font-size: 1em;
+          box-sizing: border-box;
+          outline: none;
+          transition: border-color 0.2s;
+        }
+        .form-field:focus { border-color: #3b82f6; }
+
+        /* Report card */
+        .report-card {
+          text-align: center;
+        }
+        .rc-header { margin-bottom: 1.5em; }
+        .rc-icon { font-size: 2.5em; margin-bottom: 0.25em; }
+        .rc-title {
+          font-size: 1.2em;
+          font-weight: 700;
+          color: #1e293b;
+          background: none;
+          -webkit-text-fill-color: initial;
+        }
+        .rc-subtitle {
+          font-size: 0.85em;
+          color: #94a3b8;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+        .rc-student {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: #f8fafc;
+          border-radius: 0.8em;
+          padding: 0.8em 1em;
+          margin-bottom: 1em;
+          font-size: 0.9em;
+          border: 1px solid #e2e8f0;
+        }
+        .rc-label { color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.8em; }
+        .rc-value { color: #1e293b; font-weight: 600; }
+        .rc-number { color: #94a3b8; font-size: 0.9em; }
+        .best-score-highlight {
+          background: rgba(251, 191, 36, 0.1);
+          border: 1px solid rgba(251, 191, 36, 0.4);
+          border-radius: 0.7em;
+          padding: 0.6em 1em;
+          font-size: 0.9em;
+          color: #d97706;
+          font-weight: 700;
+          text-align: center;
+          margin-bottom: 1em;
+        }
+        .rc-score-row {
+          display: flex;
+          align-items: center;
+          gap: 1.5em;
+          margin-bottom: 1em;
+          justify-content: center;
+        }
+        .rc-score-circle {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          box-shadow: 0 0 20px rgba(59,130,246,0.3);
+        }
+        .rc-score-val {
+          font-size: 1.6em;
+          font-weight: 900;
+          color: white;
+          line-height: 1;
+        }
+        .rc-score-denom {
+          font-size: 0.75em;
+          color: rgba(255,255,255,0.8);
+          font-weight: 600;
+        }
+        .rc-score-label {
+          font-size: 1em;
+          font-weight: 700;
+          color: #1e293b;
+          text-align: left;
+        }
+        .rc-bar-track {
+          height: 8px;
+          background: #e2e8f0;
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 1em;
+        }
+        .rc-bar-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+          border-radius: 4px;
+          transition: width 0.5s ease;
+        }
+        .rc-details {
+          background: #f8fafc;
+          border-radius: 0.8em;
+          padding: 1em;
+          margin-bottom: 1em;
+          border: 1px solid #e2e8f0;
+        }
+        .rc-detail-row {
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.85em;
+          color: #64748b;
+          padding: 0.3em 0;
+        }
+        .rc-detail-row span:last-child { color: #1e293b; font-weight: 600; }
+        .rc-submission-box {
+          margin-top: 1em;
+          padding: 1em;
+          background: #f8fafc;
+          border-radius: 0.8em;
+          border: 1px dashed #cbd5e1;
+          text-align: left;
+        }
+        .rc-submission-box p {
+          margin: 0 0 8px 0;
+          font-size: 0.8em;
+          color: #64748b;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+        .rc-teacher-input {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0.7em;
+          border: 1px solid #cbd5e1;
+          border-radius: 0.5em;
+          font-size: 0.9em;
+          margin-bottom: 4px;
+          outline: none;
+          transition: border-color 0.2s;
+        }
+        .rc-teacher-input:focus { border-color: #3b82f6; }
+        .rc-helper-text {
+          margin: 4px 0 0 0;
+          font-size: 0.75em;
+          color: #94a3b8;
+        }
+        .rc-submit-btn {
+          margin-top: 1em;
+          width: 100%;
+          padding: 0.9em;
+          background: #3b82f6;
+          color: white;
+          border: none;
+          border-radius: 0.8em;
+          font-weight: 800;
+          font-size: 1em;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .rc-submit-btn:hover { background: #2563eb; }
+        .rc-submit-btn:disabled { opacity: 0.6; cursor: default; }
+        .btn-outline {
+          display: inline-block;
+          margin-top: 1em;
+          padding: 0.8em 1.5em;
+          background: transparent;
+          border: 2px solid #3b82f6;
+          color: #3b82f6;
+          border-radius: 0.8em;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .btn-outline:hover { background: #f0f7ff; }
       </style>
     `;
 
@@ -656,23 +905,67 @@ class TjGrammarHearts extends HTMLElement {
       `;
     } else if (this.gameState === 'form') {
       content = `
-        <div class="card">
-          <h2>Great Job!</h2>
-          <p>You've finished the round. Enter your details to get your report card.</p>
-          <input type="text" id="nickname" class="input-field" placeholder="Enter Nickname" value="${this.studentInfo.nickname}">
-          <input type="text" id="student-number" class="input-field" placeholder="Enter Student Number" value="${this.studentInfo.number}">
+        <div class="form-card">
+          <h2>Great Job! 🎉</h2>
+          <p>You've finished the round with a score of <strong>${this.score} / ${this.currentPool.length}</strong>.</p>
+          <p>Enter your details to generate your report card.</p>
+          <div class="form-input-group">
+            <label class="form-label" for="nickname">Nickname</label>
+            <input type="text" id="nickname" class="form-field" placeholder="e.g. Jake" value="${this.studentInfo.nickname}">
+          </div>
+          <div class="form-input-group">
+            <label class="form-label" for="student-number">Student Number</label>
+            <input type="text" id="student-number" class="form-field" placeholder="e.g. 01" value="${this.studentInfo.number}">
+          </div>
+          <div class="form-input-group">
+            <label class="form-label" for="homeroom">Homeroom</label>
+            <input type="text" id="homeroom" class="form-field" placeholder="e.g. 5A" value="${this.studentInfo.homeroom}">
+          </div>
           <button class="btn" onclick="this.getRootNode().host.showReport()">Generate Report</button>
         </div>
       `;
     } else if (this.gameState === 'report') {
+      const totalQ = this.currentPool.length;
+      const pct = Math.round((this.bestScore / totalQ) * 100) || 0;
+      const timestamp = new Date().toLocaleString();
+      let emoji = '🏆';
+      if (pct < 50) emoji = '💪';
+      else if (pct < 80) emoji = '⭐';
+
       content = `
         <div class="report-card">
-          <h2>${this.title}</h2>
-          <p><strong>Student:</strong> ${this.studentInfo.nickname} (${this.studentInfo.number})</p>
-          <div class="report-stat">${this.score} / ${this.currentPool.length}</div>
-          <p>Take a screenshot and send it to your teacher!</p>
-          <p style="font-size: 0.8em; color: #94a3b8; margin-top: 1em;">${new Date().toLocaleString()}</p>
-          <button class="btn" style="margin-top: 1em;" onclick="this.getRootNode().host.restart()">Play Again</button>
+          <div class="rc-header">
+            <div class="rc-icon">📄</div>
+            <div class="rc-title">${this.title}</div>
+            <div class="rc-subtitle">Report Card</div>
+          </div>
+          <div class="rc-student">
+            <span class="rc-label">Student</span>
+            <span class="rc-value">${this.studentInfo.nickname} <span class="rc-number">(${this.studentInfo.number})${this.studentInfo.homeroom ? ` — ${this.studentInfo.homeroom}` : ''}</span></span>
+          </div>
+          <div class="best-score-highlight">🏆 Best Score: ${this.bestScore} / ${totalQ}</div>
+          <div class="rc-score-row">
+            <div class="rc-score-circle">
+              <div class="rc-score-val">${this.bestScore}</div>
+              <div class="rc-score-denom">/ ${totalQ}</div>
+            </div>
+            <div class="rc-score-label">
+              ${emoji} ${pct >= 80 ? 'Excellent!' : pct >= 50 ? 'Good effort!' : 'Keep practicing!'}
+            </div>
+          </div>
+          <div class="rc-bar-track"><div class="rc-bar-fill" style="width:${pct}%"></div></div>
+          <div class="rc-details">
+            <div class="rc-detail-row"><span>Score</span><span>${this.bestScore} / ${totalQ} (${pct}%)</span></div>
+            <div class="rc-detail-row"><span>Completed On</span><span>${timestamp}</span></div>
+          </div>
+          <div class="rc-submission-box">
+            <p>Official Submission</p>
+            <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code">
+            <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+          </div>
+          <button class="rc-submit-btn" id="submit-score-btn" onclick="this.getRootNode().host._submitScore()">Submit Score</button>
+          <br>
+          <button class="btn-outline" onclick="this.getRootNode().host.restart()">Play Again</button>
         </div>
       `;
     }

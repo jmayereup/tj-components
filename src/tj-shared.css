@@ -236,6 +236,8 @@
   align-items: center;
   justify-content: space-between;
   border: 1px solid rgba(226, 232, 240, 0.8);
+  max-height: 8rem;
+  overflow-y: auto;
 }
 
 /* Typography Helpers */

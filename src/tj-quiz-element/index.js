@@ -1,6 +1,7 @@
 import { config } from './config.js';
 import templateHtml from './template.html?raw';
 import stylesText from './styles.css?inline';
+import { getBestVoice, shouldShowAudioControls } from '../audio-utils.js';
 
 class TjQuizElement extends HTMLElement {
     static get observedAttributes() {
@@ -143,30 +144,7 @@ class TjQuizElement extends HTMLElement {
 
 
     _getBestVoice(lang = "en-US") {
-        if (!window.speechSynthesis) return null;
-        const voices = window.speechSynthesis.getVoices();
-        if (voices.length === 0) return null;
-
-        const langPrefix = lang.split(/[-_]/)[0].toLowerCase();
-
-        // 1. Filter by language
-        let langVoices = voices.filter(v => v.lang.toLowerCase() === lang.toLowerCase());
-        if (langVoices.length === 0) {
-            langVoices = voices.filter(v => v.lang.split(/[-_]/)[0].toLowerCase() === langPrefix);
-        }
-
-        if (langVoices.length === 0) return null;
-
-        // 2. Priority list
-        const priorities = ["natural", "google", "premium", "siri"];
-        for (const p of priorities) {
-            const found = langVoices.find(v => v.name.toLowerCase().includes(p));
-            if (found) return found;
-        }
-
-        // 3. Fallback
-        const nonRobotic = langVoices.find(v => !v.name.toLowerCase().includes("microsoft"));
-        return nonRobotic || langVoices[0];
+        return getBestVoice(window.speechSynthesis, lang);
     }
 
     _updateVoiceList() {
@@ -219,11 +197,7 @@ class TjQuizElement extends HTMLElement {
     }
 
     _shouldShowAudioControls() {
-        const ua = navigator.userAgent.toLowerCase();
-        if (ua.includes("instagram") || ua.includes("facebook") || ua.includes("line")) {
-            return false;
-        }
-        return !!window.speechSynthesis;
+        return shouldShowAudioControls(window.speechSynthesis);
     }
 
 

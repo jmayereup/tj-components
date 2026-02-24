@@ -1,7 +1,9 @@
-import { config } from "./config.js";
+import { config } from "../tj-config.js";
 import sharedStyles from "../tj-shared.css?inline";
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
+import { getBestVoice, shouldShowAudioControls, startAudioRecording, getAndroidIntentLink } from "../audio-utils.js";
+
 const icons = {
   play: `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`,
   stop: `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12"></rect></svg>`,
@@ -366,16 +368,17 @@ class TjPronunciation extends HTMLElement {
           const button = e.target.closest("button");
           const text = button.dataset.text;
           const index = button.dataset.index;
-          this.playTTS(text, button).then(() => {
-              if (index !== undefined) {
-                  const recordBtn = this.shadowRoot.querySelector(`button[data-action="record"][data-index="${index}"]`);
-                  if (recordBtn) {
-                      recordBtn.disabled = false;
-                      recordBtn.style.opacity = "1";
-                      recordBtn.style.cursor = "pointer";
-                  }
-              }
-          });
+            this.playTTS(text, button).then(() => {
+                if (index !== undefined) {
+                    const recordBtn = this.shadowRoot.querySelector(`button[data-action="record"][data-index="${index}"]`);
+                    // Only enable record button if we're not in a limited browser environments that block getUserMedia
+                    if (recordBtn && this._shouldShowAudioControls()) {
+                        recordBtn.disabled = false;
+                        recordBtn.style.opacity = "1";
+                        recordBtn.style.cursor = "pointer";
+                    }
+                }
+            });
         });
       });
 
@@ -636,6 +639,16 @@ class TjPronunciation extends HTMLElement {
   _hideReportOverlay() {
       const overlay = this.shadowRoot.getElementById('report-overlay');
       if (overlay) overlay.style.display = 'none';
+      
+      // Stop any playing recordings when closing report
+      if (this._currentPlayingAudio) {
+        this._currentPlayingAudio.pause();
+        this._currentPlayingAudio = null;
+      }
+      this.shadowRoot.querySelectorAll('.recording-play-btn.playing').forEach(btn => {
+        btn.classList.remove('playing');
+        btn.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      });
   }
 
   _generateReport() {
@@ -704,8 +717,118 @@ class TjPronunciation extends HTMLElement {
       if (reportArea) {
           reportArea.style.display = 'block';
           reportArea.innerHTML = reportHtml;
+
+          // Display individual recordings for spot checking
+          if (this.recordings.size > 0) {
+            const recordingsSection = document.createElement('div');
+            recordingsSection.classList.add('recordings-section');
+            recordingsSection.style.marginTop = '20px';
+            recordingsSection.style.textAlign = 'left';
+
+            const sectionTitle = document.createElement('h4');
+            sectionTitle.style.display = 'flex';
+            sectionTitle.style.alignItems = 'center';
+            sectionTitle.style.gap = '8px';
+            sectionTitle.style.margin = '0 0 12px 0';
+            sectionTitle.style.color = 'var(--tj-text-main)';
+            sectionTitle.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="var(--tj-primary)"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg> Student Recordings`;
+            recordingsSection.appendChild(sectionTitle);
+
+            const recordingsList = document.createElement('div');
+            recordingsList.classList.add('recordings-list');
+            recordingsList.style.display = 'flex';
+            recordingsList.style.flexDirection = 'column';
+            recordingsList.style.gap = '8px';
+
+            // Sort recordings by index
+            const sortedIndices = Array.from(this.recordings.keys()).sort((a, b) => a - b);
+
+            sortedIndices.forEach(idx => {
+              // Find the target word for this activity
+              const actCard = this.shadowRoot.getElementById(`act-${idx}`);
+              let targetText = "Recording " + (parseInt(idx) + 1);
+              if (actCard) {
+                  const targetWordEl = actCard.querySelector('.lr-target-word');
+                  if (targetWordEl) targetText = targetWordEl.textContent;
+              }
+
+              const item = document.createElement('div');
+              item.classList.add('recording-item');
+              item.style.display = 'flex';
+              item.style.alignItems = 'center';
+              item.style.gap = '12px';
+              item.style.padding = '8px';
+              item.style.background = 'var(--tj-bg-main)';
+              item.style.border = '1px solid var(--tj-border-main)';
+              item.style.borderRadius = '8px';
+
+              const playBtn = document.createElement('button');
+              playBtn.classList.add('tj-icon-btn', 'recording-play-btn');
+              playBtn.style.width = '32px';
+              playBtn.style.height = '32px';
+              playBtn.style.padding = '0';
+              playBtn.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+              playBtn.title = "Play Recording";
+              playBtn.onclick = () => this._playReportRecording(idx, playBtn);
+
+              const text = document.createElement('div');
+              text.classList.add('recording-text');
+              text.style.fontSize = '0.9em';
+              text.style.color = 'var(--tj-text-main)';
+              text.textContent = targetText;
+
+              item.appendChild(playBtn);
+              item.appendChild(text);
+              recordingsList.appendChild(item);
+            });
+
+            recordingsSection.appendChild(recordingsList);
+            reportArea.appendChild(recordingsSection);
+          }
       }
       if (submitActions) submitActions.style.display = 'block';
+  }
+
+  _playReportRecording(index, btn) {
+    const audioUrl = this.recordings.get(index);
+    if (!audioUrl) return;
+
+    // Stop currently playing audio if any
+    if (this._currentPlayingAudio) {
+      this._currentPlayingAudio.pause();
+      this.shadowRoot.querySelectorAll('.recording-play-btn.playing').forEach(b => {
+        b.classList.remove('playing');
+        b.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      });
+      // If clicking the same button that's playing, just stop it
+      if (this._currentPlayingBtn === btn) {
+        this._currentPlayingAudio = null;
+        this._currentPlayingBtn = null;
+        return;
+      }
+    }
+
+    const audio = new Audio(audioUrl);
+    this._currentPlayingAudio = audio;
+    this._currentPlayingBtn = btn;
+
+    audio.onplay = () => {
+      btn.classList.add("playing");
+      btn.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="6" y="6" width="12" height="12"></rect></svg>`;
+    };
+
+    audio.onended = () => {
+      btn.classList.remove("playing");
+      btn.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      this._currentPlayingAudio = null;
+      this._currentPlayingBtn = null;
+    };
+
+    audio.play().catch((e) => {
+      console.error("Error playing recording:", e);
+      btn.classList.remove("playing");
+      btn.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+    });
   }
 
   async _submitScore() {
@@ -804,36 +927,7 @@ class TjPronunciation extends HTMLElement {
 
   // TTS Guide 1.3 Methods
   _getBestVoice(lang) {
-    if (!this.synth) return null;
-    const voices = this.synth.getVoices();
-    if (voices.length === 0) return null;
-
-    const langPrefix = lang.split(/[-_]/)[0].toLowerCase();
-
-    // 1. Filter by language
-    let langVoices = voices.filter(
-      (v) => v.lang.toLowerCase() === lang.toLowerCase(),
-    );
-    if (langVoices.length === 0) {
-      langVoices = voices.filter(
-        (v) => v.lang.split(/[-_]/)[0].toLowerCase() === langPrefix,
-      );
-    }
-
-    if (langVoices.length === 0) return null;
-
-    // 2. Priority list
-    const priorities = ["natural", "google", "premium", "siri"];
-    for (const p of priorities) {
-      const found = langVoices.find((v) => v.name.toLowerCase().includes(p));
-      if (found) return found;
-    }
-
-    // 3. Fallback
-    const nonRobotic = langVoices.find(
-      (v) => !v.name.toLowerCase().includes("microsoft"),
-    );
-    return nonRobotic || langVoices[0];
+    return getBestVoice(this.synth, lang);
   }
 
   _showVoiceOverlay() {
@@ -889,27 +983,11 @@ class TjPronunciation extends HTMLElement {
   }
 
   _shouldShowAudioControls() {
-    const ua = navigator.userAgent.toLowerCase();
-    
-    // Block known in-app browsers and WebViews
-    if (ua.includes("wv") || ua.includes("webview") ||
-        ua.includes("instagram") || ua.includes("facebook") ||
-        ua.includes("line")) {
-      return false;
-    }
-
-    return !!window.speechSynthesis;
+    return shouldShowAudioControls(this.synth);
   }
 
   _getAndroidIntentLink() {
-    const isAndroid = /android/i.test(navigator.userAgent);
-    if (!isAndroid) return "";
-
-    const url = new URL(window.location.href);
-    const urlNoScheme = url.toString().replace(/^https?:\/\//, "");
-    const scheme = window.location.protocol.replace(":", "");
-
-    return `intent://${urlNoScheme}#Intent;scheme=${scheme};package=com.android.chrome;end`;
+    return getAndroidIntentLink();
   }
 
   checkBrowserSupport() {
@@ -985,45 +1063,38 @@ class TjPronunciation extends HTMLElement {
     } else {
       // Start recording
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
         this.audioChunks = [];
-        this.mediaRecorder = new MediaRecorder(stream);
+        this.mediaRecorder = await startAudioRecording(
+          (event) => {
+            if (event.data.size > 0) {
+              this.audioChunks.push(event.data);
+            }
+          },
+          (recordingMimeType) => {
+            const audioBlob = new Blob(this.audioChunks, { type: recordingMimeType });
+            const audioUrl = URL.createObjectURL(audioBlob);
 
-        this.mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            this.audioChunks.push(event.data);
+            // Revoke old URL if it exists
+            if (this.recordings.has(index)) {
+              URL.revokeObjectURL(this.recordings.get(index));
+            }
+
+            this.recordings.set(index, audioUrl);
+
+            // Enable playback button
+            const playbackBtn = this.shadowRoot.querySelector(
+              `#playback-${index}`,
+            );
+            if (playbackBtn) {
+              playbackBtn.classList.add("ready");
+              playbackBtn.disabled = false;
+              playbackBtn.style.opacity = "1";
+              playbackBtn.style.cursor = "pointer";
+            }
+            this.audioChunks = null;
           }
-        };
+        );
 
-        this.mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(this.audioChunks, { type: "audio/webm" });
-          const audioUrl = URL.createObjectURL(audioBlob);
-
-          // Revoke old URL if it exists
-          if (this.recordings.has(index)) {
-            URL.revokeObjectURL(this.recordings.get(index));
-          }
-
-          this.recordings.set(index, audioUrl);
-
-          // Enable playback button
-          const playbackBtn = this.shadowRoot.querySelector(
-            `#playback-${index}`,
-          );
-          if (playbackBtn) {
-            playbackBtn.classList.add("ready");
-            playbackBtn.disabled = false;
-            playbackBtn.style.opacity = "1";
-            playbackBtn.style.cursor = "pointer";
-          }
-
-          // Stop tracks to release microphone
-          stream.getTracks().forEach((track) => track.stop());
-        };
-
-        this.mediaRecorder.start();
         btn.classList.add("recording");
       } catch (err) {
         console.error("Error accessing microphone:", err);

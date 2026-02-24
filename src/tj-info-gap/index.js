@@ -1,5 +1,6 @@
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
+import { getBestVoice, startAudioRecording } from "../audio-utils.js";
 
 class TjInfoGap extends HTMLElement {
     // Static registry of all instances on the page
@@ -548,49 +549,38 @@ class TjInfoGap extends HTMLElement {
         if (this.isRecordingId !== null) return;
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-            let mimeType = 'audio/webm';
-            if (typeof MediaRecorder.isTypeSupported === 'function') {
-                if (!MediaRecorder.isTypeSupported(mimeType)) {
-                    mimeType = 'audio/mp4';
-                    if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = '';
-                }
-            }
-
-            const options = mimeType ? { mimeType } : {};
-            this.mediaRecorder = new MediaRecorder(stream, options);
-            this._recordingMimeType = this.mediaRecorder.mimeType || mimeType || 'audio/webm';
-
-            let chunks = [];
-            this.mediaRecorder.ondataavailable = (e) => {
-                if (e.data.size > 0) chunks.push(e.data);
-            };
-
-            this.mediaRecorder.onstop = () => {
-                const blob = new Blob(chunks, { type: this._recordingMimeType });
-                const duration = Date.now() - this.recordingStartTime;
-
-                if (duration > 600) {
-                    const isNew = !this.recordedBlobs.has(id);
-                    this.recordedBlobs.set(id, blob);
-
-                    if (isNew) {
-                        this.score++;
-                        this.answeredCount++;
-                        this.updateProgressDisplay();
-                        this._checkCompletion();
+            this.mediaRecorder = await startAudioRecording(
+                (e) => {
+                    if (e.data.size > 0) {
+                        if (!this._audioChunks) this._audioChunks = [];
+                        this._audioChunks.push(e.data);
                     }
-                }
+                },
+                (recordingMimeType) => {
+                    const blob = new Blob(this._audioChunks, { type: recordingMimeType });
+                    const duration = Date.now() - this.recordingStartTime;
 
-                stream.getTracks().forEach(track => track.stop());
-                this.isRecordingId = null;
-                this.refreshRecordingUI(id);
-            };
+                    if (duration > 600) {
+                        const isNew = !this.recordedBlobs.has(id);
+                        this.recordedBlobs.set(id, blob);
+
+                        if (isNew) {
+                            this.score++;
+                            this.answeredCount++;
+                            this.updateProgressDisplay();
+                            this._checkCompletion();
+                        }
+                    }
+
+                    this.isRecordingId = null;
+                    this._audioChunks = null;
+                    this.refreshRecordingUI(id);
+                },
+                1000
+            );
 
             this.recordingStartTime = Date.now();
             this.isRecordingId = id;
-            this.mediaRecorder.start(1000);
             this.refreshRecordingUI(id);
         } catch (err) {
             console.error('Error starting recording:', err);
@@ -666,30 +656,7 @@ class TjInfoGap extends HTMLElement {
 
     // TTS LOGIC
     _getBestVoice(lang) {
-        if (!window.speechSynthesis) return null;
-        const voices = window.speechSynthesis.getVoices();
-        if (voices.length === 0) return null;
-
-        const langPrefix = lang.split(/[-_]/)[0].toLowerCase();
-
-        // 1. Filter by language
-        let langVoices = voices.filter(v => v.lang.toLowerCase() === lang.toLowerCase());
-        if (langVoices.length === 0) {
-            langVoices = voices.filter(v => v.lang.split(/[-_]/)[0].toLowerCase() === langPrefix);
-        }
-
-        if (langVoices.length === 0) return null;
-
-        // 2. Priority list
-        const priorities = ["natural", "google", "premium", "siri"];
-        for (const p of priorities) {
-            const found = langVoices.find(v => v.name.toLowerCase().includes(p));
-            if (found) return found;
-        }
-
-        // 3. Fallback
-        const nonRobotic = langVoices.find(v => !v.name.toLowerCase().includes("microsoft"));
-        return nonRobotic || langVoices[0];
+        return getBestVoice(window.speechSynthesis, lang);
     }
 
     _playTTS(text) {
