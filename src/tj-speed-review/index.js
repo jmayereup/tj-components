@@ -1,3 +1,5 @@
+import { config } from '../tj-config.js';
+
 class TjSpeedReview extends HTMLElement {
   constructor() {
     super();
@@ -18,6 +20,7 @@ class TjSpeedReview extends HTMLElement {
     // Identity state
     this.nickname = '';
     this.studentNumber = '';
+    this.homeroom = '';
     this.identityLocked = false;
 
     // Activity state
@@ -28,6 +31,10 @@ class TjSpeedReview extends HTMLElement {
     this.feedbackText = '';
     this.feedbackExplanation = '';
     this.shuffledOptions = [];
+
+    // Submission
+    this.submissionUrl = config?.submissionUrl || 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
+    this.isSubmitting = false;
 
     // Audio
     this.synthCorrect = null;
@@ -145,9 +152,11 @@ class TjSpeedReview extends HTMLElement {
     if (!this.identityLocked) {
       const nickInput = this.shadowRoot.querySelector('#nickname');
       const idInput = this.shadowRoot.querySelector('#student-number');
+      const homeroomInput = this.shadowRoot.querySelector('#homeroom');
 
       const nickname = nickInput ? nickInput.value.trim() : '';
       const studentNumber = idInput ? idInput.value.trim() : '';
+      const homeroom = homeroomInput ? homeroomInput.value.trim() : '';
 
       if (!nickname || !studentNumber) {
         alert('Please enter both nickname and student number to begin.');
@@ -156,6 +165,7 @@ class TjSpeedReview extends HTMLElement {
 
       this.nickname = nickname;
       this.studentNumber = studentNumber;
+      this.homeroom = homeroom;
       this.identityLocked = true;
     }
 
@@ -252,6 +262,68 @@ class TjSpeedReview extends HTMLElement {
       this.bestScore = this.score;
     }
     this.render();
+  }
+
+  _showReportOverlay() {
+    const overlay = this.shadowRoot.getElementById('report-overlay');
+    if (overlay) overlay.style.display = 'flex';
+  }
+
+  _hideReportOverlay() {
+    const overlay = this.shadowRoot.getElementById('report-overlay');
+    if (overlay) overlay.style.display = 'none';
+  }
+
+  async _submitScore() {
+    const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
+    const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : '';
+
+    if (currentTeacherCode !== '6767') {
+      alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
+      return;
+    }
+
+    if (this.isSubmitting) return;
+
+    const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
+    const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+    this.isSubmitting = true;
+    if (submitBtn) {
+      submitBtn.textContent = 'Submitting...';
+      submitBtn.disabled = true;
+    }
+
+    const payload = {
+      nickname: this.nickname,
+      homeroom: this.homeroom || '',
+      studentId: this.studentNumber,
+      quizName: 'Speed- ' + this.title,
+      score: this.bestScore,
+      total: this.questionsPerRound
+    };
+
+    try {
+      await fetch(this.submissionUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      alert('Score successfully submitted!');
+      if (submitBtn) {
+        submitBtn.textContent = 'Submitted ✓';
+        submitBtn.style.background = '#64748b';
+      }
+    } catch (err) {
+      console.error('Error submitting score:', err);
+      alert('There was an error submitting your score. Please try again.');
+      if (submitBtn) {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+      this.isSubmitting = false;
+    }
   }
 
   render() {
@@ -413,6 +485,23 @@ class TjSpeedReview extends HTMLElement {
           background: #06b6d4;
           transform: scale(1.02);
         }
+        .btn-secondary {
+          display: block;
+          width: 100%;
+          padding: 1em;
+          background: #334155;
+          color: #f1f5f9;
+          border: 1px solid #475569;
+          border-radius: 0.8em;
+          font-weight: 700;
+          font-size: 1em;
+          cursor: pointer;
+          transition: all 0.2s;
+          margin-top: 1em;
+        }
+        .btn-secondary:hover {
+          background: #475569;
+        }
         .start-screen, .end-screen {
           text-align: center;
           padding: 2em 0;
@@ -505,6 +594,193 @@ class TjSpeedReview extends HTMLElement {
         .result-identity strong {
           color: #f1f5f9;
         }
+
+        /* Report Card Overlay */
+        .report-overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.7);
+          z-index: 1000;
+          align-items: center;
+          justify-content: center;
+          padding: 1em;
+          box-sizing: border-box;
+        }
+        .report-modal {
+          background: #1e293b;
+          border: 1px solid #334155;
+          border-radius: 1.5em;
+          padding: 2em;
+          max-width: 480px;
+          width: 100%;
+          max-height: 90vh;
+          overflow-y: auto;
+          position: relative;
+        }
+        .rc-close-btn {
+          position: absolute;
+          top: 1em;
+          right: 1em;
+          background: none;
+          border: none;
+          color: #94a3b8;
+          font-size: 1.5em;
+          cursor: pointer;
+          line-height: 1;
+          padding: 0.2em;
+        }
+        .rc-header {
+          text-align: center;
+          margin-bottom: 1.5em;
+        }
+        .rc-icon { font-size: 2.5em; margin-bottom: 0.25em; }
+        .rc-title {
+          font-size: 1.2em;
+          font-weight: 700;
+          color: #e2e8f0;
+        }
+        .rc-subtitle {
+          font-size: 0.85em;
+          color: #94a3b8;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+        .rc-student {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: #0f172a;
+          border-radius: 0.8em;
+          padding: 0.8em 1em;
+          margin-bottom: 1em;
+          font-size: 0.9em;
+        }
+        .rc-label { color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.8em; }
+        .rc-value { color: #f1f5f9; font-weight: 600; }
+        .rc-number { color: #94a3b8; font-size: 0.9em; }
+        .rc-score-row {
+          display: flex;
+          align-items: center;
+          gap: 1.5em;
+          margin-bottom: 1em;
+          justify-content: center;
+        }
+        .rc-score-circle {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #22d3ee, #0891b2);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          box-shadow: 0 0 20px rgba(34,211,238,0.3);
+        }
+        .rc-score-val {
+          font-size: 1.3em;
+          font-weight: 900;
+          color: #0f172a;
+          line-height: 1;
+        }
+        .rc-score-pct {
+          font-size: 0.7em;
+          color: #0f172a;
+          font-weight: 700;
+        }
+        .rc-score-label {
+          font-size: 1em;
+          font-weight: 700;
+          color: #e2e8f0;
+        }
+        .rc-bar-track {
+          height: 8px;
+          background: #334155;
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 1em;
+        }
+        .rc-bar-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #22d3ee, #0891b2);
+          border-radius: 4px;
+          transition: width 0.5s ease;
+        }
+        .rc-details {
+          background: #0f172a;
+          border-radius: 0.8em;
+          padding: 1em;
+          margin-bottom: 1em;
+        }
+        .rc-detail-row {
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.85em;
+          color: #94a3b8;
+          padding: 0.3em 0;
+        }
+        .rc-detail-row span:last-child { color: #e2e8f0; }
+        .rc-submission-box {
+          margin-top: 1em;
+          padding: 1em;
+          background: #0f172a;
+          border-radius: 0.8em;
+          border: 1px dashed #334155;
+          text-align: left;
+        }
+        .rc-submission-box p {
+          margin: 0 0 8px 0;
+          font-size: 0.8em;
+          color: #64748b;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+        .rc-teacher-input {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0.7em;
+          background: #1e293b;
+          border: 1px solid #475569;
+          border-radius: 0.5em;
+          color: #f1f5f9;
+          font-size: 0.9em;
+          margin-bottom: 4px;
+          outline: none;
+        }
+        .rc-teacher-input:focus { border-color: #22d3ee; }
+        .rc-helper-text {
+          margin: 4px 0 0 0;
+          font-size: 0.75em;
+          color: #64748b;
+        }
+        .rc-submit-btn {
+          margin-top: 1em;
+          width: 100%;
+          padding: 0.9em;
+          background: #22d3ee;
+          color: #0f172a;
+          border: none;
+          border-radius: 0.7em;
+          font-weight: 800;
+          font-size: 1em;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .rc-submit-btn:hover { background: #06b6d4; }
+        .rc-submit-btn:disabled { opacity: 0.6; cursor: default; }
+        .best-score-highlight {
+          background: rgba(251, 191, 36, 0.1);
+          border: 1px solid rgba(251, 191, 36, 0.3);
+          border-radius: 0.5em;
+          padding: 0.5em 1em;
+          font-size: 0.85em;
+          color: #fbbf24;
+          font-weight: 700;
+          text-align: center;
+          margin-bottom: 1em;
+        }
       </style>
     `;
 
@@ -527,10 +803,14 @@ class TjSpeedReview extends HTMLElement {
                 <label for="student-number">Student Number</label>
                 <input type="text" id="student-number" class="input-field" placeholder="e.g. 01">
               </div>
+              <div class="input-group">
+                <label for="homeroom">Homeroom</label>
+                <input type="text" id="homeroom" class="input-field" placeholder="e.g. 5A">
+              </div>
             </div>
           ` : `
             <div class="locked-identity">
-              Playing as: <strong>${this.nickname}</strong> (${this.studentNumber})
+              Playing as: <strong>${this.nickname}</strong> (${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ''}
             </div>
           `}
 
@@ -566,7 +846,7 @@ class TjSpeedReview extends HTMLElement {
           if (opt === q.answer) className += ' correct';
           else if (opt === this.userAnswer) className += ' incorrect';
         }
-        return `<button class="${className}" ${this.isAnswered ? 'disabled' : ''} onclick="this.getRootNode().host.selectAnswer('${opt.replace(/'/g, "\\'")}')">${opt}</button>`;
+        return `<button class="${className}" ${this.isAnswered ? 'disabled' : ''} onclick="this.getRootNode().host.selectAnswer('${opt.replace(/'/g, "\\'")}')"> ${opt}</button>`;
       }).join('')}
         </div>
 
@@ -581,17 +861,58 @@ class TjSpeedReview extends HTMLElement {
         ` : ''}
       `;
     } else if (this.gameState === 'gameover') {
+      const isNewBest = this.score >= this.bestScore && this.score > 0;
+      const timestamp = new Date().toLocaleString();
       content = `
         <div class="end-screen">
           <h1>Quiz Complete!</h1>
           <div class="result-identity">
-            Player: <strong>${this.nickname}</strong> (${this.studentNumber})
+            Player: <strong>${this.nickname}</strong> (${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ''}
           </div>
           <p>Your final score:</p>
           <div class="final-score">${this.score}</div>
-          ${this.score >= this.bestScore && this.score > 0 ? `<p style="color: #fbbf24; font-weight: 800;">🎉 NEW HIGH SCORE! 🎉</p>` : ''}
+          ${isNewBest ? `<p style="color: #fbbf24; font-weight: 800;">🎉 NEW HIGH SCORE! 🎉</p>` : ''}
           <div class="best-score-badge">Personal Best: ${this.bestScore}</div>
-          <button class="btn-large" onclick="this.getRootNode().host.startGame()">Play Again</button>
+
+          <button class="btn-large" onclick="this.getRootNode().host._showReportOverlay()">📄 Generate Report</button>
+          <button class="btn-secondary" onclick="this.getRootNode().host.startGame()">▶ Play Again</button>
+        </div>
+
+        <!-- Report Card Overlay -->
+        <div class="report-overlay" id="report-overlay">
+          <div class="report-modal">
+            <button class="rc-close-btn" onclick="this.getRootNode().host._hideReportOverlay()">✕</button>
+            <div class="rc-header">
+              <div class="rc-icon">📄</div>
+              <div class="rc-title">${this.title}</div>
+              <div class="rc-subtitle">Report Card</div>
+            </div>
+            <div class="rc-student">
+              <span class="rc-label">Student</span>
+              <span class="rc-value">${this.nickname} <span class="rc-number">(${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ''}</span></span>
+            </div>
+            <div class="best-score-highlight">🏆 Best Score: ${this.bestScore} pts</div>
+            <div class="rc-score-row">
+              <div class="rc-score-circle">
+                <div class="rc-score-val">${this.bestScore}</div>
+                <div class="rc-score-pct">pts</div>
+              </div>
+              <div class="rc-score-label">
+                ${this.bestScore >= 100 ? '🏆 Excellent!' : this.bestScore >= 50 ? '⭐ Good effort!' : '💪 Keep practicing!'}
+              </div>
+            </div>
+            <div class="rc-details">
+              <div class="rc-detail-row"><span>Best Score</span><span>${this.bestScore} pts</span></div>
+              <div class="rc-detail-row"><span>Latest Score</span><span>${this.score} pts</span></div>
+              <div class="rc-detail-row"><span>Completed On</span><span>${timestamp}</span></div>
+            </div>
+            <div class="rc-submission-box">
+              <p>Official Submission</p>
+              <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code">
+              <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+            </div>
+            <button class="rc-submit-btn" id="submit-score-btn" onclick="this.getRootNode().host._submitScore()">Submit Score</button>
+          </div>
         </div>
       `;
     }

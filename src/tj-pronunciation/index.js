@@ -1,4 +1,4 @@
-import { config } from "./config.js";
+import { config } from "../tj-config.js";
 import sharedStyles from "../tj-shared.css?inline";
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";

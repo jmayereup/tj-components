@@ -1,6 +1,8 @@
+import { c as d } from "./chunks/tj-config-Co8tO1UZ.js";
 class n extends HTMLElement {
   constructor() {
-    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
+    var e;
+    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = (e = d) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
   }
   connectedCallback() {
     this.timeLimit = parseInt(this.getAttribute("time-limit")) || 15, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 10, this.bestScore = 0, this.loadLibrary("marked", "https://cdn.jsdelivr.net/npm/marked/marked.min.js"), this.loadLibrary("Tone", "https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js", () => {
@@ -9,14 +11,14 @@ class n extends HTMLElement {
       this.loadData(), this.render();
     });
   }
-  loadLibrary(e, t, i) {
+  loadLibrary(e, i, t) {
     if (window[e]) {
-      i && i();
+      t && t();
       return;
     }
     const s = document.createElement("script");
-    s.src = t, s.async = !0, s.onload = () => {
-      i && i(), this.render();
+    s.src = i, s.async = !0, s.onload = () => {
+      t && t(), this.render();
     }, document.head.appendChild(s);
   }
   initAudio() {
@@ -36,9 +38,9 @@ class n extends HTMLElement {
           e = String(this.config);
       else this.hasAttribute("config") ? e = this.getAttribute("config") : this.querySelector('script[type="application/json"]') ? e = this.querySelector('script[type="application/json"]').textContent.trim() : e = this.textContent.trim();
       if (!e) return;
-      const t = e.replace(/"((?:\\.|[^"\\])*)"/gs, (s, r) => '"' + r.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"');
-      let i = JSON.parse(t);
-      this._processParsedData(i), this.innerHTML = "";
+      const i = e.replace(/"((?:\\.|[^"\\])*)"]/gs, (s, r) => '"' + r.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"');
+      let t = JSON.parse(i);
+      this._processParsedData(t), this.innerHTML = "";
     } catch (e) {
       console.error("Failed to parse JSON for tj-speed-review", e), this.shadowRoot.innerHTML = '<div class="error-msg">Error loading quiz data. Check console.</div>';
     }
@@ -51,12 +53,12 @@ class n extends HTMLElement {
   }
   startGame() {
     if (!this.identityLocked) {
-      const t = this.shadowRoot.querySelector("#nickname"), i = this.shadowRoot.querySelector("#student-number"), s = t ? t.value.trim() : "", r = i ? i.value.trim() : "";
-      if (!s || !r) {
+      const i = this.shadowRoot.querySelector("#nickname"), t = this.shadowRoot.querySelector("#student-number"), s = this.shadowRoot.querySelector("#homeroom"), r = i ? i.value.trim() : "", o = t ? t.value.trim() : "", a = s ? s.value.trim() : "";
+      if (!r || !o) {
         alert("Please enter both nickname and student number to begin.");
         return;
       }
-      this.nickname = s, this.studentNumber = r, this.identityLocked = !0;
+      this.nickname = r, this.studentNumber = o, this.homeroom = a, this.identityLocked = !0;
     }
     this.score = 0, this.currentIndex = 0;
     const e = [...this.questions].sort(() => 0.5 - Math.random());
@@ -75,8 +77,8 @@ class n extends HTMLElement {
   updateTimerBar() {
     const e = this.shadowRoot.querySelector(".timer-inner");
     if (e) {
-      const t = this.timeLeft / this.timeLimit * 100;
-      e.style.width = `${t}%`, this.timeLeft < 5 ? e.style.background = "#ef4444" : e.style.background = "#22d3ee";
+      const i = this.timeLeft / this.timeLimit * 100;
+      e.style.width = `${i}%`, this.timeLeft < 5 ? e.style.background = "#ef4444" : e.style.background = "#22d3ee";
     }
   }
   handleTimeout() {
@@ -87,13 +89,13 @@ class n extends HTMLElement {
   async selectAnswer(e) {
     if (this.isAnswered) return;
     clearInterval(this.timerInterval), this.isAnswered = !0, this.userAnswer = e;
-    const t = this.currentPool[this.currentIndex];
-    if (e === t.answer) {
+    const i = this.currentPool[this.currentIndex];
+    if (e === i.answer) {
       this.isCorrect = !0;
-      const i = Math.max(10, Math.round(this.timeLeft * 10));
-      this.score += i, this.feedbackText = `+${i} points!`, this.feedbackExplanation = t.explanation || "Perfect!", this.playSound("correct");
+      const t = Math.max(10, Math.round(this.timeLeft * 10));
+      this.score += t, this.feedbackText = `+${t} points!`, this.feedbackExplanation = i.explanation || "Perfect!", this.playSound("correct");
     } else
-      this.isCorrect = !1, this.feedbackText = "Not quite!", this.feedbackExplanation = t.explanation || `The correct answer was **${t.answer}**.`, this.playSound("incorrect");
+      this.isCorrect = !1, this.feedbackText = "Not quite!", this.feedbackExplanation = i.explanation || `The correct answer was **${i.answer}**.`, this.playSound("incorrect");
     this.render();
   }
   nextQuestion() {
@@ -101,6 +103,42 @@ class n extends HTMLElement {
   }
   endGame() {
     this.gameState = "gameover", this.score > this.bestScore && (this.bestScore = this.score), this.render();
+  }
+  _showReportOverlay() {
+    const e = this.shadowRoot.getElementById("report-overlay");
+    e && (e.style.display = "flex");
+  }
+  _hideReportOverlay() {
+    const e = this.shadowRoot.getElementById("report-overlay");
+    e && (e.style.display = "none");
+  }
+  async _submitScore() {
+    const e = this.shadowRoot.getElementById("report-teacher-code");
+    if ((e ? e.value.trim() : "") !== "6767") {
+      alert("Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.");
+      return;
+    }
+    if (this.isSubmitting) return;
+    const t = this.shadowRoot.getElementById("submit-score-btn"), s = t ? t.textContent : "Submit";
+    this.isSubmitting = !0, t && (t.textContent = "Submitting...", t.disabled = !0);
+    const r = {
+      nickname: this.nickname,
+      homeroom: this.homeroom || "",
+      studentId: this.studentNumber,
+      quizName: "Speed- " + this.title,
+      score: this.bestScore,
+      total: this.questionsPerRound
+    };
+    try {
+      await fetch(this.submissionUrl, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(r)
+      }), alert("Score successfully submitted!"), t && (t.textContent = "Submitted ✓", t.style.background = "#64748b");
+    } catch (o) {
+      console.error("Error submitting score:", o), alert("There was an error submitting your score. Please try again."), t && (t.textContent = s, t.disabled = !1), this.isSubmitting = !1;
+    }
   }
   render() {
     const e = `
@@ -261,6 +299,23 @@ class n extends HTMLElement {
           background: #06b6d4;
           transform: scale(1.02);
         }
+        .btn-secondary {
+          display: block;
+          width: 100%;
+          padding: 1em;
+          background: #334155;
+          color: #f1f5f9;
+          border: 1px solid #475569;
+          border-radius: 0.8em;
+          font-weight: 700;
+          font-size: 1em;
+          cursor: pointer;
+          transition: all 0.2s;
+          margin-top: 1em;
+        }
+        .btn-secondary:hover {
+          background: #475569;
+        }
         .start-screen, .end-screen {
           text-align: center;
           padding: 2em 0;
@@ -353,11 +408,198 @@ class n extends HTMLElement {
         .result-identity strong {
           color: #f1f5f9;
         }
+
+        /* Report Card Overlay */
+        .report-overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.7);
+          z-index: 1000;
+          align-items: center;
+          justify-content: center;
+          padding: 1em;
+          box-sizing: border-box;
+        }
+        .report-modal {
+          background: #1e293b;
+          border: 1px solid #334155;
+          border-radius: 1.5em;
+          padding: 2em;
+          max-width: 480px;
+          width: 100%;
+          max-height: 90vh;
+          overflow-y: auto;
+          position: relative;
+        }
+        .rc-close-btn {
+          position: absolute;
+          top: 1em;
+          right: 1em;
+          background: none;
+          border: none;
+          color: #94a3b8;
+          font-size: 1.5em;
+          cursor: pointer;
+          line-height: 1;
+          padding: 0.2em;
+        }
+        .rc-header {
+          text-align: center;
+          margin-bottom: 1.5em;
+        }
+        .rc-icon { font-size: 2.5em; margin-bottom: 0.25em; }
+        .rc-title {
+          font-size: 1.2em;
+          font-weight: 700;
+          color: #e2e8f0;
+        }
+        .rc-subtitle {
+          font-size: 0.85em;
+          color: #94a3b8;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+        .rc-student {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: #0f172a;
+          border-radius: 0.8em;
+          padding: 0.8em 1em;
+          margin-bottom: 1em;
+          font-size: 0.9em;
+        }
+        .rc-label { color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.8em; }
+        .rc-value { color: #f1f5f9; font-weight: 600; }
+        .rc-number { color: #94a3b8; font-size: 0.9em; }
+        .rc-score-row {
+          display: flex;
+          align-items: center;
+          gap: 1.5em;
+          margin-bottom: 1em;
+          justify-content: center;
+        }
+        .rc-score-circle {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #22d3ee, #0891b2);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          box-shadow: 0 0 20px rgba(34,211,238,0.3);
+        }
+        .rc-score-val {
+          font-size: 1.3em;
+          font-weight: 900;
+          color: #0f172a;
+          line-height: 1;
+        }
+        .rc-score-pct {
+          font-size: 0.7em;
+          color: #0f172a;
+          font-weight: 700;
+        }
+        .rc-score-label {
+          font-size: 1em;
+          font-weight: 700;
+          color: #e2e8f0;
+        }
+        .rc-bar-track {
+          height: 8px;
+          background: #334155;
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 1em;
+        }
+        .rc-bar-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #22d3ee, #0891b2);
+          border-radius: 4px;
+          transition: width 0.5s ease;
+        }
+        .rc-details {
+          background: #0f172a;
+          border-radius: 0.8em;
+          padding: 1em;
+          margin-bottom: 1em;
+        }
+        .rc-detail-row {
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.85em;
+          color: #94a3b8;
+          padding: 0.3em 0;
+        }
+        .rc-detail-row span:last-child { color: #e2e8f0; }
+        .rc-submission-box {
+          margin-top: 1em;
+          padding: 1em;
+          background: #0f172a;
+          border-radius: 0.8em;
+          border: 1px dashed #334155;
+          text-align: left;
+        }
+        .rc-submission-box p {
+          margin: 0 0 8px 0;
+          font-size: 0.8em;
+          color: #64748b;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+        .rc-teacher-input {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0.7em;
+          background: #1e293b;
+          border: 1px solid #475569;
+          border-radius: 0.5em;
+          color: #f1f5f9;
+          font-size: 0.9em;
+          margin-bottom: 4px;
+          outline: none;
+        }
+        .rc-teacher-input:focus { border-color: #22d3ee; }
+        .rc-helper-text {
+          margin: 4px 0 0 0;
+          font-size: 0.75em;
+          color: #64748b;
+        }
+        .rc-submit-btn {
+          margin-top: 1em;
+          width: 100%;
+          padding: 0.9em;
+          background: #22d3ee;
+          color: #0f172a;
+          border: none;
+          border-radius: 0.7em;
+          font-weight: 800;
+          font-size: 1em;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .rc-submit-btn:hover { background: #06b6d4; }
+        .rc-submit-btn:disabled { opacity: 0.6; cursor: default; }
+        .best-score-highlight {
+          background: rgba(251, 191, 36, 0.1);
+          border: 1px solid rgba(251, 191, 36, 0.3);
+          border-radius: 0.5em;
+          padding: 0.5em 1em;
+          font-size: 0.85em;
+          color: #fbbf24;
+          font-weight: 700;
+          text-align: center;
+          margin-bottom: 1em;
+        }
       </style>
     `;
-    let t = "";
+    let i = "";
     if (this.gameState === "start")
-      t = `
+      i = `
         <div class="start-screen">
           <h1>${this.title} 🏎️</h1>
           <p>Think fast! Points based on speed.</p>
@@ -365,7 +607,7 @@ class n extends HTMLElement {
           
           ${this.identityLocked ? `
             <div class="locked-identity">
-              Playing as: <strong>${this.nickname}</strong> (${this.studentNumber})
+              Playing as: <strong>${this.nickname}</strong> (${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ""}
             </div>
           ` : `
             <div class="identity-form">
@@ -377,6 +619,10 @@ class n extends HTMLElement {
                 <label for="student-number">Student Number</label>
                 <input type="text" id="student-number" class="input-field" placeholder="e.g. 01">
               </div>
+              <div class="input-group">
+                <label for="homeroom">Homeroom</label>
+                <input type="text" id="homeroom" class="input-field" placeholder="e.g. 5A">
+              </div>
             </div>
           `}
 
@@ -384,8 +630,8 @@ class n extends HTMLElement {
         </div>
       `;
     else if (this.gameState === "playing") {
-      const i = this.currentPool[this.currentIndex];
-      t = `
+      const t = this.currentPool[this.currentIndex];
+      i = `
         <div class="header">
           <div class="title-area">
             <h1>${this.title}</h1>
@@ -402,13 +648,13 @@ class n extends HTMLElement {
           <div class="timer-inner" style="width: ${this.timeLeft / this.timeLimit * 100}%"></div>
         </div>
 
-        <div class="question-meta">Question ${this.currentIndex + 1} / ${this.currentPool.length} — ${i.category || ""}</div>
-        <div class="question-text">${i.question}</div>
+        <div class="question-meta">Question ${this.currentIndex + 1} / ${this.currentPool.length} — ${t.category || ""}</div>
+        <div class="question-text">${t.question}</div>
 
         <div class="options-grid">
           ${this.shuffledOptions.map((s) => {
         let r = "option-btn";
-        return this.isAnswered && (s === i.answer ? r += " correct" : s === this.userAnswer && (r += " incorrect")), `<button class="${r}" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.selectAnswer('${s.replace(/'/g, "\\'")}')">${s}</button>`;
+        return this.isAnswered && (s === t.answer ? r += " correct" : s === this.userAnswer && (r += " incorrect")), `<button class="${r}" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.selectAnswer('${s.replace(/'/g, "\\'")}')"> ${s}</button>`;
       }).join("")}
         </div>
 
@@ -422,23 +668,65 @@ class n extends HTMLElement {
           </div>
         ` : ""}
       `;
-    } else this.gameState === "gameover" && (t = `
+    } else if (this.gameState === "gameover") {
+      const t = this.score >= this.bestScore && this.score > 0, s = (/* @__PURE__ */ new Date()).toLocaleString();
+      i = `
         <div class="end-screen">
           <h1>Quiz Complete!</h1>
           <div class="result-identity">
-            Player: <strong>${this.nickname}</strong> (${this.studentNumber})
+            Player: <strong>${this.nickname}</strong> (${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ""}
           </div>
           <p>Your final score:</p>
           <div class="final-score">${this.score}</div>
-          ${this.score >= this.bestScore && this.score > 0 ? '<p style="color: #fbbf24; font-weight: 800;">🎉 NEW HIGH SCORE! 🎉</p>' : ""}
+          ${t ? '<p style="color: #fbbf24; font-weight: 800;">🎉 NEW HIGH SCORE! 🎉</p>' : ""}
           <div class="best-score-badge">Personal Best: ${this.bestScore}</div>
-          <button class="btn-large" onclick="this.getRootNode().host.startGame()">Play Again</button>
+
+          <button class="btn-large" onclick="this.getRootNode().host._showReportOverlay()">📄 Generate Report</button>
+          <button class="btn-secondary" onclick="this.getRootNode().host.startGame()">▶ Play Again</button>
         </div>
-      `);
+
+        <!-- Report Card Overlay -->
+        <div class="report-overlay" id="report-overlay">
+          <div class="report-modal">
+            <button class="rc-close-btn" onclick="this.getRootNode().host._hideReportOverlay()">✕</button>
+            <div class="rc-header">
+              <div class="rc-icon">📄</div>
+              <div class="rc-title">${this.title}</div>
+              <div class="rc-subtitle">Report Card</div>
+            </div>
+            <div class="rc-student">
+              <span class="rc-label">Student</span>
+              <span class="rc-value">${this.nickname} <span class="rc-number">(${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ""}</span></span>
+            </div>
+            <div class="best-score-highlight">🏆 Best Score: ${this.bestScore} pts</div>
+            <div class="rc-score-row">
+              <div class="rc-score-circle">
+                <div class="rc-score-val">${this.bestScore}</div>
+                <div class="rc-score-pct">pts</div>
+              </div>
+              <div class="rc-score-label">
+                ${this.bestScore >= 100 ? "🏆 Excellent!" : this.bestScore >= 50 ? "⭐ Good effort!" : "💪 Keep practicing!"}
+              </div>
+            </div>
+            <div class="rc-details">
+              <div class="rc-detail-row"><span>Best Score</span><span>${this.bestScore} pts</span></div>
+              <div class="rc-detail-row"><span>Latest Score</span><span>${this.score} pts</span></div>
+              <div class="rc-detail-row"><span>Completed On</span><span>${s}</span></div>
+            </div>
+            <div class="rc-submission-box">
+              <p>Official Submission</p>
+              <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code">
+              <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+            </div>
+            <button class="rc-submit-btn" id="submit-score-btn" onclick="this.getRootNode().host._submitScore()">Submit Score</button>
+          </div>
+        </div>
+      `;
+    }
     this.shadowRoot.innerHTML = `
       ${e}
       <div class="container">
-        ${t}
+        ${i}
       </div>
     `;
   }
