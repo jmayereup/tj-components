@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listening Lesson: Ordering Food</title>
+    <script src="../tj-listening.js" type="module"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #22d3ee;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        tj-listening:not(:defined) {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h2>Listening Lesson Demo</h2>
+        <a href="../index.html" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Home
+        </a>
+    </div>
+
+    <div class="container">
+
+    <!-- Lesson 1 -->
+    <tj-listening>
+        {
+        "title": "Ordering Food at a Restaurant",
+        "lang": "en-US",
+        "intro": {
+        "text": "In this lesson, you will listen to a conversation between a customer and a waiter at a Thai restaurant.        Pay close attention to what the customer orders and how the waiter responds. After listening, you will answer some comprehension questions.",
+        "context": "You are at a popular Thai restaurant with a friend. It's lunchtime and the restaurant is quite busy."
+        },
+        "vocab": [
+        {
+        "word": "appetizer",
+        "definition": "A small dish served before the main meal to stimulate appetite.",
+        "example": "We ordered spring rolls as an appetizer."
+        },
+        {
+        "word": "entrée",
+        "definition": "The main course of a meal.",
+        "example": "For my entrée, I chose the pad thai with shrimp."
+        },
+        {
+        "word": "spicy",
+        "definition": "Having a strong, hot flavor from spices like chili.",
+        "example": "Thai green curry can be very spicy."
+        },
+        {
+        "word": "mild",
+        "definition": "Not spicy or strong in flavor; gentle.",
+        "example": "If you don't like chili, ask for it mild."
+        },
+        {
+        "word": "bill",
+        "definition": "A written statement of charges for food and services at a restaurant.",
+        "example": "Could we have the bill, please?"
+        },
+        {
+        "word": "recommend",
+        "definition": "To suggest something as good or suitable.",
+        "example": "Can you recommend a popular dish?"
+        }
+        ],
+        "listening": {
+        "transcript": "Waiter: Welcome! Table for two? Right this way. Here are your menus.\nCustomer: Thank you. Could you recommend something?\nWaiter: Our green curry is very popular. We also have a great pad thai.\nCustomer: I'll try the green curry, please. Can I have it mild?\nWaiter: Of course. And for your friend?\nCustomer: She'll have the pad thai with shrimp.\nWaiter: Would you like any appetizers? Our spring rolls are excellent.\nCustomer: Yes, one order of spring rolls, please.\nWaiter: Great choice! I'll bring your foodshortly.",
+        "questions": [
+        {
+        "question": "What did the waiter recommend?",
+        "options": ["Fried rice and soup", "Green curry and pad thai", "Spring rolls and salad", "Tom yum and som tam"],
+        "correct": "Green curry and pad thai"
+        },
+        {
+        "question": "How spicy did the customer want the green curry?",
+        "options": ["Very spicy", "Medium", "Mild", "Extra hot"],
+        "correct": "Mild"
+        },
+        {
+        "question": "What did the customer's friend order?",
+        "options": ["Green curry", "Fried rice", "Pad thai with shrimp", "Spring rolls"],
+        "correct": "Pad thai with shrimp"
+        },
+        {
+        "question": "What appetizer did they order?",
+        "options": ["Satay", "Spring rolls", "Soup", "Salad"],
+        "correct": "Spring rolls"
+        }
+        ]
+        }
+        }
+    </tj-listening>
+
+    <!-- Lesson 2 -->
+   <tj-listening>
+        {
+        "title": "Ordering Food at a Restaurant",
+        "lang": "en-US",
+        "intro": {
+        "text": "In this lesson, you will listen to a conversation between a customer and a waiter at a Thai restaurant.        Pay close attention to what the customer orders and how the waiter responds. After listening, you will answer some comprehension questions.",
+        "context": "You are at a popular Thai restaurant with a friend. It's lunchtime and the restaurant is quite busy."
+        },
+        "vocab": [
+        {
+        "word": "appetizer",
+        "definition": "A small dish served before the main meal to stimulate appetite.",
+        "example": "We ordered spring rolls as an appetizer."
+        },
+        {
+        "word": "entrée",
+        "definition": "The main course of a meal.",
+        "example": "For my entrée, I chose the pad thai with shrimp."
+        },
+        {
+        "word": "spicy",
+        "definition": "Having a strong, hot flavor from spices like chili.",
+        "example": "Thai green curry can be very spicy."
+        },
+        {
+        "word": "mild",
+        "definition": "Not spicy or strong in flavor; gentle.",
+        "example": "If you don't like chili, ask for it mild."
+        },
+        {
+        "word": "bill",
+        "definition": "A written statement of charges for food and services at a restaurant.",
+        "example": "Could we have the bill, please?"
+        },
+        {
+        "word": "recommend",
+        "definition": "To suggest something as good or suitable.",
+        "example": "Can you recommend a popular dish?"
+        }
+        ],
+        "listening": {
+        "transcript": "Waiter: Welcome! Table for two? Right this way. Here are your menus.\nCustomer: Thank you. Could you recommend something?\nWaiter: Our green curry is very popular. We also have a great pad thai.\nCustomer: I'll try the green curry, please. Can I have it mild?\nWaiter: Of course. And for your friend?\nCustomer: She'll have the pad thai with shrimp.\nWaiter: Would you like any appetizers? Our spring rolls are excellent.\nCustomer: Yes, one order of spring rolls, please.\nWaiter: Great choice! I'll bring your foodshortly.",
+        "questions": [
+        {
+        "question": "What did the waiter recommend?",
+        "options": ["Fried rice and soup", "Green curry and pad thai", "Spring rolls and salad", "Tom yum and som tam"],
+        "correct": "Green curry and pad thai"
+        },
+        {
+        "question": "How spicy did the customer want the green curry?",
+        "options": ["Very spicy", "Medium", "Mild", "Extra hot"],
+        "correct": "Mild"
+        },
+        {
+        "question": "What did the customer's friend order?",
+        "options": ["Green curry", "Fried rice", "Pad thai with shrimp", "Spring rolls"],
+        "correct": "Pad thai with shrimp"
+        },
+        {
+        "question": "What appetizer did they order?",
+        "options": ["Satay", "Spring rolls", "Soup", "Salad"],
+        "correct": "Spring rolls"
+        }
+        ]
+        }
+        }
+    </tj-listening>
+    </div>
+</body>
+
+</html>

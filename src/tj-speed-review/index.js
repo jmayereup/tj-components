@@ -922,7 +922,7 @@ class TjSpeedReview extends HTMLElement {
               <div class="rc-detail-row"><span>Completed On</span><span>${timestamp}</span></div>
             </div>
             <div class="rc-submission-box">
-              <p>Official Submission</p>
+              <p>Submission (Optional)</p>
               <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code">
               <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
             </div>

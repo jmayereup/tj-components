@@ -4,7 +4,7 @@ const q = ":host{--tj-primary-color: #2563eb;--tj-primary-hover: #1d4ed8;--tj-pr
     <div class="tj-sticky-bar">
         <div class="header-main">
             <h1 class="tj-h3" id="pronunciationTitle" style="margin: 0;">Pronunciation Practice</h1>
-            <p class="instructions tj-text-muted" id="pronunciationInstructions" style="display: none; margin: 0; font-size: 0.9em;"></p>
+            <p class="instructions tj-text-muted" id="pronunciationInstructions" style="display: none; margin: 0; font-size: 0.9em;">Please complete all activities to generate a report card.</p>
         </div>
         <div class="tj-flex-center" style="gap: 1em;">
             <div class="progress-text">0 / 0</div>
@@ -108,12 +108,7 @@ class M extends HTMLElement {
   render(t) {
     t.language && (this.language = t.language);
     const e = document.createElement("template");
-    if (e.innerHTML = `<style>${q}</style><style>${_}</style>${P}`, this.shadowRoot.firstChild && (this.shadowRoot.innerHTML = ""), this.shadowRoot.appendChild(e.content.cloneNode(!0)), t.title && (this.shadowRoot.getElementById("pronunciationTitle").textContent = t.title), t.instructions) {
-      const r = this.shadowRoot.getElementById(
-        "pronunciationInstructions"
-      );
-      r.textContent = t.instructions, r.style.display = "block";
-    }
+    e.innerHTML = `<style>${q}</style><style>${_}</style>${P}`, this.shadowRoot.firstChild && (this.shadowRoot.innerHTML = ""), this.shadowRoot.appendChild(e.content.cloneNode(!0)), t.title && (this.shadowRoot.getElementById("pronunciationTitle").textContent = t.title);
     let o = "";
     if (t.activities && Array.isArray(t.activities) && (o = t.activities.map((r, a) => this.renderActivity(r, a)).join("")), this.shadowRoot.getElementById("activitiesContainer").innerHTML = o, this.updateProgress(), this.attachEventListeners(), this._updateVoiceList(), !this._shouldShowAudioControls()) {
       const r = this.shadowRoot.getElementById("voice-btn");
@@ -414,7 +409,7 @@ class M extends HTMLElement {
               <div class="rc-detail-row"><span>Completed On</span><span>${i}</span></div>
           </div>
           <div style="margin-top: 16px; padding: 12px; background: var(--tj-bg-alt); border-radius: 8px; border: 1px dashed var(--tj-border-main); text-align: left;">
-              <p style="margin: 0 0 8px 0; font-size: 0.85em; color: var(--tj-text-muted); font-weight: 600; text-transform: uppercase;">Official Submission</p>
+              <p style="margin: 0 0 8px 0; font-size: 0.85em; color: var(--tj-text-muted); font-weight: 600; text-transform: uppercase;">Submission (Optional)</p>
               <input type="text" id="report-teacher-code" placeholder="Enter Teacher Code" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--tj-border-main); border-radius: 6px; font-size: 0.9em; margin-bottom: 4px;" value="${u}">
               <p style="margin: 4px 0 0 0; font-size: 0.8em; color: var(--tj-text-muted);">Enter the teacher code to submit, or take a screenshot of this page.</p>
           </div>

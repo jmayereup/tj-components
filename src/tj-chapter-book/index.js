@@ -1,973 +1,9 @@
 import { getBestVoice } from '../audio-utils.js';
 import { config } from '../tj-config.js';
+import stylesText from './styles.css?inline';
+import templateHtml from './template.html?raw';
 
-const styles = `
-    @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
-    tj-chapter-book {
-        --tj-bg-color: #f8fafc;
-        --tj-text-color: #1e293b;
-        --tj-card-bg: #ffffff;
-        --tj-accent-color: #b45309;
-        --tj-subtitle-color: #64748b;
-        --tj-card-border: #e2e8f0;
-        --tj-btn-bg: #f1f5f9;
-        --tj-btn-text: #475569;
-        --tj-btn-hover: #e2e8f0;
-        --tj-btn-slow-text: #2563eb;
-        --tj-quiz-bg: #f8fafc;
-        --tj-shadow: rgba(0, 0, 0, 0.05);
-        --tj-input-bg: #ffffff;
-        
-        display: block;
-        box-sizing: border-box;
-        font-family: 'Lato', sans-serif;
-        background-color: var(--tj-bg-color);
-        color: var(--tj-text-color);
-        overflow-anchor: auto;
-        padding-bottom: 2em;
-        transition: background-color 0.3s, color 0.3s;
-    }
-
-    tj-chapter-book *, tj-chapter-book *::before, tj-chapter-book *::after {
-        box-sizing: inherit;
-    }
-
-    tj-chapter-book h1, tj-chapter-book h2, tj-chapter-book h3, tj-chapter-book p {
-        margin: 0;
-        padding: 0;
-    }
-
-    tj-chapter-book.dark-theme {
-        --tj-bg-color: #0f172a;
-        --tj-text-color: #e2e8f0;
-        --tj-card-bg: #1e293b;
-        --tj-card-border: #334155;
-        --tj-accent-color: #fbbf24;
-        --tj-subtitle-color: #94a3b8;
-        --tj-btn-bg: #334155;
-        --tj-btn-hover: #475569;
-        --tj-btn-text: white;
-        --tj-btn-slow-text: #93c5fd;
-        --tj-quiz-bg: #334155;
-        --tj-shadow: rgba(0, 0, 0, 0.5);
-        --tj-input-bg: #1e293b;
-    }
-
-    tj-chapter-book h1, tj-chapter-book h2, tj-chapter-book h3 {
-        font-family: 'Lato', sans-serif;
-    }
-
-    .book-header {
-        max-width: 56em;
-        margin: 0 auto;
-        padding: 1.5em 1em;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1em;
-    }
-
-    .theme-toggle, .print-toggle, .lang-swap {
-        background: none;
-        border: none;
-        color: var(--tj-text-color);
-        cursor: pointer;
-        padding: 0.5em;
-        border-radius: 50%;
-        transition: background-color 0.2s;
-    }
-
-    .theme-toggle:hover, .print-toggle:hover, .lang-swap:hover {
-        background-color: var(--tj-btn-hover);
-    }
-
-    .header-actions {
-        display: flex;
-        gap: 0.5em;
-        justify-content: flex-end;
-        width: 100%;
-        flex-wrap: wrap;
-        margin-bottom: 0.5em;
-    }
-
-    @media (max-width: 640px) {
-        .header-actions {
-            justify-content: center;
-        }
-    }
-
-    .book-title {
-        font-size: 3em;
-        line-height: 1;
-        color: var(--tj-accent-color);
-        margin-bottom: 0.5em;
-    }
-
-    .book-subtitle {
-        font-size: 1.25em;
-        color: var(--tj-subtitle-color);
-    }
-
-    @media (max-width: 640px) {
-        .book-title {
-            font-size: 2em;
-        }
-    }
-
-    .chapters-container {
-        margin: 0 auto;
-        padding: 1em 1em;
-    }
-
-    .chapters-container > * + * {
-        margin-top: 3em;
-    }
-
-    .chapter-card {
-        background-color: var(--tj-card-bg);
-        border: 1px solid var(--tj-card-border);
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px var(--tj-shadow);
-        transition: transform 0.2s, background-color 0.3s, border-color 0.3s;
-        padding: 1.5em;
-    }
-
-    @media (min-width: 768px) {
-        .chapter-card {
-            padding: 2em;
-        }
-    }
-
-    .chapter-title {
-        font-size: 1.875em;
-        line-height: 2.25em;
-        color: var(--tj-accent-color);
-        margin-bottom: 1.5em;
-    }
-
-    .audio-controls {
-        display: flex;
-        gap: 0.75em;
-        flex-wrap: wrap;
-        align-items: center;
-        margin-bottom: 1em;
-    }
-
-    .audio-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.5em;
-        padding: 0.375em 0.75em;
-        border-radius: 9999px;
-        transition: all 0.2s;
-        font-size: 0.875em;
-        border-width: 1px;
-        border-style: solid;
-        cursor: pointer;
-        font-weight: 600;
-    }
-
-    .audio-btn-normal {
-        background-color: var(--tj-btn-bg);
-        color: var(--tj-btn-text);
-        border-color: var(--tj-card-border);
-    }
-
-    .audio-btn-normal:hover {
-        background-color: var(--tj-btn-hover);
-    }
-
-    .audio-btn-slow {
-        background-color: var(--tj-btn-bg);
-        color: var(--tj-btn-slow-text);
-        border-color: var(--tj-card-border);
-    }
-
-    .audio-btn-slow:hover {
-        background-color: var(--tj-btn-hover);
-    }
-
-    .audio-btn-cancel {
-        background-color: var(--tj-btn-bg);
-        color: var(--tj-btn-text);
-        border-color: var(--tj-card-border);
-    }
-
-    .audio-btn-cancel:hover {
-        background-color: var(--tj-btn-hover);
-    }
-
-    .chapter-text {
-        color: var(--tj-text-color);
-        line-height: 1.625;
-        margin-bottom: 1.5em;
-        font-size: 1.125em;
-    }
-
-    .chapter-text p {
-        margin-bottom: 1.25em;
-    }
-
-    .translation-details {
-        margin-bottom: 2em;
-    }
-
-    .translation-summary {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-weight: 500;
-        cursor: pointer;
-        list-style: none;
-        background-color: var(--tj-card-bg);
-        padding: 0.75em;
-        border-radius: 0.5em;
-        color: var(--tj-accent-color);
-        transition: background-color 0.2s;
-        border: 1px solid var(--tj-card-border);
-    }
-
-    .translation-summary:hover {
-        background-color: var(--tj-btn-hover);
-    }
-
-    .translation-content {
-        color: var(--tj-subtitle-color);
-        font-style: italic;
-        font-size: 1em;
-        margin-top: 0.75em;
-        padding-left: 0.75em;
-        padding-right: 0.75em;
-    }
-
-    .quiz-container {
-        background-color: var(--tj-card-bg);
-        padding: 1.5em;
-        border-radius: 0.5em;
-        border: 1px solid var(--tj-card-border);
-    }
-
-    .quiz-title {
-        font-size: 1.25em;
-        color: var(--tj-accent-color);
-        margin-bottom: 1em;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 0.5em;
-    }
-
-    .question-block {
-        background: var(--tj-quiz-bg);
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        border: 1px solid var(--tj-card-border);
-    }
-
-    .question-text {
-        margin-bottom: 0.5em;
-        font-weight: 600;
-    }
-
-    .option-label {
-        display: block;
-        margin-bottom: 0.25em;
-    }
-
-    input[type="radio"] {
-        accent-color: var(--tj-accent-color);
-        transform: scale(1.2);
-        margin-right: 8px;
-    }
-
-    .feedback {
-        margin-top: 8px;
-        font-size: 0.9em;
-        transition: all 0.3s;
-    }
-
-    .check-btn {
-        margin-top: 0.5em;
-        background-color: #ca8a04;
-        color: white;
-        padding: 0.5em 1em;
-        border-radius: 0.25em;
-        font-weight: 700;
-        transition: background-color 0.2s;
-        border: none;
-        cursor: pointer;
-    }
-
-    .check-btn:hover {
-        background-color: #a16207;
-    }
-
-    .lang-selector-container {
-        margin: 1.5em 0;
-        text-align: center;
-        width: 100%;
-    }
-
-    .lang-selector-label {
-        font-weight: bold;
-        color: var(--tj-subtitle-color);
-        margin-bottom: 0.75em;
-        font-size: 1.1em;
-    }
-
-    .lang-selector-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 1em;
-        flex-wrap: wrap;
-    }
-
-    .lang-btn {
-        background: var(--tj-card-bg);
-        border: 2px solid var(--tj-card-border);
-        color: var(--tj-text-color);
-        padding: 0.75em 1.5em;
-        border-radius: 9999px;
-        font-size: 1em;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .lang-btn:hover {
-        border-color: var(--tj-accent-color);
-    }
-
-    .lang-btn.active {
-        background: var(--tj-accent-color);
-        border-color: var(--tj-accent-color);
-        color: white;
-    }
-
-    .quiz-container.quiz-hidden-checked,
-    .translation-details.translation-hidden-checked {
-        display: none !important;
-    }
-
-    .quiz-lock-message.visible {
-        display: block;
-        animation: fadeIn 0.3s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    /* Accordion Styling */
-    details > summary::-webkit-details-marker { display: none; }
-    
-    details[open] summary ~ * {
-        animation: sweep .3s ease-in-out;
-    }
-
-    @keyframes sweep {
-        0% { opacity: 0; transform: translateY(-10px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-
-    .chevron { transition: transform 0.3s; display: flex; align-items: center; }
-    details[open] .chevron { transform: rotate(180deg); }
-
-    /* Dynamic Classes */
-    .playing {
-        box-shadow: 0 0 0 2px #60a5fa, 0 0 0 3px var(--tj-bg-color);
-    }
-
-    .feedback-correct {
-        color: #4ade80;
-        font-weight: 700;
-    }
-
-    .feedback-wrong {
-        color: #f87171;
-        font-weight: 700;
-    }
-
-    .feedback-neutral {
-        color: #9ca3af;
-    }
-
-    .book-footer {
-        max-width: 48em;
-        margin: 2em auto 0;
-        padding: 1.5em;
-        text-align: left;
-        font-size: 0.875em;
-        color: var(--tj-subtitle-color);
-        border-top: 1px solid var(--tj-card-border);
-    }
-
-    .book-footer p {
-        margin: 0.5em 0;
-        line-height: 1.5;
-    }
-
-    .report-card-section {
-        max-width: 48em;
-        margin: 2em auto;
-        background-color: var(--tj-card-bg);
-        border: 1px solid var(--tj-card-border);
-        padding: 2em;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px var(--tj-shadow);
-        display: flex;
-        flex-direction: column;
-        gap: 1.5em;
-    }
-
-    .report-tally {
-        font-weight: bold;
-        color: var(--tj-accent-color);
-        text-align: center;
-        font-size: 1.25em;
-    }
-
-    .student-inputs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1em;
-    }
-
-    @media (max-width: 640px) {
-        .student-inputs {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .student-inputs input {
-        padding: 8px 12px;
-        border-radius: 6px;
-        border: 1px solid var(--tj-card-border);
-        background: var(--tj-input-bg);
-        color: var(--tj-text-color);
-        font-size: 0.9em;
-    }
-
-    .student-inputs input:disabled {
-        opacity: 0.7;
-        background: var(--tj-btn-bg);
-        cursor: not-allowed;
-    }
-
-    .report-actions {
-        display: flex;
-        gap: 1em;
-    }
-
-    .generate-btn {
-        flex: 3;
-        background-color: var(--tj-accent-color);
-        color: white;
-        border: none;
-        padding: 0.75em;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: opacity 0.2s;
-        font-size: 1em;
-    }
-
-    .reset-btn {
-        flex: 1;
-        background-color: #ef4444;
-        color: white;
-        border: none;
-        padding: 0.75em;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: opacity 0.2s;
-        font-size: 1em;
-    }
-
-    .generate-btn:hover, .reset-btn:hover {
-        opacity: 0.9;
-    }
-
-    .report-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(15, 23, 42, 0.8);
-        backdrop-filter: blur(8px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 2000;
-        padding: 1.5em;
-    }
-
-    .report-overlay.visible {
-        display: flex;
-    }
-
-    .report-modal {
-        background: var(--tj-card-bg);
-        width: 100%;
-        max-width: 550px;
-        max-height: 90vh;
-        border-radius: 1.5em;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        display: flex;
-        flex-direction: column;
-        overflow: auto;
-        border: 1px solid var(--tj-card-border);
-        position: relative;
-    }
-
-    /* Report Card Content */
-    .rc-header { text-align: center; margin-bottom: 24px; }
-    .rc-icon { font-size: 2.5em; margin-bottom: 8px; }
-    .rc-title { font-size: 1.4em; font-weight: 700; color: var(--tj-accent-color); margin-bottom: 4px; }
-    .rc-subtitle { color: var(--tj-subtitle-color); font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.05em; }
-    .rc-student { background: var(--tj-card-bg); border: 1px solid var(--tj-card-border); border-radius: 12px; padding: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
-    .rc-label { color: var(--tj-subtitle-color); font-size: 0.9em; font-weight: 600; }
-    .rc-value { font-weight: 700; color: var(--tj-text-color); text-align: right; }
-    .rc-number { color: var(--tj-subtitle-color); font-weight: 500; font-size: 0.9em; display: block; }
-    .rc-score-row { display: flex; align-items: center; gap: 20px; margin-bottom: 16px; }
-    .rc-score-circle { width: 80px; height: 80px; border-radius: 50%; background: var(--tj-btn-bg); color: var(--tj-accent-color); display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid var(--tj-accent-color); flex-shrink: 0; }
-    .rc-score-val { font-size: 1.5em; font-weight: 800; line-height: 1; }
-    .rc-score-pct { font-size: 0.85em; font-weight: 700; margin-top: 2px; }
-    .rc-score-label { font-size: 1.1em; font-weight: 700; color: var(--tj-text-color); }
-    .rc-bar-track { height: 8px; background: var(--tj-btn-bg); border-radius: 4px; overflow: hidden; }
-    .rc-bar-fill { height: 100%; background: var(--tj-accent-color); border-radius: 4px; }
-    .rc-details { background: var(--tj-btn-bg); padding: 16px; border-radius: 12px; margin-bottom: 24px; font-size: 0.9em; }
-    .rc-detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
-    .rc-detail-row:last-child { margin-bottom: 0; }
-    .rc-detail-row span:first-child { color: var(--tj-subtitle-color); font-weight: 500; }
-    .rc-detail-row span:last-child { font-weight: 600; color: var(--tj-text-color); }
-    .rc-close-btn:hover { background: var(--tj-btn-bg); }
-
-    /* Official Submission Refinements */
-    .rc-submission-box {
-        margin-top: 20px;
-        padding: 20px;
-        background: var(--tj-btn-bg);
-        border-radius: 12px;
-        border: 1px solid var(--tj-card-border);
-        text-align: left;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-    }
-
-    .rc-submission-header {
-        margin: 0 0 12px 0;
-        font-size: 0.85em;
-        color: var(--tj-subtitle-color);
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .rc-teacher-code-input {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 12px 16px;
-        border: 2px solid var(--tj-card-border);
-        border-radius: 10px;
-        font-size: 1em;
-        margin-bottom: 8px;
-        background: var(--tj-card-bg);
-        transition: all 0.2s ease;
-        outline: none;
-        font-family: inherit;
-        color: var(--tj-text-color);
-    }
-
-    .rc-teacher-code-input:focus {
-        border-color: var(--tj-accent-color);
-        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-    }
-
-    .rc-help-text {
-        margin: 4px 0 0 0;
-        font-size: 0.85em;
-        color: var(--tj-subtitle-color);
-        line-height: 1.4;
-    }
-
-    .rc-submit-btn {
-        width: 100%;
-        padding: 16px;
-        background: var(--tj-accent-color);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 1.1em;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-        margin-bottom: 8px;
-    }
-
-    .rc-submit-btn:hover:not(:disabled) {
-        opacity: 0.9;
-        transform: translateY(-1px);
-        box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
-    }
-
-    .rc-submit-btn:disabled {
-        opacity: 0.6;
-        cursor: default;
-        background: var(--tj-subtitle-color);
-        box-shadow: none;
-    }
-
-    .rc-secondary-btn {
-        width: 100%;
-        padding: 14px;
-        background: lightgrey;
-        color: var(--tj-text-color);
-        border: 2px solid var(--tj-card-border);
-        border-radius: 12px;
-        font-size: 1em;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .rc-secondary-btn:hover {
-        background: var(--tj-btn-bg);
-        border-color: var(--tj-subtitle-color);
-    }
-
-    /* Print Styles */
-    @media print {
-        /*
-         * Print scoping
-         * - When printing from the component's Print button, JS sets:
-         *   - html.tj-print-scope
-         *   - tj-chapter-book[data-tj-print-target="true"]
-         * - For Ctrl/Cmd+P, you can opt-in by adding: print-scope="component".
-         */
-        html.tj-print-scope body * {
-            visibility: hidden !important;
-        }
-
-        html.tj-print-scope tj-chapter-book[data-tj-print-target="true"],
-        html.tj-print-scope tj-chapter-book[data-tj-print-target="true"] * {
-            visibility: visible !important;
-        }
-
-        html.tj-print-scope tj-chapter-book[data-tj-print-target="true"] {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-        }
-
-        tj-chapter-book {
-            background: white !important;
-            color: black !important;
-            padding: 0 !important;
-        }
-
-        .book-header {
-            padding-top: 0.5em !important;
-            padding-bottom: 0.5em !important;
-            page-break-after: avoid;
-        }
-
-        .header-actions, .sticky-report, .book-footer, .audio-controls {
-            display: none !important;
-        }
-
-        .book-title {
-            font-size: 1.5em !important;
-            color: black !important;
-            margin-bottom: 0.25em !important;
-        }
-
-        .book-subtitle {
-            font-size: 0.9em !important;
-            margin-bottom: 0.5em !important;
-            color: #666 !important;
-        }
-
-        .chapters-container {
-            max-width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-        .chapters-container > * + * {
-            margin-top: 0.75em !important;
-        }
-
-        .chapter-card {
-            background: white !important;
-            border: none !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-            padding: 0.25em 0 !important;
-            page-break-inside: avoid;
-            margin-bottom: 0.35em !important;
-            display: block !important;
-        }
-
-        .chapter-title {
-            font-size: 0.95em !important;
-            color: black !important;
-            margin-bottom: 0.2em !important;
-            font-weight: bold !important;
-            line-height: 1.15 !important;
-        }
-
-        .chapter-text {
-            font-size: 0.75em !important;
-            line-height: 1.3 !important;
-            margin-bottom: 0.4em !important;
-            color: black !important;
-        }
-
-        .chapter-text p {
-            margin-bottom: 0.3em !important;
-        }
-
-        .translation-details {
-            display: none !important;
-        }
-
-        .quiz-container {
-            background: white !important;
-            border: none !important;
-            padding: 0 !important;
-            margin-top: 0.2em !important;
-        }
-
-        .quiz-title {
-            display: none !important;
-        }
-
-        .question-block {
-            background: white !important;
-            border: none !important;
-            padding: 0 !important;
-            margin-bottom: 0.5em !important;
-            break-inside: avoid;
-        }
-
-        .question-text {
-            font-size: 0.7em !important;
-            margin-bottom: 0.1em !important;
-            font-weight: 600 !important;
-            color: black !important;
-            line-height: 1.2 !important;
-        }
-
-        .question-text::after {
-            content: none !important;
-        }
-
-        .option-label {
-            display: none !important;
-        }
-
-        input[type="radio"] {
-            display: none !important;
-        }
-
-        .check-btn, .feedback {
-            display: none !important;
-        }
-
-        /* Force content to fit in 4 pages */
-        @page {
-            size: A4;
-            margin: 1cm;
-        }
-    }
-
-    .word {
-        cursor: pointer;
-        padding: 0 2px;
-        transition: background-color 0.2s, color 0.2s;
-        border-radius: 4px;
-        display: inline-block;
-    }
-
-    .word:hover {
-        background-color: var(--tj-btn-hover);
-        color: var(--tj-accent-color);
-    }
-
-    #voice-btn {
-        background: var(--tj-btn-bg);
-        border: 1px solid var(--tj-card-border);
-        border-radius: 6px;
-        padding: 6px;
-        color: var(--tj-btn-text);
-        cursor: pointer;
-        transition: background-color 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    #voice-btn:hover {
-        background-color: var(--tj-btn-hover);
-    }
-
-    .voice-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(15, 23, 42, 0.7);
-        backdrop-filter: blur(4px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        padding: 1em;
-    }
-
-    .voice-overlay.visible {
-        display: flex;
-    }
-
-    .voice-card {
-        background: var(--tj-card-bg);
-        width: 100%;
-        max-width: 400px;
-        max-height: 80vh;
-        border-radius: 1.2em;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        border: 1px solid var(--tj-card-border);
-    }
-
-    .voice-card-header {
-        padding: 1.25em 1.5em;
-        border-bottom: 1px solid var(--tj-card-border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .voice-card-header h3 {
-        margin: 0;
-        font-size: 1.25em;
-        color: var(--tj-accent-color);
-    }
-
-    .close-voice-btn {
-        background: none;
-        border: none;
-        color: var(--tj-text-color);
-        font-size: 1.5em;
-        cursor: pointer;
-        padding: 0.25em;
-        line-height: 1;
-    }
-
-    .voice-list {
-        padding: 1em;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5em;
-    }
-
-    .voice-option-btn {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75em 1em;
-        border-radius: 0.75em;
-        border: 1px solid var(--tj-card-border);
-        background: var(--tj-btn-bg);
-        color: var(--tj-btn-text);
-        cursor: pointer;
-        transition: all 0.2s;
-        text-align: left;
-        font-size: 0.95em;
-    }
-
-    .voice-option-btn:hover {
-        background: var(--tj-btn-hover);
-    }
-
-    .voice-option-btn.active {
-        background: var(--tj-accent-color);
-        border-color: var(--tj-accent-color);
-        color: white;
-        font-weight: 600;
-    }
-
-    .voice-option-btn .badge {
-        background: #fbbf24;
-        color: #92400e;
-        padding: 2px 8px;
-        border-radius: 9999px;
-        font-size: 0.75em;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-
-    @media (max-width: 640px) {
-        #voice-btn {
-            padding: 4px;
-        }
-    }
-
-    .browser-prompt-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(15, 23, 42, 0.9);
-        backdrop-filter: blur(8px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        color: white;
-        padding: 2em;
-        text-align: center;
-    }
-
-    .browser-prompt-card {
-        background: white;
-        color: #1e293b;
-        padding: 2.5em;
-        border-radius: 1.5em;
-        max-width: 400px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-
-    .browser-prompt-card h2 {
-        color: #b45309;
-        margin-bottom: 0.5em;
-        font-size: 1.5em;
-    }
-
-    .browser-prompt-card p {
-        margin-bottom: 1.5em;
-        line-height: 1.5;
-    }
-
-    .browser-action-btn {
-        display: inline-block;
-        background-color: #ca8a04;
-        color: white;
-        padding: 0.75em 1.5em;
-        border-radius: 9999px;
-        text-decoration: none;
-        font-weight: bold;
-        transition: background-color 0.2s;
-        cursor: pointer;
-    }
-
-    .browser-action-btn:hover {
-        background-color: #a16207;
-    }
-`;
 
 class TjChapterBook extends HTMLElement {
     getLanguageName(localeStr) {
@@ -1019,6 +55,7 @@ class TjChapterBook extends HTMLElement {
 
     constructor() {
         super();
+        this.attachShadow({ mode: 'open' });
         this.synth = window.speechSynthesis;
         this.currentUtterance = null;
         this.currentButtonId = null;
@@ -1066,8 +103,8 @@ class TjChapterBook extends HTMLElement {
                 this._parseAndRender(this.getAttribute('config'));
             } else if (src) {
                 this.loadData(src);
-            } else if (this.querySelector('script[type="application/json"]')) {
-                this._parseAndRender(this.querySelector('script[type="application/json"]').textContent);
+            } else if (this.shadowRoot.querySelector('script[type="application/json"]')) {
+                this._parseAndRender(this.shadowRoot.querySelector('script[type="application/json"]').textContent);
             } else {
                 this._parseAndRender(this.textContent);
             }
@@ -1081,7 +118,7 @@ class TjChapterBook extends HTMLElement {
             this.render(data);
         } catch (e) {
             console.error('Error parsing inline JSON data', e);
-            this.innerHTML = `<p style="color: red;">Error loading book data: Invalid JSON.</p>`;
+            this.shadowRoot.innerHTML = `<p style="color: red;">Error loading book data: Invalid JSON.</p>`;
         }
     }
 
@@ -1092,7 +129,7 @@ class TjChapterBook extends HTMLElement {
             this.render(data);
         } catch (error) {
             console.error('Error loading chapter data:', error);
-            this.innerHTML = `<p style="color: red;">Error loading book data.</p>`;
+            this.shadowRoot.innerHTML = `<p style="color: red;">Error loading book data.</p>`;
         }
     }
 
@@ -1101,7 +138,7 @@ class TjChapterBook extends HTMLElement {
     }
 
     _showVoiceOverlay() {
-        const overlay = this.querySelector('.voice-overlay');
+        const overlay = this.shadowRoot.querySelector('.voice-overlay');
         if (overlay) {
             overlay.classList.add('visible');
             document.body.style.overflow = 'hidden';
@@ -1110,7 +147,7 @@ class TjChapterBook extends HTMLElement {
     }
 
     _hideVoiceOverlay() {
-        const overlay = this.querySelector('.voice-overlay');
+        const overlay = this.shadowRoot.querySelector('.voice-overlay');
         if (overlay) {
             overlay.classList.remove('visible');
             document.body.style.overflow = '';
@@ -1120,8 +157,8 @@ class TjChapterBook extends HTMLElement {
     _updateVoiceList() {
         if (!this.synth) return;
         const voices = this.synth.getVoices();
-        const voiceList = this.querySelector('.voice-list');
-        const voiceBtn = this.querySelector('#voice-btn');
+        const voiceList = this.shadowRoot.querySelector('.voice-list');
+        const voiceBtn = this.shadowRoot.querySelector('#voice-btn');
         if (!voiceList || !voiceBtn || voices.length === 0) return;
 
         const lang = this.language;
@@ -1232,38 +269,34 @@ class TjChapterBook extends HTMLElement {
             this.originalTranslationLanguage = this.translationLanguage;
         }
 
-        // Inject styles if not already present
-        if (!document.getElementById('tj-chapter-book-styles')) {
-            const styleEl = document.createElement('style');
-            styleEl.id = 'tj-chapter-book-styles';
-            styleEl.textContent = styles;
-            document.head.appendChild(styleEl);
+        // Use Shadow DOM
+        this.shadowRoot.innerHTML = `
+            <style>${stylesText}</style>
+            ${templateHtml}
+        `;
+
+        // Populate header
+        const titleEl = this.shadowRoot.getElementById('book-title');
+        if (titleEl) titleEl.textContent = data.title;
+        const subtitleEl = this.shadowRoot.getElementById('book-subtitle');
+        if (subtitleEl) subtitleEl.textContent = data.subtitle;
+
+        // Audio controls placeholder
+        const audioPlaceholder = this.shadowRoot.getElementById('audio-controls-placeholder');
+        if (audioPlaceholder && this.shouldShowAudioControls()) {
+            audioPlaceholder.innerHTML = `
+                <button id="voice-btn" title="Choose Voice">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z"/>
+                    </svg>
+                </button>
+            `;
         }
 
-        const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-        const printerIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>`;
-        const swapLangIcon = `<svg width="20px" height="20px" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>swap-horizontal-circle</title> <g id="Layer_2" data-name="Layer 2"> <g id="invisible_box" data-name="invisible box"> <rect width="48" height="48" fill="none"></rect> </g> <g id="icons_Q2" data-name="icons Q2"> <path d="M36.4,28.6l-4.9-5a2.1,2.1,0,0,0-2.7-.2,1.9,1.9,0,0,0-.2,3L30.2,28H15a2,2,0,0,0,0,4H30.2l-1.6,1.6a1.9,1.9,0,0,0,.2,3,2.1,2.1,0,0,0,2.7-.2l4.9-5A1.9,1.9,0,0,0,36.4,28.6Z"></path> <path d="M33,16H17.8l1.6-1.6a1.9,1.9,0,0,0-.2-3,2.1,2.1,0,0,0-2.7.2l-4.9,5a1.9,1.9,0,0,0,0,2.8l4.9,5a2.1,2.1,0,0,0,2.7.2,1.9,1.9,0,0,0,.2-3L17.8,20H33a2,2,0,0,0,0-4Z"></path> <path d="M42,24A18,18,0,1,1,24,6,18.1,18.1,0,0,1,42,24m4,0A22,22,0,1,0,24,46,21.9,21.9,0,0,0,46,24Z"></path> </g> </g> </g></svg>`;
-
-        this.innerHTML = `
-            <header class="book-header">
-                <div class="header-actions">
-                    ${this.shouldShowAudioControls() ? `
-                    <button id="voice-btn" title="Choose Voice">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                            <path d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z"/>
-                        </svg>
-                    </button>
-                    ` : ''}
-                    <button id="print-toggle" class="print-toggle" aria-label="Print" title="Print friendly version">
-                        ${printerIcon}
-                    </button>
-                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
-                        ${moonIcon}
-                    </button>
-                </div>
-                <h1 class="book-title">${data.title}</h1>
-                <p class="book-subtitle">${data.subtitle}</p>
-                ${this.hasAnyTranslations ? `
+        // Language selector placeholder
+        const langPlaceholder = this.shadowRoot.getElementById('lang-selector-placeholder');
+        if (langPlaceholder && this.hasAnyTranslations) {
+            langPlaceholder.innerHTML = `
                 <div class="lang-selector-container">
                     <p class="lang-selector-label">I want to read in:</p>
                     <div class="lang-selector-buttons">
@@ -1271,67 +304,25 @@ class TjChapterBook extends HTMLElement {
                         <button class="lang-btn ${this.isTextSwapped ? 'active' : ''}" data-action="set-lang" data-swap="true">${this.getLanguageName(this.originalTranslationLanguage)}</button>
                     </div>
                 </div>
-                ` : ''}
-            </header>
+            `;
+        }
 
-            <div class="chapters-container" translate="no">
-                ${data.chapters ? data.chapters.map((chapter, index) => this.renderChapter(chapter, index)).join('') : '<p>No chapters found.</p>'}
-            </div>
+        // Chapters
+        const chaptersContainer = this.shadowRoot.getElementById('chapters-container');
+        if (chaptersContainer) {
+            chaptersContainer.innerHTML = data.chapters ? data.chapters.map((chapter, index) => this.renderChapter(chapter, index)).join('') : '<p>No chapters found.</p>';
+        }
 
-            <footer class="book-footer">
-                <p>Note: I apologize for any cultural stereotypes or oversimplifications that may appear in these materials.
-                My goal is to create accessible content for language learners, but I recognize this may sometimes result in generalizations.
-                I welcome feedback to help me improve cultural sensitivity and accuracy.</p>
-            </footer>
-
-            <div class="report-card-section">
-                <div class="report-tally">
-                    Score: <span id="score-tally">0</span> / <span id="total-tally">${this.absoluteTotalQuestions}</span>
-                </div>
-                <div class="student-inputs">
-                    <input type="text" id="student-name" placeholder="Jake" required>
-                    <input type="text" id="student-id" placeholder="01" required>
-                    <input type="text" id="student-homeroom" placeholder="1/1" required>
-                </div>
-                <div class="report-actions">
-                    <button class="generate-btn" id="generate-report">Generate Report Card</button>
-                    <button class="reset-btn" id="reset-book">Reset Quiz</button>
-                </div>
-            </div>
-
-            <div class="report-overlay">
-                <div class="report-modal" style="padding: 24px; border-radius: 16px;">
-                    <div id="report-content" class="report-area"></div>
-                </div>
-            </div>
-
-            <div class="voice-overlay">
-                <div class="voice-card">
-                    <div class="voice-card-header">
-                        <h3>Choose Voice</h3>
-                        <button class="close-voice-btn">×</button>
-                    </div>
-                    <div class="voice-list"></div>
-                </div>
-            </div>
-
-            <div class="browser-prompt-overlay">
-                <div class="browser-prompt-card">
-                    <h2>Browser Support Needed</h2>
-                    <p>This application works best in standard browsers like <strong>Chrome</strong> or <strong>Safari</strong> to enable high-quality text-to-speech features.</p>
-                    <p>กรุณาเปิดใน Chrome หรือ Safari เพื่อใช้งานฟีเจอร์เสียงแบบเต็มรูปแบบ</p>
-                    <a class="browser-action-btn">Open in Browser</a>
-                </div>
-            </div>
-
-        `;
+        // Tally
+        const totalTally = this.shadowRoot.getElementById('total-tally');
+        if (totalTally) totalTally.textContent = this.absoluteTotalQuestions;
 
         this.attachEventListeners();
         this._updateVoiceList();
         this.checkBrowserSupport();
 
         // Start observing chapters for scroll-past behavior
-        this.querySelectorAll('.chapter-card').forEach(card => {
+        this.shadowRoot.querySelectorAll('.chapter-card').forEach(card => {
             if (this._visibilityObserver) {
                 this._visibilityObserver.observe(card);
             }
@@ -1351,11 +342,11 @@ class TjChapterBook extends HTMLElement {
 
     checkBrowserSupport() {
         if (!this.shouldShowAudioControls()) {
-            const overlay = this.querySelector('.browser-prompt-overlay');
+            const overlay = this.shadowRoot.querySelector('.browser-prompt-overlay');
             if (overlay) {
                 overlay.style.display = 'flex';
                 const androidLink = this._getAndroidIntentLink();
-                const actionBtn = this.querySelector('.browser-action-btn');
+                const actionBtn = this.shadowRoot.querySelector('.browser-action-btn');
 
                 if (androidLink) {
                     actionBtn.href = androidLink;
@@ -1501,7 +492,7 @@ class TjChapterBook extends HTMLElement {
         TjChapterBook.ensureGlobalPrintScoping();
 
         // Print button
-        const printToggle = this.querySelector('#print-toggle');
+        const printToggle = this.shadowRoot.querySelector('#print-toggle');
         if (printToggle) {
             printToggle.addEventListener('click', () => {
                 document.querySelectorAll('tj-chapter-book[data-tj-print-target="true"]').forEach(el => {
@@ -1514,7 +505,7 @@ class TjChapterBook extends HTMLElement {
         }
 
         // Swap target/translation languages (TTS)
-        this.querySelectorAll('.lang-btn').forEach(btn => {
+        this.shadowRoot.querySelectorAll('.lang-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const targetSwap = btn.dataset.swap === 'true';
                 if (this.isTextSwapped !== targetSwap) {
@@ -1527,14 +518,14 @@ class TjChapterBook extends HTMLElement {
                     this.isTextSwapped = targetSwap;
                     this.applyLanguageTextSwap();
 
-                    this.querySelectorAll('button[id^="btn-trans-"][data-action="play"]').forEach(b => {
+                    this.shadowRoot.querySelectorAll('button[id^="btn-trans-"][data-action="play"]').forEach(b => {
                         b.dataset.lang = this.translationLanguage;
                     });
 
                     this.selectedVoiceName = null;
                     this._updateVoiceList();
 
-                    this.querySelectorAll('.lang-btn').forEach(b => {
+                    this.shadowRoot.querySelectorAll('.lang-btn').forEach(b => {
                         b.classList.toggle('active', b.dataset.swap === String(this.isTextSwapped));
                     });
 
@@ -1544,7 +535,7 @@ class TjChapterBook extends HTMLElement {
         });
 
         // Voice selection button
-        const voiceBtn = this.querySelector('#voice-btn');
+        const voiceBtn = this.shadowRoot.querySelector('#voice-btn');
         if (voiceBtn) {
             voiceBtn.addEventListener('click', () => {
                 this._showVoiceOverlay();
@@ -1552,7 +543,7 @@ class TjChapterBook extends HTMLElement {
         }
 
         // Voice overlay close
-        const closeVoiceBtn = this.querySelector('.close-voice-btn');
+        const closeVoiceBtn = this.shadowRoot.querySelector('.close-voice-btn');
         if (closeVoiceBtn) {
             closeVoiceBtn.addEventListener('click', () => {
                 this._hideVoiceOverlay();
@@ -1560,7 +551,7 @@ class TjChapterBook extends HTMLElement {
         }
 
         // Close overlay on click outside card
-        const voiceOverlay = this.querySelector('.voice-overlay');
+        const voiceOverlay = this.shadowRoot.querySelector('.voice-overlay');
         if (voiceOverlay) {
             voiceOverlay.addEventListener('click', (e) => {
                 if (e.target === voiceOverlay) {
@@ -1570,7 +561,7 @@ class TjChapterBook extends HTMLElement {
         }
 
         // Theme toggle
-        const themeToggle = this.querySelector('#theme-toggle');
+        const themeToggle = this.shadowRoot.querySelector('#theme-toggle');
         if (themeToggle) {
             themeToggle.addEventListener('click', () => {
                 this.classList.toggle('dark-theme');
@@ -1584,7 +575,7 @@ class TjChapterBook extends HTMLElement {
         }
 
         // Audio buttons
-        this.querySelectorAll('button[data-action="play"]').forEach(btn => {
+        this.shadowRoot.querySelectorAll('button[data-action="play"]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 // Handle click on icon inside button
                 const button = e.target.closest('button');
@@ -1595,14 +586,14 @@ class TjChapterBook extends HTMLElement {
         });
 
         // Cancel TTS buttons
-        this.querySelectorAll('button[data-action="cancel-tts"]').forEach(btn => {
+        this.shadowRoot.querySelectorAll('button[data-action="cancel-tts"]').forEach(btn => {
             btn.addEventListener('click', () => {
                 this.cancelTTS();
             });
         });
 
         // Quiz buttons
-        this.querySelectorAll('button[data-action="check-quiz"]').forEach(btn => {
+        this.shadowRoot.querySelectorAll('button[data-action="check-quiz"]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const button = e.target.closest('button');
                 const targetId = button.dataset.target;
@@ -1611,23 +602,23 @@ class TjChapterBook extends HTMLElement {
         });
 
         // Report Card Actions
-        const generateBtn = this.querySelector('#generate-report');
+        const generateBtn = this.shadowRoot.querySelector('#generate-report');
         if (generateBtn) {
             generateBtn.addEventListener('click', () => this.showReportCard());
         }
 
-        const resetBtn = this.querySelector('#reset-book');
+        const resetBtn = this.shadowRoot.querySelector('#reset-book');
         if (resetBtn) {
             resetBtn.addEventListener('click', () => this.resetApp());
         }
 
-        const closeReportBtn = this.querySelector('.close-report-btn');
+        const closeReportBtn = this.shadowRoot.querySelector('.close-report-btn');
         if (closeReportBtn) {
             closeReportBtn.addEventListener('click', () => this.hideReportCard());
         }
 
         // Clickable words
-        this.querySelectorAll('.chapter-text, .translation-content').forEach(container => {
+        this.shadowRoot.querySelectorAll('.chapter-text, .translation-content').forEach(container => {
             container.addEventListener('click', (e) => {
                 const wordEl = e.target.closest('.word');
                 if (wordEl) {
@@ -1651,7 +642,7 @@ class TjChapterBook extends HTMLElement {
         });
 
         // Translation toggle (lockout mechanism)
-        this.querySelectorAll('.translation-details').forEach(details => {
+        this.shadowRoot.querySelectorAll('.translation-details').forEach(details => {
             details.addEventListener('toggle', (e) => {
                 const chapterCard = details.closest('.chapter-card');
                 if (chapterCard) {
@@ -1689,7 +680,7 @@ class TjChapterBook extends HTMLElement {
     }
 
     updateIcon(btnId, type) {
-        const btn = this.querySelector(`#${btnId}`);
+        const btn = this.shadowRoot.querySelector(`#${btnId}`);
         if (!btn) return;
         const iconWrapper = btn.querySelector('.icon-wrapper');
 
@@ -1706,7 +697,7 @@ class TjChapterBook extends HTMLElement {
     }
 
     resetAllButtons() {
-        this.querySelectorAll('button[data-action="play"]').forEach(btn => {
+        this.shadowRoot.querySelectorAll('button[data-action="play"]').forEach(btn => {
             this.updateIcon(btn.id, 'play');
         });
     }
@@ -1730,7 +721,7 @@ class TjChapterBook extends HTMLElement {
 
     applyLanguageTextSwap() {
         // Swap chapter text vs translation text in-place, without re-rendering quizzes.
-        this.querySelectorAll('section.chapter-card').forEach(section => {
+        this.shadowRoot.querySelectorAll('section.chapter-card').forEach(section => {
             const main = section.querySelector('.chapter-text[id^="text-"]');
             const trans = section.querySelector('.translation-content[id^="trans-"]');
             if (!main || !trans) return;
@@ -1766,7 +757,7 @@ class TjChapterBook extends HTMLElement {
         if (this.ttsState.status === 'playing') {
             // If user clicks a different rate/lang while playing, immediately switch by cancel+restart.
             const clickedLang = (() => {
-                const btn = this.querySelector(`#${btnId}`);
+                const btn = this.shadowRoot.querySelector(`#${btnId}`);
                 return btn && btn.dataset.lang ? btn.dataset.lang : this.language;
             })();
 
@@ -1784,7 +775,7 @@ class TjChapterBook extends HTMLElement {
         if (this.ttsState.status === 'paused') {
             // If user clicks a different rate/lang button while paused, restart with new settings.
             const clickedLang = (() => {
-                const btn = this.querySelector(`#${btnId}`);
+                const btn = this.shadowRoot.querySelector(`#${btnId}`);
                 return btn && btn.dataset.lang ? btn.dataset.lang : this.language;
             })();
 
@@ -1860,11 +851,11 @@ class TjChapterBook extends HTMLElement {
             return;
         }
 
-        const element = this.querySelector(`#${elementId}`);
+        const element = this.shadowRoot.querySelector(`#${elementId}`);
         if (!element) return;
 
         const text = element.innerText;
-        const btn = this.querySelector(`#${btnId}`);
+        const btn = this.shadowRoot.querySelector(`#${btnId}`);
         const lang = btn && btn.dataset.lang ? btn.dataset.lang : this.language;
 
         this._ttsActionSeq++;
@@ -1989,7 +980,7 @@ class TjChapterBook extends HTMLElement {
         `;
 
         if (btnId) {
-            const btn = this.querySelector(`#${btnId}`);
+            const btn = this.shadowRoot.querySelector(`#${btnId}`);
             if (btn) {
                 const container = btn.closest('.audio-controls');
                 if (container) {
@@ -2000,7 +991,7 @@ class TjChapterBook extends HTMLElement {
         }
 
         // Fallback global message
-        if (this.querySelector('.tts-error-message')) return;
+        if (this.shadowRoot.querySelector('.tts-error-message')) return;
 
         const errorDiv = document.createElement('div');
         errorDiv.className = 'tts-error-message';
@@ -2024,7 +1015,7 @@ class TjChapterBook extends HTMLElement {
         const closeBtn = errorDiv.querySelector('button');
         closeBtn.onclick = () => errorDiv.remove();
 
-        const header = this.querySelector('.book-header');
+        const header = this.shadowRoot.querySelector('.book-header');
         if (header) {
             header.after(errorDiv);
         } else {
@@ -2033,7 +1024,7 @@ class TjChapterBook extends HTMLElement {
     }
 
     checkRadioAnswers(quizId, btn) {
-        const quizContainer = this.querySelector(`#${quizId}`);
+        const quizContainer = this.shadowRoot.querySelector(`#${quizId}`);
         const chapterCard = quizContainer.closest('.chapter-card');
         const questionBlocks = quizContainer.querySelectorAll('.question-block');
         let chapterScore = 0;
@@ -2097,7 +1088,7 @@ class TjChapterBook extends HTMLElement {
 
         // Notify user that questions will disappear on scroll
         const chapterId = quizId.replace('quiz-', '');
-        const lockMsg = this.querySelector(`#lock-msg-${chapterId}`);
+        const lockMsg = this.shadowRoot.querySelector(`#lock-msg-${chapterId}`);
         const transAside = chapterCard.querySelector(`#trans-aside-${chapterId}`);
 
         if (transAside) {
@@ -2114,8 +1105,8 @@ class TjChapterBook extends HTMLElement {
     updateScore(chapterScore, chapterTotal) {
         this.totalScore = (this.totalScore || 0) + chapterScore;
 
-        const scoreSpan = this.querySelector('#score-tally');
-        const totalSpan = this.querySelector('#total-tally');
+        const scoreSpan = this.shadowRoot.querySelector('#score-tally');
+        const totalSpan = this.shadowRoot.querySelector('#total-tally');
 
         if (scoreSpan && totalSpan) {
             scoreSpan.textContent = this.totalScore;
@@ -2124,9 +1115,9 @@ class TjChapterBook extends HTMLElement {
     }
 
     showReportCard() {
-        const nameInput = this.querySelector('#student-name');
-        const idInput = this.querySelector('#student-id');
-        const homeroomInput = this.querySelector('#student-homeroom');
+        const nameInput = this.shadowRoot.querySelector('#student-name');
+        const idInput = this.shadowRoot.querySelector('#student-id');
+        const homeroomInput = this.shadowRoot.querySelector('#student-homeroom');
         const name = nameInput.value.trim();
         const studentId = idInput.value.trim();
         const homeroom = homeroomInput.value.trim();
@@ -2145,13 +1136,13 @@ class TjChapterBook extends HTMLElement {
         idInput.disabled = true;
         if (homeroomInput) homeroomInput.disabled = true;
 
-        const overlay = this.querySelector('.report-overlay');
-        const content = this.querySelector('#report-content');
+        const overlay = this.shadowRoot.querySelector('.report-overlay');
+        const content = this.shadowRoot.querySelector('#report-content');
 
         const now = new Date();
         const dateStr = now.toLocaleDateString();
         const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const bookTitle = this.querySelector('.book-title').innerText;
+        const bookTitle = this.shadowRoot.querySelector('.book-title').innerText;
         const percentage = this.absoluteTotalQuestions > 0 ? Math.round((this.totalScore / this.absoluteTotalQuestions) * 100) : 0;
 
         const emoji = percentage >= 80 ? '🏆' : percentage >= 50 ? '⭐' : '💪';
@@ -2196,7 +1187,7 @@ class TjChapterBook extends HTMLElement {
             ` : ''}
 
             <div class="rc-submission-box">
-                <p class="rc-submission-header">Official Submission</p>
+                <p class="rc-submission-header">Submission (Optional)</p>
                 <input type="text" id="report-teacher-code" class="rc-teacher-code-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ''}">
                 <p class="rc-help-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
             </div>
@@ -2217,12 +1208,12 @@ class TjChapterBook extends HTMLElement {
     }
 
     hideReportCard() {
-        const overlay = this.querySelector('.report-overlay');
+        const overlay = this.shadowRoot.querySelector('.report-overlay');
         overlay.classList.remove('visible');
     }
 
     async _submitScore() {
-        const reportTeacherCodeInput = this.querySelector('#report-teacher-code');
+        const reportTeacherCodeInput = this.shadowRoot.querySelector('#report-teacher-code');
         const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : this.studentInfo.teacherCode;
         
         // Cache for reuse
@@ -2235,7 +1226,7 @@ class TjChapterBook extends HTMLElement {
 
         if (this.isSubmitting) return;
 
-        const submitBtn = this.querySelector('#submit-score-btn');
+        const submitBtn = this.shadowRoot.querySelector('#submit-score-btn');
         if (!submitBtn) return;
         const originalText = submitBtn.textContent;
         
@@ -2243,7 +1234,7 @@ class TjChapterBook extends HTMLElement {
         submitBtn.textContent = 'Submitting...';
         submitBtn.disabled = true;
 
-        const bookTitle = this.querySelector('.book-title').innerText;
+        const bookTitle = this.shadowRoot.querySelector('.book-title').innerText;
         const percentage = this.absoluteTotalQuestions > 0 ? Math.round((this.totalScore / this.absoluteTotalQuestions) * 100) : 0;
 
         const payload = {
@@ -2285,8 +1276,8 @@ class TjChapterBook extends HTMLElement {
         this.wrongQuestions = [];
 
         // Unlock and clear inputs
-        const nameInput = this.querySelector('#student-name');
-        const idInput = this.querySelector('#student-id');
+        const nameInput = this.shadowRoot.querySelector('#student-name');
+        const idInput = this.shadowRoot.querySelector('#student-id');
         if (nameInput) {
             nameInput.disabled = false;
             nameInput.value = '';
@@ -2297,13 +1288,13 @@ class TjChapterBook extends HTMLElement {
         }
 
         // Reset Tally UI
-        const scoreSpan = this.querySelector('#score-tally');
-        const totalSpan = this.querySelector('#total-tally');
+        const scoreSpan = this.shadowRoot.querySelector('#score-tally');
+        const totalSpan = this.shadowRoot.querySelector('#total-tally');
         if (scoreSpan) scoreSpan.textContent = "0";
         if (totalSpan) totalSpan.textContent = this.absoluteTotalQuestions;
 
         // Reset All Chapters
-        this.querySelectorAll('.chapter-card').forEach(card => {
+        this.shadowRoot.querySelectorAll('.chapter-card').forEach(card => {
             // Re-enable quizzes
             const quizId = `quiz-${card.id}`;
             const quizContainer = card.querySelector(`#${quizId}`);
