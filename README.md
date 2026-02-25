@@ -8,13 +8,13 @@ You can use these components directly without downloading them by linking to the
 
 ```html
 <!-- Components -->
-<script src="https://jmayereup.github.io/tj-components/dist/tj-reader.js" defer></script>
-<script src="https://jmayereup.github.io/tj-components/dist/tj-grammar-hearts.js" defer></script>
-<script src="https://jmayereup.github.io/tj-components/dist/tj-info-gap.js" defer></script>
-<script src="https://jmayereup.github.io/tj-components/dist/tj-listening.js" defer></script>
-<script src="https://jmayereup.github.io/tj-components/dist/tj-speed-review.js" defer></script>
-<script src="https://jmayereup.github.io/tj-components/dist/tj-quiz-element.js" defer></script>
-<script src="https://jmayereup.github.io/tj-components/dist/tj-chapter-book.js" defer></script>
+<script src="https://scripts.teacherjake.com/tj-reader.js" defer></script>
+<script src="https://scripts.teacherjake.com/tj-grammar-hearts.js" defer></script>
+<script src="https://scripts.teacherjake.com/tj-info-gap.js" defer></script>
+<script src="https://scripts.teacherjake.com/tj-listening.js" defer></script>
+<script src="https://scripts.teacherjake.com/tj-speed-review.js" defer></script>
+<script src="https://scripts.teacherjake.com/tj-quiz-element.js" defer></script>
+<script src="https://scripts.teacherjake.com/tj-chapter-book.js" defer></script>
 
 <!-- Required Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
