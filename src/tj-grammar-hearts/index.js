@@ -295,10 +295,9 @@ class TjGrammarHearts extends HTMLElement {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      alert('Score successfully submitted!');
       if (submitBtn) {
         submitBtn.textContent = 'Submitted ✓';
-        submitBtn.style.background = '#64748b';
+        submitBtn.style.background = 'green';
       }
     } catch (err) {
       console.error('Error submitting score:', err);

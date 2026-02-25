@@ -1,0 +1,103 @@
+<div class="container" id="game-container">
+    <!-- Content will be injected here based on gameState -->
+</div>
+
+<!-- State Templates -->
+<template id="tpl-hint">
+    <div class="card">
+        <h2 id="hint-summary"></h2>
+        <div class="hint-content" id="hint-content"></div>
+        <button class="btn" id="start-btn">Start Game!</button>
+    </div>
+</template>
+
+<template id="tpl-playing">
+    <div class="header">
+        <div style="font-weight: 600; color: #64748b;" id="question-progress"></div>
+        <div class="score-display" id="score-display"></div>
+        <div class="hearts" id="hearts-container"></div>
+    </div>
+
+    <div class="card" id="question-card">
+        <div class="instruction" id="instruction"></div>
+        <div id="main-text-container"></div>
+        <div id="question-container"></div>
+        
+        <div id="feedback-container"></div>
+        <button class="btn next-btn" id="next-btn" style="display: none;"></button>
+    </div>
+    
+    <div class="hint-collapsible">
+        <button class="hint-toggle" id="hint-toggle-btn">
+            <span>💡 Grammar Guide</span>
+            <span class="hint-toggle-icon">▼</span>
+        </button>
+        <div class="hint-drawer" id="hint-drawer">
+            <div class="hint-content" style="margin-bottom: 0;" id="drawer-hint-content"></div>
+        </div>
+    </div>
+</template>
+
+<template id="tpl-gameover">
+    <div class="card" style="text-align: center;">
+        <h2 style="color: #ef4444; background: none; -webkit-text-fill-color: initial;">Out of Hearts!</h2>
+        <p>Don't worry! Practice makes perfect. Try again with new questions.</p>
+        <button class="btn" id="retry-btn">Try Again</button>
+    </div>
+</template>
+
+<template id="tpl-form">
+    <div class="form-card">
+        <h2>Great Job! 🎉</h2>
+        <p id="form-score-msg"></p>
+        <p>Enter your details to generate your report card.</p>
+        <div class="form-input-group">
+            <label class="form-label" for="nickname">Nickname</label>
+            <input type="text" id="nickname" class="form-field" placeholder="e.g. Jake">
+        </div>
+        <div class="form-input-group">
+            <label class="form-label" for="student-number">Student Number</label>
+            <input type="text" id="student-number" class="form-field" placeholder="e.g. 01">
+        </div>
+        <div class="form-input-group">
+            <label class="form-label" for="homeroom">Homeroom</label>
+            <input type="text" id="homeroom" class="form-field" placeholder="e.g. 5A">
+        </div>
+        <button class="btn" id="generate-report-btn">Generate Report</button>
+    </div>
+</template>
+
+<template id="tpl-report">
+    <div class="report-card">
+        <div class="rc-header">
+            <div class="rc-icon">📄</div>
+            <div class="rc-title" id="rc-title"></div>
+            <div class="rc-subtitle">Report Card</div>
+        </div>
+        <div class="rc-student">
+            <span class="rc-label">Student</span>
+            <span class="rc-value" id="rc-student-val"></span>
+        </div>
+        <div class="best-score-highlight" id="rc-best-score"></div>
+        <div class="rc-score-row">
+            <div class="rc-score-circle">
+                <div class="rc-score-val" id="rc-score-val"></div>
+                <div class="rc-score-denom" id="rc-score-denom"></div>
+            </div>
+            <div class="rc-score-label" id="rc-score-label"></div>
+        </div>
+        <div class="rc-bar-track"><div class="rc-bar-fill" id="rc-bar-fill"></div></div>
+        <div class="rc-details">
+            <div class="rc-detail-row"><span>Score</span><span id="rc-detail-score"></span></div>
+            <div class="rc-detail-row"><span>Completed On</span><span id="rc-detail-date"></span></div>
+        </div>
+        <div class="rc-submission-box">
+            <p>Official Submission</p>
+            <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code">
+            <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+        </div>
+        <button class="rc-submit-btn" id="submit-score-btn">Submit Score</button>
+        <br>
+        <button class="btn-outline" id="play-again-btn">Play Again</button>
+    </div>
+</template>
