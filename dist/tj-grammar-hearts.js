@@ -121,7 +121,7 @@ class l extends HTMLElement {
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(i)
-      }), alert("Score successfully submitted!"), t && (t.textContent = "Submitted ✓", t.style.background = "#64748b");
+      }), t && (t.textContent = "Submitted ✓", t.style.background = "green");
     } catch (o) {
       console.error("Error submitting score:", o), alert("There was an error submitting your score. Please try again."), t && (t.textContent = s, t.disabled = !1), this.isSubmitting = !1;
     }

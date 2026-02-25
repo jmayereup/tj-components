@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Info Gap: Reading & Multiple Choice</title>
+    <script src="../tj-info-gap.js" type="module"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --tj-primary: #22d3ee;
+            --tj-bg-color: #0f172a;
+            --tj-card-bg: #1e293b;
+            --tj-text-color: #f1f5f9;
+            --tj-text-muted: #94a3b8;
+            --tj-border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--tj-bg-color);
+            color: var(--tj-text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: var(--tj-card-bg);
+            border-bottom: 1px solid var(--tj-border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            color: var(--tj-primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        tj-info-gap:not(:defined) {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h2>Info Gap Demo</h2>
+        <a href="../index.html" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Home
+        </a>
+    </div>
+
+    <div class="container">
+
+    <tj-info-gap>
+        {
+        "topic": "Ordering Delivery",
+        "scenario_description": "Read your information. Then, ask your partner the multiple-choice questions to complete the order.",
+        "player_count": 2,
+        "blocks": [
+        {
+        "text_holder_id": 1,
+        "text": "Wanchai wants to order Kha na moo grob for dinner. He prefers it to be very spicy, but he doesn't want a fried egg on top.",
+        "questions": [
+        {
+        "asker_id": 2,
+        "question": "What level of spice does Wanchai want?",
+        "options": ["Not spicy", "Medium spicy", "Very spicy"],
+        "correct_answer": "Very spicy"
+        },
+        {
+        "asker_id": 2,
+        "question": "Does he want a fried egg?",
+        "options": ["Yes", "No", "Only the egg white"],
+        "correct_answer": "No"
+        }
+        ]
+        },
+        {
+        "text_holder_id": 2,
+        "text": "The delivery fee is usually 30 baht, but because it is raining heavily right now, the restaurant added a 15 baht weather surcharge.",
+        "questions": [
+        {
+        "asker_id": 1,
+        "question": "How much is the total delivery fee?",
+        "options": ["15 baht", "30 baht", "45 baht"],
+        "correct_answer": "45 baht"
+        }
+        ]
+        }
+        ]
+        }
+
+    </tj-info-gap>
+    </div>
+</body>
+
+</html>

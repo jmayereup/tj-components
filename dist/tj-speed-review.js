@@ -1,8 +1,8 @@
-import { c } from "./chunks/tj-config-Co8tO1UZ.js";
+import { c as d } from "./chunks/tj-config-Co8tO1UZ.js";
 class n extends HTMLElement {
   constructor() {
     var e;
-    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = (e = c) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
+    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = (e = d) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
   }
   connectedCallback() {
     this.timeLimit = parseInt(this.getAttribute("time-limit")) || 15, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 10, this.bestScore = 0, this.loadLibrary("marked", "https://cdn.jsdelivr.net/npm/marked/marked.min.js"), this.loadLibrary("Tone", "https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js", () => {
@@ -729,7 +729,7 @@ class n extends HTMLElement {
               <div class="rc-detail-row"><span>Completed On</span><span>${s}</span></div>
             </div>
             <div class="rc-submission-box">
-              <p>Official Submission</p>
+              <p>Submission (Optional)</p>
               <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code">
               <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
             </div>

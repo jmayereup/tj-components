@@ -3,12 +3,79 @@ var v = (h, e, t) => e in h ? x(h, e, { enumerable: !0, configurable: !0, writab
 var m = (h, e, t) => v(h, typeof e != "symbol" ? e + "" : e, t);
 import { g as y } from "./chunks/audio-utils-BQ4R88Cf.js";
 import { c as w } from "./chunks/tj-config-Co8tO1UZ.js";
-const d = class d extends HTMLElement {
+const k = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;max-width:800px;margin:0 auto;margin-bottom:2rem;color:#000;background-color:#fff}.container{border:1px solid #e2e8f0;padding:24px;border-radius:8px;background-color:#fff;box-shadow:0 4px 6px -1px #0000001a}.header-row{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #f1f5f9;margin-bottom:10px;padding-bottom:10px}.header-info h2{margin:0;color:#1e293b}.phase-badge{font-size:.8em;color:#64748b;font-weight:600;text-transform:uppercase;margin-top:4px}.header-controls{display:flex;align-items:center;gap:12px}.progress-info{background:#f1f5f9;padding:6px 14px;border-radius:12px;font-size:.9em;font-weight:600;color:#64748b;white-space:nowrap}.icon-btn{background:none;border:1px solid #e2e8f0;padding:8px;border-radius:8px;cursor:pointer;color:#475569;transition:all .2s}.icon-btn:hover{background-color:#f1f5f9;color:#2563eb;border-color:#2563eb}.phase-dots{display:flex;align-items:center;justify-content:center;gap:0;margin:20px 0}.phase-dot-group{display:flex;flex-direction:column;align-items:center;gap:6px}.phase-dot{width:32px;height:32px;border-radius:50%;background:#f1f5f9;border:2px solid #cbd5e1;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85em;color:#94a3b8;transition:all .3s}.phase-dot-group.active .phase-dot{background:#2563eb;border-color:#2563eb;color:#fff;box-shadow:0 0 0 4px #2563eb26}.phase-dot-group.completed .phase-dot{background:#dcfce7;border-color:#22c55e;color:#166534}.phase-dot-label{font-size:.7em;color:#94a3b8;font-weight:600;text-transform:uppercase}.phase-dot-group.active .phase-dot-label{color:#2563eb}.phase-dot-group.completed .phase-dot-label{color:#22c55e}.phase-dot-line{width:48px;height:2px;background:#e2e8f0;margin:0 4px 20px}.phase-nav{display:flex;justify-content:space-between;margin-top:24px;padding-top:16px;border-top:1px solid #f1f5f9}.nav-btn{display:flex;align-items:center;gap:6px;padding:10px 20px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;font-weight:600;color:#475569;transition:all .2s;font-size:.95em}.nav-btn:hover:not([disabled]){background-color:#f1f5f9;border-color:#cbd5e1}.nav-btn:disabled{opacity:.4;cursor:default}.nav-btn-primary{background:#2563eb;color:#fff;border-color:#2563eb}.nav-btn-primary:hover{background:#1d4ed8}.intro-section{text-align:center}.context-card{display:flex;align-items:center;gap:10px;background:#f0f9ff;border:1px solid #bae6fd;color:#0369a1;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:.95em;text-align:left}.context-card svg{flex-shrink:0;color:#0284c7}.intro-text{font-size:1.1em;line-height:1.7;color:#334155;margin-bottom:24px;padding:0 8px}.intro-text p{margin:0}.tts-play-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;padding:14px 28px;border-radius:12px;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px #2563eb4d}.tts-play-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px #2563eb66}.tts-play-btn:active{transform:translateY(0)}.audio-player{margin:16px 0;display:flex;justify-content:center}.audio-el{width:100%;max-width:500px;border-radius:8px}.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}.vocab-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;transition:all .2s}.vocab-card:hover{border-color:#cbd5e1;box-shadow:0 2px 8px #0000000f}.vocab-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.vocab-word{margin:0;font-size:1.15em;color:#1e293b}.vocab-definition{color:#475569;margin:0 0 8px;line-height:1.5}.vocab-example{color:#64748b;font-style:italic;margin:0;font-size:.9em;line-height:1.5}.transcript-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin:16px 0;overflow:hidden}.transcript-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px}.transcript-label{font-weight:600;color:#475569;font-size:.9em}.transcript-toggle{background:none;border:1px solid #cbd5e1;border-radius:6px;padding:4px 12px;font-size:.85em;font-weight:600;color:#475569;cursor:pointer;transition:all .2s}.transcript-toggle:hover{background:#f1f5f9}.transcript-body{padding:12px 16px 16px;border-top:1px solid #e2e8f0}.transcript-line{margin:0 0 8px;color:#334155;line-height:1.6;font-size:.95em}.transcript-line:last-child{margin-bottom:0}.instruction-banner{display:flex;align-items:center;gap:8px;background:#f5f3ff;color:#5b21b6;padding:10px 14px;border-radius:6px;margin-bottom:16px;font-size:.9em;font-weight:500;border:1px solid #ddd6fe}.instruction-banner svg{flex-shrink:0}.section-title{font-size:1.1em;font-weight:700;color:#0f172a;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid #e2e8f0}.tts-btn{display:flex;align-items:center;gap:6px;background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:.85em;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}.tts-btn:hover{background:#1d4ed8}.tts-btn svg{width:16px;height:16px}.question-card{background-color:#f8fafc;border:1px solid #e2e8f0;padding:16px;margin-bottom:16px;border-radius:6px}.question-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:10px}.question-text{margin:0;color:#1e293b;line-height:1.4}.options-group{display:flex;flex-direction:column;gap:8px}.mc-option{display:flex;align-items:center;padding:10px 12px;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;transition:all .2s;background-color:#fff}.mc-option:hover:not(.correct):not(.incorrect):not(.correct-highlight){background-color:#f1f5f9}.mc-option input{margin-right:12px;cursor:pointer}.mc-option.correct{background-color:#dcfce7;border-color:#22c55e;color:#166534;font-weight:700}.mc-option.correct-highlight{border:2px dashed #22c55e;background-color:#f0fdf4}.mc-option.incorrect{background-color:#fee2e2;border-color:#ef4444;color:#991b1b}.score-screen{text-align:center;padding:40px 24px}.score-circle{width:150px;height:150px;border-radius:50%;background:#f1f5f9;border:8px solid #2563eb;margin:0 auto 24px;display:flex;flex-direction:column;justify-content:center;align-items:center}.score-value{font-size:2em;font-weight:800;color:#1e293b}.score-percent{font-size:1.2em;font-weight:600;color:#2563eb}.score-actions{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:8px}.role-btn{padding:12px 28px;font-size:1em;font-weight:700;cursor:pointer;background-color:#f1f5f9;border:2px solid #cbd5e1;border-radius:8px;transition:all .2s}.role-btn:hover{background-color:#e2e8f0;border-color:#94a3b8}.report-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.report-btn:hover{background:#1d4ed8}.share-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:none;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;color:#475569;transition:all .2s;white-space:nowrap;font-size:.9em;font-weight:600;height:42px;box-sizing:border-box}.share-btn:hover{background-color:#f1f5f9;color:#2563eb;border-color:#2563eb}.share-btn svg{color:#475569}.share-btn:hover svg{color:#2563eb}.report-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172acc;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000}.report-modal{background:#fff;width:92%;max-width:420px;padding:28px 24px;border-radius:16px;box-shadow:0 25px 50px -12px #0000004d;text-align:center;max-height:90vh;overflow-y:auto}.report-modal h2{margin:8px 0 4px;color:#1e293b}.report-modal p{color:#64748b;margin:0 0 16px;font-size:.95em}.report-icon{font-size:2.5em;margin-bottom:4px}.report-modal input{display:block;width:100%;box-sizing:border-box;padding:12px 14px;margin-bottom:12px;border:1px solid #e2e8f0;border-radius:8px;font-size:1em;outline:none;transition:border-color .2s}.report-modal input:focus{border-color:#2563eb}.generate-btn{width:100%;padding:13px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s;margin-bottom:8px}.generate-btn:hover{background:#1d4ed8}.cancel-btn{background:none;border:none;color:#94a3b8;font-size:.9em;cursor:pointer;text-decoration:underline}.rc-header{text-align:center;margin-bottom:16px}.rc-icon{font-size:2em}.rc-title{font-size:1.3em;font-weight:800;color:#1e293b;margin:4px 0 2px}.rc-subtitle{font-size:.9em;font-weight:600;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}.rc-activity{font-size:.85em;color:#94a3b8}.rc-student{display:flex;justify-content:space-between;align-items:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin-bottom:16px}.rc-label{font-size:.8em;font-weight:700;color:#94a3b8;text-transform:uppercase}.rc-value{font-weight:700;color:#1e293b}.rc-number{color:#64748b;font-weight:400}.rc-score-row{display:flex;align-items:center;gap:16px;margin-bottom:10px}.rc-score-circle{width:80px;height:80px;border-radius:50%;background:#f1f5f9;border:6px solid #2563eb;display:flex;flex-direction:column;justify-content:center;align-items:center;flex-shrink:0}.rc-score-val{font-size:1.1em;font-weight:800;color:#1e293b;line-height:1.1}.rc-score-pct{font-size:.85em;font-weight:700;color:#2563eb}.rc-score-label{font-size:1.1em;font-weight:700;color:#1e293b}.rc-bar-track{height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}.rc-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:4px;transition:width .6s ease}.rc-details{border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:16px}.rc-detail-row{display:flex;justify-content:space-between;padding:9px 14px;font-size:.9em;border-bottom:1px solid #f1f5f9}.rc-detail-row:last-child{border-bottom:none}.rc-detail-row span:first-child{color:#64748b}.rc-detail-row span:last-child{font-weight:600;color:#1e293b}.rc-combined{background:linear-gradient(135deg,#f0f9ff,#eff6ff);border:1px solid #bae6fd;border-radius:10px;padding:14px 16px;margin-bottom:16px;text-align:center}.rc-combined-title{font-size:.95em;font-weight:700;color:#0c4a6e;margin-bottom:8px}.rc-combined-score{font-size:1.4em;font-weight:800;color:#1e293b;margin-bottom:8px}.rc-combined-pct{color:#2563eb}.rc-actions{margin-top:16px}.rc-close-btn{width:100%;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.rc-close-btn:hover{background:#16a34a}.rc-submission-box{margin-top:20px;padding:20px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;text-align:left;box-shadow:inset 0 2px 4px #00000005}.rc-submission-header{margin:0 0 12px;font-size:.85em;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em}.rc-teacher-code-input{width:100%;box-sizing:border-box;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:1em;margin-bottom:8px;background:#fff;transition:all .2s ease;outline:none;font-family:inherit;color:#1e293b}.rc-teacher-code-input:focus{border-color:#2563eb;box-shadow:0 0 0 4px #2563eb1a}.rc-teacher-code-input::placeholder{color:#94a3b8}.rc-help-text{margin:4px 0 0;font-size:.85em;color:#64748b;line-height:1.4}.rc-submit-btn{width:100%;padding:16px;background:#90ee90;color:#1e293b;border:none;border-radius:12px;font-size:1.1em;font-weight:700;cursor:pointer;transition:all .2s ease;box-shadow:0 4px 6px #0000001a;margin-bottom:8px}.rc-submit-btn:hover:not(:disabled){background:#1d4ed8;transform:translateY(-1px);box-shadow:0 6px 12px #2563eb4d}.rc-submit-btn:active:not(:disabled){transform:translateY(0)}.rc-submit-btn:disabled{opacity:.6;cursor:default;background:#94a3b8;box-shadow:none}.rc-secondary-btn{width:100%;padding:14px;background:#d3d3d3;color:#1e293b;border:2px solid #e2e8f0;border-radius:12px;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s ease}.rc-secondary-btn:hover{background:#f1f5f9;border-color:#cbd5e1}.footer-actions{margin-top:30px;display:none;justify-content:center;padding-top:20px;border-top:1px solid #f1f5f9}.complete-btn{background-color:#2563eb;color:#fff;border:none;padding:12px 32px;border-radius:6px;font-weight:700;cursor:pointer;font-size:1.1em;transition:background .2s}.complete-btn:hover{background-color:#1d4ed8}.combined-score{margin-top:30px;padding:20px 24px;background:linear-gradient(135deg,#f0f9ff,#eff6ff);border:1px solid #bae6fd;border-radius:12px;text-align:center}.combined-header{font-size:1.1em;font-weight:700;color:#0c4a6e;margin-bottom:12px}.combined-stats{display:flex;justify-content:center;gap:24px;margin-bottom:12px}.combined-value{font-size:1.8em;font-weight:800;color:#1e293b}.combined-percent{font-size:1.8em;font-weight:800;color:#2563eb}.combined-bar-track{height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden}.combined-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:5px;transition:width .6s ease}.combined-pending{background:#f8fafc;border-color:#e2e8f0}.combined-note{color:#64748b;font-size:.9em;margin:0}.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%);background:#1e293b;color:#fff;padding:12px 20px;border-radius:10px;display:flex;align-items:center;gap:8px;font-size:.9em;font-weight:600;box-shadow:0 8px 24px #00000040;z-index:2000;animation:toastIn .3s ease}.toast-url{background:#334155;border:none;color:#fff;padding:6px 10px;border-radius:6px;font-size:.85em;width:260px;max-width:60vw}@keyframes toastIn{0%{opacity:0;transform:translate(-50%) translateY(12px)}to{opacity:1;transform:translate(-50%) translateY(0)}}.empty-state{color:#94a3b8;font-style:italic}.voice-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ab3;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1000}.voice-card{background:#fff;width:90%;max-width:400px;max-height:80vh;border-radius:1.2em;box-shadow:0 20px 25px -5px #0003;display:flex;flex-direction:column;overflow:hidden}.voice-card-header{padding:16px 20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center}.voice-card-header h3{margin:0;font-size:1.2em;color:#1e293b}.close-voice-btn{background:none;border:none;font-size:24px;cursor:pointer;color:#64748b}.voice-list{padding:10px;overflow-y:auto;flex:1}.voice-option-btn{width:100%;text-align:left;padding:12px 16px;margin-bottom:6px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .2s}.voice-option-btn:hover{background-color:#f8fafc;border-color:#cbd5e1}.voice-option-btn.active{background:#eff6ff;border-color:#3b82f6;color:#2563eb;font-weight:600}.badge{background:#dcfce7;color:#166534;font-size:.7em;padding:2px 8px;border-radius:10px;font-weight:700}@media (max-width: 600px){.container{padding:16px}.vocab-grid{grid-template-columns:1fr}.phase-dots{gap:0}.phase-dot-line{width:24px}.phase-dot-label{font-size:.6em}.nav-btn{padding:8px 14px;font-size:.85em}}", z = `<div id="lesson-container" class="container">
+    <div class="header-row">
+        <div class="header-info">
+            <h2 id="lesson-title">Listening Lesson</h2>
+            <div id="phase-badge" class="phase-badge">Introduction</div>
+        </div>
+        <div class="header-controls">
+            <button id="share-quiz-btn" class="share-btn" title="Share as Quiz (no transcript)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+                </svg>
+                <span>Share Quiz</span>
+            </button>
+            <button id="voice-btn" class="icon-btn" title="Choose Voice">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z"/>
+                </svg>
+            </button>
+            <div id="progress-info" class="progress-info"></div>
+        </div>
+    </div>
+
+    <!-- Phase Progress Dots -->
+    <div id="phase-dots" class="phase-dots"></div>
+
+    <div id="phase-content" class="phase-content"></div>
+
+    <div id="phase-nav" class="phase-nav">
+        <button class="nav-btn" id="prev-btn">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+            Back
+        </button>
+        <button class="nav-btn nav-btn-primary" id="next-btn">
+            Next
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+    </div>
+</div>
+
+<div id="score-screen" class="container score-screen" style="display: none;">
+</div>
+
+<div class="voice-overlay" id="voice-overlay" style="display: none;">
+    <div class="voice-card">
+        <div class="voice-card-header">
+            <h3>Choose Voice</h3>
+            <button class="close-voice-btn" id="close-voice-btn">×</button>
+        </div>
+        <div class="voice-list" id="voice-list"></div>
+    </div>
+</div>
+
+<div class="report-overlay" id="report-overlay" style="display:none;">
+    <div class="report-modal">
+      <div class="initial-form" id="initial-form">
+        <div class="report-icon">📄</div>
+        <h2>Report Card</h2>
+        <p>Enter your details to generate your report.</p>
+        <input type="text" id="nickname-input" placeholder="Jake" autocomplete="off">
+        <input type="text" id="number-input" placeholder="01" autocomplete="off" inputmode="numeric">
+        <input type="text" id="homeroom-input" placeholder="1/1" autocomplete="off">
+        <button class="generate-btn" id="generate-btn">Generate Report Card</button>
+        <button class="cancel-btn" id="cancel-btn">Cancel</button>
+      </div>
+      <div id="report-area" style="display:none;"></div>
+    </div>
+</div>
+`, l = class l extends HTMLElement {
   constructor() {
     var t;
     super(), this.attachShadow({ mode: "open" }), this.lessonData = null, this.currentPhase = 0, this.score = 0, this.answeredCount = 0, this.totalQuestions = 0, this.isCompleted = !1, this.studentInfo = { nickname: "", number: "", homeroom: "", teacherCode: "" }, this.submissionUrl = (t = w) == null ? void 0 : t.submissionUrl, this.isSubmitting = !1, this.selectedVoiceName = null, this.isPlaying = !1, this._currentAudioEl = null;
     const e = new URLSearchParams(window.location.search);
-    this.isQuizMode = e.get("quiz") === "1", d._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList());
+    this.isQuizMode = e.get("quiz") === "1", l._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList());
   }
   connectedCallback() {
     requestAnimationFrame(() => {
@@ -36,76 +103,31 @@ const d = class d extends HTMLElement {
     return ((e = this.lessonData) == null ? void 0 : e.lang) || "en-US";
   }
   render() {
+    if (!this.shadowRoot.querySelector("#lesson-container")) {
+      const e = document.createElement("template");
+      e.innerHTML = `<style>${k}</style>${z}`, this.shadowRoot.appendChild(e.content.cloneNode(!0)), this._attachBaseListeners();
+    }
     this.isCompleted ? this.renderScoreScreen() : this.renderLesson();
   }
   renderLesson() {
     const e = this.lessonData, t = ["Introduction", "Vocabulary", "Listening"];
-    let o = "";
-    this.currentPhase === 0 ? o = this._renderIntroPhase() : this.currentPhase === 1 ? o = this._renderVocabPhase() : o = this._renderListeningPhase();
-    const n = `
-      <style>${this.getBaseStyles()}</style>
-      <div class="container">
-        <div class="header-row">
-            <div class="header-info">
-                <h2>${e.title || "Listening Lesson"}</h2>
-                <div class="phase-badge">${t[this.currentPhase]}</div>
+    this.shadowRoot.getElementById("lesson-container").style.display = "block";
+    const o = this.shadowRoot.getElementById("score-screen");
+    o && (o.style.display = "none"), this.shadowRoot.getElementById("lesson-title").textContent = e.title || "Listening Lesson", this.shadowRoot.getElementById("phase-badge").textContent = t[this.currentPhase];
+    const n = this.shadowRoot.getElementById("progress-info");
+    this.currentPhase === 2 ? (n.style.display = "block", n.textContent = `${this.answeredCount} / ${this.totalQuestions} Answered`) : n.style.display = "none";
+    const a = this.shadowRoot.getElementById("phase-dots");
+    a.innerHTML = t.map((d, c) => `
+            <div class="phase-dot-group ${c === this.currentPhase ? "active" : ""} ${c < this.currentPhase ? "completed" : ""}">
+                <div class="phase-dot">${c < this.currentPhase ? "✓" : c + 1}</div>
+                <span class="phase-dot-label">${d}</span>
             </div>
-            <div class="header-controls">
-                <button id="share-quiz-btn" class="share-btn" title="Share as Quiz (no transcript)">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
-                    </svg>
-                    <span>Share Quiz</span>
-                </button>
-                <button id="voice-btn" class="icon-btn" title="Choose Voice">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                        <path d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z"/>
-                    </svg>
-                </button>
-                ${this.currentPhase === 2 ? `<div class="progress-info">${this.answeredCount} / ${this.totalQuestions} Answered</div>` : ""}
-            </div>
-        </div>
-
-        <!-- Phase Progress Dots -->
-        <div class="phase-dots">
-            ${t.map((r, s) => `
-                <div class="phase-dot-group ${s === this.currentPhase ? "active" : ""} ${s < this.currentPhase ? "completed" : ""}">
-                    <div class="phase-dot">${s < this.currentPhase ? "✓" : s + 1}</div>
-                    <span class="phase-dot-label">${r}</span>
-                </div>
-                ${s < t.length - 1 ? '<div class="phase-dot-line"></div>' : ""}
-            `).join("")}
-        </div>
-
-        <div class="phase-content">
-            ${o}
-        </div>
-
-        <div class="phase-nav">
-            <button class="nav-btn" id="prev-btn" ${this.currentPhase === 0 ? "disabled" : ""}>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-                Back
-            </button>
-            ${this.currentPhase < 2 ? `
-                <button class="nav-btn nav-btn-primary" id="next-btn">
-                    Next
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                </button>
-            ` : ""}
-        </div>
-      </div>
-
-      <div class="voice-overlay" id="voice-overlay" style="display: none;">
-        <div class="voice-card">
-            <div class="voice-card-header">
-                <h3>Choose Voice</h3>
-                <button class="close-voice-btn" id="close-voice-btn">×</button>
-            </div>
-            <div class="voice-list" id="voice-list"></div>
-        </div>
-      </div>
-    `;
-    this.shadowRoot.innerHTML = n, this._attachListeners();
+            ${c < t.length - 1 ? '<div class="phase-dot-line"></div>' : ""}
+        `).join("");
+    const s = this.shadowRoot.getElementById("phase-content");
+    this.currentPhase === 0 ? s.innerHTML = this._renderIntroPhase() : this.currentPhase === 1 ? s.innerHTML = this._renderVocabPhase() : s.innerHTML = this._renderListeningPhase();
+    const i = this.shadowRoot.getElementById("prev-btn"), r = this.shadowRoot.getElementById("next-btn");
+    i && (i.disabled = this.currentPhase === 0), r && (this.currentPhase < 2 ? r.style.display = "flex" : r.style.display = "none"), this._attachPhaseListeners();
   }
   // ─── PHASE RENDERERS ───────────────────────────────────
   _renderIntroPhase() {
@@ -178,11 +200,11 @@ const d = class d extends HTMLElement {
                     </div>
                 </div>
             `);
-    let r = "";
-    return e.questions && e.questions.length > 0 && (r = e.questions.map((s, i) => {
-      const a = `q_${i}`, l = s.options.map((c, p) => `
-                    <label class="mc-option" id="label_${a}_${p}">
-                        <input type="radio" name="${a}" value="${c}" data-correct="${s.correct}" data-label-id="label_${a}_${p}">
+    let a = "";
+    return e.questions && e.questions.length > 0 && (a = e.questions.map((s, i) => {
+      const r = `q_${i}`, d = s.options.map((c, p) => `
+                    <label class="mc-option" id="label_${r}_${p}">
+                        <input type="radio" name="${r}" value="${c}" data-correct="${s.correct}" data-label-id="label_${r}_${p}">
                         ${c}
                     </label>
                 `).join("");
@@ -197,7 +219,7 @@ const d = class d extends HTMLElement {
                             </button>
                         </div>
                         <div class="options-group">
-                            ${l}
+                            ${d}
                         </div>
                     </div>
                 `;
@@ -212,7 +234,7 @@ const d = class d extends HTMLElement {
                 ${o}
                 ${n}
                 <div class="section-title">Comprehension Questions</div>
-                ${r}
+                ${a}
                 <div id="footer-actions" class="footer-actions" style="display: ${this.answeredCount === this.totalQuestions && this.totalQuestions > 0 ? "flex" : "none"}">
                     <button id="complete-btn" class="complete-btn">See My Score</button>
                 </div>
@@ -220,28 +242,31 @@ const d = class d extends HTMLElement {
         `;
   }
   // ─── EVENT LISTENERS ───────────────────────────────────
-  _attachListeners() {
+  _attachBaseListeners() {
     const e = this.shadowRoot.getElementById("prev-btn"), t = this.shadowRoot.getElementById("next-btn");
     e && (e.onclick = () => this._navigatePhase(-1)), t && (t.onclick = () => this._navigatePhase(1));
     const o = this.shadowRoot.getElementById("share-quiz-btn");
-    o && (o.onclick = () => this._shareAsQuiz()), this.shadowRoot.getElementById("voice-btn").onclick = () => this._showVoiceOverlay(), this.shadowRoot.getElementById("close-voice-btn").onclick = () => this._hideVoiceOverlay(), this.shadowRoot.getElementById("voice-overlay").onclick = (i) => {
-      i.target.id === "voice-overlay" && this._hideVoiceOverlay();
-    }, this.shadowRoot.querySelectorAll(".tts-btn, .vocab-play-btn").forEach((i) => {
-      i.onclick = () => this._playTTS(i.getAttribute("data-text"));
+    o && (o.onclick = () => this._shareAsQuiz()), this.shadowRoot.getElementById("voice-btn").onclick = () => this._showVoiceOverlay(), this.shadowRoot.getElementById("close-voice-btn").onclick = () => this._hideVoiceOverlay(), this.shadowRoot.getElementById("voice-overlay").onclick = (n) => {
+      n.target.id === "voice-overlay" && this._hideVoiceOverlay();
+    };
+  }
+  _attachPhaseListeners() {
+    this.shadowRoot.querySelectorAll(".tts-btn, .vocab-play-btn").forEach((n) => {
+      n.onclick = () => this._playTTS(n.getAttribute("data-text"));
     });
-    const n = this.shadowRoot.getElementById("listening-play-btn");
-    n && (n.onclick = () => {
+    const e = this.shadowRoot.getElementById("listening-play-btn");
+    e && (e.onclick = () => {
       var a;
-      const i = ((a = this.lessonData.listening) == null ? void 0 : a.transcript) || "";
-      this._playTTS(i);
+      const n = ((a = this.lessonData.listening) == null ? void 0 : a.transcript) || "";
+      this._playTTS(n);
     });
-    const r = this.shadowRoot.getElementById("transcript-toggle");
-    r && (r.onclick = () => {
-      const i = this.shadowRoot.getElementById("transcript-body");
-      i.style.display === "none" ? (i.style.display = "block", r.textContent = "Hide") : (i.style.display = "none", r.textContent = "Show");
+    const t = this.shadowRoot.getElementById("transcript-toggle");
+    t && (t.onclick = () => {
+      const n = this.shadowRoot.getElementById("transcript-body");
+      n.style.display === "none" ? (n.style.display = "block", t.textContent = "Hide") : (n.style.display = "none", t.textContent = "Show");
     }), this._attachValidationListeners();
-    const s = this.shadowRoot.getElementById("complete-btn");
-    s && (s.onclick = () => {
+    const o = this.shadowRoot.getElementById("complete-btn");
+    o && (o.onclick = () => {
       this.isCompleted = !0, this.render();
     });
   }
@@ -252,10 +277,10 @@ const d = class d extends HTMLElement {
   _attachValidationListeners() {
     this.shadowRoot.querySelectorAll('input[type="radio"]').forEach((t) => {
       t.addEventListener("change", (o) => {
-        const n = o.target.value, r = o.target.getAttribute("data-correct"), s = o.target.getAttribute("data-label-id"), i = this.shadowRoot.getElementById(s), a = o.target.name, l = this.shadowRoot.querySelectorAll(`input[name="${a}"]`);
-        l.forEach((c) => {
+        const n = o.target.value, a = o.target.getAttribute("data-correct"), s = o.target.getAttribute("data-label-id"), i = this.shadowRoot.getElementById(s), r = o.target.name, d = this.shadowRoot.querySelectorAll(`input[name="${r}"]`);
+        d.forEach((c) => {
           c.disabled = !0;
-        }), n === r ? (i.classList.add("correct"), this.score++) : (i.classList.add("incorrect"), l.forEach((c) => {
+        }), n === a ? (i.classList.add("correct"), this.score++) : (i.classList.add("incorrect"), d.forEach((c) => {
           if (c.value === c.getAttribute("data-correct")) {
             const p = c.getAttribute("data-label-id");
             this.shadowRoot.getElementById(p).classList.add("correct-highlight");
@@ -275,14 +300,14 @@ const d = class d extends HTMLElement {
     }
   }
   _isLastInstance() {
-    const e = d._instances;
+    const e = l._instances;
     return e.length > 1 && e[e.length - 1] === this;
   }
   _getCombinedScore() {
-    const e = d._instances;
+    const e = l._instances;
     let t = 0, o = 0, n = !0;
-    return e.forEach((r) => {
-      t += r.score, o += r.totalQuestions, r.isCompleted || (n = !1);
+    return e.forEach((a) => {
+      t += a.score, o += a.totalQuestions, a.isCompleted || (n = !1);
     }), { totalScore: t, totalQuestions: o, allDone: n, count: e.length };
   }
   renderScoreScreen() {
@@ -294,10 +319,10 @@ const d = class d extends HTMLElement {
       const s = this._getCombinedScore();
       if (s.allDone) {
         const i = Math.round(s.totalScore / s.totalQuestions * 100) || 0;
-        let a = "🏆";
-        i < 50 ? a = "💪" : i < 80 && (a = "⭐"), o = `
+        let r = "🏆";
+        i < 50 ? r = "💪" : i < 80 && (r = "⭐"), o = `
                     <div class="combined-score">
-                        <div class="combined-header">${a} Combined Score — All ${s.count} Lessons</div>
+                        <div class="combined-header">${r} Combined Score — All ${s.count} Lessons</div>
                         <div class="combined-stats">
                             <div class="combined-value">${s.totalScore} / ${s.totalQuestions}</div>
                             <div class="combined-percent">${i}%</div>
@@ -311,45 +336,26 @@ const d = class d extends HTMLElement {
         o = `
                     <div class="combined-score combined-pending">
                         <div class="combined-header">📋 Lesson Progress</div>
-                        <p class="combined-note">${d._instances.filter((a) => a.isCompleted).length} of ${s.count} lessons completed. Finish all to see your combined score.</p>
+                        <p class="combined-note">${l._instances.filter((r) => r.isCompleted).length} of ${s.count} lessons completed. Finish all to see your combined score.</p>
                     </div>
                 `;
     }
-    const n = this._isLastInstance(), r = `
-  <style>${this.getBaseStyles()}</style>
-  <div class="container score-screen">
-    <div class="score-circle">
-        <div class="score-value">${this.score}/${this.totalQuestions}</div>
-        <div class="score-percent">${e}%</div>
-    </div>
-    <h2>${t} ${e >= 80 ? "Excellent!" : e >= 50 ? "Good effort!" : "Keep practicing!"}</h2>
-    <p>You completed the "${this.lessonData.title || "Listening Lesson"}" activity.</p>
-    <div class="score-actions">
-        <button class="role-btn" id="restart-btn">Try Again</button>
-        ${n ? '<button class="report-btn" id="report-btn">📄 See Report Card</button>' : ""}
-    </div>
-    ${o}
-  </div>
-
-  ${n ? `
-  <div class="report-overlay" id="report-overlay" style="display:none;">
-    <div class="report-modal">
-      <div class="initial-form" id="initial-form">
-        <div class="report-icon">📄</div>
-        <h2>Report Card</h2>
-        <p>Enter your details to generate your report.</p>
-        <input type="text" id="nickname-input" placeholder="Jake" autocomplete="off">
-        <input type="text" id="number-input" placeholder="01" autocomplete="off" inputmode="numeric">
-        <input type="text" id="homeroom-input" placeholder="1/1" autocomplete="off">
-        <button class="generate-btn" id="generate-btn">Generate Report Card</button>
-        <button class="cancel-btn" id="cancel-btn">Cancel</button>
-      </div>
-      <div id="report-area" style="display:none;"></div>
-    </div>
-  </div>
-  ` : ""}
-`;
-    this.shadowRoot.innerHTML = r, this.scrollIntoView({ behavior: "smooth", block: "start" }), this.shadowRoot.getElementById("restart-btn").addEventListener("click", () => {
+    const n = this._isLastInstance();
+    this.shadowRoot.getElementById("lesson-container").style.display = "none";
+    const a = this.shadowRoot.getElementById("score-screen");
+    a.style.display = "block", a.innerHTML = `
+            <div class="score-circle">
+                <div class="score-value">${this.score}/${this.totalQuestions}</div>
+                <div class="score-percent">${e}%</div>
+            </div>
+            <h2>${t} ${e >= 80 ? "Excellent!" : e >= 50 ? "Good effort!" : "Keep practicing!"}</h2>
+            <p>You completed the "${this.lessonData.title || "Listening Lesson"}" activity.</p>
+            <div class="score-actions">
+                <button class="role-btn" id="restart-btn">Try Again</button>
+                ${n ? '<button class="report-btn" id="report-btn">📄 See Report Card</button>' : ""}
+            </div>
+            ${o}
+        `, this.scrollIntoView({ behavior: "smooth", block: "start" }), this.shadowRoot.getElementById("restart-btn").addEventListener("click", () => {
       this.score = 0, this.answeredCount = 0, this.isCompleted = !1, this.currentPhase = 0, this.render();
     }), n && (this.shadowRoot.getElementById("report-btn").addEventListener("click", () => {
       this._showReportOverlay();
@@ -372,15 +378,15 @@ const d = class d extends HTMLElement {
     }
   }
   _generateReport() {
-    const e = this.shadowRoot.getElementById("nickname-input"), t = this.shadowRoot.getElementById("number-input"), o = this.shadowRoot.getElementById("homeroom-input"), n = e ? e.value.trim() : this.studentInfo.nickname, r = t ? t.value.trim() : this.studentInfo.number, s = o ? o.value.trim() : this.studentInfo.homeroom;
-    if (!n || !r) {
+    const e = this.shadowRoot.getElementById("nickname-input"), t = this.shadowRoot.getElementById("number-input"), o = this.shadowRoot.getElementById("homeroom-input"), n = e ? e.value.trim() : this.studentInfo.nickname, a = t ? t.value.trim() : this.studentInfo.number, s = o ? o.value.trim() : this.studentInfo.homeroom;
+    if (!n || !a) {
       alert("Please enter both nickname and student number.");
       return;
     }
-    this.studentInfo = { ...this.studentInfo, nickname: n, number: r, homeroom: s };
-    const i = this._getCombinedScore(), a = Math.round(i.totalScore / i.totalQuestions * 100) || 0, l = (/* @__PURE__ */ new Date()).toLocaleString();
+    this.studentInfo = { ...this.studentInfo, nickname: n, number: a, homeroom: s };
+    const i = this._getCombinedScore(), r = Math.round(i.totalScore / i.totalQuestions * 100) || 0, d = (/* @__PURE__ */ new Date()).toLocaleString();
     let c = "🏆";
-    a < 50 ? c = "💪" : a < 80 && (c = "⭐");
+    r < 50 ? c = "💪" : r < 80 && (c = "⭐");
     const p = `
             <div class="rc-header">
                 <div class="rc-icon">📄</div>
@@ -390,23 +396,23 @@ const d = class d extends HTMLElement {
             </div>
             <div class="rc-student">
                 <span class="rc-label">Student</span>
-                <span class="rc-value">${n} <span class="rc-number">(${r}) ${s ? `- ${s}` : ""}</span></span>
+                <span class="rc-value">${n} <span class="rc-number">(${a}) ${s ? `- ${s}` : ""}</span></span>
             </div>
             <div class="rc-score-row">
                 <div class="rc-score-circle">
                     <div class="rc-score-val">${i.totalScore}/${i.totalQuestions}</div>
-                    <div class="rc-score-pct">${a}%</div>
+                    <div class="rc-score-pct">${r}%</div>
                 </div>
-                <div class="rc-score-label">${c} ${a >= 80 ? "Excellent!" : a >= 50 ? "Good effort!" : "Keep practicing!"}</div>
+                <div class="rc-score-label">${c} ${r >= 80 ? "Excellent!" : r >= 50 ? "Good effort!" : "Keep practicing!"}</div>
             </div>
-            <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${a}%"></div></div>
+            <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${r}%"></div></div>
             <div class="rc-details">
                 <div class="rc-detail-row"><span>Total Correct</span><span>${i.totalScore} / ${i.totalQuestions}</span></div>
-                <div class="rc-detail-row"><span>Completed On</span><span>${l}</span></div>
+                <div class="rc-detail-row"><span>Completed On</span><span>${d}</span></div>
             </div>
 
             <div class="rc-submission-box">
-                <p class="rc-submission-header">Official Submission</p>
+                <p class="rc-submission-header">Submission (Optional)</p>
                 <input type="text" id="report-teacher-code" class="rc-teacher-code-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ""}">
                 <p class="rc-help-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
             </div>
@@ -415,10 +421,10 @@ const d = class d extends HTMLElement {
                 <button class="rc-submit-btn" id="submit-score-btn">Submit Score Online</button>
                 <button class="rc-secondary-btn" id="rc-close-btn" style="margin-top: 8px;">↩ Return to Activity</button>
             </div>
-        `, u = this.shadowRoot.getElementById("initial-form"), b = this.shadowRoot.getElementById("report-area");
-    u && (u.style.display = "none"), b && (b.style.display = "block", b.innerHTML = p);
-    const f = this.shadowRoot.getElementById("submit-score-btn");
-    f && (f.onclick = () => this._submitScore()), this.shadowRoot.getElementById("rc-close-btn").addEventListener("click", () => {
+        `, g = this.shadowRoot.getElementById("initial-form"), b = this.shadowRoot.getElementById("report-area");
+    g && (g.style.display = "none"), b && (b.style.display = "block", b.innerHTML = p);
+    const u = this.shadowRoot.getElementById("submit-score-btn");
+    u && (u.onclick = () => this._submitScore()), this.shadowRoot.getElementById("rc-close-btn").addEventListener("click", () => {
       this.shadowRoot.getElementById("report-overlay").style.display = "none";
     });
   }
@@ -433,7 +439,7 @@ const d = class d extends HTMLElement {
     if (!o) return;
     const n = o.textContent;
     this.isSubmitting = !0, o.textContent = "Submitting...", o.disabled = !0;
-    const r = this._getCombinedScore(), s = Math.round(r.totalScore / r.totalQuestions * 100) || 0, i = {
+    const a = this._getCombinedScore(), s = Math.round(a.totalScore / a.totalQuestions * 100) || 0, i = {
       nickname: this.studentInfo.nickname,
       homeroom: this.studentInfo.homeroom || "",
       studentId: this.studentInfo.number,
@@ -450,8 +456,8 @@ const d = class d extends HTMLElement {
         },
         body: JSON.stringify(i)
       }), alert("Score successfully submitted!"), o.textContent = "Submitted ✓", o.style.background = "#64748b";
-    } catch (a) {
-      console.error("Error submitting score:", a), alert("There was an error submitting your score. Please try again."), o.textContent = n, o.disabled = !1, this.isSubmitting = !1;
+    } catch (r) {
+      console.error("Error submitting score:", r), alert("There was an error submitting your score. Please try again."), o.textContent = n, o.disabled = !1, this.isSubmitting = !1;
     }
   }
   // ─── TTS LOGIC ─────────────────────────────────────────
@@ -463,8 +469,8 @@ const d = class d extends HTMLElement {
     window.speechSynthesis.cancel();
     const t = new SpeechSynthesisUtterance(e), o = this._getLang();
     t.lang = o, t.rate = 0.85;
-    let r = window.speechSynthesis.getVoices().find((s) => s.name === this.selectedVoiceName);
-    r || (r = this._getBestVoice(o)), r && (t.voice = r), t.onstart = () => {
+    let a = window.speechSynthesis.getVoices().find((s) => s.name === this.selectedVoiceName);
+    a || (a = this._getBestVoice(o)), a && (t.voice = a), t.onstart = () => {
       this.isPlaying = !0;
     }, t.onend = () => {
       this.isPlaying = !1;
@@ -502,336 +508,17 @@ const d = class d extends HTMLElement {
     const e = this.shadowRoot.getElementById("voice-list");
     if (!e) return;
     const t = window.speechSynthesis.getVoices(), o = this._getLang(), n = o.split(/[-_]/)[0].toLowerCase();
-    let r = t.filter((i) => i.lang.split(/[-_]/)[0].toLowerCase() === n);
+    let a = t.filter((i) => i.lang.split(/[-_]/)[0].toLowerCase() === n);
     const s = this._getBestVoice(o);
-    e.innerHTML = "", r.sort((i, a) => i.name.localeCompare(a.name)), r.forEach((i) => {
-      const a = document.createElement("button");
-      a.classList.add("voice-option-btn"), (this.selectedVoiceName === i.name || !this.selectedVoiceName && s && i.name === s.name) && a.classList.add("active"), a.innerHTML = `<span>${i.name}</span>`, s && i.name === s.name && (a.innerHTML += '<span class="badge">Best</span>'), a.onclick = () => {
+    e.innerHTML = "", a.sort((i, r) => i.name.localeCompare(r.name)), a.forEach((i) => {
+      const r = document.createElement("button");
+      r.classList.add("voice-option-btn"), (this.selectedVoiceName === i.name || !this.selectedVoiceName && s && i.name === s.name) && r.classList.add("active"), r.innerHTML = `<span>${i.name}</span>`, s && i.name === s.name && (r.innerHTML += '<span class="badge">Best</span>'), r.onclick = () => {
         this.selectedVoiceName = i.name, this._updateVoiceList(), this._hideVoiceOverlay();
-      }, e.appendChild(a);
+      }, e.appendChild(r);
     });
-  }
-  // ─── STYLES ────────────────────────────────────────────
-  getBaseStyles() {
-    return `
-      :host { display: block; font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; margin-bottom: 2rem; color: black; background-color: white; }
-      .container { border: 1px solid #e2e8f0; padding: 24px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-
-      /* Header */
-      .header-row { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f1f5f9; margin-bottom: 10px; padding-bottom: 10px; }
-      .header-info h2 { margin: 0; color: #1e293b; }
-      .phase-badge { font-size: 0.8em; color: #64748b; font-weight: 600; text-transform: uppercase; margin-top: 4px; }
-      .header-controls { display: flex; align-items: center; gap: 12px; }
-      .progress-info { background: #f1f5f9; padding: 6px 14px; border-radius: 12px; font-size: 0.9em; font-weight: 600; color: #64748b; white-space: nowrap; }
-      .icon-btn { background: none; border: 1px solid #e2e8f0; padding: 8px; border-radius: 8px; cursor: pointer; color: #475569; transition: all 0.2s; }
-      .icon-btn:hover { background-color: #f1f5f9; color: #2563eb; border-color: #2563eb; }
-
-      /* Phase Progress Dots */
-      .phase-dots { display: flex; align-items: center; justify-content: center; gap: 0; margin: 20px 0; }
-      .phase-dot-group { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-      .phase-dot { width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85em; color: #94a3b8; transition: all 0.3s; }
-      .phase-dot-group.active .phase-dot { background: #2563eb; border-color: #2563eb; color: white; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
-      .phase-dot-group.completed .phase-dot { background: #dcfce7; border-color: #22c55e; color: #166534; }
-      .phase-dot-label { font-size: 0.7em; color: #94a3b8; font-weight: 600; text-transform: uppercase; }
-      .phase-dot-group.active .phase-dot-label { color: #2563eb; }
-      .phase-dot-group.completed .phase-dot-label { color: #22c55e; }
-      .phase-dot-line { width: 48px; height: 2px; background: #e2e8f0; margin: 0 4px; margin-bottom: 20px; }
-
-      /* Phase Navigation */
-      .phase-nav { display: flex; justify-content: space-between; margin-top: 24px; padding-top: 16px; border-top: 1px solid #f1f5f9; }
-      .nav-btn { display: flex; align-items: center; gap: 6px; padding: 10px 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer; font-weight: 600; color: #475569; transition: all 0.2s; font-size: 0.95em; }
-      .nav-btn:hover:not([disabled]) { background-color: #f1f5f9; border-color: #cbd5e1; }
-      .nav-btn:disabled { opacity: 0.4; cursor: default; }
-      .nav-btn-primary { background: #2563eb; color: white; border-color: #2563eb; }
-      .nav-btn-primary:hover { background: #1d4ed8; }
-
-      /* Intro Phase */
-      .intro-section { text-align: center; }
-      .context-card { display: flex; align-items: center; gap: 10px; background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.95em; text-align: left; }
-      .context-card svg { flex-shrink: 0; color: #0284c7; }
-      .intro-text { font-size: 1.1em; line-height: 1.7; color: #334155; margin-bottom: 24px; padding: 0 8px; }
-      .intro-text p { margin: 0; }
-
-      .tts-play-btn { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
-      .tts-play-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4); }
-      .tts-play-btn:active { transform: translateY(0); }
-
-      /* Audio Player */
-      .audio-player { margin: 16px 0; display: flex; justify-content: center; }
-      .audio-el { width: 100%; max-width: 500px; border-radius: 8px; }
-
-      /* Vocab Phase */
-      .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-      .vocab-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; transition: all 0.2s; }
-      .vocab-card:hover { border-color: #cbd5e1; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); }
-      .vocab-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-      .vocab-word { margin: 0; font-size: 1.15em; color: #1e293b; }
-      .vocab-definition { color: #475569; margin: 0 0 8px 0; line-height: 1.5; }
-      .vocab-example { color: #64748b; font-style: italic; margin: 0; font-size: 0.9em; line-height: 1.5; }
-
-      /* Listening Phase */
-      .listening-section { }
-      .transcript-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin: 16px 0; overflow: hidden; }
-      .transcript-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; }
-      .transcript-label { font-weight: 600; color: #475569; font-size: 0.9em; }
-      .transcript-toggle { background: none; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 12px; font-size: 0.85em; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.2s; }
-      .transcript-toggle:hover { background: #f1f5f9; }
-      .transcript-body { padding: 0 16px 16px 16px; border-top: 1px solid #e2e8f0; padding-top: 12px; }
-      .transcript-line { margin: 0 0 8px 0; color: #334155; line-height: 1.6; font-size: 0.95em; }
-      .transcript-line:last-child { margin-bottom: 0; }
-
-      /* Shared: Instruction Banner */
-      .instruction-banner { display: flex; align-items: center; gap: 8px; background: #f5f3ff; color: #5b21b6; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9em; font-weight: 500; border: 1px solid #ddd6fe; }
-      .instruction-banner svg { flex-shrink: 0; }
-
-      /* Shared: Section Title */
-      .section-title { font-size: 1.1em; font-weight: bold; color: #0f172a; margin: 24px 0 12px 0; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; }
-
-      /* Shared: TTS Button */
-      .tts-btn { display: flex; align-items: center; gap: 6px; background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
-      .tts-btn:hover { background: #1d4ed8; }
-      .tts-btn svg { width: 16px; height: 16px; }
-
-      /* MC Questions */
-      .question-card { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; margin-bottom: 16px; border-radius: 6px; }
-      .question-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 10px; }
-      .question-text { margin: 0; color: #1e293b; line-height: 1.4; }
-      .options-group { display: flex; flex-direction: column; gap: 8px; }
-      .mc-option { display: flex; align-items: center; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; transition: all 0.2s; background-color: white; }
-      .mc-option:hover:not(.correct):not(.incorrect):not(.correct-highlight) { background-color: #f1f5f9; }
-      .mc-option input { margin-right: 12px; cursor: pointer; }
-      .mc-option.correct { background-color: #dcfce7; border-color: #22c55e; color: #166534; font-weight: bold; }
-      .mc-option.correct-highlight { border: 2px dashed #22c55e; background-color: #f0fdf4; }
-      .mc-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
-
-      /* Score Screen */
-      .score-screen { text-align: center; padding: 40px 24px; }
-  .score-circle { width: 150px; height: 150px; border-radius: 50%; background: #f1f5f9; border: 8px solid #2563eb; margin: 0 auto 24px auto; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-  .score-value { font-size: 2em; font-weight: 800; color: #1e293b; }
-  .score-percent { font-size: 1.2em; font-weight: 600; color: #2563eb; }
-  .score-actions { display: flex; flex-direction: column; gap: 12px; align-items: center; margin-top: 8px; }
-  .role-btn { padding: 12px 28px; font-size: 1em; font-weight: bold; cursor: pointer; background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; transition: all 0.2s; }
-  .role-btn:hover { background-color: #e2e8f0; border-color: #94a3b8; }
-  .report-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-  .report-btn:hover { background: #1d4ed8; }
-  .share-btn { 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 8px; 
-    padding: 8px 16px; 
-    background: none; 
-    border: 1px solid #e2e8f0; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    color: #475569; 
-    transition: all 0.2s; 
-    white-space: nowrap;
-    font-size: 0.9em;
-    font-weight: 600;
-    height: 42px;
-    box-sizing: border-box;
-  }
-  .share-btn:hover { background-color: #f1f5f9; color: #2563eb; border-color: #2563eb; }
-  .share-btn svg { color: #475569; }
-  .share-btn:hover svg { color: #2563eb; }
-
-  /* Report Overlay */
-  .report-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-  .report-modal { background: white; width: 92%; max-width: 420px; padding: 28px 24px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); text-align: center; max-height: 90vh; overflow-y: auto; }
-  .report-modal h2 { margin: 8px 0 4px; color: #1e293b; }
-  .report-modal p { color: #64748b; margin: 0 0 16px; font-size: 0.95em; }
-  .report-icon { font-size: 2.5em; margin-bottom: 4px; }
-  .report-modal input { display: block; width: 100%; box-sizing: border-box; padding: 12px 14px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1em; outline: none; transition: border-color 0.2s; }
-  .report-modal input:focus { border-color: #2563eb; }
-  .generate-btn { width: 100%; padding: 13px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background 0.2s; margin-bottom: 8px; }
-  .generate-btn:hover { background: #1d4ed8; }
-  .cancel-btn { background: none; border: none; color: #94a3b8; font-size: 0.9em; cursor: pointer; text-decoration: underline; }
-
-  /* Report Card */
-  .report-area { text-align: left; }
-  .rc-header { text-align: center; margin-bottom: 16px; }
-  .rc-icon { font-size: 2em; }
-  .rc-title { font-size: 1.3em; font-weight: 800; color: #1e293b; margin: 4px 0 2px; }
-  .rc-subtitle { font-size: 0.9em; font-weight: 600; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .rc-activity { font-size: 0.85em; color: #94a3b8; }
-  .rc-student { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
-  .rc-label { font-size: 0.8em; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
-  .rc-value { font-weight: 700; color: #1e293b; }
-  .rc-number { color: #64748b; font-weight: 400; }
-  .rc-score-row { display: flex; align-items: center; gap: 16px; margin-bottom: 10px; }
-  .rc-score-circle { width: 80px; height: 80px; border-radius: 50%; background: #f1f5f9; border: 6px solid #2563eb; display: flex; flex-direction: column; justify-content: center; align-items: center; flex-shrink: 0; }
-  .rc-score-val { font-size: 1.1em; font-weight: 800; color: #1e293b; line-height: 1.1; }
-  .rc-score-pct { font-size: 0.85em; font-weight: 700; color: #2563eb; }
-  .rc-score-label { font-size: 1.1em; font-weight: 700; color: #1e293b; }
-  .rc-bar-track { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
-  .rc-bar-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #22c55e); border-radius: 4px; transition: width 0.6s ease; }
-  .rc-details { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
-  .rc-detail-row { display: flex; justify-content: space-between; padding: 9px 14px; font-size: 0.9em; border-bottom: 1px solid #f1f5f9; }
-  .rc-detail-row:last-child { border-bottom: none; }
-  .rc-detail-row span:first-child { color: #64748b; }
-  .rc-detail-row span:last-child { font-weight: 600; color: #1e293b; }
-  .rc-combined { background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%); border: 1px solid #bae6fd; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; text-align: center; }
-  .rc-combined-title { font-size: 0.95em; font-weight: 700; color: #0c4a6e; margin-bottom: 8px; }
-  .rc-combined-score { font-size: 1.4em; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
-  .rc-combined-pct { color: #2563eb; }
-  .rc-actions { margin-top: 16px; }
-  .rc-close-btn { width: 100%; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-  .rc-close-btn:hover { background: #16a34a; }
-
-  /* Official Submission Refinements */
-  .rc-submission-box {
-      margin-top: 20px;
-      padding: 20px;
-      background: #f8fafc;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      text-align: left;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-  }
-
-  .rc-submission-header {
-      margin: 0 0 12px 0;
-      font-size: 0.85em;
-      color: #64748b;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-  }
-
-  .rc-teacher-code-input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px 16px;
-      border: 2px solid #e2e8f0;
-      border-radius: 10px;
-      font-size: 1em;
-      margin-bottom: 8px;
-      background: white;
-      transition: all 0.2s ease;
-      outline: none;
-      font-family: inherit;
-      color: #1e293b;
-  }
-
-  .rc-teacher-code-input:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-  }
-
-  .rc-teacher-code-input::placeholder {
-      color: #94a3b8;
-  }
-
-  .rc-help-text {
-      margin: 4px 0 0 0;
-      font-size: 0.85em;
-      color: #64748b;
-      line-height: 1.4;
-  }
-
-  .rc-submit-btn {
-      width: 100%;
-      padding: 16px;
-      background: lightgreen;
-      color: #1e293b;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.1em;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      margin-bottom: 8px;
-  }
-
-  .rc-submit-btn:hover:not(:disabled) {
-      background: #1d4ed8;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
-  }
-
-  .rc-submit-btn:active:not(:disabled) {
-      transform: translateY(0);
-  }
-
-  .rc-submit-btn:disabled {
-      opacity: 0.6;
-      cursor: default;
-      background: #94a3b8;
-      box-shadow: none;
-  }
-
-  .rc-secondary-btn {
-      width: 100%;
-      padding: 14px;
-      background: lightgrey;
-      color: #1e293b;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 1em;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-  }
-
-  .rc-secondary-btn:hover {
-      background: #f1f5f9;
-      border-color: #cbd5e1;
-  }
-
-      /* Footer Actions */
-      .footer-actions { margin-top: 30px; display: none; justify-content: center; padding-top: 20px; border-top: 1px solid #f1f5f9; }
-      .complete-btn { background-color: #2563eb; color: white; border: none; padding: 12px 32px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1em; transition: background 0.2s; }
-      .complete-btn:hover { background-color: #1d4ed8; }
-
-      .role-btn { padding: 16px; font-size: 16px; font-weight: bold; cursor: pointer; background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; transition: all 0.2s; }
-      .role-btn:hover { background-color: #e2e8f0; border-color: #94a3b8; }
-
-
-
-      /* Combined Score */
-      .combined-score { margin-top: 30px; padding: 20px 24px; background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%); border: 1px solid #bae6fd; border-radius: 12px; text-align: center; }
-      .combined-header { font-size: 1.1em; font-weight: 700; color: #0c4a6e; margin-bottom: 12px; }
-      .combined-stats { display: flex; justify-content: center; gap: 24px; margin-bottom: 12px; }
-      .combined-value { font-size: 1.8em; font-weight: 800; color: #1e293b; }
-      .combined-percent { font-size: 1.8em; font-weight: 800; color: #2563eb; }
-      .combined-bar-track { height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; }
-      .combined-bar-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #22c55e); border-radius: 5px; transition: width 0.6s ease; }
-      .combined-pending { background: #f8fafc; border-color: #e2e8f0; }
-      .combined-note { color: #64748b; font-size: 0.9em; margin: 0; }
-
-      /* Toast notification */
-      .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 20px; border-radius: 10px; display: flex; align-items: center; gap: 8px; font-size: 0.9em; font-weight: 600; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); z-index: 2000; animation: toastIn 0.3s ease; }
-      .toast-url { background: #334155; border: none; color: white; padding: 6px 10px; border-radius: 6px; font-size: 0.85em; width: 260px; max-width: 60vw; }
-      @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(12px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-
-      .empty-state { color: #94a3b8; font-style: italic; }
-
-      /* Voice Overlay */
-      .voice-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-      .voice-card { background: white; width: 90%; max-width: 400px; max-height: 80vh; border-radius: 1.2em; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; overflow: hidden; }
-      .voice-card-header { padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-      .voice-card-header h3 { margin: 0; font-size: 1.2em; color: #1e293b; }
-      .close-voice-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; }
-      .voice-list { padding: 10px; overflow-y: auto; flex: 1; }
-      .voice-option-btn { width: 100%; text-align: left; padding: 12px 16px; margin-bottom: 6px; border: 1px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
-      .voice-option-btn:hover { background-color: #f8fafc; border-color: #cbd5e1; }
-      .voice-option-btn.active { background: #eff6ff; border-color: #3b82f6; color: #2563eb; font-weight: 600; }
-      .badge { background: #dcfce7; color: #166534; font-size: 0.7em; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
-
-      /* Responsive */
-      @media (max-width: 600px) {
-        .container { padding: 16px; }
-        .vocab-grid { grid-template-columns: 1fr; }
-        .phase-dots { gap: 0; }
-        .phase-dot-line { width: 24px; }
-        .phase-dot-label { font-size: 0.6em; }
-        .nav-btn { padding: 8px 14px; font-size: 0.85em; }
-      }
-    `;
   }
 };
 // Static registry of all instances on the page
-m(d, "_instances", []);
-let g = d;
-customElements.define("tj-listening", g);
+m(l, "_instances", []);
+let f = l;
+customElements.define("tj-listening", f);

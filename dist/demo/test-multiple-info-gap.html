@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Multiple Info Gaps</title>
+    <script src="../tj-info-gap.js" type="module"></script>
+    <style>
+        tj-info-gap:not(:defined) {
+            display: none;
+        }
+        body {
+            background-color: #f8fafc;
+            padding: 40px;
+            font-family: sans-serif;
+        }
+        .test-section {
+            margin-bottom: 50px;
+            border-bottom: 2px dashed #cbd5e1;
+            padding-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="test-section">
+        <h1>Activity 1: Ordering Delivery</h1>
+        <tj-info-gap id="gap1">
+            {
+                "topic": "Ordering Delivery",
+                "scenario_description": "Read your information. Then, ask your partner the multiple-choice questions to complete the order.",
+                "player_count": 2,
+                "blocks": [
+                    {
+                        "text_holder_id": 1,
+                        "text": "Wanchai wants to order Kha na moo grob for dinner. He prefers it to be very spicy, but he doesn't want a fried egg on top.",
+                        "questions": [
+                            {
+                                "asker_id": 2,
+                                "question": "What level of spice does Wanchai want?",
+                                "options": ["Not spicy", "Medium spicy", "Very spicy"],
+                                "correct_answer": "Very spicy"
+                            },
+                            {
+                                "asker_id": 2,
+                                "question": "Does he want a fried egg?",
+                                "options": ["Yes", "No", "Only the egg white"],
+                                "correct_answer": "No"
+                            }
+                        ]
+                    },
+                    {
+                        "text_holder_id": 2,
+                        "text": "The delivery fee is usually 30 baht, but because it is raining heavily right now, the restaurant added a 15 baht weather surcharge.",
+                        "questions": [
+                            {
+                                "asker_id": 1,
+                                "question": "How much is the total delivery fee?",
+                                "options": ["15 baht", "30 baht", "45 baht"],
+                                "correct_answer": "45 baht"
+                            }
+                        ]
+                    }
+                ]
+            }
+        </tj-info-gap>
+    </div>
+
+    <div class="test-section">
+        <h1>Activity 2: Weekend Plans</h1>
+        <tj-info-gap id="gap2">
+            {
+                "topic": "Weekend Plans",
+                "scenario_description": "Find out what your friends are doing this weekend.",
+                "player_count": 2,
+                "blocks": [
+                    {
+                        "text_holder_id": 1,
+                        "text": "Somchai is going to the beach at 9 AM on Saturday.",
+                        "questions": [
+                            {
+                                "asker_id": 2,
+                                "question": "What time is Somchai going to the beach?",
+                                "options": ["8 AM", "9 AM", "10 AM"],
+                                "correct_answer": "9 AM"
+                            }
+                        ]
+                    }
+                ]
+            }
+        </tj-info-gap>
+    </div>
+
+</body>
+</html>

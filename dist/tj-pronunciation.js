@@ -409,7 +409,7 @@ class M extends HTMLElement {
               <div class="rc-detail-row"><span>Completed On</span><span>${i}</span></div>
           </div>
           <div style="margin-top: 16px; padding: 12px; background: var(--tj-bg-alt); border-radius: 8px; border: 1px dashed var(--tj-border-main); text-align: left;">
-              <p style="margin: 0 0 8px 0; font-size: 0.85em; color: var(--tj-text-muted); font-weight: 600; text-transform: uppercase;">Official Submission</p>
+              <p style="margin: 0 0 8px 0; font-size: 0.85em; color: var(--tj-text-muted); font-weight: 600; text-transform: uppercase;">Submission (Optional)</p>
               <input type="text" id="report-teacher-code" placeholder="Enter Teacher Code" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--tj-border-main); border-radius: 6px; font-size: 0.9em; margin-bottom: 4px;" value="${u}">
               <p style="margin: 4px 0 0 0; font-size: 0.8em; color: var(--tj-text-muted);">Enter the teacher code to submit, or take a screenshot of this page.</p>
           </div>

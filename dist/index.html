@@ -1,111 +1,339 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teacher Jake Components</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.6;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem;
-      background-color: #f8fafc;
-      color: #1e293b;
-    }
-    h1 {
-      color: #2563eb;
-    }
-    p {
-      margin-bottom: 1.5rem;
-    }
-    .card {
-      background: white;
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      margin-bottom: 2rem;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      margin-bottom: 0.75rem;
-      padding: 0.75rem;
-      background: #f1f5f9;
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    a {
-      color: #2563eb;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    a:hover {
-      text-decoration: underline;
-      color: #1d4ed8;
-    }
-    code {
-      background: #e2e8f0;
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.875rem;
-      color: #475569;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TJ Components | Interactive ELT Web Components</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #22d3ee;
+            --primary-hover: #06b6d4;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 5rem;
+            position: relative;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.15) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(34, 211, 238, 0.4);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(34, 211, 238, 0.03) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(34, 211, 238, 0.4);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover::after {
+            opacity: 1;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #fff;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .card-footer svg {
+            margin-left: 0.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover .card-footer svg {
+            transform: translateX(4px);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 6rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 2.5rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-  <h1>Teacher Jake Components</h1>
-  <div class="card">
-    <p>This domain hosts a collection of interactive language learning web components. These scripts can be easily embedded into blogs, websites, or LMS platforms to create rich educational experiences.</p>
-    
-    <h2>Available Scripts</h2>
-    <p>Include any of these scripts in your HTML using a <code>&lt;script type="module" src="..."&gt;</code> tag.</p>
-    
-    <ul>
-      <li>
-        <span><strong>Speed Review</strong> (<code>tj-speed-review</code>)</span>
-        <a href="https://scripts.teacherjake.com/tj-speed-review.js" target="_blank">tj-speed-review.js</a>
-      </li>
-      <li>
-        <span><strong>Grammar Hearts</strong> (<code>tj-grammar-hearts</code>)</span>
-        <a href="https://scripts.teacherjake.com/tj-grammar-hearts.js" target="_blank">tj-grammar-hearts.js</a>
-      </li>
-      <li>
-        <span><strong>Pronunciation</strong> (<code>tj-pronunciation</code>)</span>
-        <a href="https://scripts.teacherjake.com/tj-pronunciation.js" target="_blank">tj-pronunciation.js</a>
-      </li>
-      <li>
-        <span><strong>Info Gap</strong> (<code>tj-info-gap</code>)</span>
-        <a href="https://scripts.teacherjake.com/tj-info-gap.js" target="_blank">tj-info-gap.js</a>
-      </li>
-      <li>
-        <span><strong>Listening</strong> (<code>tj-listening</code>)</span>
-        <a href="https://scripts.teacherjake.com/tj-listening.js" target="_blank">tj-listening.js</a>
-      </li>
-      <li>
-        <span><strong>Reader</strong> (<code>tj-reader</code>)</span>
-        <a href="https://scripts.teacherjake.com/tj-reader.js" target="_blank">tj-reader.js</a>
-      </li>
-      <li>
-        <span><strong>Chapter Book</strong> (<code>tj-chapter-book</code>)</span>
-        <a href="https://scripts.teacherjake.com/tj-chapter-book.js" target="_blank">tj-chapter-book.js</a>
-      </li>
-      <li>
-        <span><strong>Quiz Element</strong> (<code>tj-quiz-element</code>)</span>
-        <a href="https://scripts.teacherjake.com/tj-quiz-element.js" target="_blank">tj-quiz-element.js</a>
-      </li>
-    </ul>
 
-    <h3>Example Usage</h3>
-    <code>
-      &lt;script type="module" src="https://scripts.teacherjake.com/tj-reader.js"&gt;&lt;/script&gt;<br>
-      &lt;tj-reader&gt;...&lt;/tj-reader&gt;
-    </code>
-  </div>
+    <div class="container">
+        <header>
+            <h1>TJ Components</h1>
+            <p class="subtitle">A library of premium, interactive web components designed for English Language Teaching (ELT) and language learning blogs.</p>
+            <div class="nav-links">
+                <a href="guide.html" class="btn btn-primary">Documentation</a>
+                <a href="https://github.com/jmayereup/tj-components" class="btn btn-outline" target="_blank">View on GitHub</a>
+            </div>
+        </header>
+
+        <h2 class="section-title">Component Catalog</h2>
+
+        <div class="grid">
+            <!-- LBL Reader -->
+            <a href="demo/test-lbl-reader.html" style="text-decoration: none;">
+                <div class="card">
+                    <div class="card-icon">📖</div>
+                    <h3>LBL Reader</h3>
+                    <p>Interactive story reader with word highlighting, text-to-speech, and memory matching activities.</p>
+                    <div class="card-footer">
+                        View Demo
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Grammar Hearts -->
+            <a href="demo/test-grammar.html" style="text-decoration: none;">
+                <div class="card">
+                    <div class="card-icon">❤️</div>
+                    <h3>Grammar Hearts</h3>
+                    <p>Gamified grammar practice with lives, multiple-choice, and sentence scrambling challenges.</p>
+                    <div class="card-footer">
+                        View Demo
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Info Gap -->
+            <a href="demo/test-info-gap.html" style="text-decoration: none;">
+                <div class="card">
+                    <div class="card-icon">👥</div>
+                    <h3>Info Gap</h3>
+                    <p>Collaborative multi-player activity for communication practice or single-player mode with AI partner.</p>
+                    <div class="card-footer">
+                        View Demo
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Listening -->
+            <a href="demo/test-listening.html" style="text-decoration: none;">
+                <div class="card">
+                    <div class="card-icon">🎧</div>
+                    <h3>Listening</h3>
+                    <p>Comprehensive listening lesson component with vocabulary preview, dialogue, and comprehension quiz.</p>
+                    <div class="card-footer">
+                        View Demo
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Speed Review -->
+            <a href="demo/test-speed.html" style="text-decoration: none;">
+                <div class="card">
+                    <div class="card-icon">🏎️</div>
+                    <h3>Speed Review</h3>
+                    <p>Fast-paced review game where students score points based on how quickly they can answer questions.</p>
+                    <div class="card-footer">
+                        View Demo
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Quiz Element -->
+            <a href="demo/test-quiz.html" style="text-decoration: none;">
+                <div class="card">
+                    <div class="card-icon">📝</div>
+                    <h3>Quiz Element</h3>
+                    <p>Flexible quiz supporting reading passages, vocab matching, and cloze sections with optional teacher submission.</p>
+                    <div class="card-footer">
+                        View Demo
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Chapter Book -->
+            <a href="demo/test-chapter-book.html" style="text-decoration: none;">
+                <div class="card">
+                    <div class="card-icon">📚</div>
+                    <h3>Chapter Book</h3>
+                    <p>Multi-chapter reader with integrated Text-to-Speech, translation toggles, and comprehension checks.</p>
+                    <div class="card-footer">
+                        View Demo
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Pronunciation -->
+            <a href="demo/test-pronunciation.html" style="text-decoration: none;">
+                <div class="card">
+                    <div class="card-icon">🗣️</div>
+                    <h3>Pronunciation</h3>
+                    <p>Practice speaking with native audio comparison, minimal pair discrimination, and sentence scrambles.</p>
+                    <div class="card-footer">
+                        View Demo
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 TJ Components. Designed for modern educators.</p>
+        </footer>
+    </div>
+
 </body>
 </html>
