@@ -4,7 +4,7 @@ const q = ":host{--tj-primary-color: #2563eb;--tj-primary-hover: #1d4ed8;--tj-pr
     <div class="tj-sticky-bar">
         <div class="header-main">
             <h1 class="tj-h3" id="pronunciationTitle" style="margin: 0;">Pronunciation Practice</h1>
-            <p class="instructions tj-text-muted" id="pronunciationInstructions" style="display: none; margin: 0; font-size: 0.9em;"></p>
+            <p class="instructions tj-text-muted" id="pronunciationInstructions" style="display: none; margin: 0; font-size: 0.9em;">Please complete all activities to generate a report card.</p>
         </div>
         <div class="tj-flex-center" style="gap: 1em;">
             <div class="progress-text">0 / 0</div>
@@ -108,12 +108,7 @@ class M extends HTMLElement {
   render(t) {
     t.language && (this.language = t.language);
     const e = document.createElement("template");
-    if (e.innerHTML = `<style>${q}</style><style>${_}</style>${P}`, this.shadowRoot.firstChild && (this.shadowRoot.innerHTML = ""), this.shadowRoot.appendChild(e.content.cloneNode(!0)), t.title && (this.shadowRoot.getElementById("pronunciationTitle").textContent = t.title), t.instructions) {
-      const r = this.shadowRoot.getElementById(
-        "pronunciationInstructions"
-      );
-      r.textContent = t.instructions, r.style.display = "block";
-    }
+    e.innerHTML = `<style>${q}</style><style>${_}</style>${P}`, this.shadowRoot.firstChild && (this.shadowRoot.innerHTML = ""), this.shadowRoot.appendChild(e.content.cloneNode(!0)), t.title && (this.shadowRoot.getElementById("pronunciationTitle").textContent = t.title);
     let o = "";
     if (t.activities && Array.isArray(t.activities) && (o = t.activities.map((r, a) => this.renderActivity(r, a)).join("")), this.shadowRoot.getElementById("activitiesContainer").innerHTML = o, this.updateProgress(), this.attachEventListeners(), this._updateVoiceList(), !this._shouldShowAudioControls()) {
       const r = this.shadowRoot.getElementById("voice-btn");

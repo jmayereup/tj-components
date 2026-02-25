@@ -30,7 +30,7 @@ class l extends HTMLElement {
           e = String(this.config);
       else this.hasAttribute("config") ? e = this.getAttribute("config") : this.querySelector('script[type="application/json"]') ? e = this.querySelector('script[type="application/json"]').textContent.trim() : e = this.textContent.trim();
       if (!e) return;
-      const r = e.replace(/"((?:\\.|[^"\\])*)"]/gs, (s, i) => '"' + i.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"');
+      const r = e.replace(/"((?:\\.|[^"\\])*)"/gs, (s, i) => '"' + i.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"');
       let t = JSON.parse(r);
       this._processParsedData(t), this.innerHTML = "";
     } catch (e) {
@@ -127,6 +127,7 @@ class l extends HTMLElement {
     }
   }
   getInstruction(e) {
+    if (!e) return "Practice:";
     if (e.instruction) return e.instruction;
     switch (e.type) {
       case "multiple-choice":
@@ -147,10 +148,11 @@ class l extends HTMLElement {
           font-family: 'Outfit', 'Inter', sans-serif;
           margin: 2em auto;
           color: #1e293b;
+          background: whitesmoke;
         }
 
         .container {
-          background: rgba(255, 255, 255, 0.8);
+          background: white;
           backdrop-filter: blur(12px);
           border-radius: 2em;
           padding: 2em;

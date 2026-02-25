@@ -1,5 +1,6 @@
 import { g as k } from "./chunks/audio-utils-BQ4R88Cf.js";
-const S = `
+import { c as S } from "./chunks/tj-config-Co8tO1UZ.js";
+const j = `
     @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
     tj-chapter-book {
@@ -515,103 +516,125 @@ const S = `
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         display: flex;
         flex-direction: column;
-        overflow: hidden;
+        overflow: auto;
         border: 1px solid var(--tj-card-border);
         position: relative;
     }
 
-    .report-header {
-        padding: 1.5em;
+    /* Report Card Content */
+    .rc-header { text-align: center; margin-bottom: 24px; }
+    .rc-icon { font-size: 2.5em; margin-bottom: 8px; }
+    .rc-title { font-size: 1.4em; font-weight: 700; color: var(--tj-accent-color); margin-bottom: 4px; }
+    .rc-subtitle { color: var(--tj-subtitle-color); font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.05em; }
+    .rc-student { background: var(--tj-card-bg); border: 1px solid var(--tj-card-border); border-radius: 12px; padding: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .rc-label { color: var(--tj-subtitle-color); font-size: 0.9em; font-weight: 600; }
+    .rc-value { font-weight: 700; color: var(--tj-text-color); text-align: right; }
+    .rc-number { color: var(--tj-subtitle-color); font-weight: 500; font-size: 0.9em; display: block; }
+    .rc-score-row { display: flex; align-items: center; gap: 20px; margin-bottom: 16px; }
+    .rc-score-circle { width: 80px; height: 80px; border-radius: 50%; background: var(--tj-btn-bg); color: var(--tj-accent-color); display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid var(--tj-accent-color); flex-shrink: 0; }
+    .rc-score-val { font-size: 1.5em; font-weight: 800; line-height: 1; }
+    .rc-score-pct { font-size: 0.85em; font-weight: 700; margin-top: 2px; }
+    .rc-score-label { font-size: 1.1em; font-weight: 700; color: var(--tj-text-color); }
+    .rc-bar-track { height: 8px; background: var(--tj-btn-bg); border-radius: 4px; overflow: hidden; }
+    .rc-bar-fill { height: 100%; background: var(--tj-accent-color); border-radius: 4px; }
+    .rc-details { background: var(--tj-btn-bg); padding: 16px; border-radius: 12px; margin-bottom: 24px; font-size: 0.9em; }
+    .rc-detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .rc-detail-row:last-child { margin-bottom: 0; }
+    .rc-detail-row span:first-child { color: var(--tj-subtitle-color); font-weight: 500; }
+    .rc-detail-row span:last-child { font-weight: 600; color: var(--tj-text-color); }
+    .rc-close-btn:hover { background: var(--tj-btn-bg); }
+
+    /* Official Submission Refinements */
+    .rc-submission-box {
+        margin-top: 20px;
+        padding: 20px;
         background: var(--tj-btn-bg);
-        border-bottom: 1px solid var(--tj-card-border);
-        text-align: center;
-    }
-
-    .report-header h2 {
-        color: var(--tj-accent-color);
-        margin: 0;
-        font-size: 1.5em;
-    }
-
-    .report-body {
-        padding: 2em;
-        overflow-y: auto;
-        color: var(--tj-text-color);
-    }
-
-    .report-info-grid {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 10px 20px;
-        margin-bottom: 2em;
-        font-size: 1em;
-    }
-
-    .report-info-label {
-        font-weight: bold;
-        color: var(--tj-subtitle-color);
-    }
-
-    .report-score-box {
-        background: var(--tj-quiz-bg);
-        padding: 1.5em;
         border-radius: 12px;
-        text-align: center;
-        margin-bottom: 2em;
         border: 1px solid var(--tj-card-border);
+        text-align: left;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
-    .report-score-value {
-        font-size: 2.5em;
-        font-weight: bold;
-        color: var(--tj-accent-color);
-        display: block;
-    }
-
-    .report-wrong-list {
-        margin-top: 1.5em;
-    }
-
-    .report-wrong-item {
-        padding: 12px;
-        border-bottom: 1px solid var(--tj-card-border);
-        font-size: 0.95em;
-    }
-
-    .report-wrong-item:last-child {
-        border-bottom: none;
-    }
-
-    .report-wrong-chapter {
-        font-size: 0.8em;
+    .rc-submission-header {
+        margin: 0 0 12px 0;
+        font-size: 0.85em;
         color: var(--tj-subtitle-color);
-        display: block;
-        margin-bottom: 4px;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
 
-    .close-report-btn {
-        margin: 1.5em auto;
-        display: block;
-        padding: 0.75em 2em;
+    .rc-teacher-code-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 16px;
+        border: 2px solid var(--tj-card-border);
+        border-radius: 10px;
+        font-size: 1em;
+        margin-bottom: 8px;
+        background: var(--tj-card-bg);
+        transition: all 0.2s ease;
+        outline: none;
+        font-family: inherit;
+        color: var(--tj-text-color);
+    }
+
+    .rc-teacher-code-input:focus {
+        border-color: var(--tj-accent-color);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    .rc-help-text {
+        margin: 4px 0 0 0;
+        font-size: 0.85em;
+        color: var(--tj-subtitle-color);
+        line-height: 1.4;
+    }
+
+    .rc-submit-btn {
+        width: 100%;
+        padding: 16px;
         background: var(--tj-accent-color);
         color: white;
         border: none;
-        border-radius: 9999px;
-        font-weight: bold;
+        border-radius: 12px;
+        font-size: 1.1em;
+        font-weight: 700;
         cursor: pointer;
-        width: fit-content;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        margin-bottom: 8px;
     }
 
-    .sticky-report.visible {
-        display: block;
-        animation: slideIn 0.3s ease-out;
+    .rc-submit-btn:hover:not(:disabled) {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
     }
 
-    @keyframes slideIn {
-        from { transform: translateY(100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
+    .rc-submit-btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+        background: var(--tj-subtitle-color);
+        box-shadow: none;
+    }
+
+    .rc-secondary-btn {
+        width: 100%;
+        padding: 14px;
+        background: lightgrey;
+        color: var(--tj-text-color);
+        border: 2px solid var(--tj-card-border);
+        border-radius: 12px;
+        font-size: 1em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .rc-secondary-btn:hover {
+        background: var(--tj-btn-bg);
+        border-color: var(--tj-subtitle-color);
     }
 
     /* Print Styles */
@@ -944,7 +967,7 @@ const S = `
         background-color: #a16207;
     }
 `;
-class g extends HTMLElement {
+class m extends HTMLElement {
   getLanguageName(t) {
     if (!t) return "Unknown";
     try {
@@ -957,10 +980,10 @@ class g extends HTMLElement {
     return !t || typeof t.translation != "string" ? !1 : t.translation.trim().length > 0;
   }
   static bookHasAnyTranslations(t) {
-    return !t || !Array.isArray(t.chapters) ? !1 : t.chapters.some((o) => g.chapterHasTranslation(o));
+    return !t || !Array.isArray(t.chapters) ? !1 : t.chapters.some((o) => m.chapterHasTranslation(o));
   }
   static ensureGlobalPrintScoping() {
-    g._globalPrintScopingReady || (g._globalPrintScopingReady = !0, window.addEventListener("beforeprint", () => {
+    m._globalPrintScopingReady || (m._globalPrintScopingReady = !0, window.addEventListener("beforeprint", () => {
       let t = document.querySelector('tj-chapter-book[data-tj-print-target="true"]');
       t || (t = document.querySelector('tj-chapter-book[print-scope="component"]'), t && t.setAttribute("data-tj-print-target", "true")), t && document.documentElement.classList.add("tj-print-scope");
     }), window.addEventListener("afterprint", () => {
@@ -970,7 +993,8 @@ class g extends HTMLElement {
     }));
   }
   constructor() {
-    super(), this.synth = window.speechSynthesis, this.currentUtterance = null, this.currentButtonId = null, this.isTextSwapped = !1, this.ttsState = {
+    var t;
+    super(), this.synth = window.speechSynthesis, this.currentUtterance = null, this.currentButtonId = null, this.isTextSwapped = !1, this.studentInfo = { nickname: "", number: "", homeroom: "", teacherCode: "" }, this.submissionUrl = (t = S) == null ? void 0 : t.submissionUrl, this.isSubmitting = !1, this.ttsState = {
       status: "idle",
       activeButtonId: null,
       activeElementId: null,
@@ -1017,21 +1041,21 @@ class g extends HTMLElement {
     if (!this.synth) return;
     const t = this.synth.getVoices(), o = this.querySelector(".voice-list"), e = this.querySelector("#voice-btn");
     if (!o || !e || t.length === 0) return;
-    const r = this.language, n = r.split(/[-_]/)[0].toLowerCase(), a = t.filter((s) => s.lang.split(/[-_]/)[0].toLowerCase() === n), l = this._getBestVoice(r);
-    !this.selectedVoiceName && l && (this.selectedVoiceName = l.name), o.innerHTML = "", a.sort((s, i) => s.name.localeCompare(i.name)), a.forEach((s) => {
-      const i = document.createElement("button");
-      i.classList.add("voice-option-btn"), this.selectedVoiceName === s.name && i.classList.add("active");
+    const r = this.language, i = r.split(/[-_]/)[0].toLowerCase(), a = t.filter((s) => s.lang.split(/[-_]/)[0].toLowerCase() === i), c = this._getBestVoice(r);
+    !this.selectedVoiceName && c && (this.selectedVoiceName = c.name), o.innerHTML = "", a.sort((s, n) => s.name.localeCompare(n.name)), a.forEach((s) => {
+      const n = document.createElement("button");
+      n.classList.add("voice-option-btn"), this.selectedVoiceName === s.name && n.classList.add("active");
       let p = `<span>${s.name}</span>`;
-      l && s.name === l.name && (p += '<span class="badge">Best</span>'), i.innerHTML = p, i.onclick = () => {
+      c && s.name === c.name && (p += '<span class="badge">Best</span>'), n.innerHTML = p, n.onclick = () => {
         this.selectedVoiceName = s.name, this.cancelTTS(), this._updateVoiceList(), this._hideVoiceOverlay();
-      }, o.appendChild(i);
+      }, o.appendChild(n);
     });
   }
   _initVisibilityObserver() {
     this._visibilityObserver = new IntersectionObserver((t) => {
       t.forEach((o) => {
-        const e = o.target, r = e.id, n = e.querySelector(`#quiz-${r}`);
-        !o.isIntersecting && o.boundingClientRect.bottom < 0 && n && n.dataset.checked === "true" && !n.classList.contains("quiz-hidden-checked") && this._hideCheckedQuiz(e, n);
+        const e = o.target, r = e.id, i = e.querySelector(`#quiz-${r}`);
+        !o.isIntersecting && o.boundingClientRect.bottom < 0 && i && i.dataset.checked === "true" && !i.classList.contains("quiz-hidden-checked") && this._hideCheckedQuiz(e, i);
       });
     }, {
       threshold: 0,
@@ -1044,11 +1068,11 @@ class g extends HTMLElement {
   }
   render(t) {
     if (!t) return;
-    if (this.hasAnyTranslations = g.bookHasAnyTranslations(t), this.absoluteTotalQuestions = 0, t.chapters && t.chapters.forEach((r) => {
+    if (this.hasAnyTranslations = m.bookHasAnyTranslations(t), this.absoluteTotalQuestions = 0, t.chapters && t.chapters.forEach((r) => {
       r.quiz && (this.absoluteTotalQuestions += r.quiz.length);
     }), t.language ? (this.language = t.language, this.originalLanguage = t.language) : this.originalLanguage = this.language, t.translationLanguage ? (this.translationLanguage = t.translationLanguage, this.originalTranslationLanguage = t.translationLanguage) : (this.translationLanguage = this.language.startsWith("en") ? "th-TH" : "en-US", this.originalTranslationLanguage = this.translationLanguage), !document.getElementById("tj-chapter-book-styles")) {
       const r = document.createElement("style");
-      r.id = "tj-chapter-book-styles", r.textContent = S, document.head.appendChild(r);
+      r.id = "tj-chapter-book-styles", r.textContent = j, document.head.appendChild(r);
     }
     const o = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>', e = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>';
     this.innerHTML = `
@@ -1082,7 +1106,7 @@ class g extends HTMLElement {
             </header>
 
             <div class="chapters-container" translate="no">
-                ${t.chapters ? t.chapters.map((r, n) => this.renderChapter(r, n)).join("") : "<p>No chapters found.</p>"}
+                ${t.chapters ? t.chapters.map((r, i) => this.renderChapter(r, i)).join("") : "<p>No chapters found.</p>"}
             </div>
 
             <footer class="book-footer">
@@ -1096,8 +1120,9 @@ class g extends HTMLElement {
                     Score: <span id="score-tally">0</span> / <span id="total-tally">${this.absoluteTotalQuestions}</span>
                 </div>
                 <div class="student-inputs">
-                    <input type="text" id="student-name" placeholder="Student Name" required>
-                    <input type="text" id="student-id" placeholder="Student ID" required>
+                    <input type="text" id="student-name" placeholder="Jake" required>
+                    <input type="text" id="student-id" placeholder="01" required>
+                    <input type="text" id="student-homeroom" placeholder="1/1" required>
                 </div>
                 <div class="report-actions">
                     <button class="generate-btn" id="generate-report">Generate Report Card</button>
@@ -1106,14 +1131,8 @@ class g extends HTMLElement {
             </div>
 
             <div class="report-overlay">
-                <div class="report-modal">
-                    <div class="report-header">
-                        <h2>Chapter Book Report Card</h2>
-                    </div>
-                    <div class="report-body">
-                        <div id="report-content"></div>
-                        <button class="close-report-btn">Close Report</button>
-                    </div>
+                <div class="report-modal" style="padding: 24px; border-radius: 16px;">
+                    <div id="report-content" class="report-area"></div>
                 </div>
             </div>
 
@@ -1165,26 +1184,26 @@ class g extends HTMLElement {
     return !(t.includes("wv") || t.includes("webview") || t.includes("instagram") || t.includes("facebook") || t.includes("line"));
   }
   renderChapter(t, o) {
-    const e = `text-${t.id}`, r = `quiz-${t.id}`, n = `trans-${t.id}`, a = g.chapterHasTranslation(t), l = this.wrapWords(t.content ?? t.text), s = a ? this.wrapWords(t.translation) : "", i = s, p = t.quiz.map((b, f) => `
+    const e = `text-${t.id}`, r = `quiz-${t.id}`, i = `trans-${t.id}`, a = m.chapterHasTranslation(t), c = this.wrapWords(t.content ?? t.text), s = a ? this.wrapWords(t.translation) : "", n = s, p = t.quiz.map((b, f) => `
             <div class="question-block">
                 <p class="question-text">${b.question}</p>
-                ${b.options.map((v) => `
+                ${b.options.map((y) => `
                     <label class="option-label">
-                        <input type="radio" name="${t.id}-q${f}" value="${v.value}"> ${v.text}
+                        <input type="radio" name="${t.id}-q${f}" value="${y.value}"> ${y.text}
                     </label>
                 `).join("")}
                 <p class="feedback"></p>
             </div>
-        `).join(""), c = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>', d = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect></svg>', h = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>', u = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>', y = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>';
-    let m;
+        `).join(""), l = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>', d = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect></svg>', h = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>', u = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>', v = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>';
+    let g;
     if (this.shouldShowAudioControls())
-      m = `
+      g = `
                 <div class="audio-controls">
                     <button data-action="play" data-rate="1.0" data-target="${e}" id="btn-${t.id}-normal" class="audio-btn audio-btn-normal">
-                        <span class="icon-wrapper">${c}</span> Normal
+                        <span class="icon-wrapper">${l}</span> Normal
                     </button>
                     <button data-action="play" data-rate="0.6" data-target="${e}" id="btn-${t.id}-slow" class="audio-btn audio-btn-slow">
-                        <span class="icon-wrapper">${c}</span> Slow
+                        <span class="icon-wrapper">${l}</span> Slow
                     </button>
                     <button data-action="cancel-tts" id="btn-${t.id}-cancel" class="audio-btn audio-btn-cancel" aria-label="Cancel audio" title="Stop audio">
                         <span class="icon-wrapper">${d}</span> Cancel
@@ -1197,7 +1216,7 @@ class g extends HTMLElement {
         const w = window.location.href.replace(/^https?:\/\//, ""), x = window.location.protocol.replace(":", "");
         f = `<div style="margin-top: 0.5em;"><a href="${`intent://${w}#Intent;scheme=${x};package=com.android.chrome;end`}" style="color: var(--tj-accent-color); text-decoration: underline; font-weight: bold;">Open in Chrome</a></div>`;
       }
-      m = `
+      g = `
                 <div style="background-color: var(--tj-btn-bg); color: var(--tj-subtitle-color); padding: 0.75em; border-radius: 0.5em; border: 1px dashed var(--tj-card-border); text-align: center; font-size: 0.9em; margin-bottom: 1em;">
                     <p style="margin-bottom: 0.25em;">🎧 Audio available in Chrome or Safari</p>
                     <p>เสียงบรรยายใช้ได้ใน Chrome หรือ Safari</p>
@@ -1208,15 +1227,15 @@ class g extends HTMLElement {
             <section id="${t.id}" class="chapter-card">
                 <h2 class="chapter-title">${t.title}</h2>
                 
-                ${m}
+                ${g}
 
-                <template data-tj-template="main-original">${l}</template>
+                <template data-tj-template="main-original">${c}</template>
                 ${a ? `<template data-tj-template="main-translation">${s}</template>` : ""}
-                <template data-tj-template="trans-original">${l}</template>
+                <template data-tj-template="trans-original">${c}</template>
                 ${a ? `<template data-tj-template="trans-translation">${s}</template>` : ""}
 
                 <div id="${e}" class="chapter-text">
-                    ${this.isTextSwapped && a ? i : l}
+                    ${this.isTextSwapped && a ? n : c}
                 </div>
 
                 ${a ? `
@@ -1227,19 +1246,19 @@ class g extends HTMLElement {
                         <span class="chevron">${u}</span>
                     </summary>
                     <div style="padding: 0.5em 0.75em 0;">
-                        <button data-action="play" data-rate="1.0" data-target="${n}" data-lang="${this.translationLanguage}" id="btn-trans-${t.id}" class="audio-btn audio-btn-normal" style="font-size: 0.8em; padding: 0.25em 0.5em;">
-                            <span class="icon-wrapper">${c}</span> Play
+                        <button data-action="play" data-rate="1.0" data-target="${i}" data-lang="${this.translationLanguage}" id="btn-trans-${t.id}" class="audio-btn audio-btn-normal" style="font-size: 0.8em; padding: 0.25em 0.5em;">
+                            <span class="icon-wrapper">${l}</span> Play
                         </button>
                     </div>
-                    <div id="${n}" class="translation-content">
-                        ${this.isTextSwapped ? l : s}
+                    <div id="${i}" class="translation-content">
+                        ${this.isTextSwapped ? c : s}
                     </div>
                 </details>
                 </aside>
                 ` : ""}
 
                 <div class="quiz-container" id="${r}">
-                    <h3 class="quiz-title">${y} Comprehension</h3>
+                    <h3 class="quiz-title">${v} Comprehension</h3>
                     ${p}
                     <button data-action="check-quiz" data-target="${r}" class="check-btn">Check</button>
                 </div>
@@ -1250,19 +1269,19 @@ class g extends HTMLElement {
         `;
   }
   attachEventListeners() {
-    g.ensureGlobalPrintScoping();
+    m.ensureGlobalPrintScoping();
     const t = this.querySelector("#print-toggle");
     t && t.addEventListener("click", () => {
-      document.querySelectorAll('tj-chapter-book[data-tj-print-target="true"]').forEach((i) => {
-        i.removeAttribute("data-tj-print-target");
+      document.querySelectorAll('tj-chapter-book[data-tj-print-target="true"]').forEach((n) => {
+        n.removeAttribute("data-tj-print-target");
       }), this.setAttribute("data-tj-print-target", "true"), document.documentElement.classList.add("tj-print-scope"), window.print();
-    }), this.querySelectorAll(".lang-btn").forEach((i) => {
-      i.addEventListener("click", (p) => {
-        const c = i.dataset.swap === "true";
-        if (this.isTextSwapped !== c) {
+    }), this.querySelectorAll(".lang-btn").forEach((n) => {
+      n.addEventListener("click", (p) => {
+        const l = n.dataset.swap === "true";
+        if (this.isTextSwapped !== l) {
           this.cancelTTS();
           const d = this.language;
-          this.language = this.translationLanguage, this.translationLanguage = d, this.isTextSwapped = c, this.applyLanguageTextSwap(), this.querySelectorAll('button[id^="btn-trans-"][data-action="play"]').forEach((h) => {
+          this.language = this.translationLanguage, this.translationLanguage = d, this.isTextSwapped = l, this.applyLanguageTextSwap(), this.querySelectorAll('button[id^="btn-trans-"][data-action="play"]').forEach((h) => {
             h.dataset.lang = this.translationLanguage;
           }), this.selectedVoiceName = null, this._updateVoiceList(), this.querySelectorAll(".lang-btn").forEach((h) => {
             h.classList.toggle("active", h.dataset.swap === String(this.isTextSwapped));
@@ -1279,46 +1298,46 @@ class g extends HTMLElement {
       this._hideVoiceOverlay();
     });
     const r = this.querySelector(".voice-overlay");
-    r && r.addEventListener("click", (i) => {
-      i.target === r && this._hideVoiceOverlay();
+    r && r.addEventListener("click", (n) => {
+      n.target === r && this._hideVoiceOverlay();
     });
-    const n = this.querySelector("#theme-toggle");
-    n && n.addEventListener("click", () => {
+    const i = this.querySelector("#theme-toggle");
+    i && i.addEventListener("click", () => {
       this.classList.toggle("dark-theme");
-      const i = this.classList.contains("dark-theme"), p = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>', c = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
-      n.innerHTML = i ? p : c;
-    }), this.querySelectorAll('button[data-action="play"]').forEach((i) => {
-      i.addEventListener("click", (p) => {
-        const c = p.target.closest("button"), d = c.dataset.target, h = parseFloat(c.dataset.rate);
-        this.playAudio(d, h, c.id);
+      const n = this.classList.contains("dark-theme"), p = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>', l = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+      i.innerHTML = n ? p : l;
+    }), this.querySelectorAll('button[data-action="play"]').forEach((n) => {
+      n.addEventListener("click", (p) => {
+        const l = p.target.closest("button"), d = l.dataset.target, h = parseFloat(l.dataset.rate);
+        this.playAudio(d, h, l.id);
       });
-    }), this.querySelectorAll('button[data-action="cancel-tts"]').forEach((i) => {
-      i.addEventListener("click", () => {
+    }), this.querySelectorAll('button[data-action="cancel-tts"]').forEach((n) => {
+      n.addEventListener("click", () => {
         this.cancelTTS();
       });
-    }), this.querySelectorAll('button[data-action="check-quiz"]').forEach((i) => {
-      i.addEventListener("click", (p) => {
-        const c = p.target.closest("button"), d = c.dataset.target;
-        this.checkRadioAnswers(d, c);
+    }), this.querySelectorAll('button[data-action="check-quiz"]').forEach((n) => {
+      n.addEventListener("click", (p) => {
+        const l = p.target.closest("button"), d = l.dataset.target;
+        this.checkRadioAnswers(d, l);
       });
     });
     const a = this.querySelector("#generate-report");
     a && a.addEventListener("click", () => this.showReportCard());
-    const l = this.querySelector("#reset-book");
-    l && l.addEventListener("click", () => this.resetApp());
+    const c = this.querySelector("#reset-book");
+    c && c.addEventListener("click", () => this.resetApp());
     const s = this.querySelector(".close-report-btn");
-    s && s.addEventListener("click", () => this.hideReportCard()), this.querySelectorAll(".chapter-text, .translation-content").forEach((i) => {
-      i.addEventListener("click", (p) => {
-        const c = p.target.closest(".word");
-        if (c) {
+    s && s.addEventListener("click", () => this.hideReportCard()), this.querySelectorAll(".chapter-text, .translation-content").forEach((n) => {
+      n.addEventListener("click", (p) => {
+        const l = p.target.closest(".word");
+        if (l) {
           let d = this.language;
-          i.classList.contains("translation-content") && !this.isTextSwapped ? d = this.translationLanguage : i.classList.contains("chapter-text") && this.isTextSwapped ? d = this.language : i.classList.contains("translation-content") && this.isTextSwapped && (d = this.translationLanguage), this.playWord(c.innerText, d);
+          n.classList.contains("translation-content") && !this.isTextSwapped ? d = this.translationLanguage : n.classList.contains("chapter-text") && this.isTextSwapped ? d = this.language : n.classList.contains("translation-content") && this.isTextSwapped && (d = this.translationLanguage), this.playWord(l.innerText, d);
         }
       });
-    }), this.querySelectorAll(".translation-details").forEach((i) => {
-      i.addEventListener("toggle", (p) => {
-        const c = i.closest(".chapter-card");
-        c && this.handleTranslationToggle(c.id, i.open);
+    }), this.querySelectorAll(".translation-details").forEach((n) => {
+      n.addEventListener("toggle", (p) => {
+        const l = n.closest(".chapter-card");
+        l && this.handleTranslationToggle(l.id, n.open);
       });
     });
   }
@@ -1326,15 +1345,15 @@ class g extends HTMLElement {
     const o = (r) => /[\u0E00-\u0E7F]/.test(r);
     return (Array.isArray(t) ? t : [t]).map((r) => {
       if (r == null) return "";
-      const n = r.replace(/<[^>]*>/g, "");
-      return o(n) ? `<p>${r}</p>` : `<p>${n.split(/(\s+)/).map((s) => /\s+/.test(s) || s === "" ? s : `<span class="word">${s}</span>`).join("")}</p>`;
+      const i = r.replace(/<[^>]*>/g, "");
+      return o(i) ? `<p>${r}</p>` : `<p>${i.split(/(\s+)/).map((s) => /\s+/.test(s) || s === "" ? s : `<span class="word">${s}</span>`).join("")}</p>`;
     }).join("");
   }
   updateIcon(t, o) {
     const e = this.querySelector(`#${t}`);
     if (!e) return;
-    const r = e.querySelector(".icon-wrapper"), n = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>', a = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
-    o === "play" ? (r.innerHTML = n, e.classList.remove("playing")) : o === "pause" && (r.innerHTML = a, e.classList.add("playing"));
+    const r = e.querySelector(".icon-wrapper"), i = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>', a = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+    o === "play" ? (r.innerHTML = i, e.classList.remove("playing")) : o === "pause" && (r.innerHTML = a, e.classList.add("playing"));
   }
   resetAllButtons() {
     this.querySelectorAll('button[data-action="play"]').forEach((t) => {
@@ -1352,8 +1371,8 @@ class g extends HTMLElement {
     this.querySelectorAll("section.chapter-card").forEach((t) => {
       const o = t.querySelector('.chapter-text[id^="text-"]'), e = t.querySelector('.translation-content[id^="trans-"]');
       if (!o || !e) return;
-      const r = t.querySelector(this.isTextSwapped ? 'template[data-tj-template="main-translation"]' : 'template[data-tj-template="main-original"]'), n = t.querySelector(this.isTextSwapped ? 'template[data-tj-template="trans-original"]' : 'template[data-tj-template="trans-translation"]');
-      r && (o.innerHTML = r.innerHTML), n && (e.innerHTML = n.innerHTML);
+      const r = t.querySelector(this.isTextSwapped ? 'template[data-tj-template="main-translation"]' : 'template[data-tj-template="main-original"]'), i = t.querySelector(this.isTextSwapped ? 'template[data-tj-template="trans-original"]' : 'template[data-tj-template="trans-translation"]');
+      r && (o.innerHTML = r.innerHTML), i && (e.innerHTML = i.innerHTML);
     });
   }
   handleTranslationToggle(t, o) {
@@ -1364,11 +1383,11 @@ class g extends HTMLElement {
       return;
     }
     if (this.ttsState.status === "playing") {
-      const n = (() => {
-        const l = this.querySelector(`#${e}`);
-        return l && l.dataset.lang ? l.dataset.lang : this.language;
+      const i = (() => {
+        const c = this.querySelector(`#${e}`);
+        return c && c.dataset.lang ? c.dataset.lang : this.language;
       })();
-      if (this.ttsState.activeRate !== o || this.ttsState.activeLang !== n) {
+      if (this.ttsState.activeRate !== o || this.ttsState.activeLang !== i) {
         this.cancelTTS(), this.startNewSpeech(t, o, e);
         return;
       }
@@ -1376,11 +1395,11 @@ class g extends HTMLElement {
       return;
     }
     if (this.ttsState.status === "paused") {
-      const n = (() => {
-        const l = this.querySelector(`#${e}`);
-        return l && l.dataset.lang ? l.dataset.lang : this.language;
+      const i = (() => {
+        const c = this.querySelector(`#${e}`);
+        return c && c.dataset.lang ? c.dataset.lang : this.language;
       })();
-      if (this.ttsState.activeRate !== o || this.ttsState.activeLang !== n) {
+      if (this.ttsState.activeRate !== o || this.ttsState.activeLang !== i) {
         this.cancelTTS(), this.startNewSpeech(t, o, e);
         return;
       }
@@ -1404,13 +1423,13 @@ class g extends HTMLElement {
     this.ttsState.status = "playing", this.ttsState.activeButtonId = e, this.ttsState.activeElementId = t, this.ttsState.activeRate = o, this.updateIcon(e, "pause");
     try {
       this.synth && this.synth.resume();
-    } catch (n) {
-      console.warn("Speech resume() failed:", n);
+    } catch (i) {
+      console.warn("Speech resume() failed:", i);
     }
     window.setTimeout(() => {
       if (this._ttsActionSeq !== r) return;
-      const n = !!(this.synth && this.synth.paused), a = !!(this.synth && this.synth.speaking);
-      this.ttsState.status === "playing" && (n || !a) && this.startNewSpeech(t, o, e);
+      const i = !!(this.synth && this.synth.paused), a = !!(this.synth && this.synth.speaking);
+      this.ttsState.status === "playing" && (i || !a) && this.startNewSpeech(t, o, e);
     }, 650);
   }
   startNewSpeech(t, o, e) {
@@ -1419,20 +1438,20 @@ class g extends HTMLElement {
       this.showTTSError(e);
       return;
     }
-    const n = this.querySelector(`#${t}`);
-    if (!n) return;
-    const a = n.innerText, l = this.querySelector(`#${e}`), s = l && l.dataset.lang ? l.dataset.lang : this.language;
+    const i = this.querySelector(`#${t}`);
+    if (!i) return;
+    const a = i.innerText, c = this.querySelector(`#${e}`), s = c && c.dataset.lang ? c.dataset.lang : this.language;
     this._ttsActionSeq++, this._ttsUtteranceSeq++;
-    const i = this._ttsUtteranceSeq;
+    const n = this._ttsUtteranceSeq;
     this.ttsState.status = "playing", this.ttsState.activeButtonId = e, this.ttsState.activeElementId = t, this.ttsState.activeRate = o, this.ttsState.activeLang = s;
     try {
       this.currentUtterance = new SpeechSynthesisUtterance(a);
-      let c = this.synth.getVoices().find((u) => u.name === this.selectedVoiceName);
-      const d = c ? c.lang.split(/[-_]/)[0].toLowerCase() : null, h = s.split(/[-_]/)[0].toLowerCase();
-      (!c || d !== h) && (c = this._getBestVoice(s)), c && (this.currentUtterance.voice = c), this.currentUtterance.lang = s, this.currentUtterance.rate = o, this.currentUtterance.onend = () => {
-        this._ttsUtteranceSeq === i && (this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null, this.currentButtonId = null, this.currentUtterance = null);
+      let l = this.synth.getVoices().find((u) => u.name === this.selectedVoiceName);
+      const d = l ? l.lang.split(/[-_]/)[0].toLowerCase() : null, h = s.split(/[-_]/)[0].toLowerCase();
+      (!l || d !== h) && (l = this._getBestVoice(s)), l && (this.currentUtterance.voice = l), this.currentUtterance.lang = s, this.currentUtterance.rate = o, this.currentUtterance.onend = () => {
+        this._ttsUtteranceSeq === n && (this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null, this.currentButtonId = null, this.currentUtterance = null);
       }, this.currentUtterance.onerror = (u) => {
-        this._ttsUtteranceSeq === i && (console.error("Speech error:", u), this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null, this.currentButtonId = null, u.error !== "canceled" && u.error !== "interrupted" && this.showTTSError(e));
+        this._ttsUtteranceSeq === n && (console.error("Speech error:", u), this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null, this.currentButtonId = null, u.error !== "canceled" && u.error !== "interrupted" && this.showTTSError(e));
       }, this.currentButtonId = e, this.updateIcon(e, "pause"), this.synth.speak(this.currentUtterance);
     } catch (p) {
       console.error("Speech synthesis setup error", p), this.showTTSError(e), this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null;
@@ -1444,9 +1463,9 @@ class g extends HTMLElement {
     if (!e) return;
     this.synth.cancel();
     const r = new SpeechSynthesisUtterance(e);
-    let a = this.synth.getVoices().find((i) => i.name === this.selectedVoiceName);
-    const l = a ? a.lang.split(/[-_]/)[0].toLowerCase() : null, s = (o || this.language).split(/[-_]/)[0].toLowerCase();
-    (!a || l !== s) && (a = this._getBestVoice(o || this.language)), a && (r.voice = a), r.lang = o || this.language, r.rate = 0.8, this.synth.speak(r);
+    let a = this.synth.getVoices().find((n) => n.name === this.selectedVoiceName);
+    const c = a ? a.lang.split(/[-_]/)[0].toLowerCase() : null, s = (o || this.language).split(/[-_]/)[0].toLowerCase();
+    (!a || c !== s) && (a = this._getBestVoice(o || this.language)), a && (r.voice = a), r.lang = o || this.language, r.rate = 0.8, this.synth.speak(r);
   }
   showTTSError(t) {
     const o = `
@@ -1459,9 +1478,9 @@ class g extends HTMLElement {
     if (t) {
       const a = this.querySelector(`#${t}`);
       if (a) {
-        const l = a.closest(".audio-controls");
-        if (l) {
-          l.innerHTML = o;
+        const c = a.closest(".audio-controls");
+        if (c) {
+          c.innerHTML = o;
           return;
         }
       }
@@ -1485,33 +1504,33 @@ class g extends HTMLElement {
         `;
     const r = e.querySelector("button");
     r.onclick = () => e.remove();
-    const n = this.querySelector(".book-header");
-    n ? n.after(e) : this.prepend(e);
+    const i = this.querySelector(".book-header");
+    i ? i.after(e) : this.prepend(e);
   }
   checkRadioAnswers(t, o) {
-    const e = this.querySelector(`#${t}`), r = e.closest(".chapter-card"), n = e.querySelectorAll(".question-block");
-    let a = 0, l = 0, s = !0;
-    if (n.forEach((d) => {
+    const e = this.querySelector(`#${t}`), r = e.closest(".chapter-card"), i = e.querySelectorAll(".question-block");
+    let a = 0, c = 0, s = !0;
+    if (i.forEach((d) => {
       d.querySelector('input[type="radio"]:checked') || (s = !1);
     }), !s) {
       alert("Please answer all questions before checking.");
       return;
     }
-    o && (o.disabled = !0, o.textContent = "Checked", o.style.opacity = "0.7", o.style.cursor = "not-allowed"), e.dataset.checked = "true", n.forEach((d) => {
+    o && (o.disabled = !0, o.textContent = "Checked", o.style.opacity = "0.7", o.style.cursor = "not-allowed"), e.dataset.checked = "true", i.forEach((d) => {
       const h = d.querySelector('input[type="radio"]:checked'), u = d.querySelector(".feedback");
-      if (d.querySelectorAll('input[type="radio"]').forEach((m) => m.disabled = !0), l++, u.classList.remove("feedback-correct", "feedback-wrong", "feedback-neutral"), h.value === "correct")
+      if (d.querySelectorAll('input[type="radio"]').forEach((g) => g.disabled = !0), c++, u.classList.remove("feedback-correct", "feedback-wrong", "feedback-neutral"), h.value === "correct")
         u.textContent = "Correct !", u.classList.add("feedback-correct"), a++;
       else {
         u.textContent = "Incorrect.", u.classList.add("feedback-wrong");
-        const m = r ? r.querySelector(".chapter-title").innerText : "Unknown Chapter", b = d.querySelector(".question-text").innerText;
+        const g = r ? r.querySelector(".chapter-title").innerText : "Unknown Chapter", b = d.querySelector(".question-text").innerText;
         this.wrongQuestions.push({
           question: b,
-          chapter: m
+          chapter: g
         });
       }
-    }), this.updateScore(a, l);
-    const i = t.replace("quiz-", ""), p = this.querySelector(`#lock-msg-${i}`), c = r.querySelector(`#trans-aside-${i}`);
-    c && (c.style.display = "block"), p && (p.innerHTML = "Answers and translation will disappear when you scroll past.", p.classList.add("visible"), p.style.display = "block");
+    }), this.updateScore(a, c);
+    const n = t.replace("quiz-", ""), p = this.querySelector(`#lock-msg-${n}`), l = r.querySelector(`#trans-aside-${n}`);
+    l && (l.style.display = "block"), p && (p.innerHTML = "Answers and translation will disappear when you scroll past.", p.classList.add("visible"), p.style.display = "block");
   }
   updateScore(t, o) {
     this.totalScore = (this.totalScore || 0) + t;
@@ -1519,67 +1538,121 @@ class g extends HTMLElement {
     e && r && (e.textContent = this.totalScore, r.textContent = this.absoluteTotalQuestions);
   }
   showReportCard() {
-    const t = this.querySelector("#student-name"), o = this.querySelector("#student-id"), e = t.value.trim(), r = o.value.trim();
-    if (!e || !r) {
-      alert("Please enter both Student Name and Student ID before generating a report card."), e ? o.focus() : t.focus();
+    const t = this.querySelector("#student-name"), o = this.querySelector("#student-id"), e = this.querySelector("#student-homeroom"), r = t.value.trim(), i = o.value.trim(), a = e.value.trim();
+    if (!r || !i) {
+      alert("Please enter both Student Name and Student ID before generating a report card."), r ? o.focus() : t.focus();
       return;
     }
-    t.disabled = !0, o.disabled = !0;
-    const n = this.querySelector(".report-overlay"), a = this.querySelector("#report-content"), l = /* @__PURE__ */ new Date(), s = l.toLocaleDateString(), i = l.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), p = this.querySelector(".book-title").innerText, c = this.absoluteTotalQuestions > 0 ? Math.round(this.totalScore / this.absoluteTotalQuestions * 100) : 0;
-    let d = "";
-    this.wrongQuestions.length > 0 ? d = `
-                <div class="report-wrong-list">
-                    <h3 style="font-size: 1.1em; color: #ef4444; margin-bottom: 0.5em;">Needs Review:</h3>
-                    ${this.wrongQuestions.map((h) => `
-                        <div class="report-wrong-item">
-                            <span class="report-wrong-chapter">${h.chapter}</span>
-                            ${h.question}
+    this.studentInfo = { ...this.studentInfo, nickname: r, number: i, homeroom: a }, t.disabled = !0, o.disabled = !0, e && (e.disabled = !0);
+    const c = this.querySelector(".report-overlay"), s = this.querySelector("#report-content"), n = /* @__PURE__ */ new Date(), p = n.toLocaleDateString(), l = n.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), d = this.querySelector(".book-title").innerText, h = this.absoluteTotalQuestions > 0 ? Math.round(this.totalScore / this.absoluteTotalQuestions * 100) : 0, u = h >= 80 ? "🏆" : h >= 50 ? "⭐" : "💪", v = h >= 80 ? "Excellent!" : h >= 50 ? "Good effort!" : "Keep practicing!";
+    s.innerHTML = `
+            <div class="rc-header">
+                <div class="rc-icon">📄</div>
+                <div class="rc-title">${d}</div>
+                <div class="rc-subtitle">Report Card</div>
+            </div>
+            <div class="rc-student">
+                <span class="rc-label">Student</span>
+                <span class="rc-value">${r} <span class="rc-number">(${i}) ${a ? `- ${a}` : ""}</span></span>
+            </div>
+            <div class="rc-score-row">
+                <div class="rc-score-circle">
+                    <div class="rc-score-val">${h}%</div>
+                    <div class="rc-score-pct">Overall</div>
+                </div>
+                <div class="rc-score-label">${u} ${v}</div>
+            </div>
+            <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${h}%"></div></div>
+            <div class="rc-details">
+                <div class="rc-detail-row"><span>Total Score</span><span>${this.totalScore} / ${this.absoluteTotalQuestions}</span></div>
+                <div class="rc-detail-row"><span>Date</span><span>${p}</span></div>
+                <div class="rc-detail-row"><span>Time</span><span>${l}</span></div>
+            </div>
+
+            ${this.wrongQuestions.length > 0 ? `
+                <div class="report-wrong-list" style="margin-bottom: 20px;">
+                    <h3 style="font-size: 1em; color: var(--tj-error-color); margin-bottom: 10px; font-weight: 700;">Needs Review:</h3>
+                    <div style="max-height: 200px; overflow-y: auto; background: var(--tj-btn-bg); border-radius: 8px; border: 1px solid var(--tj-card-border);">
+                    ${this.wrongQuestions.map((f) => `
+                        <div class="report-wrong-item" style="padding: 10px; border-bottom: 1px solid var(--tj-card-border);">
+                            <span class="report-wrong-chapter" style="font-size: 0.75em; color: var(--tj-subtitle-color); text-transform: uppercase;">${f.chapter}</span>
+                            <div style="font-size: 0.9em;">${f.question}</div>
                         </div>
                     `).join("")}
+                    </div>
                 </div>
-            ` : this.absoluteTotalQuestions > 0 && (d = '<p style="color: #10b981; font-weight: bold; text-align: center; margin-top: 2em;">Excellent! No incorrect answers.</p>'), a.innerHTML = `
-            <div class="report-info-grid">
-                <span class="report-info-label">Student:</span>
-                <span>${e}</span>
-                <span class="report-info-label">ID:</span>
-                <span>${r}</span>
-                <span class="report-info-label">Book:</span>
-                <span>${p}</span>
-                <span class="report-info-label">Date:</span>
-                <span>${s} at ${i}</span>
+            ` : ""}
+
+            <div class="rc-submission-box">
+                <p class="rc-submission-header">Official Submission</p>
+                <input type="text" id="report-teacher-code" class="rc-teacher-code-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ""}">
+                <p class="rc-help-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
             </div>
 
-            <div class="report-score-box">
-                <span class="report-info-label" style="display: block; margin-bottom: 0.5em;">Final Score</span>
-                <span class="report-score-value">${this.totalScore} / ${this.absoluteTotalQuestions}</span>
-                <span style="font-weight: bold; color: var(--tj-accent-color); font-size: 1.25em;">${c}%</span>
+            <div class="rc-actions" style="margin-top: 16px;">
+                <button class="rc-submit-btn" id="submit-score-btn">Submit Score Online</button>
+                <button class="rc-secondary-btn close-report-btn">Close Report</button>
             </div>
-
-            ${d}
-        `, n.classList.add("visible");
+        `;
+    const g = s.querySelector("#submit-score-btn");
+    g && (g.onclick = () => this._submitScore());
+    const b = s.querySelector(".close-report-btn");
+    b && (b.onclick = () => this.hideReportCard()), c.classList.add("visible");
   }
   hideReportCard() {
     this.querySelector(".report-overlay").classList.remove("visible");
+  }
+  async _submitScore() {
+    const t = this.querySelector("#report-teacher-code"), o = t ? t.value.trim() : this.studentInfo.teacherCode;
+    if (this.studentInfo.teacherCode = o, o !== "6767") {
+      alert("Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.");
+      return;
+    }
+    if (this.isSubmitting) return;
+    const e = this.querySelector("#submit-score-btn");
+    if (!e) return;
+    const r = e.textContent;
+    this.isSubmitting = !0, e.textContent = "Submitting...", e.disabled = !0;
+    const i = this.querySelector(".book-title").innerText, a = this.absoluteTotalQuestions > 0 ? Math.round(this.totalScore / this.absoluteTotalQuestions * 100) : 0, c = {
+      nickname: this.studentInfo.nickname,
+      homeroom: this.studentInfo.homeroom || "",
+      studentId: this.studentInfo.number,
+      quizName: "Book- " + i,
+      score: a,
+      total: 100
+    };
+    try {
+      await fetch(this.submissionUrl, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(c)
+      }), alert("Score successfully submitted!"), e.textContent = "Submitted ✓", e.style.background = "var(--tj-subtitle-color)";
+    } catch (s) {
+      console.error("Error submitting score:", s), alert("There was an error submitting your score. Please try again."), e.textContent = r, e.disabled = !1, this.isSubmitting = !1;
+    }
   }
   resetApp(t = !1) {
     if (!t && !confirm("Are you sure you want to reset everything? Your scores and progress will be lost.")) return;
     this.totalScore = 0, this.wrongQuestions = [];
     const o = this.querySelector("#student-name"), e = this.querySelector("#student-id");
     o && (o.disabled = !1, o.value = ""), e && (e.disabled = !1, e.value = "");
-    const r = this.querySelector("#score-tally"), n = this.querySelector("#total-tally");
-    r && (r.textContent = "0"), n && (n.textContent = this.absoluteTotalQuestions), this.querySelectorAll(".chapter-card").forEach((a) => {
-      const l = `quiz-${a.id}`, s = a.querySelector(`#${l}`);
+    const r = this.querySelector("#score-tally"), i = this.querySelector("#total-tally");
+    r && (r.textContent = "0"), i && (i.textContent = this.absoluteTotalQuestions), this.querySelectorAll(".chapter-card").forEach((a) => {
+      const c = `quiz-${a.id}`, s = a.querySelector(`#${c}`);
       if (s) {
         s.classList.remove("quiz-hidden-checked", "locked-open", "locked-delay"), delete s.dataset.checked;
-        const c = s.querySelector('button[data-action="check-quiz"]');
-        c && (c.disabled = !1, c.textContent = "Check", c.style.opacity = "1", c.style.cursor = "pointer"), s.querySelectorAll('input[type="radio"]').forEach((d) => {
+        const l = s.querySelector('button[data-action="check-quiz"]');
+        l && (l.disabled = !1, l.textContent = "Check", l.style.opacity = "1", l.style.cursor = "pointer"), s.querySelectorAll('input[type="radio"]').forEach((d) => {
           d.disabled = !1, d.checked = !1;
         }), s.querySelectorAll(".feedback").forEach((d) => {
           d.textContent = "", d.className = "feedback";
         });
       }
-      const i = a.querySelector(".translation-details");
-      i && (i.classList.remove("translation-hidden-checked"), i.open = !1);
+      const n = a.querySelector(".translation-details");
+      n && (n.classList.remove("translation-hidden-checked"), n.open = !1);
       const p = a.querySelector(".quiz-lock-message");
       p && (p.classList.remove("visible"), p.textContent = "");
     }), this.lockoutTimers.forEach((a) => clearInterval(a)), this.lockoutTimers.clear(), window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1588,4 +1661,4 @@ class g extends HTMLElement {
     this.synth && this.synth.cancel(), this._visibilityObserver && this._visibilityObserver.disconnect();
   }
 }
-customElements.define("tj-chapter-book", g);
+customElements.define("tj-chapter-book", m);

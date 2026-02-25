@@ -638,7 +638,7 @@ class TjListening extends HTMLElement {
             </div>
 
             <div class="rc-submission-box">
-                <p class="rc-submission-header">Official Submission</p>
+                <p class="rc-submission-header">Submission (Optional)</p>
                 <input type="text" id="report-teacher-code" class="rc-teacher-code-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ''}">
                 <p class="rc-help-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
             </div>
