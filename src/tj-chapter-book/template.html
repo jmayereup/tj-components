@@ -1,0 +1,62 @@
+<header class="book-header">
+    <div class="header-actions">
+        <div id="audio-controls-placeholder"></div>
+        <button id="print-toggle" class="print-toggle" aria-label="Print" title="Print friendly version">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        </button>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+    </div>
+    <h1 class="book-title" id="book-title"></h1>
+    <p class="book-subtitle" id="book-subtitle"></p>
+    <div id="lang-selector-placeholder"></div>
+</header>
+
+<div class="chapters-container" id="chapters-container" translate="no"></div>
+
+<footer class="book-footer">
+    <p>Note: I apologize for any cultural stereotypes or oversimplifications that may appear in these materials.
+    My goal is to create accessible content for language learners, but I recognize this may sometimes result in generalizations.
+    I welcome feedback to help me improve cultural sensitivity and accuracy.</p>
+</footer>
+
+<div class="report-card-section">
+    <div class="report-tally">
+        Score: <span id="score-tally">0</span> / <span id="total-tally">0</span>
+    </div>
+    <div class="student-inputs">
+        <input type="text" id="student-name" placeholder="Jake" required>
+        <input type="text" id="student-id" placeholder="01" required>
+        <input type="text" id="student-homeroom" placeholder="1/1" required>
+    </div>
+    <div class="report-actions">
+        <button class="generate-btn" id="generate-report">Generate Report Card</button>
+        <button class="reset-btn" id="reset-book">Reset Quiz</button>
+    </div>
+</div>
+
+<div class="report-overlay" id="report-overlay">
+    <div class="report-modal" style="padding: 24px; border-radius: 16px;">
+        <div id="report-content" class="report-area"></div>
+    </div>
+</div>
+
+<div class="voice-overlay" id="voice-overlay">
+    <div class="voice-card">
+        <div class="voice-card-header">
+            <h3>Choose Voice</h3>
+            <button class="close-voice-btn">×</button>
+        </div>
+        <div class="voice-list"></div>
+    </div>
+</div>
+
+<div class="browser-prompt-overlay" id="browser-prompt-overlay">
+    <div class="browser-prompt-card">
+        <h2>Browser Support Needed</h2>
+        <p>This application works best in standard browsers like <strong>Chrome</strong> or <strong>Safari</strong> to enable high-quality text-to-speech features.</p>
+        <p>กรุณาเปิดใน Chrome หรือ Safari เพื่อใช้งานฟีเจอร์เสียงแบบเต็มรูปแบบ</p>
+        <a class="browser-action-btn">Open in Browser</a>
+    </div>
+</div>

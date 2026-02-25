@@ -1,5 +1,7 @@
 import { getBestVoice } from '../audio-utils.js';
 import { config } from '../tj-config.js';
+import stylesText from "./styles.css?inline";
+import templateHtml from "./template.html?raw";
 
 class TjListening extends HTMLElement {
     // Static registry of all instances on the page
@@ -95,6 +97,13 @@ class TjListening extends HTMLElement {
     }
 
     render() {
+        if (!this.shadowRoot.querySelector('#lesson-container')) {
+            const template = document.createElement("template");
+            template.innerHTML = `<style>${stylesText}</style>${templateHtml}`;
+            this.shadowRoot.appendChild(template.content.cloneNode(true));
+            this._attachBaseListeners();
+        }
+
         if (this.isCompleted) {
             this.renderScoreScreen();
         } else {
@@ -106,81 +115,56 @@ class TjListening extends HTMLElement {
         const data = this.lessonData;
         const phaseLabels = ['Introduction', 'Vocabulary', 'Listening'];
 
-        let phaseContent = '';
-        if (this.currentPhase === 0) {
-            phaseContent = this._renderIntroPhase();
-        } else if (this.currentPhase === 1) {
-            phaseContent = this._renderVocabPhase();
+        // Show lesson container, hide score screen
+        this.shadowRoot.getElementById('lesson-container').style.display = 'block';
+        const scoreScreen = this.shadowRoot.getElementById('score-screen');
+        if (scoreScreen) scoreScreen.style.display = 'none';
+
+        // Update Header
+        this.shadowRoot.getElementById('lesson-title').textContent = data.title || 'Listening Lesson';
+        this.shadowRoot.getElementById('phase-badge').textContent = phaseLabels[this.currentPhase];
+        
+        const progressInfo = this.shadowRoot.getElementById('progress-info');
+        if (this.currentPhase === 2) {
+            progressInfo.style.display = 'block';
+            progressInfo.textContent = `${this.answeredCount} / ${this.totalQuestions} Answered`;
         } else {
-            phaseContent = this._renderListeningPhase();
+            progressInfo.style.display = 'none';
         }
 
-        const html = `
-      <style>${this.getBaseStyles()}</style>
-      <div class="container">
-        <div class="header-row">
-            <div class="header-info">
-                <h2>${data.title || 'Listening Lesson'}</h2>
-                <div class="phase-badge">${phaseLabels[this.currentPhase]}</div>
+        // Update Phase Dots
+        const dotsContainer = this.shadowRoot.getElementById('phase-dots');
+        dotsContainer.innerHTML = phaseLabels.map((label, i) => `
+            <div class="phase-dot-group ${i === this.currentPhase ? 'active' : ''} ${i < this.currentPhase ? 'completed' : ''}">
+                <div class="phase-dot">${i < this.currentPhase ? '✓' : i + 1}</div>
+                <span class="phase-dot-label">${label}</span>
             </div>
-            <div class="header-controls">
-                <button id="share-quiz-btn" class="share-btn" title="Share as Quiz (no transcript)">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
-                    </svg>
-                    <span>Share Quiz</span>
-                </button>
-                <button id="voice-btn" class="icon-btn" title="Choose Voice">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                        <path d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z"/>
-                    </svg>
-                </button>
-                ${this.currentPhase === 2 ? `<div class="progress-info">${this.answeredCount} / ${this.totalQuestions} Answered</div>` : ''}
-            </div>
-        </div>
+            ${i < phaseLabels.length - 1 ? '<div class="phase-dot-line"></div>' : ''}
+        `).join('');
 
-        <!-- Phase Progress Dots -->
-        <div class="phase-dots">
-            ${phaseLabels.map((label, i) => `
-                <div class="phase-dot-group ${i === this.currentPhase ? 'active' : ''} ${i < this.currentPhase ? 'completed' : ''}">
-                    <div class="phase-dot">${i < this.currentPhase ? '✓' : i + 1}</div>
-                    <span class="phase-dot-label">${label}</span>
-                </div>
-                ${i < phaseLabels.length - 1 ? '<div class="phase-dot-line"></div>' : ''}
-            `).join('')}
-        </div>
+        // Update Phase Content
+        const contentContainer = this.shadowRoot.getElementById('phase-content');
+        if (this.currentPhase === 0) {
+            contentContainer.innerHTML = this._renderIntroPhase();
+        } else if (this.currentPhase === 1) {
+            contentContainer.innerHTML = this._renderVocabPhase();
+        } else {
+            contentContainer.innerHTML = this._renderListeningPhase();
+        }
 
-        <div class="phase-content">
-            ${phaseContent}
-        </div>
+        // Update Nav Buttons
+        const prevBtn = this.shadowRoot.getElementById('prev-btn');
+        const nextBtn = this.shadowRoot.getElementById('next-btn');
+        if (prevBtn) prevBtn.disabled = this.currentPhase === 0;
+        if (nextBtn) {
+            if (this.currentPhase < 2) {
+                nextBtn.style.display = 'flex';
+            } else {
+                nextBtn.style.display = 'none';
+            }
+        }
 
-        <div class="phase-nav">
-            <button class="nav-btn" id="prev-btn" ${this.currentPhase === 0 ? 'disabled' : ''}>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-                Back
-            </button>
-            ${this.currentPhase < 2 ? `
-                <button class="nav-btn nav-btn-primary" id="next-btn">
-                    Next
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                </button>
-            ` : ''}
-        </div>
-      </div>
-
-      <div class="voice-overlay" id="voice-overlay" style="display: none;">
-        <div class="voice-card">
-            <div class="voice-card-header">
-                <h3>Choose Voice</h3>
-                <button class="close-voice-btn" id="close-voice-btn">×</button>
-            </div>
-            <div class="voice-list" id="voice-list"></div>
-        </div>
-      </div>
-    `;
-
-        this.shadowRoot.innerHTML = html;
-        this._attachListeners();
+        this._attachPhaseListeners();
     }
 
     // ─── PHASE RENDERERS ───────────────────────────────────
@@ -327,7 +311,7 @@ class TjListening extends HTMLElement {
 
     // ─── EVENT LISTENERS ───────────────────────────────────
 
-    _attachListeners() {
+    _attachBaseListeners() {
         // Navigation
         const prevBtn = this.shadowRoot.getElementById('prev-btn');
         const nextBtn = this.shadowRoot.getElementById('next-btn');
@@ -344,7 +328,9 @@ class TjListening extends HTMLElement {
         this.shadowRoot.getElementById('voice-overlay').onclick = (e) => {
             if (e.target.id === 'voice-overlay') this._hideVoiceOverlay();
         };
+    }
 
+    _attachPhaseListeners() {
         // TTS buttons (vocab + question play buttons)
         this.shadowRoot.querySelectorAll('.tts-btn, .vocab-play-btn').forEach(btn => {
             btn.onclick = () => this._playTTS(btn.getAttribute('data-text'));
@@ -504,42 +490,25 @@ class TjListening extends HTMLElement {
 
         const isLast = this._isLastInstance();
 
-        const html = `
-  <style>${this.getBaseStyles()}</style>
-  <div class="container score-screen">
-    <div class="score-circle">
-        <div class="score-value">${this.score}/${this.totalQuestions}</div>
-        <div class="score-percent">${percentage}%</div>
-    </div>
-    <h2>${emoji} ${percentage >= 80 ? 'Excellent!' : percentage >= 50 ? 'Good effort!' : 'Keep practicing!'}</h2>
-    <p>You completed the "${this.lessonData.title || 'Listening Lesson'}" activity.</p>
-    <div class="score-actions">
-        <button class="role-btn" id="restart-btn">Try Again</button>
-        ${isLast ? `<button class="report-btn" id="report-btn">📄 See Report Card</button>` : ''}
-    </div>
-    ${combinedHtml}
-  </div>
+        // Hide lesson, show score screen
+        this.shadowRoot.getElementById('lesson-container').style.display = 'none';
+        const scoreScreen = this.shadowRoot.getElementById('score-screen');
+        scoreScreen.style.display = 'block';
 
-  ${isLast ? `
-  <div class="report-overlay" id="report-overlay" style="display:none;">
-    <div class="report-modal">
-      <div class="initial-form" id="initial-form">
-        <div class="report-icon">📄</div>
-        <h2>Report Card</h2>
-        <p>Enter your details to generate your report.</p>
-        <input type="text" id="nickname-input" placeholder="Jake" autocomplete="off">
-        <input type="text" id="number-input" placeholder="01" autocomplete="off" inputmode="numeric">
-        <input type="text" id="homeroom-input" placeholder="1/1" autocomplete="off">
-        <button class="generate-btn" id="generate-btn">Generate Report Card</button>
-        <button class="cancel-btn" id="cancel-btn">Cancel</button>
-      </div>
-      <div id="report-area" style="display:none;"></div>
-    </div>
-  </div>
-  ` : ''}
-`;
+        scoreScreen.innerHTML = `
+            <div class="score-circle">
+                <div class="score-value">${this.score}/${this.totalQuestions}</div>
+                <div class="score-percent">${percentage}%</div>
+            </div>
+            <h2>${emoji} ${percentage >= 80 ? 'Excellent!' : percentage >= 50 ? 'Good effort!' : 'Keep practicing!'}</h2>
+            <p>You completed the "${this.lessonData.title || 'Listening Lesson'}" activity.</p>
+            <div class="score-actions">
+                <button class="role-btn" id="restart-btn">Try Again</button>
+                ${isLast ? `<button class="report-btn" id="report-btn">📄 See Report Card</button>` : ''}
+            </div>
+            ${combinedHtml}
+        `;
 
-        this.shadowRoot.innerHTML = html;
         this.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         this.shadowRoot.getElementById('restart-btn').addEventListener('click', () => {
@@ -831,326 +800,6 @@ class TjListening extends HTMLElement {
         });
     }
 
-    // ─── STYLES ────────────────────────────────────────────
-
-    getBaseStyles() {
-        return `
-      :host { display: block; font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; margin-bottom: 2rem; color: black; background-color: white; }
-      .container { border: 1px solid #e2e8f0; padding: 24px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-
-      /* Header */
-      .header-row { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f1f5f9; margin-bottom: 10px; padding-bottom: 10px; }
-      .header-info h2 { margin: 0; color: #1e293b; }
-      .phase-badge { font-size: 0.8em; color: #64748b; font-weight: 600; text-transform: uppercase; margin-top: 4px; }
-      .header-controls { display: flex; align-items: center; gap: 12px; }
-      .progress-info { background: #f1f5f9; padding: 6px 14px; border-radius: 12px; font-size: 0.9em; font-weight: 600; color: #64748b; white-space: nowrap; }
-      .icon-btn { background: none; border: 1px solid #e2e8f0; padding: 8px; border-radius: 8px; cursor: pointer; color: #475569; transition: all 0.2s; }
-      .icon-btn:hover { background-color: #f1f5f9; color: #2563eb; border-color: #2563eb; }
-
-      /* Phase Progress Dots */
-      .phase-dots { display: flex; align-items: center; justify-content: center; gap: 0; margin: 20px 0; }
-      .phase-dot-group { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-      .phase-dot { width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85em; color: #94a3b8; transition: all 0.3s; }
-      .phase-dot-group.active .phase-dot { background: #2563eb; border-color: #2563eb; color: white; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
-      .phase-dot-group.completed .phase-dot { background: #dcfce7; border-color: #22c55e; color: #166534; }
-      .phase-dot-label { font-size: 0.7em; color: #94a3b8; font-weight: 600; text-transform: uppercase; }
-      .phase-dot-group.active .phase-dot-label { color: #2563eb; }
-      .phase-dot-group.completed .phase-dot-label { color: #22c55e; }
-      .phase-dot-line { width: 48px; height: 2px; background: #e2e8f0; margin: 0 4px; margin-bottom: 20px; }
-
-      /* Phase Navigation */
-      .phase-nav { display: flex; justify-content: space-between; margin-top: 24px; padding-top: 16px; border-top: 1px solid #f1f5f9; }
-      .nav-btn { display: flex; align-items: center; gap: 6px; padding: 10px 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer; font-weight: 600; color: #475569; transition: all 0.2s; font-size: 0.95em; }
-      .nav-btn:hover:not([disabled]) { background-color: #f1f5f9; border-color: #cbd5e1; }
-      .nav-btn:disabled { opacity: 0.4; cursor: default; }
-      .nav-btn-primary { background: #2563eb; color: white; border-color: #2563eb; }
-      .nav-btn-primary:hover { background: #1d4ed8; }
-
-      /* Intro Phase */
-      .intro-section { text-align: center; }
-      .context-card { display: flex; align-items: center; gap: 10px; background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.95em; text-align: left; }
-      .context-card svg { flex-shrink: 0; color: #0284c7; }
-      .intro-text { font-size: 1.1em; line-height: 1.7; color: #334155; margin-bottom: 24px; padding: 0 8px; }
-      .intro-text p { margin: 0; }
-
-      .tts-play-btn { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
-      .tts-play-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4); }
-      .tts-play-btn:active { transform: translateY(0); }
-
-      /* Audio Player */
-      .audio-player { margin: 16px 0; display: flex; justify-content: center; }
-      .audio-el { width: 100%; max-width: 500px; border-radius: 8px; }
-
-      /* Vocab Phase */
-      .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-      .vocab-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; transition: all 0.2s; }
-      .vocab-card:hover { border-color: #cbd5e1; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); }
-      .vocab-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-      .vocab-word { margin: 0; font-size: 1.15em; color: #1e293b; }
-      .vocab-definition { color: #475569; margin: 0 0 8px 0; line-height: 1.5; }
-      .vocab-example { color: #64748b; font-style: italic; margin: 0; font-size: 0.9em; line-height: 1.5; }
-
-      /* Listening Phase */
-      .listening-section { }
-      .transcript-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin: 16px 0; overflow: hidden; }
-      .transcript-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; }
-      .transcript-label { font-weight: 600; color: #475569; font-size: 0.9em; }
-      .transcript-toggle { background: none; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 12px; font-size: 0.85em; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.2s; }
-      .transcript-toggle:hover { background: #f1f5f9; }
-      .transcript-body { padding: 0 16px 16px 16px; border-top: 1px solid #e2e8f0; padding-top: 12px; }
-      .transcript-line { margin: 0 0 8px 0; color: #334155; line-height: 1.6; font-size: 0.95em; }
-      .transcript-line:last-child { margin-bottom: 0; }
-
-      /* Shared: Instruction Banner */
-      .instruction-banner { display: flex; align-items: center; gap: 8px; background: #f5f3ff; color: #5b21b6; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9em; font-weight: 500; border: 1px solid #ddd6fe; }
-      .instruction-banner svg { flex-shrink: 0; }
-
-      /* Shared: Section Title */
-      .section-title { font-size: 1.1em; font-weight: bold; color: #0f172a; margin: 24px 0 12px 0; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; }
-
-      /* Shared: TTS Button */
-      .tts-btn { display: flex; align-items: center; gap: 6px; background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
-      .tts-btn:hover { background: #1d4ed8; }
-      .tts-btn svg { width: 16px; height: 16px; }
-
-      /* MC Questions */
-      .question-card { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; margin-bottom: 16px; border-radius: 6px; }
-      .question-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 10px; }
-      .question-text { margin: 0; color: #1e293b; line-height: 1.4; }
-      .options-group { display: flex; flex-direction: column; gap: 8px; }
-      .mc-option { display: flex; align-items: center; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; transition: all 0.2s; background-color: white; }
-      .mc-option:hover:not(.correct):not(.incorrect):not(.correct-highlight) { background-color: #f1f5f9; }
-      .mc-option input { margin-right: 12px; cursor: pointer; }
-      .mc-option.correct { background-color: #dcfce7; border-color: #22c55e; color: #166534; font-weight: bold; }
-      .mc-option.correct-highlight { border: 2px dashed #22c55e; background-color: #f0fdf4; }
-      .mc-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
-
-      /* Score Screen */
-      .score-screen { text-align: center; padding: 40px 24px; }
-  .score-circle { width: 150px; height: 150px; border-radius: 50%; background: #f1f5f9; border: 8px solid #2563eb; margin: 0 auto 24px auto; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-  .score-value { font-size: 2em; font-weight: 800; color: #1e293b; }
-  .score-percent { font-size: 1.2em; font-weight: 600; color: #2563eb; }
-  .score-actions { display: flex; flex-direction: column; gap: 12px; align-items: center; margin-top: 8px; }
-  .role-btn { padding: 12px 28px; font-size: 1em; font-weight: bold; cursor: pointer; background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; transition: all 0.2s; }
-  .role-btn:hover { background-color: #e2e8f0; border-color: #94a3b8; }
-  .report-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-  .report-btn:hover { background: #1d4ed8; }
-  .share-btn { 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 8px; 
-    padding: 8px 16px; 
-    background: none; 
-    border: 1px solid #e2e8f0; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    color: #475569; 
-    transition: all 0.2s; 
-    white-space: nowrap;
-    font-size: 0.9em;
-    font-weight: 600;
-    height: 42px;
-    box-sizing: border-box;
-  }
-  .share-btn:hover { background-color: #f1f5f9; color: #2563eb; border-color: #2563eb; }
-  .share-btn svg { color: #475569; }
-  .share-btn:hover svg { color: #2563eb; }
-
-  /* Report Overlay */
-  .report-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-  .report-modal { background: white; width: 92%; max-width: 420px; padding: 28px 24px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); text-align: center; max-height: 90vh; overflow-y: auto; }
-  .report-modal h2 { margin: 8px 0 4px; color: #1e293b; }
-  .report-modal p { color: #64748b; margin: 0 0 16px; font-size: 0.95em; }
-  .report-icon { font-size: 2.5em; margin-bottom: 4px; }
-  .report-modal input { display: block; width: 100%; box-sizing: border-box; padding: 12px 14px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1em; outline: none; transition: border-color 0.2s; }
-  .report-modal input:focus { border-color: #2563eb; }
-  .generate-btn { width: 100%; padding: 13px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background 0.2s; margin-bottom: 8px; }
-  .generate-btn:hover { background: #1d4ed8; }
-  .cancel-btn { background: none; border: none; color: #94a3b8; font-size: 0.9em; cursor: pointer; text-decoration: underline; }
-
-  /* Report Card */
-  .report-area { text-align: left; }
-  .rc-header { text-align: center; margin-bottom: 16px; }
-  .rc-icon { font-size: 2em; }
-  .rc-title { font-size: 1.3em; font-weight: 800; color: #1e293b; margin: 4px 0 2px; }
-  .rc-subtitle { font-size: 0.9em; font-weight: 600; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .rc-activity { font-size: 0.85em; color: #94a3b8; }
-  .rc-student { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
-  .rc-label { font-size: 0.8em; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
-  .rc-value { font-weight: 700; color: #1e293b; }
-  .rc-number { color: #64748b; font-weight: 400; }
-  .rc-score-row { display: flex; align-items: center; gap: 16px; margin-bottom: 10px; }
-  .rc-score-circle { width: 80px; height: 80px; border-radius: 50%; background: #f1f5f9; border: 6px solid #2563eb; display: flex; flex-direction: column; justify-content: center; align-items: center; flex-shrink: 0; }
-  .rc-score-val { font-size: 1.1em; font-weight: 800; color: #1e293b; line-height: 1.1; }
-  .rc-score-pct { font-size: 0.85em; font-weight: 700; color: #2563eb; }
-  .rc-score-label { font-size: 1.1em; font-weight: 700; color: #1e293b; }
-  .rc-bar-track { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
-  .rc-bar-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #22c55e); border-radius: 4px; transition: width 0.6s ease; }
-  .rc-details { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
-  .rc-detail-row { display: flex; justify-content: space-between; padding: 9px 14px; font-size: 0.9em; border-bottom: 1px solid #f1f5f9; }
-  .rc-detail-row:last-child { border-bottom: none; }
-  .rc-detail-row span:first-child { color: #64748b; }
-  .rc-detail-row span:last-child { font-weight: 600; color: #1e293b; }
-  .rc-combined { background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%); border: 1px solid #bae6fd; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; text-align: center; }
-  .rc-combined-title { font-size: 0.95em; font-weight: 700; color: #0c4a6e; margin-bottom: 8px; }
-  .rc-combined-score { font-size: 1.4em; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
-  .rc-combined-pct { color: #2563eb; }
-  .rc-actions { margin-top: 16px; }
-  .rc-close-btn { width: 100%; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-  .rc-close-btn:hover { background: #16a34a; }
-
-  /* Official Submission Refinements */
-  .rc-submission-box {
-      margin-top: 20px;
-      padding: 20px;
-      background: #f8fafc;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      text-align: left;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-  }
-
-  .rc-submission-header {
-      margin: 0 0 12px 0;
-      font-size: 0.85em;
-      color: #64748b;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-  }
-
-  .rc-teacher-code-input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px 16px;
-      border: 2px solid #e2e8f0;
-      border-radius: 10px;
-      font-size: 1em;
-      margin-bottom: 8px;
-      background: white;
-      transition: all 0.2s ease;
-      outline: none;
-      font-family: inherit;
-      color: #1e293b;
-  }
-
-  .rc-teacher-code-input:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-  }
-
-  .rc-teacher-code-input::placeholder {
-      color: #94a3b8;
-  }
-
-  .rc-help-text {
-      margin: 4px 0 0 0;
-      font-size: 0.85em;
-      color: #64748b;
-      line-height: 1.4;
-  }
-
-  .rc-submit-btn {
-      width: 100%;
-      padding: 16px;
-      background: lightgreen;
-      color: #1e293b;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.1em;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      margin-bottom: 8px;
-  }
-
-  .rc-submit-btn:hover:not(:disabled) {
-      background: #1d4ed8;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
-  }
-
-  .rc-submit-btn:active:not(:disabled) {
-      transform: translateY(0);
-  }
-
-  .rc-submit-btn:disabled {
-      opacity: 0.6;
-      cursor: default;
-      background: #94a3b8;
-      box-shadow: none;
-  }
-
-  .rc-secondary-btn {
-      width: 100%;
-      padding: 14px;
-      background: lightgrey;
-      color: #1e293b;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 1em;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-  }
-
-  .rc-secondary-btn:hover {
-      background: #f1f5f9;
-      border-color: #cbd5e1;
-  }
-
-      /* Footer Actions */
-      .footer-actions { margin-top: 30px; display: none; justify-content: center; padding-top: 20px; border-top: 1px solid #f1f5f9; }
-      .complete-btn { background-color: #2563eb; color: white; border: none; padding: 12px 32px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1em; transition: background 0.2s; }
-      .complete-btn:hover { background-color: #1d4ed8; }
-
-      .role-btn { padding: 16px; font-size: 16px; font-weight: bold; cursor: pointer; background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; transition: all 0.2s; }
-      .role-btn:hover { background-color: #e2e8f0; border-color: #94a3b8; }
-
-
-
-      /* Combined Score */
-      .combined-score { margin-top: 30px; padding: 20px 24px; background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%); border: 1px solid #bae6fd; border-radius: 12px; text-align: center; }
-      .combined-header { font-size: 1.1em; font-weight: 700; color: #0c4a6e; margin-bottom: 12px; }
-      .combined-stats { display: flex; justify-content: center; gap: 24px; margin-bottom: 12px; }
-      .combined-value { font-size: 1.8em; font-weight: 800; color: #1e293b; }
-      .combined-percent { font-size: 1.8em; font-weight: 800; color: #2563eb; }
-      .combined-bar-track { height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; }
-      .combined-bar-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #22c55e); border-radius: 5px; transition: width 0.6s ease; }
-      .combined-pending { background: #f8fafc; border-color: #e2e8f0; }
-      .combined-note { color: #64748b; font-size: 0.9em; margin: 0; }
-
-      /* Toast notification */
-      .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 20px; border-radius: 10px; display: flex; align-items: center; gap: 8px; font-size: 0.9em; font-weight: 600; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); z-index: 2000; animation: toastIn 0.3s ease; }
-      .toast-url { background: #334155; border: none; color: white; padding: 6px 10px; border-radius: 6px; font-size: 0.85em; width: 260px; max-width: 60vw; }
-      @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(12px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-
-      .empty-state { color: #94a3b8; font-style: italic; }
-
-      /* Voice Overlay */
-      .voice-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-      .voice-card { background: white; width: 90%; max-width: 400px; max-height: 80vh; border-radius: 1.2em; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; overflow: hidden; }
-      .voice-card-header { padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-      .voice-card-header h3 { margin: 0; font-size: 1.2em; color: #1e293b; }
-      .close-voice-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; }
-      .voice-list { padding: 10px; overflow-y: auto; flex: 1; }
-      .voice-option-btn { width: 100%; text-align: left; padding: 12px 16px; margin-bottom: 6px; border: 1px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
-      .voice-option-btn:hover { background-color: #f8fafc; border-color: #cbd5e1; }
-      .voice-option-btn.active { background: #eff6ff; border-color: #3b82f6; color: #2563eb; font-weight: 600; }
-      .badge { background: #dcfce7; color: #166534; font-size: 0.7em; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
-
-      /* Responsive */
-      @media (max-width: 600px) {
-        .container { padding: 16px; }
-        .vocab-grid { grid-template-columns: 1fr; }
-        .phase-dots { gap: 0; }
-        .phase-dot-line { width: 24px; }
-        .phase-dot-label { font-size: 0.6em; }
-        .nav-btn { padding: 8px 14px; font-size: 0.85em; }
-      }
-    `;
-    }
 }
 
 customElements.define('tj-listening', TjListening);
