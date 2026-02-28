@@ -18,9 +18,7 @@ const j = '@import"https://fonts.googleapis.com/css2?family=Lato:wght@300;400;70
 <div class="chapters-container" id="chapters-container" translate="no"></div>
 
 <footer class="book-footer">
-    <p>Note: I apologize for any cultural stereotypes or oversimplifications that may appear in these materials.
-    My goal is to create accessible content for language learners, but I recognize this may sometimes result in generalizations.
-    I welcome feedback to help me improve cultural sensitivity and accuracy.</p>
+    <p>Note: Please let me know if you see any errors or have any suggestions. I'm always looking to improve these materials.</p>
 </footer>
 
 <div class="report-card-section">

@@ -109,15 +109,27 @@ h1, h2, h3 {
     .book-title {
         font-size: 2em;
     }
+
+    .chapters-container {
+        padding: 1em 0;
+    }
+
+    .chapter-card, .report-card-section {
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        box-shadow: none;
+        padding: .25rem;
+    }
 }
 
 .chapters-container {
     margin: 0 auto;
-    padding: 1em 1em;
+    padding: 1rem .25rem;
 }
 
 .chapters-container > * + * {
-    margin-top: 3em;
+    margin-top: 1rem;
 }
 
 .chapter-card {
@@ -126,7 +138,7 @@ h1, h2, h3 {
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px var(--tj-shadow);
     transition: transform 0.2s, background-color 0.3s, border-color 0.3s;
-    padding: 1.5em;
+    padding: .5rem;
 }
 
 @media (min-width: 768px) {
@@ -238,8 +250,8 @@ h1, h2, h3 {
 }
 
 .quiz-container {
-    background-color: var(--tj-card-bg);
-    padding: 1.5em;
+    background-color: var(--tj-quiz-bg);
+    padding: .25rem;
     border-radius: 0.5em;
     border: 1px solid var(--tj-card-border);
 }
@@ -247,7 +259,7 @@ h1, h2, h3 {
 .quiz-title {
     font-size: 1.25em;
     color: var(--tj-accent-color);
-    margin-bottom: 1em;
+    margin-bottom: 1rem;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -255,11 +267,10 @@ h1, h2, h3 {
 }
 
 .question-block {
-    background: var(--tj-quiz-bg);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    border: 1px solid var(--tj-card-border);
+    /* background: var(--tj-quiz-bg); */
+    padding: .25rem;
+    /* border-radius: 8px; */
+    margin-bottom: .5rem;
 }
 
 .question-text {
@@ -393,12 +404,11 @@ details[open] .chevron { transform: rotate(180deg); }
 
 .book-footer {
     max-width: 48em;
-    margin: 2em auto 0;
-    padding: 1.5em;
+    margin: 0 auto;
+    padding: 1rem;
     text-align: left;
     font-size: 0.875em;
     color: var(--tj-subtitle-color);
-    border-top: 1px solid var(--tj-card-border);
 }
 
 .book-footer p {
@@ -407,8 +417,8 @@ details[open] .chevron { transform: rotate(180deg); }
 }
 
 .report-card-section {
-    max-width: 48em;
-    margin: 2em auto;
+    /* max-width: 48em; */
+    margin: 0 auto;
     background-color: var(--tj-card-bg);
     border: 1px solid var(--tj-card-border);
     padding: 2em;
