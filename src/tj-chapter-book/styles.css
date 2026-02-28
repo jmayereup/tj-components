@@ -125,7 +125,7 @@ h1, h2, h3 {
 
 .chapters-container {
     margin: 0 auto;
-    padding: 1rem .25rem;
+    padding: .5rem .25rem;
 }
 
 .chapters-container > * + * {
@@ -141,17 +141,11 @@ h1, h2, h3 {
     padding: .5rem;
 }
 
-@media (min-width: 768px) {
-    .chapter-card {
-        padding: 2em;
-    }
-}
-
 .chapter-title {
     font-size: 1.875em;
     line-height: 2.25em;
     color: var(--tj-accent-color);
-    margin-bottom: 1.5em;
+    margin-bottom: 1rem;
 }
 
 .audio-controls {
@@ -160,6 +154,7 @@ h1, h2, h3 {
     flex-wrap: wrap;
     align-items: center;
     margin-bottom: 1em;
+    justify-content: center;
 }
 
 .audio-btn {
@@ -251,9 +246,10 @@ h1, h2, h3 {
 
 .quiz-container {
     background-color: var(--tj-quiz-bg);
-    padding: .25rem;
+    padding: .5rem;
     border-radius: 0.5em;
     border: 1px solid var(--tj-card-border);
+    margin-bottom: .5rem;
 }
 
 .quiz-title {
