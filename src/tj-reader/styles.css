@@ -2,26 +2,47 @@
   display: block;
   font-family: inherit;
   max-width: 80em;
-  margin: 1em auto;
-  color: #333;
-  background-color: ghostwhite;
+  margin: 0 auto;
+  color: #1e293b;
+  background-color: #f8fafc;
   position: relative;
+
+  /* Design tokens */
+  --tj-primary-color: #2563eb;
+  --tj-primary-hover: #1d4ed8;
+  --tj-primary-light: #eff6ff;
+  --tj-primary-border: #bfdbfe;
+  --tj-success-color: #16a34a;
+  --tj-success-light: #f0fdf4;
+  --tj-success-border: #bbf7d0;
+  --tj-danger-color: #dc2626;
+  --tj-danger-light: #fef2f2;
+  --tj-danger-border: #fecaca;
+  --tj-text-main: #1e293b;
+  --tj-text-muted: #64748b;
+  --tj-text-light: #94a3b8;
+  --tj-bg-card: #ffffff;
+  --tj-bg-alt: #f1f5f9;
+  --tj-border-main: #e2e8f0;
+  --tj-border-light: #f1f5f9;
+  --tj-border-dark: #cbd5e1;
 }
 
 .sticky-bar {
   position: sticky;
   top: 0;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  padding: 0.8em 1.2em;
-  border-radius: 1em;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.75em 1em;
+  border-radius: 0;
+  box-shadow: 0 1px 0 var(--tj-border-main), 0 4px 16px rgba(0,0,0,0.04);
   z-index: 100;
-  margin-bottom: 1.5em;
+  margin-bottom: 1em;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-bottom: 1px solid var(--tj-border-main);
 }
 
 .playback-controls {
@@ -150,40 +171,39 @@ input:checked + .slider:before {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 1.2em;
-  padding: 1em;
-  box-shadow: 0 0.5em 2em rgba(0,0,0,0.05);
-  text-align: center;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid #e2e8f0;
-  opacity: 0.7;
-  transform: scale(0.98);
+  background: var(--tj-bg-card);
+  border-radius: 1em;
+  padding: 1.2em;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  text-align: left;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--tj-border-main);
+  opacity: 0.75;
+  transform: scale(0.99);
 }
 
 .card:hover, .card.completed {
   opacity: 1;
   transform: scale(1);
-  box-shadow: 0 1em 3em rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
 .card.completed {
-  border-color: #22c55e;
-  background: #f0fdf4;
+  border-color: var(--tj-success-border);
+  background: var(--tj-success-light);
 }
 
 .card.failed {
-  border-color: #ef4444;
-  background: #fef2f2;
+  border-color: var(--tj-danger-border);
+  background: var(--tj-danger-light);
 }
 
 .card.playing {
-  border-color: #2563eb;
-  background: #eff6ff;
+  border-color: var(--tj-primary-color);
+  background: var(--tj-primary-light);
   opacity: 1;
-  transform: scale(1.02);
-  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.2);
+  transform: scale(1.01);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
 }
 
 .card-header {
@@ -195,10 +215,11 @@ input:checked + .slider:before {
 }
 
 .original-text {
-  font-size: 1.4em;
-  line-height: 1.6;
+  font-size: 1.15em;
+  line-height: 1.65;
   font-weight: 500;
   flex: 1;
+  color: var(--tj-text-main);
 }
 
 .tts-word {
@@ -210,23 +231,6 @@ input:checked + .slider:before {
 
 .tts-word:hover {
   background: #f1f5f9;
-}
-
-.voice-btn {
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
-  padding: 0.5em;
-  font-size: 1.1em;
-  border-radius: 50%;
-  width: 2.2em;
-  height: 2.2em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-  color: #64748b;
 }
 
 .voice-btn {
@@ -243,8 +247,8 @@ input:checked + .slider:before {
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
-  color: #000033;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  color: var(--tj-primary-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 .voice-btn:hover {
@@ -327,10 +331,11 @@ input:checked + .slider:before {
 
 
 .full-translation {
-  font-size: 1.5em;
-  color: #64748b;
-  margin-bottom: 1em;
+  font-size: 1em;
+  color: var(--tj-text-muted);
+  margin-bottom: 0.75em;
   font-style: italic;
+  line-height: 1.5;
 }
 
 .highlight {
@@ -364,16 +369,16 @@ button {
   padding: 0.6em 1.2em;
   cursor: pointer;
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--tj-border-main);
   border-radius: 0.7em;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
-  color: #475569;
+  color: var(--tj-text-muted);
 }
 
 button:hover:not(:disabled) {
-  background: blue;
-  border-color: #cbd5e1;
+  background: var(--tj-bg-alt);
+  border-color: var(--tj-border-dark);
   transform: translateY(-1px);
 }
 
@@ -678,22 +683,22 @@ input {
 .rc-submit-btn {
     width: 100%;
     padding: 16px;
-    background: lightgreen;
-    color: var(--tj-text-main);
+    background: var(--tj-primary-color);
+    color: #ffffff;
     border: none;
     border-radius: 12px;
     font-size: 1.1em;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
     margin-bottom: 8px;
 }
 
 .rc-submit-btn:hover:not(:disabled) {
     background: var(--tj-primary-hover);
     transform: translateY(-1px);
-    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
 }
 
 .rc-submit-btn:active:not(:disabled) {
@@ -701,7 +706,7 @@ input {
 }
 
 .rc-submit-btn:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: default;
     background: var(--tj-text-light);
     box-shadow: none;
@@ -710,18 +715,18 @@ input {
 .rc-secondary-btn {
     width: 100%;
     padding: 14px;
-    background: lightgrey;
+    background: var(--tj-bg-alt);
     color: var(--tj-text-main);
-    border: 2px solid var(--tj-border-main);
+    border: 1.5px solid var(--tj-border-main);
     border-radius: 12px;
     font-size: 1em;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .rc-secondary-btn:hover {
-    background: var(--tj-bg-alt);
+    background: var(--tj-border-main);
     border-color: var(--tj-border-dark);
 }
 
