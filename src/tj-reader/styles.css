@@ -202,6 +202,7 @@ input:checked + .slider:before {
   gap: 1rem;
   padding: 0 .5rem;
   overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
 }
@@ -215,40 +216,33 @@ input:checked + .slider:before {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
+  background: var(--tj-bg-card);
   border-radius: 1.2em;
-  padding: 1rem .5rem;
-  box-shadow: 0 0.5em 2em rgba(0,0,0,0.05);
-  text-align: center;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid #e2e8f0;
-  opacity: 0.7;
-  transform: scale(0.98);
+  padding: 1rem .75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  text-align: left;
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+  border: none;
+  opacity: 1;
 }
 
-.card:hover, .card.completed {
-  opacity: 1;
-  transform: scale(1);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.09);
 }
 
 .card.completed {
-  border-color: var(--tj-success-border);
   background: var(--tj-success-light);
+  box-shadow: 0 2px 12px rgba(22, 163, 74, 0.1);
 }
 
 .card.failed {
-  border-color: var(--tj-danger-border);
   background: var(--tj-danger-light);
+  box-shadow: 0 2px 12px rgba(220, 38, 38, 0.1);
 }
 
 .card.playing {
-  border-color: var(--tj-primary-color);
   background: var(--tj-primary-light);
-  opacity: 1;
-  transform: scale(1.01);
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.14);
 }
 
 .card-header {
@@ -800,6 +794,10 @@ input {
   margin-right: auto;
   width: 100%;
   box-sizing: border-box;
+  background: var(--tj-bg-card);
+  border-radius: 1.2em;
+  padding: 1.25em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .unscramble-card h3 {
@@ -836,9 +834,9 @@ input {
 }
 
 .unscramble-result button {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #2563eb;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #475569;
 }
 
 .unscramble-pool button {
