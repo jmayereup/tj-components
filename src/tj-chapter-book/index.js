@@ -356,7 +356,7 @@ class TjChapterBook extends HTMLElement {
                     actionBtn.innerHTML = 'Use Safari / Chrome<br><span style="font-size: 0.8em; font-weight: normal;">กรุณาเปิดใน Safari หรือ Chrome</span>';
                     actionBtn.onclick = (e) => {
                         e.preventDefault();
-                        alert('Please open this page in Safari or Chrome for audio features.\n\nกรุณาเปิดหน้านี้ใน Safari หรือ Chrome เพื่อใช้งานฟีเจอร์เสียง');
+                        this._showToast('Please open this page in Safari or Chrome for audio features.', 'info', 5000);
                     };
                 }
             }
@@ -1038,7 +1038,7 @@ class TjChapterBook extends HTMLElement {
         });
 
         if (!allAnswered) {
-            alert("Please answer all questions before checking.");
+            this._showToast('Please answer all questions before checking.', 'warning');
             return;
         }
 
@@ -1123,7 +1123,7 @@ class TjChapterBook extends HTMLElement {
         const homeroom = homeroomInput.value.trim();
 
         if (!name || !studentId) {
-            alert("Please enter both Student Name and Student ID before generating a report card.");
+            this._showToast('Please enter both Student Name and Student ID before generating a report card.', 'warning');
             if (!name) nameInput.focus();
             else idInput.focus();
             return;
@@ -1220,7 +1220,7 @@ class TjChapterBook extends HTMLElement {
         this.studentInfo.teacherCode = currentTeacherCode;
 
         if (currentTeacherCode !== '6767') {
-            alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
+            this._showToast('Invalid Teacher Code. Please show your report card screenshot to your teacher.', 'error');
             return;
         }
 
@@ -1256,20 +1256,26 @@ class TjChapterBook extends HTMLElement {
                 body: JSON.stringify(payload)
             });
             
-            alert('Score successfully submitted!');
+            this._showToast('Score successfully submitted! ✓', 'success');
             submitBtn.textContent = 'Submitted ✓';
             submitBtn.style.background = 'var(--tj-subtitle-color)';
         } catch (err) {
             console.error('Error submitting score:', err);
-            alert('There was an error submitting your score. Please try again.');
+            this._showToast('There was an error submitting your score. Please try again.', 'error');
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
             this.isSubmitting = false;
         }
     }
 
-    resetApp(skipConfirmation = false) {
-        if (!skipConfirmation && !confirm("Are you sure you want to reset everything? Your scores and progress will be lost.")) return;
+    async resetApp(skipConfirmation = false) {
+        if (!skipConfirmation) {
+            const confirmed = await this._showConfirmModal(
+                '⚠️ Reset Progress',
+                'Are you sure you want to reset everything? Your scores and progress will be lost.'
+            );
+            if (!confirmed) return;
+        }
 
         // Reset state
         this.totalScore = 0;
@@ -1353,6 +1359,53 @@ class TjChapterBook extends HTMLElement {
         if (this._visibilityObserver) {
             this._visibilityObserver.disconnect();
         }
+    }
+    _showToast(message, type = 'info', duration = 3500) {
+        let container = this.shadowRoot.querySelector('.tj-toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'tj-toast-container';
+            this.shadowRoot.appendChild(container);
+        }
+
+        const icons = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
+        const toast = document.createElement('div');
+        toast.className = `tj-toast ${type}`;
+        toast.innerHTML = `<span class="tj-toast-icon">${icons[type] || 'ℹ'}</span><span>${message}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('hiding');
+            toast.addEventListener('animationend', () => toast.remove(), { once: true });
+        }, duration);
+    }
+
+    _showConfirmModal(title, message) {
+        return new Promise((resolve) => {
+            const overlay = document.createElement('div');
+            overlay.className = 'tj-confirm-overlay';
+            overlay.innerHTML = `
+                <div class="tj-confirm-card">
+                    <div class="tj-confirm-title">${title}</div>
+                    <div class="tj-confirm-message">${message}</div>
+                    <div class="tj-confirm-actions">
+                        <button class="tj-confirm-cancel">Cancel</button>
+                        <button class="tj-confirm-ok">Reset</button>
+                    </div>
+                </div>
+            `;
+            this.shadowRoot.appendChild(overlay);
+
+            const cleanup = (result) => {
+                overlay.style.animation = 'tj-toast-out 0.2s ease forwards';
+                overlay.addEventListener('animationend', () => overlay.remove(), { once: true });
+                resolve(result);
+            };
+
+            overlay.querySelector('.tj-confirm-cancel').onclick = () => cleanup(false);
+            overlay.querySelector('.tj-confirm-ok').onclick = () => cleanup(true);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
+        });
     }
 }
 
