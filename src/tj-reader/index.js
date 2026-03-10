@@ -4,6 +4,16 @@ import { config } from '../tj-config.js';
 import { getBestVoice, shouldShowAudioControls, startAudioRecording, getAndroidIntentLink } from '../audio-utils.js';
 
 class TjReader extends HTMLElement {
+  getLanguageName(localeStr) {
+    if (!localeStr) return localeStr || '';
+    try {
+      const dn = new Intl.DisplayNames(['en'], { type: 'language' });
+      return dn.of(localeStr.split(/[-_]/)[0]);
+    } catch(e) {
+      return localeStr;
+    }
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -57,11 +67,17 @@ class TjReader extends HTMLElement {
     this.shadowRoot.querySelector('.generate-btn').onclick = () => this.generateReport();
     this.shadowRoot.querySelector('#play-pause-btn').onclick = () => this.toggleFullPlayback();
     this.shadowRoot.querySelector('#stop-btn').onclick = () => this.stopFullPlayback();
-    this.shadowRoot.querySelector('#swap-btn').onclick = () => this.swapLanguages();
     this.shadowRoot.querySelector('#voice-btn').onclick = () => this._showVoiceOverlay();
     this.shadowRoot.querySelector('.close-voice-btn').onclick = () => this._hideVoiceOverlay();
     this.shadowRoot.querySelector('.voice-overlay').onclick = (e) => {
       if (e.target.classList.contains('voice-overlay')) this._hideVoiceOverlay();
+    };
+
+    this.shadowRoot.querySelector('.lang-btn-original').onclick = () => {
+      if (this.isSwapped) this.swapLanguages();
+    };
+    this.shadowRoot.querySelector('.lang-btn-translation').onclick = () => {
+      if (!this.isSwapped) this.swapLanguages();
     };
 
     const autoplayCheckbox = this.shadowRoot.querySelector('#autoplay-checkbox');
@@ -1272,6 +1288,12 @@ class TjReader extends HTMLElement {
     this.selectedVoiceName = null;
     this._updateVoiceList();
 
+    // Keep lang selector buttons in sync
+    const orgBtn = this.shadowRoot.querySelector('.lang-btn-original');
+    const transBtn = this.shadowRoot.querySelector('.lang-btn-translation');
+    if (orgBtn) orgBtn.classList.toggle('active', !this.isSwapped);
+    if (transBtn) transBtn.classList.toggle('active', this.isSwapped);
+
     this.data = this.data.map(item => {
       const newOriginal = item.fullTranslation;
       const newFullTranslation = item.original;
@@ -1293,6 +1315,14 @@ class TjReader extends HTMLElement {
 
   render() {
     if (!this.data || this.data.length === 0) return;
+
+    // Populate lang selector button labels
+    const langOrg = this.getAttribute('lang-original') || 'en';
+    const langTrans = this.getAttribute('lang-translation') || 'th';
+    const orgBtn = this.shadowRoot.querySelector('.lang-btn-original');
+    const transBtn = this.shadowRoot.querySelector('.lang-btn-translation');
+    if (orgBtn) orgBtn.textContent = this.getLanguageName(langOrg);
+    if (transBtn) transBtn.textContent = this.getLanguageName(langTrans);
 
     // Populate sections with data
     this.displayAllLines();
