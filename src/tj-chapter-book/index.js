@@ -637,6 +637,7 @@ class TjChapterBook extends HTMLElement {
                     }
 
                     this.playWord(wordEl.innerText, lang);
+                    this._showDictionaryToast(wordEl.innerText, lang);
                 }
             });
         });
@@ -1406,6 +1407,151 @@ class TjChapterBook extends HTMLElement {
             overlay.querySelector('.tj-confirm-ok').onclick = () => cleanup(true);
             overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
         });
+    }
+
+    async fetchWordData(word, langCode) {
+        try {
+            // Helper to map app languages to API-friendly ISO codes (per guide)
+            const getLanguageCode = (lc) => {
+                const map = {
+                    'english': 'en', 'spanish': 'es', 'french': 'fr', 'german': 'de', 'thai': 'th',
+                    'en': 'en', 'es': 'es', 'fr': 'fr', 'de': 'de', 'th': 'th'
+                };
+                const prefix = lc.split(/[-_]/)[0].toLowerCase();
+                return map[prefix] || prefix || 'en';
+            };
+
+            const apiLang = getLanguageCode(langCode);
+            
+            // 1. Try the Multilingual Dictionary first (freedictionaryapi.com per guide)
+            const dictUrl = `https://freedictionaryapi.com/api/v1/entries/${apiLang}/${encodeURIComponent(word)}`;
+            const response = await fetch(dictUrl);
+            
+            if (response.ok) {
+                const data = await response.json();
+                
+                // Safety Checks from guide
+                const hasEntries = data && typeof data === 'object' && data.entries && data.entries.length > 0;
+                const hasMeanings = Array.isArray(data) && data[0]?.meanings?.length > 0;
+                
+                if (hasEntries || hasMeanings) {
+                    return { type: 'dictionary', content: data };
+                }
+            }
+
+            // 2. Fallback to Google Translate logic (per guide)
+            const translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${apiLang}&tl=en&dt=t&q=${encodeURIComponent(word)}`;
+            const transRes = await fetch(translateUrl);
+            const transData = await transRes.json();
+            
+            if (transData && transData[0] && transData[0][0]) {
+                return { type: 'translation', content: transData[0][0][0] };
+            }
+            return null;
+        } catch (error) {
+            console.error("Lookup failed", error);
+            return null;
+        }
+    }
+
+    _showDictionaryToast(word, langCode) {
+        const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim();
+        if (!cleanWord) return;
+
+        let container = this.shadowRoot.querySelector('.tj-toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'tj-toast-container';
+            this.shadowRoot.appendChild(container);
+        }
+
+        // Remove existing dictionary toasts to avoid clutter
+        container.querySelectorAll('.tj-toast.dictionary-lookup').forEach(t => t.remove());
+
+        const toast = document.createElement('div');
+        toast.className = 'tj-toast info dictionary-lookup';
+        toast.innerHTML = `
+            <div class="tj-toast-content">
+                <div class="tj-toast-header">
+                    <span class="tj-toast-icon">📖</span>
+                    <span class="tj-toast-word">${cleanWord}</span>
+                </div>
+                <div class="tj-toast-body">
+                    <button class="tj-toast-action-btn">Explore Word</button>
+                </div>
+            </div>
+            <button class="tj-toast-close">✕</button>
+        `;
+        container.appendChild(toast);
+
+        const actionBtn = toast.querySelector('.tj-toast-action-btn');
+        const body = toast.querySelector('.tj-toast-body');
+        const closeBtn = toast.querySelector('.tj-toast-close');
+
+        let isExpanded = false;
+        let autoRemoveTimeout = setTimeout(() => {
+            if (!isExpanded) {
+                toast.classList.add('hiding');
+                toast.addEventListener('animationend', () => toast.remove(), { once: true });
+            }
+        }, 5000);
+
+        closeBtn.onclick = (e) => {
+            e.stopPropagation();
+            clearTimeout(autoRemoveTimeout);
+            toast.classList.add('hiding');
+            toast.addEventListener('animationend', () => toast.remove(), { once: true });
+        };
+
+        actionBtn.onclick = async (e) => {
+            e.stopPropagation();
+            if (isExpanded) return;
+            isExpanded = true;
+            clearTimeout(autoRemoveTimeout);
+
+            actionBtn.disabled = true;
+            actionBtn.textContent = 'Looking up...';
+
+            const data = await this.fetchWordData(cleanWord, langCode);
+            
+            if (!data) {
+                body.innerHTML = `<span class="tj-toast-error">Could not find definition.</span>`;
+            } else if (data.type === 'dictionary') {
+                // Determine structure (entries vs meanings array)
+                const isLegacyStructure = Array.isArray(data.content);
+                const entry = isLegacyStructure ? data.content[0] : data.content.entries[0];
+                const meaning = entry.meanings ? entry.meanings[0] : (entry.senses ? entry.senses[0] : null);
+                
+                const partOfSpeech = meaning?.partOfSpeech || (isLegacyStructure ? entry.meanings[0].partOfSpeech : "word");
+                const definition = isLegacyStructure 
+                    ? entry.meanings[0].definitions[0].definition 
+                    : (entry.senses ? entry.senses[0].definition : entry.meanings[0].definitions[0].definition);
+                
+                body.innerHTML = `
+                    <div class="tj-definition-container">
+                        <span class="tj-pos-badge">${partOfSpeech}</span>
+                        <p class="tj-definition-text">${definition}</p>
+                        <a href="https://www.google.com/search?q=define+${encodeURIComponent(cleanWord)}" target="_blank" class="tj-google-btn">Try Google</a>
+                    </div>
+                `;
+            } else {
+                body.innerHTML = `
+                    <div class="tj-translation-container">
+                        <span class="tj-pos-badge">translation</span>
+                        <p class="tj-definition-text">${data.content}</p>
+                        <a href="https://translate.google.com/?sl=auto&tl=en&text=${encodeURIComponent(cleanWord)}&op=translate" target="_blank" class="tj-google-btn">Try Google</a>
+                    </div>
+                `;
+            }
+
+            // After expanding, it stays until closed or a shorter timeout
+            setTimeout(() => {
+                if (toast.isConnected) {
+                    toast.classList.add('hiding');
+                    toast.addEventListener('animationend', () => toast.remove(), { once: true });
+                }
+            }, 10000);
+        };
     }
 }
 

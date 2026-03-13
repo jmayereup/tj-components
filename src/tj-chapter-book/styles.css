@@ -1127,3 +1127,124 @@ details[open] .chevron { transform: rotate(180deg); }
 }
 .tj-confirm-ok:hover { background: #dc2626; }
 
+/* ─── Dictionary Toast ─────────────────────────────────────── */
+.tj-toast.dictionary-lookup {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    overflow: hidden;
+    max-width: 320px;
+    background: var(--tj-card-bg);
+    color: var(--tj-text-color);
+    border: 1px solid var(--tj-card-border);
+}
+
+.tj-toast-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.tj-toast-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0.75em 1em;
+    background: var(--tj-btn-bg);
+    border-bottom: 1px solid var(--tj-card-border);
+}
+
+.tj-toast-word {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: var(--tj-accent-color);
+}
+
+.tj-toast-body {
+    padding: 1em;
+}
+
+.tj-toast-action-btn {
+    width: 100%;
+    padding: 0.6em;
+    border-radius: 8px;
+    border: none;
+    background: var(--tj-accent-color);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.tj-toast-action-btn:hover {
+    opacity: 0.9;
+}
+
+.tj-toast-action-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.tj-toast-close {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    background: none;
+    border: none;
+    color: var(--tj-subtitle-color);
+    cursor: pointer;
+    font-size: 1.1em;
+    padding: 4px;
+    line-height: 1;
+    z-index: 10;
+}
+
+.tj-definition-container, .tj-translation-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    animation: fadeIn 0.3s ease;
+}
+
+.tj-pos-badge {
+    align-self: flex-start;
+    padding: 2px 8px;
+    background: var(--tj-btn-bg);
+    color: var(--tj-accent-color);
+    border-radius: 9999px;
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tj-definition-text {
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.tj-toast-error {
+    color: #ef4444;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+.tj-google-btn {
+    display: inline-block;
+    margin-top: 0.5em;
+    font-size: 0.8em;
+    color: var(--tj-accent-color);
+    text-decoration: none;
+    padding: 4px 8px;
+    border: 1px solid var(--tj-card-border);
+    border-radius: 4px;
+    background: var(--tj-btn-bg);
+    font-weight: 600;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.tj-google-btn:hover {
+    background: var(--tj-btn-hover);
+    border-color: var(--tj-accent-color);
+}
