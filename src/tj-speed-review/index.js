@@ -143,7 +143,8 @@ class TjSpeedReview extends HTMLElement {
 
   parseMD(text) {
     if (window.marked && text) {
-      return window.marked.parse(text);
+      // Use parseInline to avoid wrapping in <p> tags for simple text
+      return window.marked.parseInline(text);
     }
     return text || '';
   }
@@ -403,10 +404,15 @@ class TjSpeedReview extends HTMLElement {
         }
         .question-text {
           font-size: 1.4em;
-          font-weight: 600;
           margin-bottom: 1.5em;
           line-height: 1.4;
           min-height: 3em;
+        }
+        .question-text p, .explanation p {
+          margin: 0;
+        }
+        .question-text strong, .explanation strong {
+          font-weight: 800;
         }
         .options-grid {
           display: grid;
@@ -420,12 +426,13 @@ class TjSpeedReview extends HTMLElement {
           background: whitesmoke;
           border: 2px solid grey;
           color: black;
-          padding: 1em;
+          padding: .5em;
           border-radius: 0.8em;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.2s;
           text-align: center;
+          font-size: 1.2em;
         }
         .option-btn:hover:not(:disabled) {
           background: #f8fafc;
@@ -465,7 +472,7 @@ class TjSpeedReview extends HTMLElement {
         .feedback-status.incorrect { color: #ef4444; }
         .explanation {
           font-size: 0.95em;
-          color: #cbd5e1;
+          color: #475569;
           line-height: 1.5;
         }
         .btn-large {
@@ -852,7 +859,7 @@ class TjSpeedReview extends HTMLElement {
         </div>
 
         <div class="question-meta">Question ${this.currentIndex + 1} / ${this.currentPool.length} — ${q.category || ''}</div>
-        <div class="question-text">${q.question}</div>
+        <div class="question-text">${this.parseMD(q.question)}</div>
 
         <div class="options-grid">
           ${this.shuffledOptions.map(opt => {
