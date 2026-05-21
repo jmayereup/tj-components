@@ -36,8 +36,13 @@
             </div>
             <div class="report-area" id="report-area" style="display:none;"></div>
             <div id="submit-actions" style="display:none; margin-top: 1em;">
-                <button class="generate-btn" id="submit-score-btn" style="background: var(--tj-success-color);">Submit Score</button>
-                <button class="cancel-btn" id="rc-close-btn">↩ Return to Activity</button>
+                <div style="padding: 12px; background: var(--tj-bg-alt); border-radius: 8px; border: 1px dashed var(--tj-border-main); text-align: left; margin-bottom: 1em;">
+                    <p style="margin: 0 0 8px 0; font-size: 0.85em; color: var(--tj-text-muted); font-weight: 600; text-transform: uppercase;">Submission (Optional)</p>
+                    <input type="text" id="report-teacher-code" placeholder="Enter Teacher Code" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--tj-border-main); border-radius: 6px; font-size: 0.9em; margin-bottom: 4px;">
+                    <p style="margin: 4px 0 8px 0; font-size: 0.8em; color: var(--tj-text-muted);">Enter the teacher code to submit, or take a screenshot of this page.</p>
+                    <button class="generate-btn" id="submit-score-btn" style="background: var(--tj-success-color); width: 100%; margin-top: 0.5em;">Submit Score</button>
+                </div>
+                <button class="cancel-btn" id="rc-close-btn" style="width: 100%;">↩ Return to Activity</button>
             </div>
         </div>
     </div>

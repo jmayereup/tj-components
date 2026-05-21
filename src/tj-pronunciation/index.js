@@ -693,17 +693,17 @@ class TjPronunciation extends HTMLElement {
           <div class="rc-details">
               <div class="rc-detail-row"><span>Total Completed</span><span>${completed} / ${total} activities</span></div>
               <div class="rc-detail-row"><span>Completed On</span><span>${timestamp}</span></div>
-          </div>
-          <div style="margin-top: 16px; padding: 12px; background: var(--tj-bg-alt); border-radius: 8px; border: 1px dashed var(--tj-border-main); text-align: left;">
-              <p style="margin: 0 0 8px 0; font-size: 0.85em; color: var(--tj-text-muted); font-weight: 600; text-transform: uppercase;">Submission (Optional)</p>
-              <input type="text" id="report-teacher-code" placeholder="Enter Teacher Code" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--tj-border-main); border-radius: 6px; font-size: 0.9em; margin-bottom: 4px;" value="${teacherCode}">
-              <p style="margin: 4px 0 0 0; font-size: 0.8em; color: var(--tj-text-muted);">Enter the teacher code to submit, or take a screenshot of this page.</p>
-          </div>
       `;
 
       const initialForm = this.shadowRoot.getElementById('initial-form');
       const reportArea = this.shadowRoot.getElementById('report-area');
       const submitActions = this.shadowRoot.getElementById('submit-actions');
+      const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
+      
+      if (reportTeacherCodeInput) {
+          reportTeacherCodeInput.value = teacherCode;
+      }
+
       
       if (initialForm) initialForm.style.display = 'none';
       if (reportArea) {
@@ -853,17 +853,14 @@ class TjPronunciation extends HTMLElement {
           studentId: this.studentInfo.number,
           quizName: 'Pron- ' + titleText,
           score: completed,
-          total: total
+          total: total,
+          teacherCode: currentTeacherCode
       };
 
       try {
-          // Send request with no-cors to avoid CORS issues from Google Apps Script if not properly configured on their end
           await fetch(this.submissionUrl, {
               method: 'POST',
-              mode: 'no-cors',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
+              mode: 'cors',
               body: JSON.stringify(payload)
           });
           
