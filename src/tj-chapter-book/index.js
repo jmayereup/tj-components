@@ -79,6 +79,9 @@ class TjChapterBook extends HTMLElement {
         this.absoluteTotalQuestions = 0;
         this.wrongQuestions = [];
         this.lockoutTimers = new Map();
+
+        const storedSpeed = parseFloat(localStorage.getItem("tj-chapter-book-speed"));
+        this.playbackSpeed = isNaN(storedSpeed) ? 0.7 : storedSpeed;
     }
 
     connectedCallback() {
@@ -285,6 +288,20 @@ class TjChapterBook extends HTMLElement {
         const audioPlaceholder = this.shadowRoot.getElementById('audio-controls-placeholder');
         if (audioPlaceholder && this.shouldShowAudioControls()) {
             audioPlaceholder.innerHTML = `
+                <div class="tj-speed-control" title="Playback Speed">
+                    <svg class="tj-speed-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 12 6a7.89 7.89 0 0 1 6 2.73l1.42-1.42A9.91 9.91 0 0 0 12 4a10 10 0 0 0-7.68 16.4h15.36A10 10 0 0 0 20.38 8.57zM10 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0zm3-6h-2v4h2V6z"/>
+                    </svg>
+                    <select id="speed-select" class="tj-speed-select">
+                        <option value="0.5">0.5x</option>
+                        <option value="0.6">0.6x</option>
+                        <option value="0.7">0.7x</option>
+                        <option value="0.8">0.8x</option>
+                        <option value="0.9">0.9x</option>
+                        <option value="1.0">1.0x</option>
+                        <option value="1.2">1.2x</option>
+                    </select>
+                </div>
                 <button id="voice-btn" title="Choose Voice">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                         <path d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z"/>
@@ -412,11 +429,8 @@ class TjChapterBook extends HTMLElement {
         if (this.shouldShowAudioControls()) {
             audioControls = `
                 <div class="audio-controls">
-                    <button data-action="play" data-rate="1.0" data-target="${textId}" id="btn-${chapter.id}-normal" class="audio-btn audio-btn-normal">
-                        <span class="icon-wrapper">${playIcon}</span> Normal
-                    </button>
-                    <button data-action="play" data-rate="0.6" data-target="${textId}" id="btn-${chapter.id}-slow" class="audio-btn audio-btn-slow">
-                        <span class="icon-wrapper">${playIcon}</span> Slow
+                    <button data-action="play" data-target="${textId}" id="btn-${chapter.id}-play" class="audio-btn audio-btn-play">
+                        <span class="icon-wrapper">${playIcon}</span> Play
                     </button>
                     <button data-action="cancel-tts" id="btn-${chapter.id}-cancel" class="audio-btn audio-btn-cancel" aria-label="Cancel audio" title="Stop audio">
                         <span class="icon-wrapper">${stopIcon}</span> Cancel
@@ -465,7 +479,7 @@ class TjChapterBook extends HTMLElement {
                         <span class="chevron">${chevronIcon}</span>
                     </summary>
                     <div style="padding: 0.5em 0.75em 0;">
-                        <button data-action="play" data-rate="1.0" data-target="${translationId}" data-lang="${this.translationLanguage}" id="btn-trans-${chapter.id}" class="audio-btn audio-btn-normal" style="font-size: 0.8em; padding: 0.25em 0.5em;">
+                        <button data-action="play" data-target="${translationId}" data-lang="${this.translationLanguage}" id="btn-trans-${chapter.id}" class="audio-btn audio-btn-play" style="font-size: 0.8em; padding: 0.25em 0.5em;">
                             <span class="icon-wrapper">${playIcon}</span> Play
                         </button>
                     </div>
@@ -542,6 +556,16 @@ class TjChapterBook extends HTMLElement {
             });
         }
 
+        // Playback Speed control select
+        const speedSelect = this.shadowRoot.getElementById('speed-select');
+        if (speedSelect) {
+            speedSelect.value = this.playbackSpeed.toString();
+            speedSelect.addEventListener('change', (e) => {
+                this.playbackSpeed = parseFloat(e.target.value);
+                localStorage.setItem("tj-chapter-book-speed", e.target.value);
+            });
+        }
+
         // Voice overlay close
         const closeVoiceBtn = this.shadowRoot.querySelector('.close-voice-btn');
         if (closeVoiceBtn) {
@@ -580,7 +604,7 @@ class TjChapterBook extends HTMLElement {
                 // Handle click on icon inside button
                 const button = e.target.closest('button');
                 const targetId = button.dataset.target;
-                const rate = parseFloat(button.dataset.rate);
+                const rate = this.playbackSpeed;
                 this.playAudio(targetId, rate, button.id);
             });
         });

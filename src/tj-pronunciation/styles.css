@@ -368,3 +368,92 @@
 .rc-actions { display: flex; flex-direction: column; gap: 8px; }
 .rc-close-btn { display: block; width: 100%; padding: 14px; background: transparent; color: var(--tj-text-main); border: 2px solid var(--tj-border-main); border-radius: 8px; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.2s; }
 .rc-close-btn:hover { background: var(--tj-bg-alt); }
+
+/* Playback Speed Controls */
+.tj-speed-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  background: var(--tj-bg-alt);
+  border: 1px solid var(--tj-border-main);
+  border-radius: 2em;
+  padding: 0.25em 0.5em 0.25em 0.75em;
+  height: 2.5em; /* standard height to align nicely with buttons */
+  transition: var(--tj-transition-fast);
+  color: var(--tj-text-muted);
+  position: relative;
+  cursor: pointer;
+}
+
+.tj-speed-control:hover {
+  background: var(--tj-primary-light);
+  color: var(--tj-primary-color);
+  border-color: var(--tj-primary-border);
+}
+
+.tj-speed-icon {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.tj-speed-select {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.9em;
+  font-weight: 700;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+  padding: 0 1.2em 0 0.2em;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.tj-speed-control::after {
+  content: "";
+  position: absolute;
+  right: 0.8em;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .tj-sticky-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6em;
+    padding: 0.6em 0.8em;
+  }
+  
+  .tj-sticky-bar .tj-flex-center {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.5em;
+  }
+
+  .tj-speed-control {
+    padding: 0.25em 0.4em 0.25em 0.6em;
+    height: 2.2em;
+    font-size: 0.85em;
+  }
+
+  .tj-speed-control::after {
+    right: 0.5em;
+  }
+
+  .tj-speed-select {
+    padding-right: 0.9em;
+  }
+
+  #voice-btn.tj-icon-btn {
+    width: 2.2em;
+    height: 2.2em;
+    padding: 0.3em;
+  }
+}

@@ -90,6 +90,18 @@ h1, h2, h3 {
 @media (max-width: 640px) {
     .header-actions {
         justify-content: center;
+        gap: 0.4em;
+    }
+    .tj-speed-control {
+        padding: 0.25em 0.4em 0.25em 0.6em;
+        height: 30px;
+        font-size: 0.85em;
+    }
+    .tj-speed-control::after {
+        right: 0.5em;
+    }
+    .tj-speed-select {
+        padding-right: 0.9em;
     }
 }
 
@@ -1247,4 +1259,75 @@ details[open] .chevron { transform: rotate(180deg); }
 .tj-google-btn:hover {
     background: var(--tj-btn-hover);
     border-color: var(--tj-accent-color);
+}
+
+#audio-controls-placeholder {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+/* Playback Speed Controls */
+.tj-speed-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  background: var(--tj-btn-bg);
+  border: 1px solid var(--tj-card-border);
+  border-radius: 6px; /* Match voice-btn and other theme elements */
+  padding: 0.25em 0.5em 0.25em 0.75em;
+  height: 32px; /* aligns perfectly with #voice-btn */
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  color: var(--tj-btn-text);
+  position: relative;
+  cursor: pointer;
+}
+
+.tj-speed-control:hover {
+  background: var(--tj-btn-hover);
+  border-color: var(--tj-accent-color);
+  color: var(--tj-accent-color);
+}
+
+.tj-speed-icon {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.tj-speed-select {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.9em;
+  font-weight: 700;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+  padding: 0 1.2em 0 0.2em;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.tj-speed-control::after {
+  content: "";
+  position: absolute;
+  right: 0.8em;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  pointer-events: none;
+}
+
+/* Audio Play button styling */
+.audio-btn-play {
+    background-color: var(--tj-btn-bg);
+    color: var(--tj-btn-slow-text);
+    border-color: var(--tj-card-border);
+}
+
+.audio-btn-play:hover {
+    background-color: var(--tj-btn-hover);
 }

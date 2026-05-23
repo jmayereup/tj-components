@@ -35,6 +35,9 @@ class TjReader extends HTMLElement {
     this.isPaused = false;
     this.playbackUtterance = null;
 
+    const storedSpeed = parseFloat(localStorage.getItem("tj-reader-speed"));
+    this.playbackSpeed = isNaN(storedSpeed) ? 0.7 : storedSpeed;
+
     this.isAutoplay = true;
     this.unscrambleData = [];
     this.currentUnscrambleIndex = 0;
@@ -84,6 +87,16 @@ class TjReader extends HTMLElement {
     autoplayCheckbox.onchange = (e) => {
       this.isAutoplay = e.target.checked;
     };
+
+    // Playback Speed control
+    const speedSelect = this.shadowRoot.querySelector('#speed-select');
+    if (speedSelect) {
+      speedSelect.value = this.playbackSpeed.toString();
+      speedSelect.onchange = (e) => {
+        this.playbackSpeed = parseFloat(e.target.value);
+        localStorage.setItem("tj-reader-speed", e.target.value);
+      };
+    }
   }
 
   connectedCallback() {
@@ -284,12 +297,15 @@ class TjReader extends HTMLElement {
       langVoices = voices.filter(v => v.lang.split(/[-_]/)[0].toLowerCase() === langPrefix);
     }
 
-    if (langVoices.length === 0) {
+    const speedControl = this.shadowRoot.querySelector('.tj-speed-control');
+    if (langVoices.length === 0 || !this._shouldShowAudioControls()) {
       voiceBtn.style.display = 'none';
+      if (speedControl) speedControl.style.display = 'none';
       return;
     }
 
     voiceBtn.style.display = 'flex';
+    if (speedControl) speedControl.style.display = 'inline-flex';
 
     voiceList.innerHTML = '';
     const bestVoice = this._getBestVoice(langOrg);
@@ -369,7 +385,7 @@ class TjReader extends HTMLElement {
     // Always set lang (critical for Android stability even when voice is set)
     utterance.lang = lang;
 
-    utterance.rate = 0.7;
+    utterance.rate = this.playbackSpeed;
     if (onEnd) {
       utterance.onend = onEnd;
     }

@@ -27,6 +27,9 @@ class TjPronunciation extends HTMLElement {
     this.studentInfo = { nickname: '', number: '', homeroom: '' };
     this.isSubmitting = false;
 
+    const storedSpeed = parseFloat(localStorage.getItem("tj-pronunciation-speed"));
+    this.playbackSpeed = isNaN(storedSpeed) ? 0.7 : storedSpeed;
+
     // Listen for voice loading
     if (this.synth) {
       this.synth.onvoiceschanged = () => this._updateVoiceList();
@@ -124,6 +127,8 @@ class TjPronunciation extends HTMLElement {
     if (!this._shouldShowAudioControls()) {
       const voiceBtn = this.shadowRoot.getElementById("voice-btn");
       if (voiceBtn) voiceBtn.style.display = "none";
+      const speedControl = this.shadowRoot.querySelector(".tj-speed-control");
+      if (speedControl) speedControl.style.display = "none";
       this.checkBrowserSupport();
     }
   }
@@ -316,6 +321,16 @@ class TjPronunciation extends HTMLElement {
       voiceOverlay.onclick = (e) => {
         if (e.target === voiceOverlay) this._hideVoiceOverlay();
       };
+    }
+
+    // Playback Speed control
+    const speedSelect = this.shadowRoot.getElementById("speed-select");
+    if (speedSelect) {
+      speedSelect.value = this.playbackSpeed.toString();
+      speedSelect.addEventListener("change", (e) => {
+        this.playbackSpeed = parseFloat(e.target.value);
+        localStorage.setItem("tj-pronunciation-speed", e.target.value);
+      });
     }
 
     // Report Card and Submit
@@ -883,7 +898,7 @@ class TjPronunciation extends HTMLElement {
       this.synth.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = this.language;
-      utterance.rate = 0.9; // Slightly slower for better pronunciation clarity
+      utterance.rate = this.playbackSpeed; // Adjustable slower/normal speed for better pronunciation clarity
 
       // Try to find selected voice or best fallback
       const voices = this.synth.getVoices();
