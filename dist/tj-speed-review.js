@@ -49,7 +49,7 @@ class n extends HTMLElement {
     Array.isArray(e) && (e = e[0]), e.title && (this.title = e.title), e.questions && (this.questions = e.questions);
   }
   parseMD(e) {
-    return window.marked && e ? window.marked.parse(e) : e || "";
+    return window.marked && e ? window.marked.parseInline(e) : e || "";
   }
   startGame() {
     if (!this.identityLocked) {
@@ -217,10 +217,15 @@ class n extends HTMLElement {
         }
         .question-text {
           font-size: 1.4em;
-          font-weight: 600;
           margin-bottom: 1.5em;
           line-height: 1.4;
           min-height: 3em;
+        }
+        .question-text p, .explanation p {
+          margin: 0;
+        }
+        .question-text strong, .explanation strong {
+          font-weight: 800;
         }
         .options-grid {
           display: grid;
@@ -234,12 +239,13 @@ class n extends HTMLElement {
           background: whitesmoke;
           border: 2px solid grey;
           color: black;
-          padding: 1em;
+          padding: .5em;
           border-radius: 0.8em;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.2s;
           text-align: center;
+          font-size: 1.2em;
         }
         .option-btn:hover:not(:disabled) {
           background: #f8fafc;
@@ -279,7 +285,7 @@ class n extends HTMLElement {
         .feedback-status.incorrect { color: #ef4444; }
         .explanation {
           font-size: 0.95em;
-          color: #cbd5e1;
+          color: #475569;
           line-height: 1.5;
         }
         .btn-large {
@@ -664,7 +670,7 @@ class n extends HTMLElement {
         </div>
 
         <div class="question-meta">Question ${this.currentIndex + 1} / ${this.currentPool.length} — ${t.category || ""}</div>
-        <div class="question-text">${t.question}</div>
+        <div class="question-text">${this.parseMD(t.question)}</div>
 
         <div class="options-grid">
           ${this.shuffledOptions.map((s) => {

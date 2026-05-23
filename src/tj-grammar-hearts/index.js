@@ -15,8 +15,10 @@ class TjGrammarHearts extends HTMLElement {
     this.score = 0;
     this.bestScore = 0;
     this.grammarHint = { summary: '', content: '' };
-    this.studentInfo = { nickname: '', number: '', homeroom: '' };
+    this.studentInfo = { nickname: '', number: '', homeroom: '', teacherCode: '' };
     this.title = 'Grammar Practice';
+    this.formError = '';
+    this.submissionError = '';
 
     // Activity state
     this.gameState = 'hint'; // hint, playing, gameover, form, report
@@ -137,14 +139,100 @@ class TjGrammarHearts extends HTMLElement {
       .replace(/\n/g, '<br>');
   }
 
+  _getShuffleScore(arr) {
+    if (arr.length === 0) return 0;
+    let maxConsecutive = 1;
+    let currentConsecutive = 1;
+    let adjacencies = 0;
+    for (let i = 1; i < arr.length; i++) {
+      if (arr[i].type === arr[i - 1].type) {
+        currentConsecutive++;
+        adjacencies++;
+      } else {
+        if (currentConsecutive > maxConsecutive) {
+          maxConsecutive = currentConsecutive;
+        }
+        currentConsecutive = 1;
+      }
+    }
+    if (currentConsecutive > maxConsecutive) {
+      maxConsecutive = currentConsecutive;
+    }
+    return maxConsecutive * 1000 + adjacencies;
+  }
+
   prepRound() {
-    // Pick unique questions for the round
-    const shuffled = [...this.questions].sort(() => 0.5 - Math.random());
-    this.currentPool = shuffled.slice(0, Math.min(this.questionsPerRound, this.questions.length));
+    if (!this.questions || this.questions.length === 0) {
+      this.currentPool = [];
+      this.currentIndex = 0;
+      this.hearts = this.maxHearts;
+      this.score = 0;
+      this.gameState = 'hint';
+      this.resetQuestionState();
+      return;
+    }
+
+    // 1. Group questions by type
+    const groups = {};
+    for (const q of this.questions) {
+      if (!groups[q.type]) {
+        groups[q.type] = [];
+      }
+      groups[q.type].push(q);
+    }
+
+    // 2. Shuffle each group's questions
+    for (const type in groups) {
+      groups[type].sort(() => 0.5 - Math.random());
+    }
+
+    // 3. Round-robin selection to balance types
+    const pool = [];
+    const types = Object.keys(groups);
+    const targetSize = Math.min(this.questionsPerRound, this.questions.length);
+
+    // Shuffle the order of types to avoid any systematic bias
+    const typeOrder = [...types].sort(() => 0.5 - Math.random());
+
+    const indices = {};
+    for (const type of types) {
+      indices[type] = 0;
+    }
+
+    while (pool.length < targetSize) {
+      let addedInThisCycle = false;
+      for (const type of typeOrder) {
+        if (pool.length >= targetSize) break;
+        if (indices[type] < groups[type].length) {
+          pool.push(groups[type][indices[type]]);
+          indices[type]++;
+          addedInThisCycle = true;
+        }
+      }
+      if (!addedInThisCycle) break;
+    }
+
+    // 4. Find the best permutation/shuffle of the selected pool to minimize consecutive types
+    let bestPool = [...pool];
+    let bestScore = this._getShuffleScore(bestPool);
+
+    // Run 200 random shuffles and pick the one with the lowest score
+    for (let i = 0; i < 200; i++) {
+      const candidate = [...pool].sort(() => 0.5 - Math.random());
+      const score = this._getShuffleScore(candidate);
+      if (score < bestScore) {
+        bestScore = score;
+        bestPool = candidate;
+      }
+    }
+
+    this.currentPool = bestPool;
     this.currentIndex = 0;
     this.hearts = this.maxHearts;
     this.score = 0;
     this.gameState = 'hint';
+    this.formError = '';
+    this.submissionError = '';
     this.resetQuestionState();
   }
 
@@ -242,13 +330,16 @@ class TjGrammarHearts extends HTMLElement {
     const nickname = this.shadowRoot.querySelector('#nickname')?.value?.trim() || '';
     const number = this.shadowRoot.querySelector('#student-number')?.value?.trim() || '';
     const homeroom = this.shadowRoot.querySelector('#homeroom')?.value?.trim() || '';
+    const teacherCode = this.shadowRoot.querySelector('#teacher-code')?.value?.trim() || '';
 
     if (!nickname || !number) {
-      alert('Please enter both nickname and student number.');
+      this.formError = 'Please enter both nickname and student number.';
+      this.render();
       return;
     }
 
-    this.studentInfo = { nickname, number, homeroom };
+    this.formError = '';
+    this.studentInfo = { nickname, number, homeroom, teacherCode };
 
     // Update bestScore
     if (this.score > this.bestScore) {
@@ -261,12 +352,19 @@ class TjGrammarHearts extends HTMLElement {
 
   async _submitScore() {
     const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
-    const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : '';
+    const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : this.studentInfo.teacherCode;
+
+    // Sync back to studentInfo state
+    this.studentInfo.teacherCode = currentTeacherCode;
 
     if (currentTeacherCode !== '6767') {
-      alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
+      this.submissionError = 'Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.';
+      this.render();
       return;
     }
+
+    this.submissionError = '';
+    this.render();
 
     if (this.isSubmitting) return;
 
@@ -285,7 +383,8 @@ class TjGrammarHearts extends HTMLElement {
       studentId: this.studentInfo.number,
       quizName: 'Grammar- ' + this.title,
       score: this.bestScore,
-      total: this.questionsPerRound
+      total: this.questionsPerRound,
+      teacherCode: currentTeacherCode
     };
 
     try {
@@ -301,12 +400,13 @@ class TjGrammarHearts extends HTMLElement {
       }
     } catch (err) {
       console.error('Error submitting score:', err);
-      alert('There was an error submitting your score. Please try again.');
+      this.submissionError = 'There was an error submitting your score. Please try again.';
       if (submitBtn) {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
       }
       this.isSubmitting = false;
+      this.render();
     }
   }
 
@@ -920,6 +1020,11 @@ class TjGrammarHearts extends HTMLElement {
             <label class="form-label" for="homeroom">Homeroom</label>
             <input type="text" id="homeroom" class="form-field" placeholder="e.g. 5A" value="${this.studentInfo.homeroom}">
           </div>
+          <div class="form-input-group">
+            <label class="form-label" for="teacher-code">Teacher Code (Optional)</label>
+            <input type="text" id="teacher-code" class="form-field" placeholder="e.g. 6767" value="${this.studentInfo.teacherCode || ''}">
+          </div>
+          ${this.formError ? `<div class="error-msg" style="margin-bottom: 1em;">⚠️ ${this.formError}</div>` : ''}
           <button class="btn" onclick="this.getRootNode().host.showReport()">Generate Report</button>
         </div>
       `;
@@ -959,8 +1064,9 @@ class TjGrammarHearts extends HTMLElement {
           </div>
           <div class="rc-submission-box">
             <p>Official Submission</p>
-            <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code">
+            <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ''}">
             <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+            ${this.submissionError ? `<div class="error-msg" style="margin-top: 8px; text-align: left; font-size: 0.9em;">⚠️ ${this.submissionError}</div>` : ''}
           </div>
           <button class="rc-submit-btn" id="submit-score-btn" onclick="this.getRootNode().host._submitScore()">Submit Score</button>
           <br>

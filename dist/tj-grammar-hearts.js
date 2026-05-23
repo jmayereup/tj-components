@@ -1,8 +1,8 @@
-import { c as d } from "./chunks/tj-config-Co8tO1UZ.js";
-class l extends HTMLElement {
+import { c as u } from "./chunks/tj-config-Co8tO1UZ.js";
+class m extends HTMLElement {
   constructor() {
     var e;
-    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.hearts = 0, this.maxHearts = 3, this.questionsPerRound = 5, this.score = 0, this.bestScore = 0, this.grammarHint = { summary: "", content: "" }, this.studentInfo = { nickname: "", number: "", homeroom: "" }, this.title = "Grammar Practice", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = (e = d) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1;
+    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.hearts = 0, this.maxHearts = 3, this.questionsPerRound = 5, this.score = 0, this.bestScore = 0, this.grammarHint = { summary: "", content: "" }, this.studentInfo = { nickname: "", number: "", homeroom: "", teacherCode: "" }, this.title = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = (e = u) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1;
   }
   connectedCallback() {
     if (this.maxHearts = parseInt(this.getAttribute("hearts")) || 3, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 5, this.hearts = this.maxHearts, typeof window.marked > "u") {
@@ -44,9 +44,40 @@ class l extends HTMLElement {
   parseMD(e) {
     return typeof window.marked < "u" ? window.marked.parse(e) : e.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>").replace(/\n/g, "<br>");
   }
+  _getShuffleScore(e) {
+    if (e.length === 0) return 0;
+    let r = 1, t = 1, s = 0;
+    for (let i = 1; i < e.length; i++)
+      e[i].type === e[i - 1].type ? (t++, s++) : (t > r && (r = t), t = 1);
+    return t > r && (r = t), r * 1e3 + s;
+  }
   prepRound() {
-    const e = [...this.questions].sort(() => 0.5 - Math.random());
-    this.currentPool = e.slice(0, Math.min(this.questionsPerRound, this.questions.length)), this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.resetQuestionState();
+    if (!this.questions || this.questions.length === 0) {
+      this.currentPool = [], this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.resetQuestionState();
+      return;
+    }
+    const e = {};
+    for (const o of this.questions)
+      e[o.type] || (e[o.type] = []), e[o.type].push(o);
+    for (const o in e)
+      e[o].sort(() => 0.5 - Math.random());
+    const r = [], t = Object.keys(e), s = Math.min(this.questionsPerRound, this.questions.length), i = [...t].sort(() => 0.5 - Math.random()), n = {};
+    for (const o of t)
+      n[o] = 0;
+    for (; r.length < s; ) {
+      let o = !1;
+      for (const a of i) {
+        if (r.length >= s) break;
+        n[a] < e[a].length && (r.push(e[a][n[a]]), n[a]++, o = !0);
+      }
+      if (!o) break;
+    }
+    let c = [...r], l = this._getShuffleScore(c);
+    for (let o = 0; o < 200; o++) {
+      const a = [...r].sort(() => 0.5 - Math.random()), d = this._getShuffleScore(a);
+      d < l && (l = d, c = a);
+    }
+    this.currentPool = c, this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.formError = "", this.submissionError = "", this.resetQuestionState();
   }
   resetQuestionState() {
     this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.selectedScrambleIndices = [], this.scrambledWords = [];
@@ -90,21 +121,21 @@ class l extends HTMLElement {
     this.prepRound(), this.gameState = "playing", this.render();
   }
   showReport() {
-    var s, i, o, n, a, c;
-    const e = ((i = (s = this.shadowRoot.querySelector("#nickname")) == null ? void 0 : s.value) == null ? void 0 : i.trim()) || "", r = ((n = (o = this.shadowRoot.querySelector("#student-number")) == null ? void 0 : o.value) == null ? void 0 : n.trim()) || "", t = ((c = (a = this.shadowRoot.querySelector("#homeroom")) == null ? void 0 : a.value) == null ? void 0 : c.trim()) || "";
+    var i, n, c, l, o, a, d, h;
+    const e = ((n = (i = this.shadowRoot.querySelector("#nickname")) == null ? void 0 : i.value) == null ? void 0 : n.trim()) || "", r = ((l = (c = this.shadowRoot.querySelector("#student-number")) == null ? void 0 : c.value) == null ? void 0 : l.trim()) || "", t = ((a = (o = this.shadowRoot.querySelector("#homeroom")) == null ? void 0 : o.value) == null ? void 0 : a.trim()) || "", s = ((h = (d = this.shadowRoot.querySelector("#teacher-code")) == null ? void 0 : d.value) == null ? void 0 : h.trim()) || "";
     if (!e || !r) {
-      alert("Please enter both nickname and student number.");
+      this.formError = "Please enter both nickname and student number.", this.render();
       return;
     }
-    this.studentInfo = { nickname: e, number: r, homeroom: t }, this.score > this.bestScore && (this.bestScore = this.score), this.gameState = "report", this.render();
+    this.formError = "", this.studentInfo = { nickname: e, number: r, homeroom: t, teacherCode: s }, this.score > this.bestScore && (this.bestScore = this.score), this.gameState = "report", this.render();
   }
   async _submitScore() {
-    const e = this.shadowRoot.getElementById("report-teacher-code");
-    if ((e ? e.value.trim() : "") !== "6767") {
-      alert("Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.");
+    const e = this.shadowRoot.getElementById("report-teacher-code"), r = e ? e.value.trim() : this.studentInfo.teacherCode;
+    if (this.studentInfo.teacherCode = r, r !== "6767") {
+      this.submissionError = "Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.", this.render();
       return;
     }
-    if (this.isSubmitting) return;
+    if (this.submissionError = "", this.render(), this.isSubmitting) return;
     const t = this.shadowRoot.getElementById("submit-score-btn"), s = t ? t.textContent : "Submit";
     this.isSubmitting = !0, t && (t.textContent = "Submitting...", t.disabled = !0);
     const i = {
@@ -113,7 +144,8 @@ class l extends HTMLElement {
       studentId: this.studentInfo.number,
       quizName: "Grammar- " + this.title,
       score: this.bestScore,
-      total: this.questionsPerRound
+      total: this.questionsPerRound,
+      teacherCode: r
     };
     try {
       await fetch(this.submissionUrl, {
@@ -122,8 +154,8 @@ class l extends HTMLElement {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(i)
       }), t && (t.textContent = "Submitted ✓", t.style.background = "green");
-    } catch (o) {
-      console.error("Error submitting score:", o), alert("There was an error submitting your score. Please try again."), t && (t.textContent = s, t.disabled = !1), this.isSubmitting = !1;
+    } catch (n) {
+      console.error("Error submitting score:", n), this.submissionError = "There was an error submitting your score. Please try again.", t && (t.textContent = s, t.disabled = !1), this.isSubmitting = !1, this.render();
     }
   }
   getInstruction(e) {
@@ -737,13 +769,18 @@ class l extends HTMLElement {
             <label class="form-label" for="homeroom">Homeroom</label>
             <input type="text" id="homeroom" class="form-field" placeholder="e.g. 5A" value="${this.studentInfo.homeroom}">
           </div>
+          <div class="form-input-group">
+            <label class="form-label" for="teacher-code">Teacher Code (Optional)</label>
+            <input type="text" id="teacher-code" class="form-field" placeholder="e.g. 6767" value="${this.studentInfo.teacherCode || ""}">
+          </div>
+          ${this.formError ? `<div class="error-msg" style="margin-bottom: 1em;">⚠️ ${this.formError}</div>` : ""}
           <button class="btn" onclick="this.getRootNode().host.showReport()">Generate Report</button>
         </div>
       `;
     else if (this.gameState === "report") {
       const t = this.currentPool.length, s = Math.round(this.bestScore / t * 100) || 0, i = (/* @__PURE__ */ new Date()).toLocaleString();
-      let o = "🏆";
-      s < 50 ? o = "💪" : s < 80 && (o = "⭐"), r = `
+      let n = "🏆";
+      s < 50 ? n = "💪" : s < 80 && (n = "⭐"), r = `
         <div class="report-card">
           <div class="rc-header">
             <div class="rc-icon">📄</div>
@@ -761,7 +798,7 @@ class l extends HTMLElement {
               <div class="rc-score-denom">/ ${t}</div>
             </div>
             <div class="rc-score-label">
-              ${o} ${s >= 80 ? "Excellent!" : s >= 50 ? "Good effort!" : "Keep practicing!"}
+              ${n} ${s >= 80 ? "Excellent!" : s >= 50 ? "Good effort!" : "Keep practicing!"}
             </div>
           </div>
           <div class="rc-bar-track"><div class="rc-bar-fill" style="width:${s}%"></div></div>
@@ -771,8 +808,9 @@ class l extends HTMLElement {
           </div>
           <div class="rc-submission-box">
             <p>Official Submission</p>
-            <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code">
+            <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ""}">
             <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+            ${this.submissionError ? `<div class="error-msg" style="margin-top: 8px; text-align: left; font-size: 0.9em;">⚠️ ${this.submissionError}</div>` : ""}
           </div>
           <button class="rc-submit-btn" id="submit-score-btn" onclick="this.getRootNode().host._submitScore()">Submit Score</button>
           <br>
@@ -856,6 +894,6 @@ class l extends HTMLElement {
     this.isHintOpen = !this.isHintOpen, this.render();
   }
 }
-customElements.get("tj-grammar-hearts") || customElements.define("tj-grammar-hearts", l);
-customElements.get("grammar-hearts") || customElements.define("grammar-hearts", class extends l {
+customElements.get("tj-grammar-hearts") || customElements.define("tj-grammar-hearts", m);
+customElements.get("grammar-hearts") || customElements.define("grammar-hearts", class extends m {
 });
