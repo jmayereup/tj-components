@@ -1,6 +1,6 @@
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
-import { getBestVoice, startAudioRecording } from "../audio-utils.js";
+import { getBestVoice, startAudioRecording, shouldShowAudioControls, getAndroidIntentLink } from "../audio-utils.js";
 
 class TjInfoGap extends HTMLElement {
     // Static registry of all instances on the page
@@ -100,6 +100,7 @@ class TjInfoGap extends HTMLElement {
         } else {
             this.renderGameScreen();
         }
+        this.checkBrowserSupport();
     }
 
     renderSelectionScreen() {
@@ -162,7 +163,7 @@ class TjInfoGap extends HTMLElement {
         this.shadowRoot.getElementById('progress-info').textContent = `${this.answeredCount} / ${this.totalQuestions} Answered`;
 
         const voiceBtn = this.shadowRoot.getElementById('voice-btn');
-        if (this.isSinglePlayer) {
+        if (this.isSinglePlayer && this._shouldShowAudioControls()) {
             voiceBtn.style.display = 'block';
             voiceBtn.onclick = () => this._showVoiceOverlay();
         } else {
@@ -651,6 +652,38 @@ class TjInfoGap extends HTMLElement {
         const display = this.shadowRoot.querySelector('.progress-info');
         if (display) {
             display.textContent = `${this.answeredCount} / ${this.totalQuestions} Answered`;
+        }
+    }
+
+    _shouldShowAudioControls() {
+        return shouldShowAudioControls(window.speechSynthesis);
+    }
+
+    _getAndroidIntentLink() {
+        return getAndroidIntentLink();
+    }
+
+    checkBrowserSupport() {
+        if (!this._shouldShowAudioControls()) {
+            const overlay = this.shadowRoot.getElementById('browser-prompt-overlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+
+                const androidLink = this._getAndroidIntentLink();
+                const actionBtn = this.shadowRoot.getElementById('browser-action-btn');
+
+                if (androidLink) {
+                    actionBtn.href = androidLink;
+                    actionBtn.textContent = 'Open in Chrome';
+                } else {
+                    // Likely iOS in-app browser or no TTS support
+                    actionBtn.onclick = (e) => {
+                        e.preventDefault();
+                        alert('Please open this page in Safari or Chrome for audio and recording features.');
+                    };
+                    actionBtn.textContent = 'Use Safari / Chrome';
+                }
+            }
         }
     }
 

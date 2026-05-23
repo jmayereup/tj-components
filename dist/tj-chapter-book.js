@@ -58,6 +58,7 @@ const S = '@import"https://fonts.googleapis.com/css2?family=Lato:wght@300;400;70
         <p>This application works best in standard browsers like <strong>Chrome</strong> or <strong>Safari</strong> to enable high-quality text-to-speech features.</p>
         <p>กรุณาเปิดใน Chrome หรือ Safari เพื่อใช้งานฟีเจอร์เสียงแบบเต็มรูปแบบ</p>
         <a class="browser-action-btn">Open in Browser</a>
+        <button class="close-prompt" style="display: block; width: 100%; margin-top: 1.5em; border: none; background: transparent; text-decoration: underline; cursor: pointer; color: #64748b; font-weight: 600; font-size: 0.95em;" onclick="this.closest('.browser-prompt-overlay').style.display='none'">Continue anyway / ใช้งานต่อ</button>
     </div>
 </div>
 `;

@@ -1,4 +1,4 @@
-import { getBestVoice } from '../audio-utils.js';
+import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../audio-utils.js';
 import { config } from '../tj-config.js';
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
@@ -85,11 +85,44 @@ class TjListening extends HTMLElement {
     _initDataAndRender() {
         this.totalQuestions = this.lessonData.listening?.questions?.length || 0;
         this.render();
+        this.checkBrowserSupport();
 
         // Retry voice list population for mobile
         this._updateVoiceList();
         setTimeout(() => this._updateVoiceList(), 500);
         setTimeout(() => this._updateVoiceList(), 1500);
+    }
+
+    _shouldShowAudioControls() {
+        return shouldShowAudioControls(window.speechSynthesis);
+    }
+
+    _getAndroidIntentLink() {
+        return getAndroidIntentLink();
+    }
+
+    checkBrowserSupport() {
+        if (!this._shouldShowAudioControls()) {
+            const overlay = this.shadowRoot.getElementById('browser-prompt-overlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+
+                const androidLink = this._getAndroidIntentLink();
+                const actionBtn = this.shadowRoot.getElementById('browser-action-btn');
+
+                if (androidLink) {
+                    actionBtn.href = androidLink;
+                    actionBtn.textContent = 'Open in Chrome';
+                } else {
+                    // Likely iOS in-app browser or no TTS support
+                    actionBtn.onclick = (e) => {
+                        e.preventDefault();
+                        this._showToast('Please open this page in Safari or Chrome for audio features.');
+                    };
+                    actionBtn.textContent = 'Use Safari / Chrome';
+                }
+            }
+        }
     }
 
     _getLang() {
@@ -102,6 +135,11 @@ class TjListening extends HTMLElement {
             template.innerHTML = `<style>${stylesText}</style>${templateHtml}`;
             this.shadowRoot.appendChild(template.content.cloneNode(true));
             this._attachBaseListeners();
+
+            if (!this._shouldShowAudioControls()) {
+                const voiceBtn = this.shadowRoot.getElementById('voice-btn');
+                if (voiceBtn) voiceBtn.style.display = 'none';
+            }
         }
 
         if (this.isCompleted) {

@@ -1,7 +1,7 @@
 import { config } from './config.js';
 import templateHtml from './template.html?raw';
 import stylesText from './styles.css?inline';
-import { getBestVoice, shouldShowAudioControls } from '../audio-utils.js';
+import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../audio-utils.js';
 
 class TjQuizElement extends HTMLElement {
     static get observedAttributes() {
@@ -92,6 +92,7 @@ class TjQuizElement extends HTMLElement {
                 const voiceBtn = this.shadowRoot.getElementById('voice-btn');
                 if (voiceBtn) voiceBtn.classList.add('hidden');
             }
+            this.checkBrowserSupport();
 
             if (window.speechSynthesis) {
                 window.speechSynthesis.onvoiceschanged = () => this._updateVoiceList();
@@ -198,6 +199,34 @@ class TjQuizElement extends HTMLElement {
 
     _shouldShowAudioControls() {
         return shouldShowAudioControls(window.speechSynthesis);
+    }
+
+    _getAndroidIntentLink() {
+        return getAndroidIntentLink();
+    }
+
+    checkBrowserSupport() {
+        if (!this._shouldShowAudioControls()) {
+            const overlay = this.shadowRoot.getElementById('browser-prompt-overlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+
+                const androidLink = this._getAndroidIntentLink();
+                const actionBtn = this.shadowRoot.getElementById('browser-action-btn');
+
+                if (androidLink) {
+                    actionBtn.href = androidLink;
+                    actionBtn.textContent = 'Open in Chrome';
+                } else {
+                    // Likely iOS in-app browser or no TTS support
+                    actionBtn.onclick = (e) => {
+                        e.preventDefault();
+                        alert('Please open this page in Safari or Chrome for audio features.');
+                    };
+                    actionBtn.textContent = 'Use Safari / Chrome';
+                }
+            }
+        }
     }
 
 
