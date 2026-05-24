@@ -689,6 +689,19 @@ class TjChapterBook extends HTMLElement {
             const plainText = p.replace(/<[^>]*>/g, '');
 
             if (isThai(plainText)) {
+                if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+                    const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+                    const segments = segmenter.segment(plainText);
+                    const wrappedTokens = [];
+                    for (const segment of segments) {
+                        if (segment.isWordLike) {
+                            wrappedTokens.push(`<span class="word">${segment.segment}</span>`);
+                        } else {
+                            wrappedTokens.push(segment.segment);
+                        }
+                    }
+                    return `<p>${wrappedTokens.join('')}</p>`;
+                }
                 return `<p>${p}</p>`;
             } else {
                 // Split by spaces but preserve them as part of the structure

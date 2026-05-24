@@ -209,20 +209,41 @@ class TjReader extends HTMLElement {
       const originalText = document.createElement('div');
       originalText.classList.add('original-text');
 
-      lineData.original.split(' ').forEach((word, wIdx) => {
-        const span = document.createElement('span');
-        span.textContent = word + ' ';
-        span.classList.add('tts-word');
-        if (!this.isSwapped && wIdx >= lineData.highlightIndex && wIdx <= lineData.highlightIndexEnd) {
-          span.classList.add('highlight');
+      const isThaiOrg = langOrg.split(/[-_]/)[0].toLowerCase() === 'th';
+      if (isThaiOrg && typeof Intl !== 'undefined' && Intl.Segmenter) {
+        const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+        const segments = segmenter.segment(lineData.original);
+        for (const segment of segments) {
+          if (segment.isWordLike) {
+            const span = document.createElement('span');
+            span.textContent = segment.segment;
+            span.classList.add('tts-word');
+            span.onclick = (e) => {
+              e.stopPropagation();
+              if (this.isPlayingAll) this.stopFullPlayback();
+              this._speak(segment.segment, langOrg);
+            };
+            originalText.appendChild(span);
+          } else {
+            originalText.appendChild(document.createTextNode(segment.segment));
+          }
         }
-        span.onclick = (e) => {
-          e.stopPropagation();
-          if (this.isPlayingAll) this.stopFullPlayback();
-          this._speak(word.replace(/[.,!?;:]/g, ''), langOrg);
-        };
-        originalText.appendChild(span);
-      });
+      } else {
+        lineData.original.split(' ').forEach((word, wIdx) => {
+          const span = document.createElement('span');
+          span.textContent = word + ' ';
+          span.classList.add('tts-word');
+          if (!this.isSwapped && wIdx >= lineData.highlightIndex && wIdx <= lineData.highlightIndexEnd) {
+            span.classList.add('highlight');
+          }
+          span.onclick = (e) => {
+            e.stopPropagation();
+            if (this.isPlayingAll) this.stopFullPlayback();
+            this._speak(word.replace(/[.,!?;:]/g, ''), langOrg);
+          };
+          originalText.appendChild(span);
+        });
+      }
 
       header.appendChild(originalText);
       card.appendChild(header);
@@ -230,20 +251,42 @@ class TjReader extends HTMLElement {
 
       const fullTranslation = document.createElement('div');
       fullTranslation.classList.add('full-translation');
-      lineData.fullTranslation.split(' ').forEach((word, wIdx) => {
-        const span = document.createElement('span');
-        span.textContent = word + ' ';
-        span.classList.add('tts-word');
-        if (this.isSwapped && wIdx >= lineData.highlightIndex && wIdx <= lineData.highlightIndexEnd) {
-          span.classList.add('highlight');
+
+      const isThaiTrans = langTrans.split(/[-_]/)[0].toLowerCase() === 'th';
+      if (isThaiTrans && typeof Intl !== 'undefined' && Intl.Segmenter) {
+        const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+        const segments = segmenter.segment(lineData.fullTranslation);
+        for (const segment of segments) {
+          if (segment.isWordLike) {
+            const span = document.createElement('span');
+            span.textContent = segment.segment;
+            span.classList.add('tts-word');
+            span.onclick = (e) => {
+              e.stopPropagation();
+              if (this.isPlayingAll) this.stopFullPlayback();
+              this._speak(segment.segment, langTrans);
+            };
+            fullTranslation.appendChild(span);
+          } else {
+            fullTranslation.appendChild(document.createTextNode(segment.segment));
+          }
         }
-        span.onclick = (e) => {
-          e.stopPropagation();
-          if (this.isPlayingAll) this.stopFullPlayback();
-          this._speak(word.replace(/[.,!?;:]/g, ''), langTrans);
-        };
-        fullTranslation.appendChild(span);
-      });
+      } else {
+        lineData.fullTranslation.split(' ').forEach((word, wIdx) => {
+          const span = document.createElement('span');
+          span.textContent = word + ' ';
+          span.classList.add('tts-word');
+          if (this.isSwapped && wIdx >= lineData.highlightIndex && wIdx <= lineData.highlightIndexEnd) {
+            span.classList.add('highlight');
+          }
+          span.onclick = (e) => {
+            e.stopPropagation();
+            if (this.isPlayingAll) this.stopFullPlayback();
+            this._speak(word.replace(/[.,!?;:]/g, ''), langTrans);
+          };
+          fullTranslation.appendChild(span);
+        });
+      }
 
       const translationOptions = document.createElement('div');
       translationOptions.classList.add('translation-options');
