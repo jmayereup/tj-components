@@ -421,12 +421,12 @@ class TjReader extends HTMLElement {
       voiceToUse = this._getBestVoice(lang);
     }
 
+    // Always set lang (critical for Android stability even when voice is set)
+    utterance.lang = lang;
+
     if (voiceToUse) {
       utterance.voice = voiceToUse;
     }
-
-    // Always set lang (critical for Android stability even when voice is set)
-    utterance.lang = lang;
 
     utterance.rate = this.playbackSpeed;
     if (onEnd) {

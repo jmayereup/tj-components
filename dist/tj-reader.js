@@ -278,7 +278,7 @@ class j extends HTMLElement {
     const t = new SpeechSynthesisUtterance(e);
     let i = null;
     const n = this.getAttribute("lang-original") || "en", s = r.split(/[-_]/)[0].toLowerCase(), c = n.split(/[-_]/)[0].toLowerCase();
-    return this.selectedVoiceName && s === c && (i = window.speechSynthesis.getVoices().find((d) => d.name === this.selectedVoiceName)), i || (i = this._getBestVoice(r)), i && (t.voice = i), t.lang = r, t.rate = this.playbackSpeed, o && (t.onend = o), window.speechSynthesis.speak(t), t;
+    return this.selectedVoiceName && s === c && (i = window.speechSynthesis.getVoices().find((d) => d.name === this.selectedVoiceName)), i || (i = this._getBestVoice(r)), t.lang = r, i && (t.voice = i), t.rate = this.playbackSpeed, o && (t.onend = o), window.speechSynthesis.speak(t), t;
   }
   toggleFullPlayback() {
     this.isPlayingAll ? this.isPaused ? this.resumeFullPlayback() : this.pauseFullPlayback() : this.startFullPlayback();

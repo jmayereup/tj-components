@@ -511,7 +511,7 @@ class f extends HTMLElement {
       this.currentUtterance = new SpeechSynthesisUtterance(a);
       let d = this.synth.getVoices().find((h) => h.name === this.selectedVoiceName);
       const s = d ? d.lang.split(/[-_]/)[0].toLowerCase() : null, u = i.split(/[-_]/)[0].toLowerCase();
-      (!d || s !== u) && (d = this._getBestVoice(i)), d && (this.currentUtterance.voice = d), this.currentUtterance.lang = i, this.currentUtterance.rate = o, this.currentUtterance.onend = () => {
+      (!d || s !== u) && (d = this._getBestVoice(i)), this.currentUtterance.lang = i, d && (this.currentUtterance.voice = d), this.currentUtterance.rate = o, this.currentUtterance.onend = () => {
         this._ttsUtteranceSeq === p && (this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null, this.currentButtonId = null, this.currentUtterance = null);
       }, this.currentUtterance.onerror = (h) => {
         this._ttsUtteranceSeq === p && (console.error("Speech error:", h), this.updateIcon(e, "play"), this._ttsActionSeq++, this.ttsState.status = "idle", this.ttsState.activeButtonId = null, this.ttsState.activeElementId = null, this.ttsState.activeRate = 1, this.ttsState.activeLang = null, this.currentButtonId = null, h.error !== "canceled" && h.error !== "interrupted" && this.showTTSError(e));
@@ -528,7 +528,7 @@ class f extends HTMLElement {
     const r = new SpeechSynthesisUtterance(e);
     let a = this.synth.getVoices().find((p) => p.name === this.selectedVoiceName);
     const c = a ? a.lang.split(/[-_]/)[0].toLowerCase() : null, i = (o || this.language).split(/[-_]/)[0].toLowerCase();
-    (!a || c !== i) && (a = this._getBestVoice(o || this.language)), a && (r.voice = a), r.lang = o || this.language, r.rate = 0.8, this.synth.speak(r);
+    (!a || c !== i) && (a = this._getBestVoice(o || this.language)), r.lang = o || this.language, a && (r.voice = a), r.rate = 0.8, this.synth.speak(r);
   }
   showTTSError(t) {
     const o = `

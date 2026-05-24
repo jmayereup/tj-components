@@ -919,12 +919,12 @@ class TjChapterBook extends HTMLElement {
                 voice = this._getBestVoice(lang);
             }
 
+            // Always set lang (critical for Android stability)
+            this.currentUtterance.lang = lang;
+
             if (voice) {
                 this.currentUtterance.voice = voice;
             }
-
-            // Always set lang (critical for Android stability)
-            this.currentUtterance.lang = lang;
 
             this.currentUtterance.rate = rate;
 
@@ -996,12 +996,12 @@ class TjChapterBook extends HTMLElement {
             voice = this._getBestVoice(lang || this.language);
         }
 
+        // Always set lang (critical for Android stability)
+        utterance.lang = lang || this.language;
+
         if (voice) {
             utterance.voice = voice;
         }
-
-        // Always set lang (critical for Android stability)
-        utterance.lang = lang || this.language;
 
         utterance.rate = 0.8; // Slightly slower for individual words
 
