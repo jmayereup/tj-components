@@ -87,6 +87,7 @@ class m extends HTMLElement {
   }
   handleAnswer(e) {
     if (this.isAnswered) return;
+    this.userAnswer = e;
     const r = this.currentPool[this.currentIndex];
     let t = !1;
     if (r.type === "multiple-choice")
@@ -383,6 +384,18 @@ class m extends HTMLElement {
 
         .input-field:focus {
           border-color: #3b82f6;
+        }
+
+        .input-field.success {
+          background: #ecfdf5;
+          border-color: #10b981;
+          color: #065f46;
+        }
+
+        .input-field.error {
+          background: #fef2f2;
+          border-color: #ef4444;
+          color: #991b1b;
         }
 
         .error-msg {
@@ -767,11 +780,11 @@ class m extends HTMLElement {
           </div>
           <div class="form-input-group">
             <label class="form-label" for="homeroom">Homeroom</label>
-            <input type="text" id="homeroom" class="form-field" placeholder="e.g. 5A" value="${this.studentInfo.homeroom}">
+            <input type="text" id="homeroom" class="form-field" placeholder="e.g. 6/1" value="${this.studentInfo.homeroom}">
           </div>
           <div class="form-input-group">
             <label class="form-label" for="teacher-code">Teacher Code (Optional)</label>
-            <input type="text" id="teacher-code" class="form-field" placeholder="e.g. 6767" value="${this.studentInfo.teacherCode || ""}">
+            <input type="text" id="teacher-code" class="form-field" placeholder="e.g. 1234" value="${this.studentInfo.teacherCode || ""}">
           </div>
           ${this.formError ? `<div class="error-msg" style="margin-bottom: 1em;">⚠️ ${this.formError}</div>` : ""}
           <button class="btn" onclick="this.getRootNode().host.showReport()">Generate Report</button>
@@ -843,7 +856,7 @@ class m extends HTMLElement {
       }).join("");
     if (e.type === "fill-in-the-blank")
       return `
-        <input type="text" class="input-field" id="fib-answer" placeholder="Type your answer here..." 
+        <input type="text" class="input-field${this.isAnswered ? this.isCorrect ? " success" : " error" : ""}" id="fib-answer" placeholder="Type your answer here..." 
           ${this.isAnswered ? "readonly" : ""} 
           value="${this.isAnswered ? this.userAnswer : ""}"
           onkeydown="if(event.key === 'Enter') { 

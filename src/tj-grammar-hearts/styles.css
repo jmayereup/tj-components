@@ -212,6 +212,18 @@ h2 {
   border-color: #3b82f6;
 }
 
+.input-field.success {
+  background: #ecfdf5;
+  border-color: #10b981;
+  color: #065f46;
+}
+
+.input-field.error {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
 .error-msg {
   color: #ef4444;
   font-weight: 600;

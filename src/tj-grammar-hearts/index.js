@@ -259,6 +259,7 @@ class TjGrammarHearts extends HTMLElement {
   handleAnswer(answer) {
     if (this.isAnswered) return;
 
+    this.userAnswer = answer;
     const q = this.currentPool[this.currentIndex];
     let correct = false;
 
@@ -632,6 +633,18 @@ class TjGrammarHearts extends HTMLElement {
 
         .input-field:focus {
           border-color: #3b82f6;
+        }
+
+        .input-field.success {
+          background: #ecfdf5;
+          border-color: #10b981;
+          color: #065f46;
+        }
+
+        .input-field.error {
+          background: #fef2f2;
+          border-color: #ef4444;
+          color: #991b1b;
         }
 
         .error-msg {
@@ -1121,8 +1134,9 @@ class TjGrammarHearts extends HTMLElement {
         return `<button class="${className}" ${this.isAnswered ? 'disabled' : ''} onclick="this.getRootNode().host.handleMultipleChoice(${i})">${opt}</button>`;
       }).join('');
     } else if (q.type === 'fill-in-the-blank') {
+      const statusClass = this.isAnswered ? (this.isCorrect ? ' success' : ' error') : '';
       return `
-        <input type="text" class="input-field" id="fib-answer" placeholder="Type your answer here..." 
+        <input type="text" class="input-field${statusClass}" id="fib-answer" placeholder="Type your answer here..." 
           ${this.isAnswered ? 'readonly' : ''} 
           value="${this.isAnswered ? this.userAnswer : ''}"
           onkeydown="if(event.key === 'Enter') { 

@@ -642,7 +642,7 @@ class n extends HTMLElement {
               </div>
               <div class="input-group">
                 <label for="homeroom">Homeroom</label>
-                <input type="text" id="homeroom" class="input-field" placeholder="e.g. 5A">
+                <input type="text" id="homeroom" class="input-field" placeholder="e.g. 6/1">
               </div>
             </div>
           `}
