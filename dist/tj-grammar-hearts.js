@@ -730,6 +730,14 @@ class u extends HTMLElement {
           transition: all 0.2s;
         }
         .btn-outline:hover { background: #f0f7ff; }
+
+        .version-text {
+          text-align: center;
+          font-size: 0.75em;
+          color: #64748b;
+          margin-top: 1em;
+          opacity: 0.9;
+        }
       </style>
     `;
     let t = "";
@@ -740,6 +748,7 @@ class u extends HTMLElement {
           <div class="hint-content">${this.parseMD(this.grammarHint.content)}</div>
           <button class="btn" onclick="this.getRootNode().host.startPlaying()">Start Game!</button>
         </div>
+        <div class="version-text">v1.1</div>
       `;
     else if (this.gameState === "playing") {
       const s = this.currentPool[this.currentIndex];
@@ -786,9 +795,7 @@ class u extends HTMLElement {
             </div>
           </div>
         </div>
-        <div class="version-text" style="text-align: center; font-size: 0.75em; color: #94a3b8; margin-top: 1em; opacity: 0.8;">
-          v1.1
-        </div>
+        <div class="version-text">v1.1</div>
       `;
     } else if (this.gameState === "gameover")
       t = `
