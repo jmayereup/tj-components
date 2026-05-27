@@ -1018,11 +1018,11 @@ class TjGrammarHearts extends HTMLElement {
           </div>
           <div class="form-input-group">
             <label class="form-label" for="homeroom">Homeroom</label>
-            <input type="text" id="homeroom" class="form-field" placeholder="e.g. 5A" value="${this.studentInfo.homeroom}">
+            <input type="text" id="homeroom" class="form-field" placeholder="e.g. 6/1" value="${this.studentInfo.homeroom}">
           </div>
           <div class="form-input-group">
             <label class="form-label" for="teacher-code">Teacher Code (Optional)</label>
-            <input type="text" id="teacher-code" class="form-field" placeholder="e.g. 6767" value="${this.studentInfo.teacherCode || ''}">
+            <input type="text" id="teacher-code" class="form-field" placeholder="e.g. 1234" value="${this.studentInfo.teacherCode || ''}">
           </div>
           ${this.formError ? `<div class="error-msg" style="margin-bottom: 1em;">⚠️ ${this.formError}</div>` : ''}
           <button class="btn" onclick="this.getRootNode().host.showReport()">Generate Report</button>
