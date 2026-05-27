@@ -251,8 +251,8 @@ class TjGrammarHearts extends HTMLElement {
     return text
       .trim()
       .toLowerCase()
-      .replace(/['']/g, "'")
-      .replace(/[""]/g, '"')
+      .replace(/['’‘]/g, "'")
+      .replace(/["“”]/g, '"')
       .replace(/\s+/g, ' ');
   }
 

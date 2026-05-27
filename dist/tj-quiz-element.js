@@ -114,6 +114,9 @@ class L extends HTMLElement {
   attributeChangedCallback(e, t) {
     e === "submission-url" && (this.submissionUrl = t);
   }
+  _normalizeText(e) {
+    return typeof e != "string" ? String(e || "") : e.trim().toLowerCase().replace(/['’‘]/g, "'").replace(/["“”]/g, '"').replace(/\s+/g, " ");
+  }
   connectedCallback() {
     requestAnimationFrame(() => {
       if (this.config ? typeof this.config == "object" ? this.originalContent = JSON.stringify(this.config) : this.originalContent = String(this.config) : this.hasAttribute("config") ? this.originalContent = this.getAttribute("config") : this.querySelector('script[type="text/markdown"]') ? this.originalContent = this.querySelector('script[type="text/markdown"]').textContent : this.querySelector('script[type="application/json"]') ? this.originalContent = this.querySelector('script[type="application/json"]').textContent : this.originalContent = this.textContent, this.hasAttribute("submission-url") && (this.submissionUrl = this.getAttribute("submission-url")), this.loadTemplate(), this.setAttribute("translate", "no"), !this._shouldShowAudioControls()) {
@@ -518,8 +521,8 @@ class L extends HTMLElement {
   }
   showClozeScore() {
     this.clozeScore = 0, this.clozeSections.reduce((t, o) => t + o.words.length, 0), this.shadowRoot.querySelectorAll(".cloze-blank").forEach((t) => {
-      const o = t.dataset.answer.toLowerCase();
-      t.value.trim().toLowerCase() === o ? (this.clozeScore++, t.classList.add("correct")) : t.classList.add("incorrect"), t.disabled = !0;
+      const o = this._normalizeText(t.dataset.answer);
+      this._normalizeText(t.value) === o ? (this.clozeScore++, t.classList.add("correct")) : t.classList.add("incorrect"), t.disabled = !0;
     }), this.clozeSubmitted = !0;
   }
   setupEventListeners() {

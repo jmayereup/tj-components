@@ -52,6 +52,16 @@ class TjQuizElement extends HTMLElement {
         }
     }
 
+    _normalizeText(text) {
+        if (typeof text !== 'string') return String(text || '');
+        return text
+            .trim()
+            .toLowerCase()
+            .replace(/['’‘]/g, "'")
+            .replace(/["“”]/g, '"')
+            .replace(/\s+/g, ' ');
+    }
+
     connectedCallback() {
         // Use setTimeout to ensure children (text content) are parsed by the browser
         requestAnimationFrame(() => {
@@ -980,8 +990,8 @@ class TjQuizElement extends HTMLElement {
         // Show feedback for each cloze blank
         const clozeInputs = this.shadowRoot.querySelectorAll('.cloze-blank');
         clozeInputs.forEach(input => {
-            const correctAnswer = input.dataset.answer.toLowerCase();
-            const userAnswer = input.value.trim().toLowerCase();
+            const correctAnswer = this._normalizeText(input.dataset.answer);
+            const userAnswer = this._normalizeText(input.value);
             const isCorrect = userAnswer === correctAnswer;
 
             if (isCorrect) {

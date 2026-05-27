@@ -83,7 +83,7 @@ class m extends HTMLElement {
     this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.selectedScrambleIndices = [], this.scrambledWords = [];
   }
   _normalizeText(e) {
-    return typeof e != "string" ? String(e || "") : e.trim().toLowerCase().replace(/['']/g, "'").replace(/[""]/g, '"').replace(/\s+/g, " ");
+    return typeof e != "string" ? String(e || "") : e.trim().toLowerCase().replace(/['’‘]/g, "'").replace(/["“”]/g, '"').replace(/\s+/g, " ");
   }
   handleAnswer(e) {
     if (this.isAnswered) return;
