@@ -1,8 +1,8 @@
-import { c as u } from "./chunks/tj-config-Co8tO1UZ.js";
-class m extends HTMLElement {
+import { c as b } from "./chunks/tj-config-Co8tO1UZ.js";
+class u extends HTMLElement {
   constructor() {
     var e;
-    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.hearts = 0, this.maxHearts = 3, this.questionsPerRound = 5, this.score = 0, this.bestScore = 0, this.grammarHint = { summary: "", content: "" }, this.studentInfo = { nickname: "", number: "", homeroom: "", teacherCode: "" }, this.title = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = (e = u) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1;
+    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.hearts = 0, this.maxHearts = 3, this.questionsPerRound = 5, this.score = 0, this.bestScore = 0, this.grammarHint = { summary: "", content: "" }, this.studentInfo = { nickname: "", number: "", homeroom: "", teacherCode: "" }, this.title = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = (e = b) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
   }
   connectedCallback() {
     if (this.maxHearts = parseInt(this.getAttribute("hearts")) || 3, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 5, this.hearts = this.maxHearts, typeof window.marked > "u") {
@@ -30,9 +30,9 @@ class m extends HTMLElement {
           e = String(this.config);
       else this.hasAttribute("config") ? e = this.getAttribute("config") : this.querySelector('script[type="application/json"]') ? e = this.querySelector('script[type="application/json"]').textContent.trim() : e = this.textContent.trim();
       if (!e) return;
-      const r = e.replace(/"((?:\\.|[^"\\])*)"/gs, (s, i) => '"' + i.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"');
-      let t = JSON.parse(r);
-      this._processParsedData(t), this.innerHTML = "";
+      const t = e.replace(/"((?:\\.|[^"\\])*)"/gs, (r, i) => '"' + i.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"');
+      let s = JSON.parse(t);
+      this._processParsedData(s), this.innerHTML = "";
     } catch (e) {
       console.error("Failed to parse JSON for grammar-hearts", e), this.shadowRoot.innerHTML = '<div class="error-msg">Error loading grammar data. Please ensure your JSON is correctly formatted.</div>';
     }
@@ -46,13 +46,13 @@ class m extends HTMLElement {
   }
   _getShuffleScore(e) {
     if (e.length === 0) return 0;
-    let r = 1, t = 1, s = 0;
+    let t = 1, s = 1, r = 0;
     for (let i = 1; i < e.length; i++)
-      e[i].type === e[i - 1].type ? (t++, s++) : (t > r && (r = t), t = 1);
-    return t > r && (r = t), r * 1e3 + s;
+      e[i].type === e[i - 1].type ? (s++, r++) : (s > t && (t = s), s = 1);
+    return s > t && (t = s), t * 1e3 + r;
   }
   prepRound() {
-    if (!this.questions || this.questions.length === 0) {
+    if (this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0, !this.questions || this.questions.length === 0) {
       this.currentPool = [], this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.resetQuestionState();
       return;
     }
@@ -61,23 +61,23 @@ class m extends HTMLElement {
       e[o.type] || (e[o.type] = []), e[o.type].push(o);
     for (const o in e)
       e[o].sort(() => 0.5 - Math.random());
-    const r = [], t = Object.keys(e), s = Math.min(this.questionsPerRound, this.questions.length), i = [...t].sort(() => 0.5 - Math.random()), n = {};
-    for (const o of t)
+    const t = [], s = Object.keys(e), r = Math.min(this.questionsPerRound, this.questions.length), i = [...s].sort(() => 0.5 - Math.random()), n = {};
+    for (const o of s)
       n[o] = 0;
-    for (; r.length < s; ) {
+    for (; t.length < r; ) {
       let o = !1;
       for (const a of i) {
-        if (r.length >= s) break;
-        n[a] < e[a].length && (r.push(e[a][n[a]]), n[a]++, o = !0);
+        if (t.length >= r) break;
+        n[a] < e[a].length && (t.push(e[a][n[a]]), n[a]++, o = !0);
       }
       if (!o) break;
     }
-    let c = [...r], l = this._getShuffleScore(c);
+    let c = [...t], d = this._getShuffleScore(c);
     for (let o = 0; o < 200; o++) {
-      const a = [...r].sort(() => 0.5 - Math.random()), d = this._getShuffleScore(a);
-      d < l && (l = d, c = a);
+      const a = [...t].sort(() => 0.5 - Math.random()), l = this._getShuffleScore(a);
+      l < d && (d = l, c = a);
     }
-    this.currentPool = c, this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.formError = "", this.submissionError = "", this.resetQuestionState();
+    this.currentPool = c, this.totalQuestionsInRound = c ? c.length : 0, this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.formError = "", this.submissionError = "", this.resetQuestionState();
   }
   resetQuestionState() {
     this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.selectedScrambleIndices = [], this.scrambledWords = [];
@@ -88,23 +88,23 @@ class m extends HTMLElement {
   handleAnswer(e) {
     if (this.isAnswered) return;
     this.userAnswer = e;
-    const r = this.currentPool[this.currentIndex];
-    let t = !1;
-    if (r.type === "multiple-choice")
-      t = e === r.correctIndex;
-    else if (r.type === "fill-in-the-blank") {
-      const s = this._normalizeText(e);
-      Array.isArray(r.answer) ? t = r.answer.some((i) => this._normalizeText(i) === s) : typeof r.answer == "string" && (t = s === this._normalizeText(r.answer));
-    } else if (r.type === "scramble") {
-      const s = this._normalizeText(r.sentence);
-      t = this._normalizeText(e) === s;
+    const t = this.currentPool[this.currentIndex];
+    let s = !1;
+    if (t.type === "multiple-choice")
+      s = e === t.correctIndex;
+    else if (t.type === "fill-in-the-blank") {
+      const r = this._normalizeText(e);
+      Array.isArray(t.answer) ? s = t.answer.some((i) => this._normalizeText(i) === r) : typeof t.answer == "string" && (s = r === this._normalizeText(t.answer));
+    } else if (t.type === "scramble") {
+      const r = this._normalizeText(t.sentence);
+      s = this._normalizeText(e) === r;
     }
-    if (this.isAnswered = !0, this.isCorrect = t, t)
-      this.score++, this.answerFeedback = "Correct!", this.answerExplanation = r.explanation || "Great job!";
+    if (this.isAnswered = !0, this.isCorrect = s, s)
+      this.score++, this.answerFeedback = "Correct!", this.answerExplanation = t.explanation || "Great job!";
     else {
-      this.hearts--, this.answerFeedback = "Oops!", this.answerExplanation = r.explanation || "Not quite right.";
-      const s = this.shadowRoot.querySelector(".card");
-      s && (s.classList.add("shake"), setTimeout(() => s.classList.remove("shake"), 500));
+      this.hearts--, this.answerFeedback = "Oops!", this.answerExplanation = t.explanation || "Not quite right.", this.isRetryPhase || this.missedQuestions.some((i) => i === t) || this.missedQuestions.push(t);
+      const r = this.shadowRoot.querySelector(".card");
+      r && (r.classList.add("shake"), setTimeout(() => r.classList.remove("shake"), 500));
     }
     this.render();
   }
@@ -113,7 +113,7 @@ class m extends HTMLElement {
       this.gameState = "gameover", this.render();
       return;
     }
-    this.currentIndex++, this.currentIndex >= this.currentPool.length ? this.gameState = "form" : this.resetQuestionState(), this.render();
+    this.currentIndex++, this.currentIndex >= this.currentPool.length ? !this.isRetryPhase && this.missedQuestions.length > 0 ? (this.currentPool = [...this.missedQuestions], this.missedQuestions = [], this.currentIndex = 0, this.isRetryPhase = !0, this.resetQuestionState()) : this.gameState = "form" : this.resetQuestionState(), this.render();
   }
   startPlaying() {
     this.gameState = "playing", this.render();
@@ -121,32 +121,41 @@ class m extends HTMLElement {
   restart() {
     this.prepRound(), this.gameState = "playing", this.render();
   }
+  continuePlaying() {
+    this.continuesCount = (this.continuesCount || 0) + 1, this.hearts = this.maxHearts, this.gameState = "playing", this.currentIndex++, this.currentIndex >= this.currentPool.length ? !this.isRetryPhase && this.missedQuestions.length > 0 ? (this.currentPool = [...this.missedQuestions], this.missedQuestions = [], this.currentIndex = 0, this.isRetryPhase = !0, this.resetQuestionState()) : this.gameState = "form" : this.resetQuestionState(), this.render();
+  }
+  getAdjustedScore() {
+    const e = (this.continuesCount || 0) * this.maxHearts;
+    return Math.max(0, this.score - e);
+  }
   showReport() {
-    var i, n, c, l, o, a, d, h;
-    const e = ((n = (i = this.shadowRoot.querySelector("#nickname")) == null ? void 0 : i.value) == null ? void 0 : n.trim()) || "", r = ((l = (c = this.shadowRoot.querySelector("#student-number")) == null ? void 0 : c.value) == null ? void 0 : l.trim()) || "", t = ((a = (o = this.shadowRoot.querySelector("#homeroom")) == null ? void 0 : o.value) == null ? void 0 : a.trim()) || "", s = ((h = (d = this.shadowRoot.querySelector("#teacher-code")) == null ? void 0 : d.value) == null ? void 0 : h.trim()) || "";
-    if (!e || !r) {
+    var n, c, d, o, a, l, h, m;
+    const e = ((c = (n = this.shadowRoot.querySelector("#nickname")) == null ? void 0 : n.value) == null ? void 0 : c.trim()) || "", t = ((o = (d = this.shadowRoot.querySelector("#student-number")) == null ? void 0 : d.value) == null ? void 0 : o.trim()) || "", s = ((l = (a = this.shadowRoot.querySelector("#homeroom")) == null ? void 0 : a.value) == null ? void 0 : l.trim()) || "", r = ((m = (h = this.shadowRoot.querySelector("#teacher-code")) == null ? void 0 : h.value) == null ? void 0 : m.trim()) || "";
+    if (!e || !t) {
       this.formError = "Please enter both nickname and student number.", this.render();
       return;
     }
-    this.formError = "", this.studentInfo = { nickname: e, number: r, homeroom: t, teacherCode: s }, this.score > this.bestScore && (this.bestScore = this.score), this.gameState = "report", this.render();
+    this.formError = "", this.studentInfo = { nickname: e, number: t, homeroom: s, teacherCode: r };
+    const i = this.getAdjustedScore();
+    i > this.bestScore && (this.bestScore = i), this.gameState = "report", this.render();
   }
   async _submitScore() {
-    const e = this.shadowRoot.getElementById("report-teacher-code"), r = e ? e.value.trim() : this.studentInfo.teacherCode;
-    if (this.studentInfo.teacherCode = r, r !== "6767") {
+    const e = this.shadowRoot.getElementById("report-teacher-code"), t = e ? e.value.trim() : this.studentInfo.teacherCode;
+    if (this.studentInfo.teacherCode = t, t !== "6767") {
       this.submissionError = "Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.", this.render();
       return;
     }
     if (this.submissionError = "", this.render(), this.isSubmitting) return;
-    const t = this.shadowRoot.getElementById("submit-score-btn"), s = t ? t.textContent : "Submit";
-    this.isSubmitting = !0, t && (t.textContent = "Submitting...", t.disabled = !0);
+    const s = this.shadowRoot.getElementById("submit-score-btn"), r = s ? s.textContent : "Submit";
+    this.isSubmitting = !0, s && (s.textContent = "Submitting...", s.disabled = !0);
     const i = {
       nickname: this.studentInfo.nickname,
       homeroom: this.studentInfo.homeroom || "",
       studentId: this.studentInfo.number,
       quizName: "Grammar- " + this.title,
       score: this.bestScore,
-      total: this.questionsPerRound,
-      teacherCode: r
+      total: this.totalQuestionsInRound,
+      teacherCode: t
     };
     try {
       await fetch(this.submissionUrl, {
@@ -154,9 +163,9 @@ class m extends HTMLElement {
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(i)
-      }), t && (t.textContent = "Submitted ✓", t.style.background = "green");
+      }), s && (s.textContent = "Submitted ✓", s.style.background = "green");
     } catch (n) {
-      console.error("Error submitting score:", n), this.submissionError = "There was an error submitting your score. Please try again.", t && (t.textContent = s, t.disabled = !1), this.isSubmitting = !1, this.render();
+      console.error("Error submitting score:", n), this.submissionError = "There was an error submitting your score. Please try again.", s && (s.textContent = r, s.disabled = !1), this.isSubmitting = !1, this.render();
     }
   }
   getInstruction(e) {
@@ -200,6 +209,25 @@ class m extends HTMLElement {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 2em;
+        }
+
+        .badge {
+          display: inline-block;
+          padding: 0.2em 0.6em;
+          font-size: 0.75em;
+          font-weight: 700;
+          line-height: 1;
+          text-align: center;
+          white-space: nowrap;
+          vertical-align: middle;
+          border-radius: 0.5em;
+          margin-left: 0.5em;
+        }
+
+        .retry-badge {
+          background-color: #fef3c7;
+          color: #d97706;
+          border: 1px solid #fcd34d;
         }
 
         .hearts {
@@ -704,9 +732,9 @@ class m extends HTMLElement {
         .btn-outline:hover { background: #f0f7ff; }
       </style>
     `;
-    let r = "";
+    let t = "";
     if (this.gameState === "hint")
-      r = `
+      t = `
         <div class="card">
           <h2>Grammar Focus: ${this.grammarHint.summary}</h2>
           <div class="hint-content">${this.parseMD(this.grammarHint.content)}</div>
@@ -714,24 +742,27 @@ class m extends HTMLElement {
         </div>
       `;
     else if (this.gameState === "playing") {
-      const t = this.currentPool[this.currentIndex];
-      r = `
+      const s = this.currentPool[this.currentIndex];
+      t = `
         <div class="header">
           <div style="font-weight: 600; color: #64748b;">
-            Question: ${this.currentIndex + 1} / ${this.currentPool.length}
+            ${this.isRetryPhase ? "Retry Question" : "Question"}: ${this.currentIndex + 1} / ${this.currentPool.length}
           </div>
           <div class="score-display">Score: ${this.score}</div>
           <div class="hearts">
-            ${Array.from({ length: this.maxHearts }).map((s, i) => `
+            ${Array.from({ length: this.maxHearts }).map((r, i) => `
               <span class="heart ${i < this.maxHearts - this.hearts ? "lost" : ""}">❤️</span>
             `).join("")}
           </div>
         </div>
 
         <div class="card ${this.isAnswered ? "answered" : ""}">
-          <div class="instruction">${this.getInstruction(t)}</div>
-          ${this.renderMainText(t)}
-          ${this.renderQuestion(t)}
+          <div class="instruction">
+            ${this.getInstruction(s)}
+            ${this.isRetryPhase ? '<span class="badge retry-badge">⚠️ Prior Mistake</span>' : ""}
+          </div>
+          ${this.renderMainText(s)}
+          ${this.renderQuestion(s)}
           
           ${this.isAnswered ? `
             <div class="feedback-box ${this.isCorrect ? "success" : "error"}">
@@ -757,18 +788,26 @@ class m extends HTMLElement {
         </div>
       `;
     } else if (this.gameState === "gameover")
-      r = `
+      t = `
         <div class="card" style="text-align: center;">
           <h2 style="color: #ef4444; background: none; -webkit-text-fill-color: initial;">Out of Hearts!</h2>
-          <p>Don't worry! Practice makes perfect. Try again with new questions.</p>
-          <button class="btn" onclick="this.getRootNode().host.restart()">Try Again</button>
+          <p>Don't worry! Practice makes perfect. Try again with new questions, or continue playing this round for a lower score.</p>
+          <div style="display: flex; flex-direction: column; gap: 0.8em; align-items: center; margin-top: 1.5em;">
+            <button class="btn" style="width: 100%; max-width: 300px;" onclick="this.getRootNode().host.continuePlaying()">Continue Playing</button>
+            <button class="btn-outline" style="width: 100%; max-width: 300px; margin-top: 0;" onclick="this.getRootNode().host.restart()">Try Again (New Round)</button>
+          </div>
         </div>
       `;
     else if (this.gameState === "form")
-      r = `
+      t = `
         <div class="form-card">
           <h2>Great Job! 🎉</h2>
-          <p>You've finished the round with a score of <strong>${this.score} / ${this.currentPool.length}</strong>.</p>
+          <p>You've finished the round with a score of <strong>${this.getAdjustedScore()} / ${this.totalQuestionsInRound}</strong>.</p>
+          ${this.continuesCount > 0 ? `
+            <p style="font-size: 0.9em; color: #64748b; margin-top: -0.5em; margin-bottom: 1.5em;">
+              ⚠️ Score includes a penalty of ${this.continuesCount * this.maxHearts} points for continuing after running out of hearts (Raw score: ${this.score}).
+            </p>
+          ` : ""}
           <p>Enter your details to generate your report card.</p>
           <div class="form-input-group">
             <label class="form-label" for="nickname">Nickname</label>
@@ -791,9 +830,9 @@ class m extends HTMLElement {
         </div>
       `;
     else if (this.gameState === "report") {
-      const t = this.currentPool.length, s = Math.round(this.bestScore / t * 100) || 0, i = (/* @__PURE__ */ new Date()).toLocaleString();
+      const s = this.totalQuestionsInRound, r = Math.round(this.bestScore / s * 100) || 0, i = (/* @__PURE__ */ new Date()).toLocaleString();
       let n = "🏆";
-      s < 50 ? n = "💪" : s < 80 && (n = "⭐"), r = `
+      r < 50 ? n = "💪" : r < 80 && (n = "⭐"), t = `
         <div class="report-card">
           <div class="rc-header">
             <div class="rc-icon">📄</div>
@@ -804,19 +843,24 @@ class m extends HTMLElement {
             <span class="rc-label">Student</span>
             <span class="rc-value">${this.studentInfo.nickname} <span class="rc-number">(${this.studentInfo.number})${this.studentInfo.homeroom ? ` — ${this.studentInfo.homeroom}` : ""}</span></span>
           </div>
-          <div class="best-score-highlight">🏆 Best Score: ${this.bestScore} / ${t}</div>
+          <div class="best-score-highlight">🏆 Best Score: ${this.bestScore} / ${s}</div>
+          ${this.continuesCount > 0 ? `
+            <div class="best-score-highlight" style="background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2); color: #ef4444; margin-top: -0.5em;">
+              ⚠️ Completed with continues (${this.continuesCount * this.maxHearts}-point penalty applied)
+            </div>
+          ` : ""}
           <div class="rc-score-row">
             <div class="rc-score-circle">
               <div class="rc-score-val">${this.bestScore}</div>
-              <div class="rc-score-denom">/ ${t}</div>
+              <div class="rc-score-denom">/ ${s}</div>
             </div>
             <div class="rc-score-label">
-              ${n} ${s >= 80 ? "Excellent!" : s >= 50 ? "Good effort!" : "Keep practicing!"}
+              ${n} ${r >= 80 ? "Excellent!" : r >= 50 ? "Good effort!" : "Keep practicing!"}
             </div>
           </div>
-          <div class="rc-bar-track"><div class="rc-bar-fill" style="width:${s}%"></div></div>
+          <div class="rc-bar-track"><div class="rc-bar-fill" style="width:${r}%"></div></div>
           <div class="rc-details">
-            <div class="rc-detail-row"><span>Score</span><span>${this.bestScore} / ${t} (${s}%)</span></div>
+            <div class="rc-detail-row"><span>Score</span><span>${this.bestScore} / ${s} (${r}%)</span></div>
             <div class="rc-detail-row"><span>Completed On</span><span>${i}</span></div>
           </div>
           <div class="rc-submission-box">
@@ -834,25 +878,25 @@ class m extends HTMLElement {
     this.shadowRoot.innerHTML = `
       ${e}
       <div class="container">
-        ${r}
+        ${t}
       </div>
     `, setTimeout(() => {
-      const t = this.shadowRoot.querySelector("#fib-answer");
-      t && t.focus();
+      const s = this.shadowRoot.querySelector("#fib-answer");
+      s && s.focus();
     }, 0);
   }
   renderMainText(e) {
-    let r = e.question || (e.type === "multiple-choice" || e.type === "scramble" ? "" : "___");
-    if (e.type === "scramble" && this.isAnswered ? r = e.sentence : e.type !== "scramble" && (r = e.question || e.sentence || (e.type === "multiple-choice" ? "" : "___")), !r) return "";
-    const t = e.type === "fill-in-the-blank" ? r.replace("___", '<span style="text-decoration: underline; font-weight: 700;">' + (this.isAnswered ? Array.isArray(e.answer) ? e.answer.join(" / ") : e.answer : "______") + "</span>") : r;
-    return `<h2>${this.parseMD(t)}</h2>`;
+    let t = e.question || (e.type === "multiple-choice" || e.type === "scramble" ? "" : "___");
+    if (e.type === "scramble" && this.isAnswered ? t = e.sentence : e.type !== "scramble" && (t = e.question || e.sentence || (e.type === "multiple-choice" ? "" : "___")), !t) return "";
+    const s = e.type === "fill-in-the-blank" ? t.replace("___", '<span style="text-decoration: underline; font-weight: 700;">' + (this.isAnswered ? Array.isArray(e.answer) ? e.answer.join(" / ") : e.answer : "______") + "</span>") : t;
+    return `<h2>${this.parseMD(s)}</h2>`;
   }
   renderQuestion(e) {
     if (!e) return '<div class="error-msg">Missing question data.</div>';
     if (e.type === "multiple-choice")
-      return e.options.map((r, t) => {
-        let s = "option-btn";
-        return this.isAnswered && (t === e.correctIndex ? s += " success" : this.userAnswer === t && !this.isCorrect && (s += " error")), `<button class="${s}" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.handleMultipleChoice(${t})">${r}</button>`;
+      return e.options.map((t, s) => {
+        let r = "option-btn";
+        return this.isAnswered && (s === e.correctIndex ? r += " success" : this.userAnswer === s && !this.isCorrect && (r += " error")), `<button class="${r}" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.handleMultipleChoice(${s})">${t}</button>`;
       }).join("");
     if (e.type === "fill-in-the-blank")
       return `
@@ -867,16 +911,16 @@ class m extends HTMLElement {
         ${this.isAnswered ? "" : `<button class="btn" onclick="this.getRootNode().host.handleAnswer(this.parentElement.querySelector('#fib-answer').value)">Submit</button>`}
       `;
     if (e.type === "scramble") {
-      const t = (e.sentence || e.question || "").trim().split(/\s+/);
-      return this.scrambledWords.length === 0 && (this.scrambledWords = [...t].sort(() => 0.5 - Math.random())), `
+      const s = (e.sentence || e.question || "").trim().split(/\s+/);
+      return this.scrambledWords.length === 0 && (this.scrambledWords = [...s].sort(() => 0.5 - Math.random())), `
         <div class="scramble-target" style="${this.isAnswered ? "border-style: solid; border-color: " + (this.isCorrect ? "#10b981" : "#ef4444") : ""}">
-          ${this.selectedScrambleIndices.map((s, i) => `
-            <button class="scramble-token" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.unpickWord(${i})">${this.scrambledWords[s]}</button>
+          ${this.selectedScrambleIndices.map((r, i) => `
+            <button class="scramble-token" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.unpickWord(${i})">${this.scrambledWords[r]}</button>
           `).join("")}
         </div>
         ${this.isAnswered ? "" : `
           <div class="scramble-pool">
-            ${this.scrambledWords.map((s, i) => this.selectedScrambleIndices.includes(i) ? "" : `<button class="scramble-token" onclick="this.getRootNode().host.pickWord(${i})">${s}</button>`).join("")}
+            ${this.scrambledWords.map((r, i) => this.selectedScrambleIndices.includes(i) ? "" : `<button class="scramble-token" onclick="this.getRootNode().host.pickWord(${i})">${r}</button>`).join("")}
           </div>
           <div style="display: flex; gap: 0.5em;">
               <button class="btn" style="flex: 1; background: #64748b;" onclick="this.getRootNode().host.resetScramble()">Reset</button>
@@ -891,7 +935,7 @@ class m extends HTMLElement {
     this.userAnswer = e, this.handleAnswer(e);
   }
   handleScrambleSubmit() {
-    const e = this.selectedScrambleIndices.map((r) => this.scrambledWords[r]).join(" ");
+    const e = this.selectedScrambleIndices.map((t) => this.scrambledWords[t]).join(" ");
     this.userAnswer = e, this.handleAnswer(e);
   }
   pickWord(e) {
@@ -907,6 +951,6 @@ class m extends HTMLElement {
     this.isHintOpen = !this.isHintOpen, this.render();
   }
 }
-customElements.get("tj-grammar-hearts") || customElements.define("tj-grammar-hearts", m);
-customElements.get("grammar-hearts") || customElements.define("grammar-hearts", class extends m {
+customElements.get("tj-grammar-hearts") || customElements.define("tj-grammar-hearts", u);
+customElements.get("grammar-hearts") || customElements.define("grammar-hearts", class extends u {
 });

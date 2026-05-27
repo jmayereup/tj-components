@@ -34,6 +34,12 @@ class TjGrammarHearts extends HTMLElement {
     // Submission
     this.submissionUrl = config?.submissionUrl || 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
     this.isSubmitting = false;
+
+    // Retry & Continue play state
+    this.continuesCount = 0;
+    this.missedQuestions = [];
+    this.isRetryPhase = false;
+    this.totalQuestionsInRound = 0;
   }
 
   connectedCallback() {
@@ -162,6 +168,11 @@ class TjGrammarHearts extends HTMLElement {
   }
 
   prepRound() {
+    this.continuesCount = 0;
+    this.missedQuestions = [];
+    this.isRetryPhase = false;
+    this.totalQuestionsInRound = 0;
+
     if (!this.questions || this.questions.length === 0) {
       this.currentPool = [];
       this.currentIndex = 0;
@@ -227,6 +238,7 @@ class TjGrammarHearts extends HTMLElement {
     }
 
     this.currentPool = bestPool;
+    this.totalQuestionsInRound = bestPool ? bestPool.length : 0;
     this.currentIndex = 0;
     this.hearts = this.maxHearts;
     this.score = 0;
@@ -290,6 +302,12 @@ class TjGrammarHearts extends HTMLElement {
       this.answerFeedback = 'Oops!';
       this.answerExplanation = q.explanation || 'Not quite right.';
 
+      if (!this.isRetryPhase) {
+        if (!this.missedQuestions.some(mq => mq === q)) {
+          this.missedQuestions.push(q);
+        }
+      }
+
       // Visual feedback for error
       const card = this.shadowRoot.querySelector('.card');
       if (card) {
@@ -309,7 +327,15 @@ class TjGrammarHearts extends HTMLElement {
 
     this.currentIndex++;
     if (this.currentIndex >= this.currentPool.length) {
-      this.gameState = 'form';
+      if (!this.isRetryPhase && this.missedQuestions.length > 0) {
+        this.currentPool = [...this.missedQuestions];
+        this.missedQuestions = [];
+        this.currentIndex = 0;
+        this.isRetryPhase = true;
+        this.resetQuestionState();
+      } else {
+        this.gameState = 'form';
+      }
     } else {
       this.resetQuestionState();
     }
@@ -325,6 +351,33 @@ class TjGrammarHearts extends HTMLElement {
     this.prepRound();
     this.gameState = 'playing';
     this.render();
+  }
+
+  continuePlaying() {
+    this.continuesCount = (this.continuesCount || 0) + 1;
+    this.hearts = this.maxHearts;
+    this.gameState = 'playing';
+
+    this.currentIndex++;
+    if (this.currentIndex >= this.currentPool.length) {
+      if (!this.isRetryPhase && this.missedQuestions.length > 0) {
+        this.currentPool = [...this.missedQuestions];
+        this.missedQuestions = [];
+        this.currentIndex = 0;
+        this.isRetryPhase = true;
+        this.resetQuestionState();
+      } else {
+        this.gameState = 'form';
+      }
+    } else {
+      this.resetQuestionState();
+    }
+    this.render();
+  }
+
+  getAdjustedScore() {
+    const penalty = (this.continuesCount || 0) * this.maxHearts;
+    return Math.max(0, this.score - penalty);
   }
 
   showReport() {
@@ -343,8 +396,9 @@ class TjGrammarHearts extends HTMLElement {
     this.studentInfo = { nickname, number, homeroom, teacherCode };
 
     // Update bestScore
-    if (this.score > this.bestScore) {
-      this.bestScore = this.score;
+    const adjustedScore = this.getAdjustedScore();
+    if (adjustedScore > this.bestScore) {
+      this.bestScore = adjustedScore;
     }
 
     this.gameState = 'report';
@@ -384,7 +438,7 @@ class TjGrammarHearts extends HTMLElement {
       studentId: this.studentInfo.number,
       quizName: 'Grammar- ' + this.title,
       score: this.bestScore,
-      total: this.questionsPerRound,
+      total: this.totalQuestionsInRound,
       teacherCode: currentTeacherCode
     };
 
@@ -449,6 +503,25 @@ class TjGrammarHearts extends HTMLElement {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 2em;
+        }
+
+        .badge {
+          display: inline-block;
+          padding: 0.2em 0.6em;
+          font-size: 0.75em;
+          font-weight: 700;
+          line-height: 1;
+          text-align: center;
+          white-space: nowrap;
+          vertical-align: middle;
+          border-radius: 0.5em;
+          margin-left: 0.5em;
+        }
+
+        .retry-badge {
+          background-color: #fef3c7;
+          color: #d97706;
+          border: 1px solid #fcd34d;
         }
 
         .hearts {
@@ -969,7 +1042,7 @@ class TjGrammarHearts extends HTMLElement {
       content = `
         <div class="header">
           <div style="font-weight: 600; color: #64748b;">
-            Question: ${this.currentIndex + 1} / ${this.currentPool.length}
+            ${this.isRetryPhase ? 'Retry Question' : 'Question'}: ${this.currentIndex + 1} / ${this.currentPool.length}
           </div>
           <div class="score-display">Score: ${this.score}</div>
           <div class="hearts">
@@ -980,7 +1053,10 @@ class TjGrammarHearts extends HTMLElement {
         </div>
 
         <div class="card ${this.isAnswered ? 'answered' : ''}">
-          <div class="instruction">${this.getInstruction(q)}</div>
+          <div class="instruction">
+            ${this.getInstruction(q)}
+            ${this.isRetryPhase ? `<span class="badge retry-badge">⚠️ Prior Mistake</span>` : ''}
+          </div>
           ${this.renderMainText(q)}
           ${this.renderQuestion(q)}
           
@@ -1011,15 +1087,24 @@ class TjGrammarHearts extends HTMLElement {
       content = `
         <div class="card" style="text-align: center;">
           <h2 style="color: #ef4444; background: none; -webkit-text-fill-color: initial;">Out of Hearts!</h2>
-          <p>Don't worry! Practice makes perfect. Try again with new questions.</p>
-          <button class="btn" onclick="this.getRootNode().host.restart()">Try Again</button>
+          <p>Don't worry! Practice makes perfect. Try again with new questions, or continue playing this round for a lower score.</p>
+          <div style="display: flex; flex-direction: column; gap: 0.8em; align-items: center; margin-top: 1.5em;">
+            <button class="btn" style="width: 100%; max-width: 300px;" onclick="this.getRootNode().host.continuePlaying()">Continue Playing</button>
+            <button class="btn-outline" style="width: 100%; max-width: 300px; margin-top: 0;" onclick="this.getRootNode().host.restart()">Try Again (New Round)</button>
+          </div>
         </div>
       `;
     } else if (this.gameState === 'form') {
+      const adjustedScore = this.getAdjustedScore();
       content = `
         <div class="form-card">
           <h2>Great Job! 🎉</h2>
-          <p>You've finished the round with a score of <strong>${this.score} / ${this.currentPool.length}</strong>.</p>
+          <p>You've finished the round with a score of <strong>${adjustedScore} / ${this.totalQuestionsInRound}</strong>.</p>
+          ${this.continuesCount > 0 ? `
+            <p style="font-size: 0.9em; color: #64748b; margin-top: -0.5em; margin-bottom: 1.5em;">
+              ⚠️ Score includes a penalty of ${this.continuesCount * this.maxHearts} points for continuing after running out of hearts (Raw score: ${this.score}).
+            </p>
+          ` : ''}
           <p>Enter your details to generate your report card.</p>
           <div class="form-input-group">
             <label class="form-label" for="nickname">Nickname</label>
@@ -1042,7 +1127,7 @@ class TjGrammarHearts extends HTMLElement {
         </div>
       `;
     } else if (this.gameState === 'report') {
-      const totalQ = this.currentPool.length;
+      const totalQ = this.totalQuestionsInRound;
       const pct = Math.round((this.bestScore / totalQ) * 100) || 0;
       const timestamp = new Date().toLocaleString();
       let emoji = '🏆';
@@ -1061,6 +1146,11 @@ class TjGrammarHearts extends HTMLElement {
             <span class="rc-value">${this.studentInfo.nickname} <span class="rc-number">(${this.studentInfo.number})${this.studentInfo.homeroom ? ` — ${this.studentInfo.homeroom}` : ''}</span></span>
           </div>
           <div class="best-score-highlight">🏆 Best Score: ${this.bestScore} / ${totalQ}</div>
+          ${this.continuesCount > 0 ? `
+            <div class="best-score-highlight" style="background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2); color: #ef4444; margin-top: -0.5em;">
+              ⚠️ Completed with continues (${this.continuesCount * this.maxHearts}-point penalty applied)
+            </div>
+          ` : ''}
           <div class="rc-score-row">
             <div class="rc-score-circle">
               <div class="rc-score-val">${this.bestScore}</div>
