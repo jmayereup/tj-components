@@ -1082,6 +1082,9 @@ class TjGrammarHearts extends HTMLElement {
             </div>
           </div>
         </div>
+        <div class="version-text" style="text-align: center; font-size: 0.75em; color: #94a3b8; margin-top: 1em; opacity: 0.8;">
+          v1.1
+        </div>
       `;
     } else if (this.gameState === 'gameover') {
       content = `
