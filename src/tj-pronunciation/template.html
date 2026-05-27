@@ -2,13 +2,16 @@
     <div class="tj-sticky-bar">
         <div class="header-main">
             <h1 class="tj-h3" id="pronunciationTitle" style="margin: 0;">Pronunciation Practice</h1>
-            <p class="instructions tj-text-muted" id="pronunciationInstructions" style="display: none; margin: 0; font-size: 0.9em;">Please complete all activities to generate a report card.</p>
+            <p class="instructions tj-text-muted" id="pronunciationInstructions"
+                style="display: none; margin: 0; font-size: 0.9em;">Please complete all activities to generate a report
+                card.</p>
         </div>
         <div class="tj-flex-center" style="gap: 1em;">
             <div class="progress-text">0 / 0</div>
             <div class="tj-speed-control" title="Playback Speed">
                 <svg class="tj-speed-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                    <path d="M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 12 6a7.89 7.89 0 0 1 6 2.73l1.42-1.42A9.91 9.91 0 0 0 12 4a10 10 0 0 0-7.68 16.4h15.36A10 10 0 0 0 20.38 8.57zM10 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0zm3-6h-2v4h2V6z"/>
+                    <path
+                        d="M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 12 6a7.89 7.89 0 0 1 6 2.73l1.42-1.42A9.91 9.91 0 0 0 12 4a10 10 0 0 0-7.68 16.4h15.36A10 10 0 0 0 20.38 8.57zM10 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0zm3-6h-2v4h2V6z" />
                 </svg>
                 <select id="speed-select" class="tj-speed-select">
                     <option value="0.5">0.5x</option>
@@ -22,17 +25,18 @@
             </div>
             <button id="voice-btn" class="tj-icon-btn" title="Choose Voice">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                    <path d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z"/>
+                    <path
+                        d="M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.77 1.29 6 2H3zM15.08 7.05c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.17 0-7.27l-1.68 1.69zM18.42 3.7l-1.7 1.71c2.3 2 2.3 5.6 0 7.6l1.7 1.71c3.28-3.23 3.28-8.15 0-11.02z" />
                 </svg>
             </button>
         </div>
     </div>
     <div class="activities-wrapper" id="activitiesContainer">
     </div>
-
     <div style="text-align: center; width: 100%; margin-bottom: 2rem;">
         <button class="report-btn" id="show-report-btn" style="display: none;">📄 See Report Card</button>
     </div>
+
 
     <!-- Report Card Overlay -->
     <div class="report-overlay" id="report-overlay" style="display:none;">
@@ -44,19 +48,29 @@
                 <input type="text" id="nickname-input" placeholder="Jake" autocomplete="off">
                 <input type="text" id="number-input" placeholder="01" autocomplete="off" inputmode="numeric">
                 <input type="text" id="homeroom-input" placeholder="1/1" autocomplete="off">
-                <input type="text" id="teacher-code-input" placeholder="Teacher Code" autocomplete="off" inputmode="numeric">
+                <input type="text" id="teacher-code-input" placeholder="Teacher Code" autocomplete="off"
+                    inputmode="numeric">
                 <button class="generate-btn" id="generate-btn">Generate Report</button>
                 <button class="cancel-btn" id="cancel-report-btn">Cancel</button>
             </div>
             <div class="report-area" id="report-area" style="display:none;"></div>
             <div id="submit-actions" style="display:none; margin-top: 1em;">
-                <div style="padding: 12px; background: var(--tj-bg-alt); border-radius: 8px; border: 1px dashed var(--tj-border-main); text-align: left; margin-bottom: 1em;">
-                    <p style="margin: 0 0 8px 0; font-size: 0.85em; color: var(--tj-text-muted); font-weight: 600; text-transform: uppercase;">Submission (Optional)</p>
-                    <input type="text" id="report-teacher-code" placeholder="Enter Teacher Code" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--tj-border-main); border-radius: 6px; font-size: 0.9em; margin-bottom: 4px;">
-                    <p style="margin: 4px 0 8px 0; font-size: 0.8em; color: var(--tj-text-muted);">Enter the teacher code to submit, or take a screenshot of this page.</p>
-                    <button class="generate-btn" id="submit-score-btn" style="background: var(--tj-success-color); width: 100%; margin-top: 0.5em;">Submit Score</button>
+                <div
+                    style="padding: 12px; background: var(--tj-bg-alt); border-radius: 8px; border: 1px dashed var(--tj-border-main); text-align: left; margin-bottom: 1em;">
+                    <p
+                        style="margin: 0 0 8px 0; font-size: 0.85em; color: var(--tj-text-muted); font-weight: 600; text-transform: uppercase;">
+                        Submission (Optional)</p>
+                    <input type="text" id="report-teacher-code" placeholder="Enter Teacher Code"
+                        style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--tj-border-main); border-radius: 6px; font-size: 0.9em; margin-bottom: 4px; background: var(--tj-bg-main); color: var(--tj-text-main);">
+                    <p style="margin: 4px 0 8px 0; font-size: 0.8em; color: var(--tj-text-muted);">Enter the teacher
+                        code to submit, or take a screenshot of this page.</p>
+                    <button class="generate-btn" id="submit-score-btn"
+                        style="background: var(--tj-success-color); width: 100%; margin-top: 0.5em;">Submit
+                        Score</button>
                 </div>
-                <button class="cancel-btn" id="rc-close-btn" style="width: 100%;">↩ Return to Activity</button>
+                <div id="report-recordings-container" style="display:none;"></div>
+                <button class="cancel-btn" id="rc-close-btn" style="width: 100%; margin-top: 1em;">↩ Return to
+                    Activity</button>
             </div>
         </div>
     </div>
@@ -67,7 +81,10 @@
             <div class="voice-card-header tj-flex-between" style="margin-bottom: 1em;">
                 <h3 class="tj-h3" style="margin: 0;">Choose Voice</h3>
                 <button class="tj-icon-btn close-voice-btn" id="close-voice-btn">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
                 </button>
             </div>
             <div class="voice-list" id="voice-list"></div>
@@ -77,9 +94,14 @@
     <div class="tj-overlay" id="browser-prompt-overlay" style="padding: 1rem;">
         <div class="tj-card" style="max-width: 400px; text-align: center;">
             <h2 class="tj-h2">Better in a Browser</h2>
-            <p class="tj-text-muted" style="margin-bottom: 2em; line-height: 1.6;">It looks like you're using an in-app browser. For the best experience (including audio features), please open this page in <b>Chrome</b> or <b>Safari</b>.</p>
-            <a id="browser-action-btn" class="tj-btn tj-btn-primary" style="width: 100%; text-decoration: none;" href="javascript:void(0)">Open Browser</a>
-            <button class="tj-btn tj-btn-secondary" style="width: 100%; margin-top: 1em; border: none; background: transparent; text-decoration: underline;" onclick="this.closest('.tj-overlay').classList.remove('active')">Continue anyway</button>
+            <p class="tj-text-muted" style="margin-bottom: 2em; line-height: 1.6;">It looks like you're using an in-app
+                browser. For the best experience (including audio features), please open this page in <b>Chrome</b> or
+                <b>Safari</b>.</p>
+            <a id="browser-action-btn" class="tj-btn tj-btn-primary" style="width: 100%; text-decoration: none;"
+                href="javascript:void(0)">Open Browser</a>
+            <button class="tj-btn tj-btn-secondary"
+                style="width: 100%; margin-top: 1em; border: none; background: transparent; text-decoration: underline;"
+                onclick="this.closest('.tj-overlay').classList.remove('active')">Continue anyway</button>
         </div>
     </div>
 </div>

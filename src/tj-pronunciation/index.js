@@ -724,9 +724,17 @@ class TjPronunciation extends HTMLElement {
       if (reportArea) {
           reportArea.style.display = 'block';
           reportArea.innerHTML = reportHtml;
+      }
+
+      const recordingsContainer = this.shadowRoot.getElementById('report-recordings-container');
+      if (recordingsContainer) {
+          recordingsContainer.innerHTML = '';
+          recordingsContainer.style.display = 'none';
 
           // Display individual recordings for spot checking
           if (this.recordings.size > 0) {
+            recordingsContainer.style.display = 'block';
+            
             const recordingsSection = document.createElement('div');
             recordingsSection.classList.add('recordings-section');
             recordingsSection.style.marginTop = '20px';
@@ -790,7 +798,7 @@ class TjPronunciation extends HTMLElement {
             });
 
             recordingsSection.appendChild(recordingsList);
-            reportArea.appendChild(recordingsSection);
+            recordingsContainer.appendChild(recordingsSection);
           }
       }
       if (submitActions) submitActions.style.display = 'block';

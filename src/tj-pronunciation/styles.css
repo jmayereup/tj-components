@@ -7,6 +7,10 @@
   font-family: 'Outfit', sans-serif;
 }
 
+.pronunciation-wrapper {
+  padding-bottom: 4rem;
+}
+
 .activities-wrapper {
   display: flex;
   flex-direction: column;
@@ -330,11 +334,11 @@
 .report-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: var(--tj-primary-color); color: white; border: none; border-radius: var(--tj-border-radius-md); font-size: 1.1em; font-weight: 700; cursor: pointer; transition: background 0.2s; margin-top: 2em; align-self: center; }
 .report-btn:hover { filter: brightness(0.9); }
 .report-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.report-modal { background: white; width: 92%; max-width: 420px; padding: 28px 24px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); text-align: center; max-height: 90vh; overflow-y: auto; }
+.report-modal { background: var(--tj-bg-card); color: var(--tj-text-main); border: 1px solid var(--tj-border-main); width: 92%; max-width: 420px; padding: 28px 24px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); text-align: center; max-height: 90vh; overflow-y: auto; }
 .report-modal h2 { margin: 8px 0 4px; color: var(--tj-text-main); }
 .report-modal p { color: var(--tj-text-muted); margin: 0 0 16px; font-size: 0.95em; }
 .report-icon { font-size: 2.5em; margin-bottom: 4px; }
-.report-modal input { display: block; width: 100%; box-sizing: border-box; padding: 12px 14px; margin-bottom: 12px; border: 1px solid var(--tj-border-main); border-radius: 8px; font-size: 1em; outline: none; transition: border-color 0.2s; }
+.report-modal input { display: block; width: 100%; box-sizing: border-box; padding: 12px 14px; margin-bottom: 12px; background: var(--tj-bg-main); color: var(--tj-text-main); border: 1px solid var(--tj-border-main); border-radius: 8px; font-size: 1em; outline: none; transition: border-color 0.2s; }
 .report-modal input:focus { border-color: var(--tj-primary-color); }
 .generate-btn { display: block; width: 100%; padding: 14px; background: var(--tj-primary-color); color: white; border: none; border-radius: 8px; font-size: 1.05em; font-weight: 700; cursor: pointer; margin-top: 8px; transition: background 0.2s; }
 .generate-btn:hover { filter: brightness(0.9); }
