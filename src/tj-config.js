@@ -1,5 +1,5 @@
 // Configuration file for TJ Components
 export const config = {
     // Shared endpoint for report cards / quiz submissions
-    submissionUrl: 'https://script.google.com/macros/s/AKfycbxDI_qYNK5NOfUCN7iN-1ebmwRapBcDzptYDEPKLdZh_vGuCb-UB6EsSgdEbSFAFuIekw/exec'
+    submissionUrl: 'https://script.google.com/macros/s/AKfycbzGofdFez5xIl7hfVAuPZSaHbvcXBjWFLLteNKYRuAAuCsDfs8dz5_WPoqyWiNc5SkZHg/exec'
 };
