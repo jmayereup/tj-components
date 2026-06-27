@@ -13,55 +13,71 @@ This guide explains how to set up a Google Apps Script to receive score submissi
 3. Paste the following code into the editor:
 
 ```javascript
+/** @OnlyCurrentDoc
+*/
+
 /**
- * This function handles HTTP POST requests. 
- * It's triggered when the HTML form is submitted.
- * @param {Object} e - The event parameter for a POST request.
- */
+* This function handles HTTP POST requests.
+* @param {Object} e - The event parameter for a POST request.
+*/
 function doPost(e) {
-  // Use a try-catch block for robust error handling.
   try {
-    // Parse the JSON data sent from the HTML form.
-    const data = JSON.parse(e.postData.contents);
-
-    // Select the spreadsheet and the specific sheet to save data to.
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Submissions');
-
-    // FIX: Check if the sheet is empty. If getLastRow() is 0, there's no data.
-    // In this case, we add the header row first.
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['Timestamp', 'Nickname', 'Homeroom', 'Student ID', 'Quiz Name', 'Score', 'Total Questions']);
+    if (!e || !e.postData || !e.postData.contents) {
+      throw new Error("No data provided.");
     }
 
-    // Append a new row with the data from the quiz.
-    // The order here must match the header order.
+    const data = JSON.parse(e.postData.contents);
+
+    const sanitize = (input) => {
+      if (input === null || input === undefined) return "";
+      let str = String(input).substring(0, 2000).trim();
+      if (/^[=\+\-@]/.test(str)) {
+        str = "'" + str;
+      }
+      return str;
+    };
+
+    const cleanScore = Number(data.score) || 0;
+    const cleanTotal = Number(data.total) || 0;
+
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Submissions');
+
+    if (!sheet) {
+      throw new Error("Target sheet not found.");
+    }
+
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        'Timestamp', 'Nickname', 'Homeroom', 'Student ID', 
+        'Quiz Name', 'Score', 'Total Questions', 'Written Answers'
+      ]);
+    }
+
     sheet.appendRow([
       new Date(),
-      data.nickname,
-      data.homeroom,
-      data.studentId,
-      data.quizName,
-      data.score,
-      data.total
+      sanitize(data.nickname),
+      sanitize(data.homeroom),
+      sanitize(data.studentId),
+      sanitize(data.quizName),
+      cleanScore,
+      cleanTotal,
+      sanitize(data.writtenAnswers)
     ]);
 
-    // Return a success response to the HTML front-end.
     return ContentService
-      .createTextOutput(JSON.stringify({ 
-        'result': 'success', 
-        'message': 'Your score was submitted successfully!' 
+      .createTextOutput(JSON.stringify({
+        'result': 'success',
+        'message': 'Your score was submitted successfully!'
       }))
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
-    // If an error occurs, log it for debugging purposes.
-    Logger.log(error.toString());
+    console.error("Submission Error: ", error);
 
-    // Return an error response to the HTML front-end.
     return ContentService
-      .createTextOutput(JSON.stringify({ 
-        'result': 'error', 
-        'message': error.toString() 
+      .createTextOutput(JSON.stringify({
+        'result': 'error',
+        'message': 'An error occurred while processing your submission.'
       }))
       .setMimeType(ContentService.MimeType.JSON);
   }
@@ -81,16 +97,15 @@ function doPost(e) {
 6. Once deployed, you will be given a **Web app URL**. Copy this URL.
 
 ## 4. Connect the URL to Your Components
-Paste the copied Web app URL into the `config.js` file of your components. 
+To connect the Web app URL to all your components, create a `.env` file in the root of the project and define the `VITE_SUBMISSION_URL` environment variable:
 
-For `tj-pronunciation`, create or edit `/src/tj-pronunciation/config.js`:
-```javascript
-export const config = {
-    submissionUrl: 'YOUR_WEB_APP_URL_HERE'
-};
+```env
+VITE_SUBMISSION_URL=YOUR_WEB_APP_URL_HERE
 ```
 
-Your component is now ready to successfully send data straight to your Google Sheet!
+Make sure that `.env` is ignored by Git in your `.gitignore` file so that your private endpoint URL is not committed. The build system will automatically inject this URL into all the components during compiling.
+
+Your components are now ready to successfully send data straight to your Google Sheet!
 
 ## 5. Student Submission Process
 The system is designed with a "Proof of Work" mechanism:

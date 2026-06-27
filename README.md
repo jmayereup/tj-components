@@ -169,6 +169,7 @@ A flexible quiz component supporting reading passages, vocabulary matching, and 
 - **Limiters**: Append `-N` to any section header (e.g., `---questions-3`) to display exactly N random items from that section.
 - **Instructions**: Use `---instructions` to add a header and body text between activities.
 - **Vocab Syntax**: Use `Word: Definition` (one per line) for vocabulary matching sections.
+- **Short Answer Questions**: Omit the `A:` rows under a question (e.g., just `Q: Question text`) to render a text input field instead of multiple-choice radio buttons. These written answers are displayed on the report card and sent to the teacher but are not included in the graded score.
 
 ---
 

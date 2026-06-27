@@ -1,8 +1,6 @@
-import { a as A, s as E, g as B } from "./chunks/audio-utils-DV9LW5S-.js";
-const L = {
-  submissionUrl: "https://script.google.com/macros/s/AKfycbxDI_qYNK5NOfUCN7iN-1ebmwRapBcDzptYDEPKLdZh_vGuCb-UB6EsSgdEbSFAFuIekw/exec"
-  // Replace with your actual submission endpoint
-}, T = `<div class="quiz-wrapper" translate="no">
+import { c as A } from "./chunks/tj-config-JtFGQ6Kt.js";
+import { a as E, s as B, g as L } from "./chunks/audio-utils-BwH2sOvH.js";
+const T = `<div class="quiz-wrapper" translate="no">
     <div class="container" id="mainContainer">
         <div class="quiz-header">
             <span class="theme-toggle" title="Toggle Light/Dark Mode">
@@ -109,7 +107,7 @@ class R extends HTMLElement {
     return ["submission-url"];
   }
   constructor() {
-    super(), this.attachShadow({ mode: "open" }), this.questionBank = [], this.passages = [], this.selectedVoiceName = null, this.isPlayingAll = !1, this.instructions = [], this.questionGroups = [], this.orderedSections = [], this.currentQuestions = [], this.score = 0, this.questionsAnswered = 0, this.questionsToDisplay = 5, this.totalQuestions = 0, this.audioPlayer = null, this.utterance = null, this.audioSrc = "", this.currentAudioButton = null, this.submissionUrl = L.submissionUrl, this.title = "", this.passage = "", this.vocabularySections = [], this.vocabUserChoices = {}, this.vocabScore = 0, this.vocabSubmitted = !1, this.clozeSections = [], this.clozeAnswers = {}, this.clozeScore = 0, this.clozeSubmitted = !1, this.userQuestionAnswers = {}, this.quizUnlocked = !0, this.autoSubmissionInProgress = !1, this.scoreSubmitted = !1, this.scoreSentToServer = !1, this.ttsPaused = !1;
+    super(), this.attachShadow({ mode: "open" }), this.questionBank = [], this.passages = [], this.selectedVoiceName = null, this.isPlayingAll = !1, this.instructions = [], this.questionGroups = [], this.orderedSections = [], this.currentQuestions = [], this.score = 0, this.questionsAnswered = 0, this.questionsToDisplay = 5, this.totalQuestions = 0, this.audioPlayer = null, this.utterance = null, this.audioSrc = "", this.currentAudioButton = null, this.submissionUrl = A.submissionUrl, this.title = "", this.passage = "", this.vocabularySections = [], this.vocabUserChoices = {}, this.vocabScore = 0, this.vocabSubmitted = !1, this.clozeSections = [], this.clozeAnswers = {}, this.clozeScore = 0, this.clozeSubmitted = !1, this.userQuestionAnswers = {}, this.quizUnlocked = !0, this.autoSubmissionInProgress = !1, this.scoreSubmitted = !1, this.scoreSentToServer = !1, this.ttsPaused = !1;
   }
   attributeChangedCallback(e, t) {
     e === "submission-url" && (this.submissionUrl = t);
@@ -146,7 +144,7 @@ class R extends HTMLElement {
     }
   }
   _getBestVoice(e = "en-US") {
-    return A(window.speechSynthesis, e);
+    return E(window.speechSynthesis, e);
   }
   _updateVoiceList() {
     if (!window.speechSynthesis) return;
@@ -171,10 +169,10 @@ class R extends HTMLElement {
     e && e.classList.add("hidden");
   }
   _shouldShowAudioControls() {
-    return E(window.speechSynthesis);
+    return B(window.speechSynthesis);
   }
   _getAndroidIntentLink() {
-    return B();
+    return L();
   }
   checkBrowserSupport() {
     if (!this._shouldShowAudioControls()) {

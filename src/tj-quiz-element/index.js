@@ -1,4 +1,4 @@
-import { config } from './config.js';
+import { config } from '../tj-config.js';
 import templateHtml from './template.html?raw';
 import stylesText from './styles.css?inline';
 import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../audio-utils.js';

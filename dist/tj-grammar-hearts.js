@@ -1,4 +1,4 @@
-import { c as b } from "./chunks/tj-config-Co8tO1UZ.js";
+import { c as b } from "./chunks/tj-config-JtFGQ6Kt.js";
 class u extends HTMLElement {
   constructor() {
     var e;
