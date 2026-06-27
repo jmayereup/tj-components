@@ -2,7 +2,7 @@ import { config } from "../tj-config.js";
 import sharedStyles from "../tj-shared.css?inline";
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
-import { getBestVoice, shouldShowAudioControls, startAudioRecording, getAndroidIntentLink } from "../audio-utils.js";
+import { getBestVoice, shouldShowAudioControls, startAudioRecording, getAndroidIntentLink, isIOS } from "../audio-utils.js";
 
 const icons = {
   play: `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`,
@@ -916,22 +916,43 @@ class TjPronunciation extends HTMLElement {
       }
       if (voice) utterance.voice = voice;
 
-      utterance.onstart = () => {
-        button.classList.add("playing");
-        this.isPlaying = true;
-      };
-
-      utterance.onend = () => {
+      let resolved = false;
+      const done = () => {
+        if (resolved) return;
+        resolved = true;
+        clearTimeout(watchdog);
         button.classList.remove("playing");
         this.isPlaying = false;
         resolve();
       };
 
+      utterance.onstart = () => {
+        button.classList.add("playing");
+        this.isPlaying = true;
+      };
+
+      utterance.onend = () => done();
+
       utterance.onerror = (e) => {
+        if (resolved) return;
+        resolved = true;
+        clearTimeout(watchdog);
         button.classList.remove("playing");
         this.isPlaying = false;
-        reject(e);
+        // On iOS, 'interrupted' errors are common and non-fatal — treat as done
+        if (e.error === 'interrupted' || e.error === 'canceled') {
+          resolve();
+        } else {
+          reject(e);
+        }
       };
+
+      // iOS Safari often never fires onend. Use a watchdog that estimates
+      // duration from text length + a generous buffer, then resolves anyway.
+      const estimatedMs = Math.max(3000, text.length * 120);
+      const watchdog = isIOS()
+        ? setTimeout(() => done(), estimatedMs)
+        : setTimeout(() => done(), estimatedMs + 5000);
 
       this.synth.speak(utterance);
     });
@@ -1121,7 +1142,14 @@ class TjPronunciation extends HTMLElement {
     const audioUrl = this.recordings.get(index);
     if (!audioUrl) return;
 
-    const audio = new Audio(audioUrl);
+    const audio = new Audio();
+
+    audio.oncanplaythrough = () => {
+      audio.play().catch((e) => {
+        console.error("Error playing recording:", e);
+        btn.classList.remove("playing");
+      });
+    };
 
     audio.onplay = () => {
       btn.classList.add("playing");
@@ -1137,10 +1165,13 @@ class TjPronunciation extends HTMLElement {
       }
     };
 
-    audio.play().catch((e) => {
-      console.error("Error playing recording:", e);
+    audio.onerror = (e) => {
+      console.error("Error loading recording for playback:", e);
       btn.classList.remove("playing");
-    });
+    };
+
+    audio.src = audioUrl;
+    audio.load();
   }
 }
 

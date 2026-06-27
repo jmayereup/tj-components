@@ -1,3 +1,10 @@
+export function isIOS() {
+  return (
+    /ipad|iphone|ipod/i.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  );
+}
+
 export function getBestVoice(synth, lang) {
   if (!synth) return null;
   const voices = synth.getVoices();
@@ -64,34 +71,41 @@ export function getAndroidIntentLink() {
   return `intent://${urlNoScheme}#Intent;scheme=${scheme};package=com.android.chrome;end`;
 }
 
-export async function startAudioRecording(onDataAvailable, onStop, timeslice = 1000) {
+export async function startAudioRecording(onDataAvailable, onStop) {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-    // Determine supported MIME type (iOS Safari doesn't support webm)
-    let mimeType = "audio/webm";
+    // Determine the best supported MIME type.
+    // iOS Safari supports audio/mp4 (AAC) but NOT audio/webm, so check iOS first.
+    let mimeType = "";
     if (typeof MediaRecorder.isTypeSupported === "function") {
-      if (!MediaRecorder.isTypeSupported(mimeType)) {
-        mimeType = "audio/mp4";
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = ""; // Let browser choose default
+      const candidates = isIOS()
+        ? ["audio/mp4", "audio/aac", ""]
+        : ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", ""];
+      for (const type of candidates) {
+        if (type === "" || MediaRecorder.isTypeSupported(type)) {
+          mimeType = type;
+          break;
         }
       }
     }
 
     const options = mimeType ? { mimeType } : {};
     const mediaRecorder = new MediaRecorder(stream, options);
+    // Read back the actual MIME type the recorder chose (may differ from requested)
     const recordingMimeType = mediaRecorder.mimeType || mimeType || "audio/webm";
 
     mediaRecorder.ondataavailable = onDataAvailable;
     mediaRecorder.onstop = () => {
-        onStop(recordingMimeType);
-        // Stop all tracks in the stream to release the mic
-        stream.getTracks().forEach((track) => track.stop());
+      onStop(recordingMimeType);
+      // Stop all tracks in the stream to release the mic
+      stream.getTracks().forEach((track) => track.stop());
     };
 
-    // Use a timeslice - helps ensure data capture on some mobile browsers
-    mediaRecorder.start(timeslice);
+    // Use a short timeslice (250ms) so we get frequent chunks.
+    // This is especially important on iOS where a single ondataavailable
+    // event at the end can be missed or empty for very short recordings.
+    mediaRecorder.start(250);
     return mediaRecorder;
   } catch (err) {
     console.error("Error starting recording:", err);
