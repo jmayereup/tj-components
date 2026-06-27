@@ -1297,3 +1297,69 @@ fieldset>legend {
 .browser-action-btn:hover {
     background-color: #a16207;
 }
+
+/* Short Answer Styles */
+.short-answer-badge {
+    font-size: 0.8em;
+    font-weight: 500;
+    color: var(--subtle-text-light);
+    background-color: var(--input-bg-light);
+    border: 1px solid var(--border-light);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    margin-left: 0.5rem;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.short-answer-container {
+    margin-top: 0.5rem;
+}
+
+.short-answer-input.submitted {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.score-note-written {
+    font-size: 0.85em;
+    color: var(--subtle-text-light);
+    margin-top: 0.75rem;
+    text-align: center;
+    font-style: italic;
+}
+
+.written-answers-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-light);
+    text-align: left;
+}
+
+.written-answers-title {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.written-qa {
+    margin-bottom: 0.75rem;
+    font-size: 0.85em;
+    background-color: var(--input-bg-light);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--border-light);
+}
+
+.written-question {
+    font-weight: 600;
+    color: var(--subtle-text-light);
+}
+
+.written-answer {
+    margin-top: 0.25rem;
+    color: var(--text-light);
+    white-space: pre-wrap;
+    word-break: break-word;
+}

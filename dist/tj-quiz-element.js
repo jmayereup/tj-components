@@ -1,8 +1,8 @@
-import { a as C, s as z, g as I } from "./chunks/audio-utils-DV9LW5S-.js";
-const A = {
+import { a as A, s as E, g as B } from "./chunks/audio-utils-DV9LW5S-.js";
+const L = {
   submissionUrl: "https://script.google.com/macros/s/AKfycbxDI_qYNK5NOfUCN7iN-1ebmwRapBcDzptYDEPKLdZh_vGuCb-UB6EsSgdEbSFAFuIekw/exec"
   // Replace with your actual submission endpoint
-}, E = `<div class="quiz-wrapper" translate="no">
+}, T = `<div class="quiz-wrapper" translate="no">
     <div class="container" id="mainContainer">
         <div class="quiz-header">
             <span class="theme-toggle" title="Toggle Light/Dark Mode">
@@ -103,13 +103,13 @@ const A = {
         <a class="browser-action-btn" id="browser-action-btn">Open in Browser</a>
         <button class="close-prompt" style="display: block; width: 100%; margin-top: 1.5em; border: none; background: transparent; text-decoration: underline; cursor: pointer; color: #64748b; font-weight: 600; font-size: 0.95em;" onclick="this.closest('.browser-prompt-overlay').style.display='none'">Continue anyway / ใช้งานต่อ</button>
     </div>
-</div>`, B = ':host{display:block;--bg-light: #f1f5f9;--text-light: #1e293b;--card-bg-light: #ffffff;--card-shadow-light: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05);--border-light: #e2e8f0;--input-bg-light: #f8fafc;--input-border-light: #cbd5e1;--subtle-text-light: #475569;--primary-color: #4f46e5;--primary-hover: #4338ca;--primary-text: #ffffff;--green-color: #16a34a;--green-hover: #15803d;--green-light-bg: #dcfce7;--red-color: #ef4444;--red-light-bg: #fee2e2;--yellow-color: #eab308;--slate-color: #64748b;--slate-hover: #475569;--font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif}:host(.dark){--bg-light: #0f172a;--text-light: #e2e8f0;--card-bg-light: #1e293b;--card-shadow-light: 0 10px 15px -3px rgba(0, 0, 0, .3), 0 4px 6px -2px rgba(0, 0, 0, .2);--border-light: #334155;--input-bg-light: #334155;--input-border-light: #475569;--subtle-text-light: #87abdd;--green-light-bg: #14532d;--red-light-bg: #7f1d1d}.quiz-wrapper *{box-sizing:border-box}.quiz-wrapper{font-family:var(--font-sans);background-color:var(--bg-light);color:var(--text-light);line-height:1.6;transition:background-color .3s,color .3s;padding:1rem 0}.quiz-wrapper p{font-size:1em;margin-bottom:1rem}.container{max-width:800px;margin-left:auto;margin-right:auto;padding:0 1rem}.quiz-header{background-color:var(--primary-color);color:var(--primary-text);padding:1.5rem;position:relative;border-radius:.75rem;margin-bottom:1.25rem;box-shadow:var(--card-shadow-light)}.quiz-header h1{font-size:1.5em;font-weight:700;margin:0}.quiz-header p{margin-top:.5rem;color:#e0e7ff;opacity:.9;font-size:.9375em}.theme-toggle{position:absolute;top:1rem;right:1rem;cursor:pointer;width:2.5rem;height:2.5rem;padding:0;border-radius:9999px;background-color:#ffffff1a;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;transition:background-color .2s,transform .2s}.theme-toggle:hover,#voice-btn:hover{background-color:#fff3;transform:scale(1.05)}form{padding:0}@media (min-width: 640px){form{padding:2rem}}fieldset{border:none;padding:0;margin:0;margin-bottom:2rem}.legend-container{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-light);padding-bottom:.5rem;margin-bottom:1rem;width:100%}legend{font-size:1.125em;font-weight:600;color:var(--text-light);border-bottom:none;padding-bottom:0;margin-bottom:0;width:auto}fieldset>legend{display:block;font-size:1.125em;font-weight:700;margin-bottom:.5rem;padding-bottom:.5rem;color:var(--text-light);border-bottom:1px solid var(--border-light)}#vocabSection .vocab-grid-table,#clozeSection .cloze-word-bank,#clozeSection .cloze-text{margin-top:1rem}.reading-instructions{font-size:.9em;font-style:italic;margin-bottom:1rem;margin-top:1rem}.instruction{font-size:.9em;color:var(--subtle-text-light);font-style:italic;margin-top:.25rem;margin-bottom:1rem;line-height:1.45}.audio-toggle{cursor:pointer;padding:.75rem;border-radius:9999px;background-color:var(--primary-color);border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;color:var(--primary-text);transition:background-color .2s}.audio-toggle:hover{background-color:var(--primary-hover)}.audio-toggle svg{width:1.5em;height:1.5em}.passage-audio-toggle{cursor:pointer;padding:.5rem .6rem;border-radius:.5rem;background-color:#fff;border:1px solid var(--border-light);color:var(--text-light);display:inline-flex;align-items:center;justify-content:center;margin-left:.5rem;box-shadow:0 2px 6px #0000000f;transition:transform .12s,box-shadow .12s}.passage-audio-toggle:hover{transform:translateY(-2px);box-shadow:0 6px 16px #0000001f}.passage-audio-toggle .play-icon,.passage-audio-toggle .pause-icon{width:1.1rem;height:1.1rem}.passage-wrapper{padding:1rem 1.25rem;border-radius:.5rem;background:transparent;margin-bottom:1rem}.passage-wrapper{position:relative}.passage-header{display:flex;align-items:center;gap:.5rem}.passage-text{margin-top:.75rem}.listening-hidden{position:absolute!important;clip:rect(1px,1px,1px,1px);clip-path:inset(50%);height:1px;width:1px;overflow:hidden;white-space:nowrap}.passage-content{background-color:var(--input-bg-light);border-radius:.5rem;padding:1.5rem;margin-bottom:1.5rem;border:1px solid var(--border-light);line-height:1.7}.section-card{background-color:var(--card-bg-light);border:1px solid var(--border-light);border-radius:.75rem;padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--card-shadow-light)}.section-card-header{font-size:1.05em;font-weight:600;color:var(--text-light);margin:0 0 .5rem;border-bottom:1px solid var(--border-light);padding-bottom:.4rem}.section-card-description{font-size:.95em;color:var(--subtle-text-light);line-height:1.6;margin-bottom:.75rem}.section-card-content{display:block}.instruction-card .section-card-content{margin-top:.25rem}.instruction-questions{margin-top:.75rem}.question-block{padding-top:1.5rem;border-top:1px solid var(--border-light)}.question-block:first-of-type{border-top:none;padding-top:0}.question-block p.question-text{font-weight:600;margin-bottom:1rem;font-size:1em}.options-group{display:flex;flex-direction:column;gap:.5rem}.option-label{display:flex;align-items:center;padding:.5rem .75rem;background-color:var(--input-bg-light);border-radius:.5rem;cursor:pointer;transition:background-color .18s,border-color .18s;border:1px solid transparent;font-size:.95em}.option-label:hover{background-color:#eef4ff}:host(.dark) .option-label:hover{background-color:#2b3440}.option-label.correct{background-color:var(--green-light-bg);border-color:var(--green-color)}.option-label.incorrect{background-color:var(--red-light-bg);border-color:var(--red-color)}.feedback-icon{margin-left:auto;font-size:1.25em}.explanation{margin-top:1rem;padding:1rem;background-color:var(--input-bg-light);border-radius:.5rem;border-left:4px solid var(--primary-color);font-size:.9em;line-height:1.5}.explanation-content strong{color:var(--primary-color)}.form-radio{width:1.125em;height:1.125em;margin-right:.75em;accent-color:var(--primary-color);flex-shrink:0}.form-radio:disabled{cursor:not-allowed}.form-input{width:100%;padding:.75rem;background-color:var(--input-bg-light);border:1px solid var(--input-border-light);border-radius:.5rem;color:var(--text-light);font-size:1em}.form-input.invalid{border-color:var(--red-color)}.form-input:disabled{background-color:#e2e8f0;cursor:not-allowed}:host(.dark) .form-input:disabled{background-color:#334155}.input-label{display:block;font-size:.875em;font-weight:500;color:var(--subtle-text-light);margin-bottom:.25rem}#teacherCode{letter-spacing:.1em;font-family:monospace}:host(.dark) #teacherCode{background-color:#1e293b}.grid-container{display:grid;grid-template-columns:1fr;gap:1rem}@media (min-width: 768px){.grid-container{grid-template-columns:repeat(2,1fr)}}.actions-container{padding-top:1.5rem;border-top:1px solid var(--border-light);margin-top:2rem}.button{width:100%;font-weight:600;padding:.875rem 1.5rem;border-radius:.5rem;font-size:1em;transition:all .2s ease-in-out;border:none;cursor:pointer}.button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 4px 10px #0000001a}.button:disabled{background-color:#94a3b8;cursor:not-allowed;transform:none;box-shadow:none}.button-primary{background-color:var(--primary-color);color:var(--primary-text)}.button-primary:hover:not(:disabled){background-color:var(--primary-hover)}.button-green{background-color:var(--green-color);color:var(--primary-text)}.button-green:hover:not(:disabled){background-color:var(--green-hover)}.button-slate{background-color:var(--slate-color);color:var(--primary-text)}.button-slate:hover:not(:disabled){background-color:var(--slate-hover)}.post-score-actions{display:flex;flex-direction:column;gap:1rem}@media (min-width: 768px){.post-score-actions{flex-direction:row-reverse}}.prequiz-actions{margin-top:1.5rem;display:flex;flex-direction:column;gap:.75rem;align-items:flex-start}#studentInfoAlert{font-size:.9em;font-weight:500;min-height:1.5rem}#studentInfoAlert.success{color:var(--green-color)}#studentInfoAlert.error{color:var(--red-color)}.result-area{padding:2rem;text-align:center;border-bottom:1px solid var(--border-light);margin-bottom:2rem}.result-area h2{font-size:1.25em;font-weight:600;margin:0}#resultScore{text-align:center;margin:1.5rem 0}.score-main{font-size:3em;font-weight:700;line-height:1;margin-bottom:.5rem}.score-percentage{font-size:1.5em;font-weight:600;opacity:.8;margin-bottom:1rem}.score-breakdown{display:flex;justify-content:center;gap:2rem;margin-top:1rem}.score-section{display:flex;flex-direction:column;align-items:center;gap:.25rem}.score-label{font-size:.9em;font-weight:500;opacity:.7;text-transform:uppercase;letter-spacing:.05em}.score-value{font-size:1.25em;font-weight:600}@media (max-width: 768px){.score-main{font-size:2.5em}.score-percentage{font-size:1.25em}.score-breakdown{flex-direction:column;gap:1rem}.score-section{flex-direction:row;justify-content:space-between;align-items:center;padding:.5rem 1rem;background-color:var(--input-bg-light);border-radius:.5rem}}#resultScore.high .score-main{color:var(--green-color)}#resultScore.medium .score-main{color:var(--yellow-color)}#resultScore.low .score-main{color:var(--red-color)}#validationMessage{text-align:center;margin-bottom:1rem;font-weight:500;min-height:1.5rem;font-size:.9em}#validationMessage.success{color:var(--green-color)}#validationMessage.error{color:var(--red-color)}.hidden{display:none!important}.vocab-word-bank{background-color:var(--input-bg-light);border:1px solid var(--border-light);border-radius:.5rem;padding:1rem;margin-bottom:1.25rem}:host(.dark) .vocab-word-bank{background-color:var(--input-bg-dark)}.vocab-bank-title{font-weight:600;margin-bottom:.75rem;color:var(--subtle-text-light);font-size:.9em;text-transform:uppercase;letter-spacing:.05em}.vocab-bank-items{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}.vocab-bank-item{background-color:var(--card-bg-light);color:var(--text-light);padding:.45rem .75rem;border-radius:.375rem;border:1px solid var(--border-light);font-size:.9em;font-weight:600;cursor:default;-webkit-user-select:none;user-select:none;box-shadow:0 1px 2px #0000000d}.vocab-matching-container{display:flex;flex-direction:column;gap:.5rem}.vocab-matching-row{display:flex;align-items:center;gap:1rem;padding:.5rem .75rem;border-radius:.5rem;transition:background-color .2s}.vocab-matching-input{width:2.5rem;height:2.5rem;padding:0;text-align:center;font-weight:700;font-size:1.125rem;line-height:normal;border:2px solid var(--input-border-light);border-radius:.4rem;background-color:var(--card-bg-light);color:var(--text-light);text-transform:uppercase;flex-shrink:0;box-sizing:border-box}:host(.dark) .vocab-matching-input{background-color:var(--input-bg-light)}.vocab-matching-input:focus{border-color:var(--primary-color);outline:none;box-shadow:0 0 0 3px #4f46e51a}.vocab-matching-input:disabled{background-color:#f1f5f9;cursor:not-allowed}:host(.dark) .vocab-matching-input:disabled{background-color:#1e293b}.vocab-definition-text{flex:1;font-size:1em;color:var(--text-light)}.vocab-matching-row.correct{background-color:var(--green-light-bg)}.vocab-matching-row.incorrect{background-color:var(--red-light-bg)}.vocab-matching-row.correct .vocab-matching-input{border-color:var(--green-color)}.vocab-matching-row.incorrect .vocab-matching-input{border-color:var(--red-color)}.vocab-matching-row .feedback-icon{font-weight:600;font-size:.9em;white-space:nowrap}@media (max-width: 768px){.vocab-def-label{display:inline-block;white-space:normal;max-width:60%}}.cloze-word-bank{background-color:var(--input-bg-light);border:1px solid var(--border-light);border-radius:.5rem;padding:1rem;margin-bottom:1.25rem}:host(.dark) .cloze-word-bank{background-color:var(--input-bg-dark)}.cloze-bank-title{font-weight:600;margin-bottom:.75rem;color:var(--subtle-text-light);font-size:.9em;text-transform:uppercase;letter-spacing:.05em}.cloze-bank-words{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}.cloze-bank-word{background-color:var(--card-bg-light);color:var(--text-light);padding:.45rem .75rem;border-radius:.375rem;border:1px solid var(--border-light);font-size:.9em;font-weight:600;cursor:default;-webkit-user-select:none;user-select:none;box-shadow:0 1px 2px #0000000d}.cloze-text{line-height:1.8;font-size:1.05em;color:var(--text-light)}.cloze-blank{display:inline-block;min-width:6.5ch;max-width:12ch;margin:0 .35rem;padding:.15rem .4rem;border:none;border-bottom:2px solid var(--border-light);background:transparent;font-size:inherit;font-family:inherit;color:var(--text-light);text-align:center;vertical-align:baseline;transition:border-color .18s,background-color .18s}.cloze-blank:focus{outline:none;border-bottom-color:var(--primary-color);background:#4f46e508;border-radius:.25rem}.cloze-blank.correct{border-bottom-color:var(--green-color);background-color:var(--green-light-bg)}.cloze-blank.correct{border-bottom-color:var(--green-color);background-color:var(--green-light-bg);border-radius:.25rem}.cloze-blank.incorrect{border-bottom-color:var(--red-color);background-color:var(--red-light-bg);border-radius:.25rem}.cloze-score{text-align:center;font-weight:600;margin-top:1rem;font-size:1.1em}@media (max-width: 768px){.cloze-bank-words{gap:.375rem}.cloze-bank-word{padding:.375rem .5rem;font-size:.8em}.cloze-blank{min-width:5.5ch}.cloze-text{font-size:1em}.cloze-blank{min-width:80px;padding:.25em .375em}}.vocab-section-header,.cloze-section-header{margin:1.5rem 0 1rem;font-size:1.1em;font-weight:600;color:var(--primary-color);border-bottom:2px solid var(--primary-color);padding-bottom:.5rem}.cloze-section-wrapper{margin-bottom:2rem}.cloze-section-wrapper:last-child{margin-bottom:0}.score-report-card{background-color:var(--card-bg-light);border:2px solid var(--primary-color);border-radius:1rem;padding:2rem;margin:1rem 0;text-align:center;box-shadow:0 4px 20px #4f46e526;position:relative;overflow:hidden}.score-report-card:before{content:"";position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--primary-color),var(--primary-hover))}.result-title{font-size:1.5em;font-weight:800;color:var(--primary-color);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.1em}.result-subtitle{font-size:1em;font-weight:600;color:var(--subtle-text-light);margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:.05em}.student-details{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem;font-size:1.1em;border:1px solid var(--border-light);padding:1.25rem;border-radius:.5rem;background-color:var(--input-bg-light);text-align:left}.student-details strong{color:var(--primary-color)}.score-summary{margin-bottom:2rem}.score-main-compact{font-size:2.5em;font-weight:800;color:var(--primary-color);margin-bottom:.25rem}.score-percentage{font-size:1.2em;color:var(--slate-color);font-weight:600}.score-breakdown-compact{display:flex;flex-direction:column;gap:.75rem;max-width:300px;margin:0 auto;padding:1rem;border-top:1px dashed var(--border-light)}.score-section{display:flex;justify-content:space-between;align-items:center;font-weight:600}.score-label{color:var(--subtle-text-light)}.score-value{color:var(--text-light)}.post-score-section{text-align:center;margin:2rem 0}.post-score-actions{display:flex;justify-content:center;gap:1rem;margin-top:1.5rem}#validationMessage.success{display:inline-flex;align-items:center;gap:.5rem;background-color:var(--green-light-bg);color:var(--green-color);padding:.75rem 1.5rem;border-radius:2rem;font-weight:600;font-size:.95rem;margin-bottom:0}#validationMessage.error{color:var(--red-color);background-color:var(--red-light-bg);padding:.75rem 1.5rem;border-radius:2rem;font-weight:600;font-size:.95rem;display:inline-flex;margin-bottom:0}.voice-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ab3;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:2000}.voice-card{background:var(--card-bg-light);width:90%;max-width:400px;max-height:80vh;border-radius:1.25rem;box-shadow:0 25px 50px -12px #00000040;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border-light)}.voice-card-header{padding:1.25rem;background:var(--primary-color);color:#fff;display:flex;justify-content:space-between;align-items:center}.voice-card-header h3{margin:0;font-size:1.25em;font-weight:700}.close-voice-btn{background:#fff3;border:none;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.5em;transition:background .2s}.close-voice-btn:hover{background:#ffffff4d}.voice-list{padding:1rem;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:.5rem}.voice-option-btn{padding:.875rem 1rem;background:var(--input-bg-light);border:1px solid var(--border-light);border-radius:.75rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .2s;color:var(--text-light);font-family:var(--font-sans)}.voice-option-btn:hover{border-color:var(--primary-color);background:#eff6ff}:host(.dark) .voice-option-btn:hover{background:#1e293b}.voice-option-btn.active{background:#eff6ff;border-color:var(--primary-color);color:var(--primary-color);font-weight:600;box-shadow:0 0 0 1px var(--primary-color)}:host(.dark) .voice-option-btn.active{background:#1e293b}.voice-option-btn .badge{background:var(--green-color);color:#fff;padding:.2rem .5rem;border-radius:2rem;font-size:.75em;font-weight:700;text-transform:uppercase}#voice-btn{position:absolute;top:1rem;right:4rem;cursor:pointer;width:2.5rem;height:2.5rem;padding:0;border-radius:9999px;background-color:#ffffff1a;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;color:#fff;transition:background-color .2s,transform .2s}#voice-btn svg{width:1.25rem;height:1.25rem}.retry-section{margin-top:1rem;margin-bottom:1rem;padding:1.25rem;background-color:var(--input-bg-light);border-radius:.6rem;border:1px dashed var(--border-light)}.retry-title{margin-top:0;margin-bottom:.75rem;font-size:.95em;font-weight:600;color:var(--text-light)}.retry-controls{display:flex;gap:.75rem;align-items:center}.retry-controls .form-input{flex:1;margin:0}.retry-controls .button{width:auto;margin:0;white-space:nowrap}.browser-prompt-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ae6;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:10000;color:#fff;padding:2em;text-align:center}.browser-prompt-card{background:#fff;color:#1e293b;padding:2.5em;border-radius:1.5em;max-width:400px;box-shadow:0 20px 25px -5px #0000001a,0 10px 10px -5px #0000000a}.browser-prompt-card h2{color:#b45309;margin-bottom:.5em;font-size:1.5em;background:none;-webkit-text-fill-color:initial}.browser-prompt-card p{margin-bottom:1.5em;line-height:1.5;color:#475569}.browser-action-btn{display:inline-block;background-color:#ca8a04;color:#fff;padding:.75em 1.5em;border-radius:9999px;text-decoration:none;font-weight:700;transition:background-color .2s;cursor:pointer}.browser-action-btn:hover{background-color:#a16207}';
-class L extends HTMLElement {
+</div>`, q = ':host{display:block;--bg-light: #f1f5f9;--text-light: #1e293b;--card-bg-light: #ffffff;--card-shadow-light: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05);--border-light: #e2e8f0;--input-bg-light: #f8fafc;--input-border-light: #cbd5e1;--subtle-text-light: #475569;--primary-color: #4f46e5;--primary-hover: #4338ca;--primary-text: #ffffff;--green-color: #16a34a;--green-hover: #15803d;--green-light-bg: #dcfce7;--red-color: #ef4444;--red-light-bg: #fee2e2;--yellow-color: #eab308;--slate-color: #64748b;--slate-hover: #475569;--font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif}:host(.dark){--bg-light: #0f172a;--text-light: #e2e8f0;--card-bg-light: #1e293b;--card-shadow-light: 0 10px 15px -3px rgba(0, 0, 0, .3), 0 4px 6px -2px rgba(0, 0, 0, .2);--border-light: #334155;--input-bg-light: #334155;--input-border-light: #475569;--subtle-text-light: #87abdd;--green-light-bg: #14532d;--red-light-bg: #7f1d1d}.quiz-wrapper *{box-sizing:border-box}.quiz-wrapper{font-family:var(--font-sans);background-color:var(--bg-light);color:var(--text-light);line-height:1.6;transition:background-color .3s,color .3s;padding:1rem 0}.quiz-wrapper p{font-size:1em;margin-bottom:1rem}.container{max-width:800px;margin-left:auto;margin-right:auto;padding:0 1rem}.quiz-header{background-color:var(--primary-color);color:var(--primary-text);padding:1.5rem;position:relative;border-radius:.75rem;margin-bottom:1.25rem;box-shadow:var(--card-shadow-light)}.quiz-header h1{font-size:1.5em;font-weight:700;margin:0}.quiz-header p{margin-top:.5rem;color:#e0e7ff;opacity:.9;font-size:.9375em}.theme-toggle{position:absolute;top:1rem;right:1rem;cursor:pointer;width:2.5rem;height:2.5rem;padding:0;border-radius:9999px;background-color:#ffffff1a;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;transition:background-color .2s,transform .2s}.theme-toggle:hover,#voice-btn:hover{background-color:#fff3;transform:scale(1.05)}form{padding:0}@media (min-width: 640px){form{padding:2rem}}fieldset{border:none;padding:0;margin:0;margin-bottom:2rem}.legend-container{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-light);padding-bottom:.5rem;margin-bottom:1rem;width:100%}legend{font-size:1.125em;font-weight:600;color:var(--text-light);border-bottom:none;padding-bottom:0;margin-bottom:0;width:auto}fieldset>legend{display:block;font-size:1.125em;font-weight:700;margin-bottom:.5rem;padding-bottom:.5rem;color:var(--text-light);border-bottom:1px solid var(--border-light)}#vocabSection .vocab-grid-table,#clozeSection .cloze-word-bank,#clozeSection .cloze-text{margin-top:1rem}.reading-instructions{font-size:.9em;font-style:italic;margin-bottom:1rem;margin-top:1rem}.instruction{font-size:.9em;color:var(--subtle-text-light);font-style:italic;margin-top:.25rem;margin-bottom:1rem;line-height:1.45}.audio-toggle{cursor:pointer;padding:.75rem;border-radius:9999px;background-color:var(--primary-color);border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;color:var(--primary-text);transition:background-color .2s}.audio-toggle:hover{background-color:var(--primary-hover)}.audio-toggle svg{width:1.5em;height:1.5em}.passage-audio-toggle{cursor:pointer;padding:.5rem .6rem;border-radius:.5rem;background-color:#fff;border:1px solid var(--border-light);color:var(--text-light);display:inline-flex;align-items:center;justify-content:center;margin-left:.5rem;box-shadow:0 2px 6px #0000000f;transition:transform .12s,box-shadow .12s}.passage-audio-toggle:hover{transform:translateY(-2px);box-shadow:0 6px 16px #0000001f}.passage-audio-toggle .play-icon,.passage-audio-toggle .pause-icon{width:1.1rem;height:1.1rem}.passage-wrapper{padding:1rem 1.25rem;border-radius:.5rem;background:transparent;margin-bottom:1rem}.passage-wrapper{position:relative}.passage-header{display:flex;align-items:center;gap:.5rem}.passage-text{margin-top:.75rem}.listening-hidden{position:absolute!important;clip:rect(1px,1px,1px,1px);clip-path:inset(50%);height:1px;width:1px;overflow:hidden;white-space:nowrap}.passage-content{background-color:var(--input-bg-light);border-radius:.5rem;padding:1.5rem;margin-bottom:1.5rem;border:1px solid var(--border-light);line-height:1.7}.section-card{background-color:var(--card-bg-light);border:1px solid var(--border-light);border-radius:.75rem;padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--card-shadow-light)}.section-card-header{font-size:1.05em;font-weight:600;color:var(--text-light);margin:0 0 .5rem;border-bottom:1px solid var(--border-light);padding-bottom:.4rem}.section-card-description{font-size:.95em;color:var(--subtle-text-light);line-height:1.6;margin-bottom:.75rem}.section-card-content{display:block}.instruction-card .section-card-content{margin-top:.25rem}.instruction-questions{margin-top:.75rem}.question-block{padding-top:1.5rem;border-top:1px solid var(--border-light)}.question-block:first-of-type{border-top:none;padding-top:0}.question-block p.question-text{font-weight:600;margin-bottom:1rem;font-size:1em}.options-group{display:flex;flex-direction:column;gap:.5rem}.option-label{display:flex;align-items:center;padding:.5rem .75rem;background-color:var(--input-bg-light);border-radius:.5rem;cursor:pointer;transition:background-color .18s,border-color .18s;border:1px solid transparent;font-size:.95em}.option-label:hover{background-color:#eef4ff}:host(.dark) .option-label:hover{background-color:#2b3440}.option-label.correct{background-color:var(--green-light-bg);border-color:var(--green-color)}.option-label.incorrect{background-color:var(--red-light-bg);border-color:var(--red-color)}.feedback-icon{margin-left:auto;font-size:1.25em}.explanation{margin-top:1rem;padding:1rem;background-color:var(--input-bg-light);border-radius:.5rem;border-left:4px solid var(--primary-color);font-size:.9em;line-height:1.5}.explanation-content strong{color:var(--primary-color)}.form-radio{width:1.125em;height:1.125em;margin-right:.75em;accent-color:var(--primary-color);flex-shrink:0}.form-radio:disabled{cursor:not-allowed}.form-input{width:100%;padding:.75rem;background-color:var(--input-bg-light);border:1px solid var(--input-border-light);border-radius:.5rem;color:var(--text-light);font-size:1em}.form-input.invalid{border-color:var(--red-color)}.form-input:disabled{background-color:#e2e8f0;cursor:not-allowed}:host(.dark) .form-input:disabled{background-color:#334155}.input-label{display:block;font-size:.875em;font-weight:500;color:var(--subtle-text-light);margin-bottom:.25rem}#teacherCode{letter-spacing:.1em;font-family:monospace}:host(.dark) #teacherCode{background-color:#1e293b}.grid-container{display:grid;grid-template-columns:1fr;gap:1rem}@media (min-width: 768px){.grid-container{grid-template-columns:repeat(2,1fr)}}.actions-container{padding-top:1.5rem;border-top:1px solid var(--border-light);margin-top:2rem}.button{width:100%;font-weight:600;padding:.875rem 1.5rem;border-radius:.5rem;font-size:1em;transition:all .2s ease-in-out;border:none;cursor:pointer}.button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 4px 10px #0000001a}.button:disabled{background-color:#94a3b8;cursor:not-allowed;transform:none;box-shadow:none}.button-primary{background-color:var(--primary-color);color:var(--primary-text)}.button-primary:hover:not(:disabled){background-color:var(--primary-hover)}.button-green{background-color:var(--green-color);color:var(--primary-text)}.button-green:hover:not(:disabled){background-color:var(--green-hover)}.button-slate{background-color:var(--slate-color);color:var(--primary-text)}.button-slate:hover:not(:disabled){background-color:var(--slate-hover)}.post-score-actions{display:flex;flex-direction:column;gap:1rem}@media (min-width: 768px){.post-score-actions{flex-direction:row-reverse}}.prequiz-actions{margin-top:1.5rem;display:flex;flex-direction:column;gap:.75rem;align-items:flex-start}#studentInfoAlert{font-size:.9em;font-weight:500;min-height:1.5rem}#studentInfoAlert.success{color:var(--green-color)}#studentInfoAlert.error{color:var(--red-color)}.result-area{padding:2rem;text-align:center;border-bottom:1px solid var(--border-light);margin-bottom:2rem}.result-area h2{font-size:1.25em;font-weight:600;margin:0}#resultScore{text-align:center;margin:1.5rem 0}.score-main{font-size:3em;font-weight:700;line-height:1;margin-bottom:.5rem}.score-percentage{font-size:1.5em;font-weight:600;opacity:.8;margin-bottom:1rem}.score-breakdown{display:flex;justify-content:center;gap:2rem;margin-top:1rem}.score-section{display:flex;flex-direction:column;align-items:center;gap:.25rem}.score-label{font-size:.9em;font-weight:500;opacity:.7;text-transform:uppercase;letter-spacing:.05em}.score-value{font-size:1.25em;font-weight:600}@media (max-width: 768px){.score-main{font-size:2.5em}.score-percentage{font-size:1.25em}.score-breakdown{flex-direction:column;gap:1rem}.score-section{flex-direction:row;justify-content:space-between;align-items:center;padding:.5rem 1rem;background-color:var(--input-bg-light);border-radius:.5rem}}#resultScore.high .score-main{color:var(--green-color)}#resultScore.medium .score-main{color:var(--yellow-color)}#resultScore.low .score-main{color:var(--red-color)}#validationMessage{text-align:center;margin-bottom:1rem;font-weight:500;min-height:1.5rem;font-size:.9em}#validationMessage.success{color:var(--green-color)}#validationMessage.error{color:var(--red-color)}.hidden{display:none!important}.vocab-word-bank{background-color:var(--input-bg-light);border:1px solid var(--border-light);border-radius:.5rem;padding:1rem;margin-bottom:1.25rem}:host(.dark) .vocab-word-bank{background-color:var(--input-bg-dark)}.vocab-bank-title{font-weight:600;margin-bottom:.75rem;color:var(--subtle-text-light);font-size:.9em;text-transform:uppercase;letter-spacing:.05em}.vocab-bank-items{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}.vocab-bank-item{background-color:var(--card-bg-light);color:var(--text-light);padding:.45rem .75rem;border-radius:.375rem;border:1px solid var(--border-light);font-size:.9em;font-weight:600;cursor:default;-webkit-user-select:none;user-select:none;box-shadow:0 1px 2px #0000000d}.vocab-matching-container{display:flex;flex-direction:column;gap:.5rem}.vocab-matching-row{display:flex;align-items:center;gap:1rem;padding:.5rem .75rem;border-radius:.5rem;transition:background-color .2s}.vocab-matching-input{width:2.5rem;height:2.5rem;padding:0;text-align:center;font-weight:700;font-size:1.125rem;line-height:normal;border:2px solid var(--input-border-light);border-radius:.4rem;background-color:var(--card-bg-light);color:var(--text-light);text-transform:uppercase;flex-shrink:0;box-sizing:border-box}:host(.dark) .vocab-matching-input{background-color:var(--input-bg-light)}.vocab-matching-input:focus{border-color:var(--primary-color);outline:none;box-shadow:0 0 0 3px #4f46e51a}.vocab-matching-input:disabled{background-color:#f1f5f9;cursor:not-allowed}:host(.dark) .vocab-matching-input:disabled{background-color:#1e293b}.vocab-definition-text{flex:1;font-size:1em;color:var(--text-light)}.vocab-matching-row.correct{background-color:var(--green-light-bg)}.vocab-matching-row.incorrect{background-color:var(--red-light-bg)}.vocab-matching-row.correct .vocab-matching-input{border-color:var(--green-color)}.vocab-matching-row.incorrect .vocab-matching-input{border-color:var(--red-color)}.vocab-matching-row .feedback-icon{font-weight:600;font-size:.9em;white-space:nowrap}@media (max-width: 768px){.vocab-def-label{display:inline-block;white-space:normal;max-width:60%}}.cloze-word-bank{background-color:var(--input-bg-light);border:1px solid var(--border-light);border-radius:.5rem;padding:1rem;margin-bottom:1.25rem}:host(.dark) .cloze-word-bank{background-color:var(--input-bg-dark)}.cloze-bank-title{font-weight:600;margin-bottom:.75rem;color:var(--subtle-text-light);font-size:.9em;text-transform:uppercase;letter-spacing:.05em}.cloze-bank-words{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}.cloze-bank-word{background-color:var(--card-bg-light);color:var(--text-light);padding:.45rem .75rem;border-radius:.375rem;border:1px solid var(--border-light);font-size:.9em;font-weight:600;cursor:default;-webkit-user-select:none;user-select:none;box-shadow:0 1px 2px #0000000d}.cloze-text{line-height:1.8;font-size:1.05em;color:var(--text-light)}.cloze-blank{display:inline-block;min-width:6.5ch;max-width:12ch;margin:0 .35rem;padding:.15rem .4rem;border:none;border-bottom:2px solid var(--border-light);background:transparent;font-size:inherit;font-family:inherit;color:var(--text-light);text-align:center;vertical-align:baseline;transition:border-color .18s,background-color .18s}.cloze-blank:focus{outline:none;border-bottom-color:var(--primary-color);background:#4f46e508;border-radius:.25rem}.cloze-blank.correct{border-bottom-color:var(--green-color);background-color:var(--green-light-bg)}.cloze-blank.correct{border-bottom-color:var(--green-color);background-color:var(--green-light-bg);border-radius:.25rem}.cloze-blank.incorrect{border-bottom-color:var(--red-color);background-color:var(--red-light-bg);border-radius:.25rem}.cloze-score{text-align:center;font-weight:600;margin-top:1rem;font-size:1.1em}@media (max-width: 768px){.cloze-bank-words{gap:.375rem}.cloze-bank-word{padding:.375rem .5rem;font-size:.8em}.cloze-blank{min-width:5.5ch}.cloze-text{font-size:1em}.cloze-blank{min-width:80px;padding:.25em .375em}}.vocab-section-header,.cloze-section-header{margin:1.5rem 0 1rem;font-size:1.1em;font-weight:600;color:var(--primary-color);border-bottom:2px solid var(--primary-color);padding-bottom:.5rem}.cloze-section-wrapper{margin-bottom:2rem}.cloze-section-wrapper:last-child{margin-bottom:0}.score-report-card{background-color:var(--card-bg-light);border:2px solid var(--primary-color);border-radius:1rem;padding:2rem;margin:1rem 0;text-align:center;box-shadow:0 4px 20px #4f46e526;position:relative;overflow:hidden}.score-report-card:before{content:"";position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--primary-color),var(--primary-hover))}.result-title{font-size:1.5em;font-weight:800;color:var(--primary-color);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.1em}.result-subtitle{font-size:1em;font-weight:600;color:var(--subtle-text-light);margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:.05em}.student-details{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem;font-size:1.1em;border:1px solid var(--border-light);padding:1.25rem;border-radius:.5rem;background-color:var(--input-bg-light);text-align:left}.student-details strong{color:var(--primary-color)}.score-summary{margin-bottom:2rem}.score-main-compact{font-size:2.5em;font-weight:800;color:var(--primary-color);margin-bottom:.25rem}.score-percentage{font-size:1.2em;color:var(--slate-color);font-weight:600}.score-breakdown-compact{display:flex;flex-direction:column;gap:.75rem;max-width:300px;margin:0 auto;padding:1rem;border-top:1px dashed var(--border-light)}.score-section{display:flex;justify-content:space-between;align-items:center;font-weight:600}.score-label{color:var(--subtle-text-light)}.score-value{color:var(--text-light)}.post-score-section{text-align:center;margin:2rem 0}.post-score-actions{display:flex;justify-content:center;gap:1rem;margin-top:1.5rem}#validationMessage.success{display:inline-flex;align-items:center;gap:.5rem;background-color:var(--green-light-bg);color:var(--green-color);padding:.75rem 1.5rem;border-radius:2rem;font-weight:600;font-size:.95rem;margin-bottom:0}#validationMessage.error{color:var(--red-color);background-color:var(--red-light-bg);padding:.75rem 1.5rem;border-radius:2rem;font-weight:600;font-size:.95rem;display:inline-flex;margin-bottom:0}.voice-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ab3;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:2000}.voice-card{background:var(--card-bg-light);width:90%;max-width:400px;max-height:80vh;border-radius:1.25rem;box-shadow:0 25px 50px -12px #00000040;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border-light)}.voice-card-header{padding:1.25rem;background:var(--primary-color);color:#fff;display:flex;justify-content:space-between;align-items:center}.voice-card-header h3{margin:0;font-size:1.25em;font-weight:700}.close-voice-btn{background:#fff3;border:none;color:#fff;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.5em;transition:background .2s}.close-voice-btn:hover{background:#ffffff4d}.voice-list{padding:1rem;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:.5rem}.voice-option-btn{padding:.875rem 1rem;background:var(--input-bg-light);border:1px solid var(--border-light);border-radius:.75rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .2s;color:var(--text-light);font-family:var(--font-sans)}.voice-option-btn:hover{border-color:var(--primary-color);background:#eff6ff}:host(.dark) .voice-option-btn:hover{background:#1e293b}.voice-option-btn.active{background:#eff6ff;border-color:var(--primary-color);color:var(--primary-color);font-weight:600;box-shadow:0 0 0 1px var(--primary-color)}:host(.dark) .voice-option-btn.active{background:#1e293b}.voice-option-btn .badge{background:var(--green-color);color:#fff;padding:.2rem .5rem;border-radius:2rem;font-size:.75em;font-weight:700;text-transform:uppercase}#voice-btn{position:absolute;top:1rem;right:4rem;cursor:pointer;width:2.5rem;height:2.5rem;padding:0;border-radius:9999px;background-color:#ffffff1a;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;color:#fff;transition:background-color .2s,transform .2s}#voice-btn svg{width:1.25rem;height:1.25rem}.retry-section{margin-top:1rem;margin-bottom:1rem;padding:1.25rem;background-color:var(--input-bg-light);border-radius:.6rem;border:1px dashed var(--border-light)}.retry-title{margin-top:0;margin-bottom:.75rem;font-size:.95em;font-weight:600;color:var(--text-light)}.retry-controls{display:flex;gap:.75rem;align-items:center}.retry-controls .form-input{flex:1;margin:0}.retry-controls .button{width:auto;margin:0;white-space:nowrap}.browser-prompt-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ae6;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:10000;color:#fff;padding:2em;text-align:center}.browser-prompt-card{background:#fff;color:#1e293b;padding:2.5em;border-radius:1.5em;max-width:400px;box-shadow:0 20px 25px -5px #0000001a,0 10px 10px -5px #0000000a}.browser-prompt-card h2{color:#b45309;margin-bottom:.5em;font-size:1.5em;background:none;-webkit-text-fill-color:initial}.browser-prompt-card p{margin-bottom:1.5em;line-height:1.5;color:#475569}.browser-action-btn{display:inline-block;background-color:#ca8a04;color:#fff;padding:.75em 1.5em;border-radius:9999px;text-decoration:none;font-weight:700;transition:background-color .2s;cursor:pointer}.browser-action-btn:hover{background-color:#a16207}.short-answer-badge{font-size:.8em;font-weight:500;color:var(--subtle-text-light);background-color:var(--input-bg-light);border:1px solid var(--border-light);padding:.2rem .5rem;border-radius:.25rem;margin-left:.5rem;display:inline-block;vertical-align:middle}.short-answer-container{margin-top:.5rem}.short-answer-input.submitted{opacity:.7;cursor:not-allowed}.score-note-written{font-size:.85em;color:var(--subtle-text-light);margin-top:.75rem;text-align:center;font-style:italic}.written-answers-section{margin-top:1rem;padding-top:1rem;border-top:1px dashed var(--border-light);text-align:left}.written-answers-title{font-weight:600;font-size:.9em;color:var(--text-light);margin-bottom:.5rem}.written-qa{margin-bottom:.75rem;font-size:.85em;background-color:var(--input-bg-light);padding:.5rem;border-radius:.25rem;border:1px solid var(--border-light)}.written-question{font-weight:600;color:var(--subtle-text-light)}.written-answer{margin-top:.25rem;color:var(--text-light);white-space:pre-wrap;word-break:break-word}';
+class R extends HTMLElement {
   static get observedAttributes() {
     return ["submission-url"];
   }
   constructor() {
-    super(), this.attachShadow({ mode: "open" }), this.questionBank = [], this.passages = [], this.selectedVoiceName = null, this.isPlayingAll = !1, this.instructions = [], this.questionGroups = [], this.orderedSections = [], this.currentQuestions = [], this.score = 0, this.questionsAnswered = 0, this.questionsToDisplay = 5, this.totalQuestions = 0, this.audioPlayer = null, this.utterance = null, this.audioSrc = "", this.currentAudioButton = null, this.submissionUrl = A.submissionUrl, this.title = "", this.passage = "", this.vocabularySections = [], this.vocabUserChoices = {}, this.vocabScore = 0, this.vocabSubmitted = !1, this.clozeSections = [], this.clozeAnswers = {}, this.clozeScore = 0, this.clozeSubmitted = !1, this.userQuestionAnswers = {}, this.quizUnlocked = !0, this.autoSubmissionInProgress = !1, this.scoreSubmitted = !1, this.scoreSentToServer = !1, this.ttsPaused = !1;
+    super(), this.attachShadow({ mode: "open" }), this.questionBank = [], this.passages = [], this.selectedVoiceName = null, this.isPlayingAll = !1, this.instructions = [], this.questionGroups = [], this.orderedSections = [], this.currentQuestions = [], this.score = 0, this.questionsAnswered = 0, this.questionsToDisplay = 5, this.totalQuestions = 0, this.audioPlayer = null, this.utterance = null, this.audioSrc = "", this.currentAudioButton = null, this.submissionUrl = L.submissionUrl, this.title = "", this.passage = "", this.vocabularySections = [], this.vocabUserChoices = {}, this.vocabScore = 0, this.vocabSubmitted = !1, this.clozeSections = [], this.clozeAnswers = {}, this.clozeScore = 0, this.clozeSubmitted = !1, this.userQuestionAnswers = {}, this.quizUnlocked = !0, this.autoSubmissionInProgress = !1, this.scoreSubmitted = !1, this.scoreSentToServer = !1, this.ttsPaused = !1;
   }
   attributeChangedCallback(e, t) {
     e === "submission-url" && (this.submissionUrl = t);
@@ -131,7 +131,7 @@ class L extends HTMLElement {
   loadTemplate() {
     try {
       const e = document.createElement("template");
-      e.innerHTML = `<style>${B}</style>${E}`, this.shadowRoot.firstChild && (this.shadowRoot.innerHTML = ""), this.shadowRoot.appendChild(e.content.cloneNode(!0)), console.log("Inlined template applied successfully");
+      e.innerHTML = `<style>${q}</style>${T}`, this.shadowRoot.firstChild && (this.shadowRoot.innerHTML = ""), this.shadowRoot.appendChild(e.content.cloneNode(!0)), console.log("Inlined template applied successfully");
     } catch (e) {
       console.error("Failed to apply inlined template:", e), this.shadowRoot.innerHTML = `
                 <div style="padding: 2rem; text-align: center; font-family: Arial, sans-serif; background: #fee2e2; color: #dc2626; border-radius: 0.5rem; margin: 1rem;">
@@ -146,20 +146,20 @@ class L extends HTMLElement {
     }
   }
   _getBestVoice(e = "en-US") {
-    return C(window.speechSynthesis, e);
+    return A(window.speechSynthesis, e);
   }
   _updateVoiceList() {
     if (!window.speechSynthesis) return;
     const e = window.speechSynthesis.getVoices(), t = this.shadowRoot.querySelector(".voice-list");
     if (!t) return;
-    const o = "en-US", s = e.filter((i) => i.lang.split(/[-_]/)[0].toLowerCase() === o.split("-")[0]), r = this._getBestVoice(o);
-    t.innerHTML = "", s.sort((i, n) => i.name.localeCompare(n.name)), s.forEach((i) => {
-      const n = document.createElement("button");
-      n.type = "button", n.classList.add("voice-option-btn"), this.selectedVoiceName === i.name && n.classList.add("active");
-      let a = `<span>${i.name}</span>`;
-      r && i.name === r.name && (a += '<span class="badge">Best</span>'), n.innerHTML = a, n.onclick = () => {
-        this.selectedVoiceName = i.name, this._updateVoiceList(), this._hideVoiceOverlay();
-      }, t.appendChild(n);
+    const o = "en-US", s = e.filter((n) => n.lang.split(/[-_]/)[0].toLowerCase() === o.split("-")[0]), r = this._getBestVoice(o);
+    t.innerHTML = "", s.sort((n, i) => n.name.localeCompare(i.name)), s.forEach((n) => {
+      const i = document.createElement("button");
+      i.type = "button", i.classList.add("voice-option-btn"), this.selectedVoiceName === n.name && i.classList.add("active");
+      let a = `<span>${n.name}</span>`;
+      r && n.name === r.name && (a += '<span class="badge">Best</span>'), i.innerHTML = a, i.onclick = () => {
+        this.selectedVoiceName = n.name, this._updateVoiceList(), this._hideVoiceOverlay();
+      }, t.appendChild(i);
     });
   }
   _showVoiceOverlay() {
@@ -171,10 +171,10 @@ class L extends HTMLElement {
     e && e.classList.add("hidden");
   }
   _shouldShowAudioControls() {
-    return z(window.speechSynthesis);
+    return E(window.speechSynthesis);
   }
   _getAndroidIntentLink() {
-    return I();
+    return B();
   }
   checkBrowserSupport() {
     if (!this._shouldShowAudioControls()) {
@@ -191,37 +191,37 @@ class L extends HTMLElement {
   parseContent() {
     const e = this.originalContent || this.textContent;
     console.log("Parsing content:", e.substring(0, 200) + "...");
-    const t = e.split("---").map((i) => i.trim());
+    const t = e.split("---").map((n) => n.trim());
     if (t.length >= 1) {
-      const n = t[0].trim().split(`
+      const i = t[0].trim().split(`
 `).map((a) => a.trim()).filter((a) => a.length > 0);
-      n.length > 0 && (this.title = n[0]);
+      i.length > 0 && (this.title = i[0]);
     }
     let o = null, s = null;
-    for (let i = 1; i < t.length; i++) {
-      const a = t[i].split(`
+    for (let n = 1; n < t.length; n++) {
+      const a = t[n].split(`
 `);
       if (a.length === 0) continue;
-      const h = (a[0] || "").trim().toLowerCase(), d = a.slice(1).join(`
+      const c = (a[0] || "").trim().toLowerCase(), d = a.slice(1).join(`
 `);
-      if (h.startsWith("vocab")) {
-        const l = h.match(/vocab(?:-(\d+))?/), u = l && l[1] ? parseInt(l[1]) : null;
+      if (c.startsWith("vocab")) {
+        const h = c.match(/vocab(?:-(\d+))?/), u = h && h[1] ? parseInt(h[1]) : null;
         this.parseVocabulary(d, u), this.orderedSections.push({ type: "vocab", data: { vocabCount: u } }), o = "vocab";
-      } else if (h.startsWith("cloze")) {
-        const l = h.match(/cloze(?:-(\d+))?/), u = l && l[1] ? parseInt(l[1]) : null;
+      } else if (c.startsWith("cloze")) {
+        const h = c.match(/cloze(?:-(\d+))?/), u = h && h[1] ? parseInt(h[1]) : null;
         this.parseCloze(d, u), this.orderedSections.push({ type: "cloze", data: { clozeCount: u, text: d } }), o = "cloze";
-      } else if (h.startsWith("instructions")) {
-        const l = this.passages.length, { heading: u, body: p } = this.extractHeadingAndBody(d, `Instructions ${this.instructions.length + 1}`);
-        this.instructions.push({ sectionId: l, heading: u, body: p }), this.passages.push({ text: p || u, sectionId: l, listening: !1, isInstruction: !0 }), this.orderedSections.push({ type: "instructions", sectionId: l, heading: u, body: p }), s = l, o = "instructions";
-      } else if (h.startsWith("questions")) {
-        const l = h.match(/questions(?:-(\d+))?/), u = l && l[1] ? parseInt(l[1]) : null, p = this.parseQuestions(d), g = o === "text" || o === "instructions" || o === "questions" && this.orderedSections.length > 0 && this.orderedSections[this.orderedSections.length - 1].tiedToPassage;
-        s !== null ? (this.questionGroups.push({ sectionId: s, questions: p, maxQuestions: u }), this.orderedSections.push({ type: "questions", sectionId: s, questions: p, maxQuestions: u, tiedToPassage: g })) : (this.questionGroups.push({ sectionId: null, questions: p, maxQuestions: u }), this.orderedSections.push({ type: "questions", sectionId: null, questions: p, maxQuestions: u, tiedToPassage: !1 })), o = "questions";
+      } else if (c.startsWith("instructions")) {
+        const h = this.passages.length, { heading: u, body: m } = this.extractHeadingAndBody(d, `Instructions ${this.instructions.length + 1}`);
+        this.instructions.push({ sectionId: h, heading: u, body: m }), this.passages.push({ text: m || u, sectionId: h, listening: !1, isInstruction: !0 }), this.orderedSections.push({ type: "instructions", sectionId: h, heading: u, body: m }), s = h, o = "instructions";
+      } else if (c.startsWith("questions")) {
+        const h = c.match(/questions(?:-(\d+))?/), u = h && h[1] ? parseInt(h[1]) : null, m = this.parseQuestions(d), f = o === "text" || o === "instructions" || o === "questions" && this.orderedSections.length > 0 && this.orderedSections[this.orderedSections.length - 1].tiedToPassage;
+        s !== null ? (this.questionGroups.push({ sectionId: s, questions: m, maxQuestions: u }), this.orderedSections.push({ type: "questions", sectionId: s, questions: m, maxQuestions: u, tiedToPassage: f })) : (this.questionGroups.push({ sectionId: null, questions: m, maxQuestions: u }), this.orderedSections.push({ type: "questions", sectionId: null, questions: m, maxQuestions: u, tiedToPassage: !1 })), o = "questions";
       } else
-        switch (h) {
+        switch (c) {
           case "text":
           case "text-listening":
-            const l = h === "text-listening", u = this.passages.length;
-            this.passages.push({ text: d, sectionId: u, listening: l }), this.passage = d, s = u, this.orderedSections.push({ type: "text", sectionId: u, text: d, listening: l }), o = "text";
+            const h = c === "text-listening", u = this.passages.length;
+            this.passages.push({ text: d, sectionId: u, listening: h }), this.passage = d, s = u, this.orderedSections.push({ type: "text", sectionId: u, text: d, listening: h }), o = "text";
             break;
           case "audio":
             this.parseAudio(d), this.orderedSections.push({ type: "audio", audioSrc: this.audioSrc }), o = "audio";
@@ -231,7 +231,7 @@ class L extends HTMLElement {
         }
     }
     this.title && (this.shadowRoot.getElementById("quizTitle").textContent = this.title);
-    const r = this.questionGroups.reduce((i, n) => i + (n.questions ? n.questions.length : 0), 0);
+    const r = this.questionGroups.reduce((n, i) => n + (i.questions ? i.questions.length : 0), 0);
     console.log("Parsed:", {
       title: this.title,
       passages: this.passages.length,
@@ -245,31 +245,31 @@ class L extends HTMLElement {
   parseVocabulary(e, t = null) {
     if (!e) return;
     const o = e.split(/\r?\n/).map((a) => a.trim()).filter(Boolean), s = o.length > 0 ? o.slice() : [e.trim()], r = (a) => {
-      const c = {};
-      return a.forEach((h) => {
-        const d = h.indexOf(":");
+      const l = {};
+      return a.forEach((c) => {
+        const d = c.indexOf(":");
         if (d === -1) return;
-        const l = h.slice(0, d).trim(), u = h.slice(d + 1).trim().replace(/,$/, "");
-        l && u && (c[l] = u);
-      }), c;
+        const h = c.slice(0, d).trim(), u = c.slice(d + 1).trim().replace(/,$/, "");
+        h && u && (l[h] = u);
+      }), l;
     };
-    let i = r(s);
-    if (Object.keys(i).length <= 1 && e.indexOf(",") !== -1) {
-      const a = e.split(",").map((c) => c.trim()).filter(Boolean);
-      i = r(a);
+    let n = r(s);
+    if (Object.keys(n).length <= 1 && e.indexOf(",") !== -1) {
+      const a = e.split(",").map((l) => l.trim()).filter(Boolean);
+      n = r(a);
     }
-    let n;
-    if (t && Object.keys(i).length > t) {
-      const a = Object.entries(i);
+    let i;
+    if (t && Object.keys(n).length > t) {
+      const a = Object.entries(n);
       this.shuffleArray(a);
-      const c = a.slice(0, t);
-      n = Object.fromEntries(c);
+      const l = a.slice(0, t);
+      i = Object.fromEntries(l);
     } else
-      n = i;
+      i = n;
     this.vocabularySections.push({
-      vocabulary: n,
+      vocabulary: i,
       sectionId: this.vocabularySections.length
-    }), console.log("Vocabulary section parsed. Words in this section:", Object.keys(n).length, "Max words:", t);
+    }), console.log("Vocabulary section parsed. Words in this section:", Object.keys(i).length, "Max words:", t);
   }
   parseAudio(e) {
     if (!e) return;
@@ -289,22 +289,22 @@ class L extends HTMLElement {
   parseQuestions(e, t = null) {
     if (!e) return [];
     const o = e.split(`
-`).map((i) => i.trim()).filter((i) => i.length > 0);
+`).map((n) => n.trim()).filter((n) => n.length > 0);
     let s = null;
     const r = [];
-    for (const i of o)
-      if (i.startsWith("Q:") || i.startsWith("Q."))
+    for (const n of o)
+      if (n.startsWith("Q:") || n.startsWith("Q."))
         s && r.push(s), s = {
-          q: i.substring(2).trim(),
+          q: n.substring(2).trim(),
           o: [],
           a: "",
           e: ""
           // explanation
         };
-      else if (i.startsWith("A:") && s) {
-        const n = i.substring(2).trim(), a = n.includes("[correct]"), c = n.replace("[correct]", "").trim();
-        s.o.push(c), a && (s.a = c);
-      } else i.startsWith("E:") && s && (s.e = i.substring(2).trim());
+      else if (n.startsWith("A:") && s) {
+        const i = n.substring(2).trim(), a = i.includes("[correct]"), l = i.replace("[correct]", "").trim();
+        s.o.push(l), a && (s.a = l);
+      } else n.startsWith("E:") && s && (s.e = n.substring(2).trim());
     return s && r.push(s), console.log("Questions parsed. Total questions parsed:", r.length, "Max questions (deferred):", t), r;
   }
   extractHeadingAndBody(e, t = "Instructions") {
@@ -312,12 +312,12 @@ class L extends HTMLElement {
 `);
     let s = "";
     const r = [];
-    for (const n of o)
-      !s && n.trim().length > 0 ? s = n.trim() : r.push(n);
+    for (const i of o)
+      !s && i.trim().length > 0 ? s = i.trim() : r.push(i);
     s || (s = t);
-    const i = r.join(`
+    const n = r.join(`
 `).trim();
-    return { heading: s, body: i };
+    return { heading: s, body: n };
   }
   generateVocabMatching() {
     const e = this.shadowRoot.getElementById("vocabSection"), t = this.shadowRoot.getElementById("vocabGrid");
@@ -326,43 +326,43 @@ class L extends HTMLElement {
       return;
     }
     e.classList.remove("hidden"), t.innerHTML = "", this.vocabScore = 0, this.vocabUserChoices = {}, this.vocabSubmitted = !1, this.vocabularySections.forEach((o, s) => {
-      const { vocabulary: r, sectionId: i } = o;
+      const { vocabulary: r, sectionId: n } = o;
       if (!r) return;
       if (this.vocabularySections.length > 1) {
-        const l = document.createElement("div");
-        l.className = "vocab-section-header", l.innerHTML = `<h4>Vocabulary Set ${s + 1}</h4>`, t.appendChild(l);
+        const h = document.createElement("div");
+        h.className = "vocab-section-header", h.innerHTML = `<h4>Vocabulary Set ${s + 1}</h4>`, t.appendChild(h);
       }
-      const n = Object.keys(r), a = Object.values(r);
+      const i = Object.keys(r), a = Object.values(r);
       this.shuffleArray(a);
+      const l = document.createElement("div");
+      l.className = "vocab-grid-table";
       const c = document.createElement("div");
-      c.className = "vocab-grid-table";
-      const h = document.createElement("div");
-      h.className = "vocab-grid-header";
+      c.className = "vocab-grid-header";
       const d = document.createElement("div");
-      if (d.className = "vocab-grid-header-cell", d.textContent = "Word", h.appendChild(d), a.forEach((l) => {
+      if (d.className = "vocab-grid-header-cell", d.textContent = "Word", c.appendChild(d), a.forEach((h) => {
         const u = document.createElement("div");
-        u.className = "vocab-grid-header-cell", u.textContent = l, h.appendChild(u);
-      }), c.appendChild(h), n.forEach((l, u) => {
-        const p = document.createElement("div");
-        p.className = "vocab-grid-row";
-        const g = document.createElement("div");
-        g.className = "vocab-grid-cell vocab-word-cell", g.textContent = l, p.appendChild(g);
-        const m = r[l], f = a.filter((v) => v !== m);
-        this.shuffleArray(f);
-        const b = [m, ...f.slice(0, 3)];
-        this.shuffleArray(b), b.forEach((v, y) => {
-          const w = document.createElement("div");
-          w.className = "vocab-grid-cell vocab-option-cell";
+        u.className = "vocab-grid-header-cell", u.textContent = h, c.appendChild(u);
+      }), l.appendChild(c), i.forEach((h, u) => {
+        const m = document.createElement("div");
+        m.className = "vocab-grid-row";
+        const f = document.createElement("div");
+        f.className = "vocab-grid-cell vocab-word-cell", f.textContent = h, m.appendChild(f);
+        const g = r[h], p = a.filter((w) => w !== g);
+        this.shuffleArray(p);
+        const b = [g, ...p.slice(0, 3)];
+        this.shuffleArray(b), b.forEach((w, C) => {
+          const x = document.createElement("div");
+          x.className = "vocab-grid-cell vocab-option-cell";
           const S = document.createElement("div");
           S.className = "vocab-radio-container";
-          const x = document.createElement("input");
-          x.type = "radio", x.name = `vocab-${i}-${u}`, x.value = v, x.id = `vocab-${i}-${u}-${y}`, S.appendChild(x), w.appendChild(S);
-          const k = document.createElement("span");
-          k.className = "vocab-def-label", k.textContent = v, w.appendChild(k), p.appendChild(w);
-        }), c.appendChild(p);
-      }), t.appendChild(c), s < this.vocabularySections.length - 1) {
-        const l = document.createElement("div");
-        l.style.marginBottom = "2rem", t.appendChild(l);
+          const v = document.createElement("input");
+          v.type = "radio", v.name = `vocab-${n}-${u}`, v.value = w, v.id = `vocab-${n}-${u}-${C}`, S.appendChild(v), x.appendChild(S);
+          const y = document.createElement("span");
+          y.className = "vocab-def-label", y.textContent = w, x.appendChild(y), m.appendChild(x);
+        }), l.appendChild(m);
+      }), t.appendChild(l), s < this.vocabularySections.length - 1) {
+        const h = document.createElement("div");
+        h.style.marginBottom = "2rem", t.appendChild(h);
       }
     });
   }
@@ -378,89 +378,89 @@ class L extends HTMLElement {
     }
     const o = this.shadowRoot.getElementById("clozeContainer");
     o.innerHTML = "", this.clozeSections.forEach((s, r) => {
-      const { text: i, words: n, sectionId: a } = s, c = document.createElement("div");
-      if (c.className = "cloze-section-wrapper", this.clozeSections.length > 1) {
-        const p = document.createElement("h4");
-        p.className = "cloze-section-header", p.textContent = `Fill in the Blanks - Section ${r + 1}`, c.appendChild(p);
+      const { text: n, words: i, sectionId: a } = s, l = document.createElement("div");
+      if (l.className = "cloze-section-wrapper", this.clozeSections.length > 1) {
+        const m = document.createElement("h4");
+        m.className = "cloze-section-header", m.textContent = `Fill in the Blanks - Section ${r + 1}`, l.appendChild(m);
       }
-      const h = document.createElement("div");
-      h.className = "cloze-word-bank", h.innerHTML = `
+      const c = document.createElement("div");
+      c.className = "cloze-word-bank", c.innerHTML = `
                 <div class="cloze-bank-title">Word Bank</div>
                 <div class="cloze-bank-words">
-                    ${n.map((p) => `<span class="cloze-bank-word">${p}</span>`).join("")}
+                    ${i.map((m) => `<span class="cloze-bank-word">${m}</span>`).join("")}
                 </div>
-            `, c.appendChild(h);
+            `, l.appendChild(c);
       const d = document.createElement("div");
       d.className = "cloze-text";
-      let l = i, u = 0;
-      n.forEach((p) => {
-        const g = new RegExp(`\\*${p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\*`, "gi");
-        l = l.replace(g, () => {
-          const m = `<input type="text" class="cloze-blank" data-answer="${p.toLowerCase()}" data-section-id="${a}" data-blank-index="${u}" autocomplete="off" spellcheck="false" title="Fill in the blank">`;
-          return u++, m;
+      let h = n, u = 0;
+      i.forEach((m) => {
+        const f = new RegExp(`\\*${m.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\*`, "gi");
+        h = h.replace(f, () => {
+          const g = `<input type="text" class="cloze-blank" data-answer="${m.toLowerCase()}" data-section-id="${a}" data-blank-index="${u}" autocomplete="off" spellcheck="false" title="Fill in the blank">`;
+          return u++, g;
         });
-      }), l = l.replace(/\*([^*]+)\*/g, "$1"), l = this.addLineBreaksToHtml(l), d.innerHTML = l, c.appendChild(d), r < this.clozeSections.length - 1 && (c.style.marginBottom = "2rem"), o.appendChild(c);
+      }), h = h.replace(/\*([^*]+)\*/g, "$1"), h = this.addLineBreaksToHtml(h), d.innerHTML = h, l.appendChild(d), r < this.clozeSections.length - 1 && (l.style.marginBottom = "2rem"), o.appendChild(l);
     });
   }
   // Render a single vocabulary section inline into the target container
   renderVocabInline(e, t, o) {
-    const { vocabulary: s, sectionId: r } = e, n = this.vocabularySections.length > 1 ? `Vocabulary Set ${o + 1}` : "Vocabulary", { card: a, content: c } = this.createSectionCard(n, {
+    const { vocabulary: s, sectionId: r } = e, i = this.vocabularySections.length > 1 ? `Vocabulary Set ${o + 1}` : "Vocabulary", { card: a, content: l } = this.createSectionCard(i, {
       cardClasses: ["vocab-card"]
-    }), d = Object.keys(s).map((g, m) => ({
-      letter: String.fromCharCode(65 + m),
+    }), d = Object.keys(s).map((f, g) => ({
+      letter: String.fromCharCode(65 + g),
       // A, B, C...
-      word: g,
-      definition: s[g]
-    })), l = document.createElement("div");
-    l.className = "vocab-word-bank", l.innerHTML = `
+      word: f,
+      definition: s[f]
+    })), h = document.createElement("div");
+    h.className = "vocab-word-bank", h.innerHTML = `
             <div class="vocab-bank-title">Word Bank</div>
             <div class="vocab-bank-items">
-                ${d.map((g) => `<span class="vocab-bank-item">${g.letter}: ${g.word.toUpperCase()}</span>`).join("")}
+                ${d.map((f) => `<span class="vocab-bank-item">${f.letter}: ${f.word.toUpperCase()}</span>`).join("")}
             </div>
-        `, c.appendChild(l);
+        `, l.appendChild(h);
     const u = document.createElement("div");
     u.className = "vocab-matching-container";
-    const p = [...d];
-    this.shuffleArray(p), p.forEach((g) => {
-      const m = document.createElement("div");
-      m.className = "vocab-matching-row";
-      const f = document.createElement("div");
-      f.className = "vocab-matching-input-group";
+    const m = [...d];
+    this.shuffleArray(m), m.forEach((f) => {
+      const g = document.createElement("div");
+      g.className = "vocab-matching-row";
+      const p = document.createElement("div");
+      p.className = "vocab-matching-input-group";
       const b = document.createElement("input");
-      b.type = "text", b.className = "vocab-matching-input", b.maxLength = 1, b.dataset.sectionId = r, b.dataset.word = g.word, b.dataset.correctLetter = g.letter, b.autocomplete = "off", b.setAttribute("autocapitalize", "characters"), b.setAttribute("autocorrect", "off"), b.setAttribute("spellcheck", "false"), b.inputMode = "text", b.title = "Enter the letter for this definition", f.appendChild(b), m.appendChild(f);
-      const v = document.createElement("div");
-      v.className = "vocab-definition-text", v.textContent = g.definition, m.appendChild(v), u.appendChild(m);
-    }), c.appendChild(u), t.appendChild(a);
+      b.type = "text", b.className = "vocab-matching-input", b.maxLength = 1, b.dataset.sectionId = r, b.dataset.word = f.word, b.dataset.correctLetter = f.letter, b.autocomplete = "off", b.setAttribute("autocapitalize", "characters"), b.setAttribute("autocorrect", "off"), b.setAttribute("spellcheck", "false"), b.inputMode = "text", b.title = "Enter the letter for this definition", p.appendChild(b), g.appendChild(p);
+      const w = document.createElement("div");
+      w.className = "vocab-definition-text", w.textContent = f.definition, g.appendChild(w), u.appendChild(g);
+    }), l.appendChild(u), t.appendChild(a);
   }
   // Render a single cloze section inline into the target container
   renderClozeInline(e, t, o) {
-    const { text: s, words: r, sectionId: i } = e, n = this.clozeSections.length > 1 ? `Fill in the Blanks - Section ${o + 1}` : "Fill in the Blanks", { card: a, content: c } = this.createSectionCard(n, {
+    const { text: s, words: r, sectionId: n } = e, i = this.clozeSections.length > 1 ? `Fill in the Blanks - Section ${o + 1}` : "Fill in the Blanks", { card: a, content: l } = this.createSectionCard(i, {
       cardClasses: ["cloze-card"]
-    }), h = document.createElement("div");
-    h.className = "cloze-word-bank", h.innerHTML = `
+    }), c = document.createElement("div");
+    c.className = "cloze-word-bank", c.innerHTML = `
             <div class="cloze-bank-title">Word Bank</div>
             <div class="cloze-bank-words">
-                ${r.map((p) => `<span class="cloze-bank-word">${p}</span>`).join("")}
+                ${r.map((m) => `<span class="cloze-bank-word">${m}</span>`).join("")}
             </div>
-        `, c.appendChild(h);
-    let d = s, l = 0;
-    r.forEach((p) => {
-      const g = new RegExp(`\\*${p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\*`, "gi");
-      d = d.replace(g, () => {
-        const m = `<input type="text" class="cloze-blank" data-answer="${p.toLowerCase()}" data-section-id="${i}" data-blank-index="${l}" autocomplete="off" spellcheck="false" inputmode="text" autocapitalize="none" autocorrect="off" title="Fill in the blank">`;
-        return l++, m;
+        `, l.appendChild(c);
+    let d = s, h = 0;
+    r.forEach((m) => {
+      const f = new RegExp(`\\*${m.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\*`, "gi");
+      d = d.replace(f, () => {
+        const g = `<input type="text" class="cloze-blank" data-answer="${m.toLowerCase()}" data-section-id="${n}" data-blank-index="${h}" autocomplete="off" spellcheck="false" inputmode="text" autocapitalize="none" autocorrect="off" title="Fill in the blank">`;
+        return h++, g;
       });
     }), d = d.replace(/\*([^*]+)\*/g, "$1"), d = this.addLineBreaksToHtml(d);
     const u = document.createElement("div");
-    u.className = "cloze-text", u.innerHTML = d, c.appendChild(u), t.appendChild(a);
+    u.className = "cloze-text", u.innerHTML = d, l.appendChild(u), t.appendChild(a);
   }
   handleVocabAnswer(e) {
     const t = e.target;
     if (t.type === "text" && t.classList.contains("vocab-matching-input")) {
       const o = t.value.trim().toUpperCase();
       t.value !== o && (t.value = o);
-      const s = parseInt(t.dataset.sectionId), r = t.dataset.word, i = `${s}-${r}`;
-      o ? this.vocabUserChoices[i] = o : delete this.vocabUserChoices[i], this.updateCheckScoreButtonState();
+      const s = parseInt(t.dataset.sectionId), r = t.dataset.word, n = `${s}-${r}`;
+      o ? this.vocabUserChoices[n] = o : delete this.vocabUserChoices[n], this.updateCheckScoreButtonState();
     }
   }
   updateCheckScoreButtonState() {
@@ -472,14 +472,21 @@ class L extends HTMLElement {
   }
   handleClozeAnswer(e) {
     if (e.target.type !== "text" || !e.target.classList.contains("cloze-blank")) return;
-    const t = e.target, o = t.dataset.sectionId, s = t.dataset.blankIndex, r = t.value.trim().toLowerCase(), i = `${o}-${s}`;
-    if (this.clozeAnswers[i] = r, this.checkAllClozeAnswered()) {
-      const n = this.vocabularySections.length === 0 || Object.keys(this.vocabUserChoices).length === this.getTotalVocabWords(), a = this.totalQuestions === 0 || this.checkAllQuestionsAnswered();
-      if (n && a) {
-        const c = this.shadowRoot.getElementById("checkScoreButton");
-        c.disabled = !1;
+    const t = e.target, o = t.dataset.sectionId, s = t.dataset.blankIndex, r = t.value.trim().toLowerCase(), n = `${o}-${s}`;
+    if (this.clozeAnswers[n] = r, this.checkAllClozeAnswered()) {
+      const i = this.vocabularySections.length === 0 || Object.keys(this.vocabUserChoices).length === this.getTotalVocabWords(), a = this.totalQuestions === 0 || this.checkAllQuestionsAnswered();
+      if (i && a) {
+        const l = this.shadowRoot.getElementById("checkScoreButton");
+        l.disabled = !1;
       }
     }
+  }
+  handleShortAnswer(e) {
+    if (!e.target.classList.contains("short-answer-input")) return;
+    const t = e.target, o = t.name, s = parseInt(o.substring(1)), r = t.value.trim();
+    r ? (this.userQuestionAnswers[s] = r, t.dataset.answered = "true") : (delete this.userQuestionAnswers[s], delete t.dataset.answered);
+    const n = Object.keys(this.userQuestionAnswers).length;
+    this.questionsAnswered = n, this.updateCheckScoreButtonState();
   }
   checkAllClozeAnswered() {
     const e = this.clozeSections.reduce((o, s) => o + s.words.length, 0);
@@ -495,12 +502,12 @@ class L extends HTMLElement {
     return e ? e.replace(/\n/g, "<br>") : "";
   }
   createSectionCard(e, t = {}) {
-    const { descriptionHtml: o = "", cardClasses: s = [] } = t, r = document.createElement("div"), i = ["section-card", ...s].filter(Boolean);
-    r.className = i.join(" ");
-    const n = document.createElement("div");
-    if (n.className = "section-card-header", n.textContent = e, r.appendChild(n), o) {
-      const c = document.createElement("div");
-      c.className = "section-card-description", c.innerHTML = o, r.appendChild(c);
+    const { descriptionHtml: o = "", cardClasses: s = [] } = t, r = document.createElement("div"), n = ["section-card", ...s].filter(Boolean);
+    r.className = n.join(" ");
+    const i = document.createElement("div");
+    if (i.className = "section-card-header", i.textContent = e, r.appendChild(i), o) {
+      const l = document.createElement("div");
+      l.className = "section-card-description", l.innerHTML = o, r.appendChild(l);
     }
     const a = document.createElement("div");
     return a.className = "section-card-content", r.appendChild(a), { card: r, content: a };
@@ -510,12 +517,12 @@ class L extends HTMLElement {
       const { vocabulary: t, sectionId: o } = e;
       if (!t) return;
       Object.keys(t).forEach((r) => {
-        const i = `${o}-${r}`, n = this.vocabUserChoices[i], a = this.shadowRoot.querySelector(`.vocab-matching-input[data-section-id="${o}"][data-word="${r}"]`);
+        const n = `${o}-${r}`, i = this.vocabUserChoices[n], a = this.shadowRoot.querySelector(`.vocab-matching-input[data-section-id="${o}"][data-word="${r}"]`);
         if (!a) return;
-        const c = a.dataset.correctLetter, h = a.closest(".vocab-matching-row");
+        const l = a.dataset.correctLetter, c = a.closest(".vocab-matching-row");
         a.disabled = !0;
-        let d = h.querySelector(".feedback-icon");
-        d || (d = document.createElement("span"), d.className = "feedback-icon", h.appendChild(d)), n === c ? (this.vocabScore++, h.classList.add("correct"), d.textContent = " ✅") : (h.classList.add("incorrect"), d.textContent = " ❌");
+        let d = c.querySelector(".feedback-icon");
+        d || (d = document.createElement("span"), d.className = "feedback-icon", c.appendChild(d)), i === l ? (this.vocabScore++, c.classList.add("correct"), d.textContent = " ✅") : (c.classList.add("incorrect"), d.textContent = " ❌");
       });
     }), this.vocabSubmitted = !0;
   }
@@ -527,27 +534,27 @@ class L extends HTMLElement {
   }
   setupEventListeners() {
     const e = this.shadowRoot.getElementById("quizForm"), t = this.shadowRoot.getElementById("sendButton"), o = this.shadowRoot.getElementById("tryAgainButton"), s = this.shadowRoot.querySelector(".theme-toggle"), r = this.shadowRoot.getElementById("startQuizButton");
-    e && e.addEventListener("keydown", (n) => {
-      !this.quizUnlocked && n.key === "Enter" && n.preventDefault();
+    e && e.addEventListener("keydown", (i) => {
+      !this.quizUnlocked && i.key === "Enter" && i.preventDefault();
     });
-    const i = this.shadowRoot.getElementById("retrySendButton");
-    e && (e.addEventListener("change", (n) => {
-      this.handleAnswer(n);
-    }), e.addEventListener("input", (n) => {
-      this.handleClozeAnswer(n), this.handleVocabAnswer(n);
-    }), e.addEventListener("submit", (n) => this.handleSubmit(n))), t && t.addEventListener("click", () => this.sendScore()), o && o.addEventListener("click", () => this.resetQuiz()), i && i.addEventListener("click", () => this.sendScore(!1, !0)), s && s.addEventListener("click", () => this.toggleTheme()), r && r.addEventListener("click", () => this.handleStartQuiz()), this.getStudentInputs().forEach((n) => {
-      n.addEventListener("input", () => {
-        n.value.trim() !== "" && n.classList.remove("invalid"), this.quizUnlocked || this.showStudentInfoAlert();
+    const n = this.shadowRoot.getElementById("retrySendButton");
+    e && (e.addEventListener("change", (i) => {
+      this.handleAnswer(i);
+    }), e.addEventListener("input", (i) => {
+      this.handleClozeAnswer(i), this.handleVocabAnswer(i), this.handleShortAnswer(i);
+    }), e.addEventListener("submit", (i) => this.handleSubmit(i))), t && t.addEventListener("click", () => this.sendScore()), o && o.addEventListener("click", () => this.resetQuiz()), n && n.addEventListener("click", () => this.sendScore(!1, !0)), s && s.addEventListener("click", () => this.toggleTheme()), r && r.addEventListener("click", () => this.handleStartQuiz()), this.getStudentInputs().forEach((i) => {
+      i.addEventListener("input", () => {
+        i.value.trim() !== "" && i.classList.remove("invalid"), this.quizUnlocked || this.showStudentInfoAlert();
       });
-    }), this.shadowRoot.addEventListener("click", (n) => {
-      const a = n.target.closest(".passage-audio-toggle");
+    }), this.shadowRoot.addEventListener("click", (i) => {
+      const a = i.target.closest(".passage-audio-toggle");
       if (a) {
-        const u = a.closest(".section-card"), g = (u ? Array.from(u.querySelectorAll(".passage-text")) : []).map((m) => m.textContent).join(`
+        const u = a.closest(".section-card"), f = (u ? Array.from(u.querySelectorAll(".passage-text")) : []).map((g) => g.textContent).join(`
 `);
-        this.handlePassageTTS(a, g);
+        this.handlePassageTTS(a, f);
         return;
       }
-      n.target.closest(".audio-toggle") && this.handleAudioToggle(), n.target.closest("#voice-btn") && this._showVoiceOverlay(), n.target.closest(".close-voice-btn") && this._hideVoiceOverlay(), n.target.closest(".voice-overlay") && !n.target.closest(".voice-card") && this._hideVoiceOverlay();
+      i.target.closest(".audio-toggle") && this.handleAudioToggle(), i.target.closest("#voice-btn") && this._showVoiceOverlay(), i.target.closest(".close-voice-btn") && this._hideVoiceOverlay(), i.target.closest(".voice-overlay") && !i.target.closest(".voice-card") && this._hideVoiceOverlay();
     });
   }
   shuffleArray(e) {
@@ -618,23 +625,35 @@ class L extends HTMLElement {
     }
   }
   createQuestionBlock(e, t) {
-    const o = `q${t}`, s = [...e.o];
-    this.shuffleArray(s);
-    const r = s.map((a) => `
-            <label class="option-label">
-                <input type="radio" name="${o}" value="${a}" class="form-radio" required>
-                <span>${a}</span>
-            </label>
-        `).join(""), i = e.e ? `<div class="explanation hidden" id="explanation-${o}">
+    const o = `q${t}`, s = !e.o || e.o.length === 0;
+    let r = "";
+    if (s)
+      r = `
+                <div class="short-answer-container">
+                    <input type="text" name="${o}" class="form-input short-answer-input" placeholder="Type your answer here" required>
+                </div>
+            `;
+    else {
+      const l = [...e.o];
+      this.shuffleArray(l), r = l.map((c) => `
+                <label class="option-label">
+                    <input type="radio" name="${o}" value="${c}" class="form-radio" required>
+                    <span>${c}</span>
+                </label>
+            `).join("");
+    }
+    const n = e.e ? `<div class="explanation hidden" id="explanation-${o}">
             <div class="explanation-content">
                 <strong>Explanation:</strong> ${e.e}
             </div>
-        </div>` : "", n = document.createElement("div");
-    return n.className = "question-block", n.innerHTML = `
-            <p class="question-text">${e.q}</p>
+        </div>` : "", i = document.createElement("div");
+    i.className = "question-block";
+    const a = s ? ' <span class="short-answer-badge">(Written - Not graded)</span>' : "";
+    return i.innerHTML = `
+            <p class="question-text">${e.q}${a}</p>
             <div class="options-group">${r}</div>
-            ${i}
-        `, n;
+            ${n}
+        `, i;
   }
   generateQuiz() {
     const e = this.shadowRoot.getElementById("checkScoreButton"), t = this.shadowRoot.getElementById("dynamicContent");
@@ -645,11 +664,11 @@ class L extends HTMLElement {
     console.log("generateQuiz called, questions total:", this.totalQuestions), t.innerHTML = "", this.score = 0, this.questionsAnswered = 0, this.userQuestionAnswers = {}, e.disabled = !0;
     const o = [];
     let s = 0, r = 0;
-    this.orderedSections.forEach((i) => {
-      if (i.type === "audio") {
+    this.orderedSections.forEach((n) => {
+      if (n.type === "audio") {
         if (!this._shouldShowAudioControls()) return;
-        const n = this.shadowRoot.querySelector(".quiz-header");
-        if (n && !n.querySelector(".audio-toggle-container")) {
+        const i = this.shadowRoot.querySelector(".quiz-header");
+        if (i && !i.querySelector(".audio-toggle-container")) {
           const a = document.createElement("div");
           a.className = "audio-toggle-container", a.style.marginTop = "1rem", a.innerHTML = `
                         <button type="button" class="audio-toggle" title="Play Overall Audio">
@@ -657,48 +676,48 @@ class L extends HTMLElement {
                             <svg class="pause-icon hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
                             <span style="margin-left: 0.5rem; font-weight: 600;">Play Lesson Audio</span>
                         </button>
-                    `, n.appendChild(a);
+                    `, i.appendChild(a);
         }
-      } else if (i.type === "text") {
-        const { card: n, content: a } = this.createSectionCard(i.heading || "Reading Passage", {
+      } else if (n.type === "text") {
+        const { card: i, content: a } = this.createSectionCard(n.heading || "Reading Passage", {
           cardClasses: ["passage-card"]
-        }), c = document.createElement("div");
-        c.className = "passage-wrapper";
-        const h = document.createElement("button");
-        h.type = "button", h.className = "passage-audio-toggle", h.title = "Play Passage Audio", h.innerHTML = `
+        }), l = document.createElement("div");
+        l.className = "passage-wrapper";
+        const c = document.createElement("button");
+        c.type = "button", c.className = "passage-audio-toggle", c.title = "Play Passage Audio", c.innerHTML = `
                     <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                     <svg class="pause-icon hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
                 `;
-        const d = n.querySelector(".section-card-header");
-        d && d.appendChild(h), i.text.split(/\n\s*\n/).forEach((u) => {
-          const p = document.createElement("p");
-          p.className = "passage-text", i.listening && p.classList.add("listening-hidden"), p.textContent = u.trim(), c.appendChild(p);
-        }), a.appendChild(c), t.appendChild(n);
-      } else if (i.type === "instructions") {
-        const n = i.heading || "Instructions", a = i.body ? this.formatTextWithLineBreaks(i.body) : "", { card: c } = this.createSectionCard(n, {
+        const d = i.querySelector(".section-card-header");
+        d && d.appendChild(c), n.text.split(/\n\s*\n/).forEach((u) => {
+          const m = document.createElement("p");
+          m.className = "passage-text", n.listening && m.classList.add("listening-hidden"), m.textContent = u.trim(), l.appendChild(m);
+        }), a.appendChild(l), t.appendChild(i);
+      } else if (n.type === "instructions") {
+        const i = n.heading || "Instructions", a = n.body ? this.formatTextWithLineBreaks(n.body) : "", { card: l } = this.createSectionCard(i, {
           descriptionHtml: a,
           cardClasses: ["instruction-card"]
         });
-        t.appendChild(c);
-      } else if (i.type === "vocab") {
-        const n = this.vocabularySections[s++];
-        n && this.renderVocabInline(n, t, s - 1);
-      } else if (i.type === "cloze") {
-        const n = this.clozeSections[r++];
-        n && this.renderClozeInline(n, t, r - 1);
-      } else if (i.type === "questions") {
-        const { card: n, content: a } = this.createSectionCard("Comprehension Questions", {
+        t.appendChild(l);
+      } else if (n.type === "vocab") {
+        const i = this.vocabularySections[s++];
+        i && this.renderVocabInline(i, t, s - 1);
+      } else if (n.type === "cloze") {
+        const i = this.clozeSections[r++];
+        i && this.renderClozeInline(i, t, r - 1);
+      } else if (n.type === "questions") {
+        const { card: i, content: a } = this.createSectionCard("Comprehension Questions", {
           cardClasses: ["questions-card"]
-        }), c = document.createElement("p");
-        if (c.className = "reading-instructions instruction", c.textContent = "Read each question and select the best answer from the choices below.", a.appendChild(c), t.appendChild(n), i.questions && i.questions.length > 0) {
-          const h = i.maxQuestions || null;
-          let d = [...i.questions];
-          h && d.length > h && (this.shuffleArray(d), d = d.slice(0, h)), d.forEach((l) => o.push({ question: l, container: a }));
+        }), l = document.createElement("p");
+        if (l.className = "reading-instructions instruction", l.textContent = "Read each question and select the best answer from the choices below.", a.appendChild(l), t.appendChild(i), n.questions && n.questions.length > 0) {
+          const c = n.maxQuestions || null;
+          let d = [...n.questions];
+          c && d.length > c && (this.shuffleArray(d), d = d.slice(0, c)), d.forEach((h) => o.push({ question: h, container: a }));
         }
       }
-    }), this.currentQuestions = o.map((i) => i.question), this.totalQuestions = this.currentQuestions.length, this.currentQuestions.forEach((i, n) => {
-      const a = o[n];
-      (a && a.container ? a.container : t).appendChild(this.createQuestionBlock(i, n));
+    }), this.currentQuestions = o.map((n) => n.question), this.totalQuestions = this.currentQuestions.length, this.currentQuestions.forEach((n, i) => {
+      const a = o[i];
+      (a && a.container ? a.container : t).appendChild(this.createQuestionBlock(n, i));
     });
   }
   getStudentInputs() {
@@ -742,8 +761,28 @@ class L extends HTMLElement {
     }
   }
   restoreQuizState(e) {
-    const t = this.shadowRoot.getElementById("nickname"), o = this.shadowRoot.getElementById("homeroom"), s = this.shadowRoot.getElementById("studentId");
-    t && (t.value = e.nickname || ""), o && (o.value = e.homeroom || ""), s && (s.value = e.studentId || ""), this.vocabScore = e.vocabScore || 0, this.clozeScore = e.clozeScore || 0, this.score = e.score || 0, this.scoreSentToServer = e.scoreSentToServer || !1, this.showFinalScore();
+    const t = this.shadowRoot.getElementById("nickname"), o = this.shadowRoot.getElementById("homeroom"), s = this.shadowRoot.getElementById("studentId"), r = this.getTeacherCodeInput();
+    t && (t.value = e.nickname || ""), o && (o.value = e.homeroom || ""), s && (s.value = e.studentId || ""), r && (r.value = e.teacherCode || ""), this.vocabScore = e.vocabScore || 0, this.clozeScore = e.clozeScore || 0, this.score = e.score || 0, this.scoreSentToServer = e.scoreSentToServer || !1, this.userQuestionAnswers = e.userQuestionAnswers || {}, this.clozeAnswers = e.clozeAnswers || {}, this.vocabUserChoices = e.vocabUserChoices || {};
+    for (let n = 0; n < this.totalQuestions; n++) {
+      const i = `q${n}`, a = this.userQuestionAnswers[n];
+      if (a !== void 0) {
+        const l = this.currentQuestions[n];
+        if (l.o && l.o.length > 0) {
+          const c = this.shadowRoot.querySelector(`input[name="${i}"][value="${a}"]`);
+          c && (c.checked = !0, c.dataset.answered = "true");
+        } else {
+          const c = this.shadowRoot.querySelector(`input[name="${i}"]`);
+          c && (c.value = a, c.dataset.answered = "true");
+        }
+      }
+    }
+    Object.keys(this.vocabUserChoices).forEach((n) => {
+      const i = this.vocabUserChoices[n], a = n.split("-"), l = a[0], c = a.slice(1).join("-"), d = this.shadowRoot.querySelector(`.vocab-matching-input[data-section-id="${l}"][data-word="${c}"]`);
+      d && (d.value = i);
+    }), Object.keys(this.clozeAnswers).forEach((n) => {
+      const i = this.clozeAnswers[n], a = n.split("-"), l = a[0], c = a[1], d = this.shadowRoot.querySelector(`.cloze-blank[data-section-id="${l}"][data-blank-index="${c}"]`);
+      d && (d.value = i);
+    }), this.vocabSubmitted = e.vocabSubmitted || !1, this.clozeSubmitted = e.clozeSubmitted || !1, this.showFinalScore();
   }
   showStudentInfoAlert(e = "", t = "") {
     const o = this.shadowRoot.getElementById("studentInfoAlert");
@@ -778,14 +817,18 @@ class L extends HTMLElement {
     this.score = 0;
     for (let e = 0; e < this.totalQuestions; e++) {
       const t = this.currentQuestions[e], o = `q${e}`, s = this.userQuestionAnswers[e];
-      this.shadowRoot.querySelectorAll(`input[name="${o}"]`).forEach((n) => {
-        const a = n.closest(".option-label");
-        n.disabled = !0;
-        let c = a.querySelector(".feedback-icon");
-        c || (c = document.createElement("span"), c.className = "feedback-icon", a.appendChild(c)), s === n.value && (s === t.a ? (a.classList.add("correct"), c.textContent = "✅") : (a.classList.add("incorrect"), c.textContent = "❌"));
-      });
-      const i = this.shadowRoot.getElementById(`explanation-q${e}`);
-      i && i.classList.add("hidden"), s === t.a && this.score++;
+      if (!t.o || t.o.length === 0) {
+        const i = this.shadowRoot.querySelector(`input[name="${o}"]`);
+        i && (i.disabled = !0, i.classList.add("submitted"));
+      } else
+        this.shadowRoot.querySelectorAll(`input[name="${o}"]`).forEach((a) => {
+          const l = a.closest(".option-label");
+          a.disabled = !0;
+          let c = l.querySelector(".feedback-icon");
+          c || (c = document.createElement("span"), c.className = "feedback-icon", l.appendChild(c)), s === a.value && (s === t.a ? (l.classList.add("correct"), c.textContent = "✅") : (l.classList.add("incorrect"), c.textContent = "❌"));
+        }), s === t.a && this.score++;
+      const n = this.shadowRoot.getElementById(`explanation-q${e}`);
+      n && n.classList.add("hidden");
     }
   }
   handleAnswer(e) {
@@ -796,8 +839,8 @@ class L extends HTMLElement {
     this.userQuestionAnswers[s] = t.value, t.dataset.answered = "true";
     const r = Object.keys(this.userQuestionAnswers).length;
     this.questionsAnswered = r;
-    const i = this.vocabularySections.length === 0 || Object.keys(this.vocabUserChoices).length === this.getTotalVocabWords(), n = this.checkAllQuestionsAnswered(), a = this.checkAllClozeAnswered();
-    i && n && a && (this.shadowRoot.getElementById("checkScoreButton").disabled = !1);
+    const n = this.vocabularySections.length === 0 || Object.keys(this.vocabUserChoices).length === this.getTotalVocabWords(), i = this.checkAllQuestionsAnswered(), a = this.checkAllClozeAnswered();
+    n && i && a && (this.shadowRoot.getElementById("checkScoreButton").disabled = !1);
   }
   handleSubmit(e) {
     if (e.preventDefault(), !this.validateStudentInfoFields({ showAlert: !0 })) {
@@ -806,67 +849,104 @@ class L extends HTMLElement {
       return;
     }
     this.vocabScore;
-    const t = this.getTotalVocabWords(), o = this.clozeSections.reduce((i, n) => i + n.words.length, 0), s = this.totalQuestions, r = this.vocabScore + this.clozeScore + this.score;
+    const t = this.getTotalVocabWords(), o = this.clozeSections.reduce((i, a) => i + a.words.length, 0), s = this.currentQuestions.filter((i) => i.o && i.o.length > 0).length, r = this.vocabScore + this.clozeScore + this.score, n = this.getTeacherCodeInput();
     this.saveToLocalStorage({
       nickname: this.shadowRoot.getElementById("nickname").value,
       homeroom: this.shadowRoot.getElementById("homeroom").value,
       studentId: this.shadowRoot.getElementById("studentId").value,
+      teacherCode: n ? n.value : "",
       vocabScore: this.vocabScore,
       clozeScore: this.clozeScore,
       score: this.score,
       totalPossible: t + o + s,
       totalEarned: r,
-      scoreSentToServer: this.scoreSentToServer
+      scoreSentToServer: this.scoreSentToServer,
+      userQuestionAnswers: this.userQuestionAnswers,
+      clozeAnswers: this.clozeAnswers,
+      vocabUserChoices: this.vocabUserChoices,
+      vocabSubmitted: this.vocabSubmitted,
+      clozeSubmitted: this.clozeSubmitted
     }), this.showFinalScore();
   }
   showFinalScore() {
     this.totalQuestions > 0 && this.showQuestionFeedback(), this.vocabularySections.length > 0 && !this.vocabSubmitted && this.showVocabScore(), this.clozeSections.length > 0 && !this.clozeSubmitted && this.showClozeScore();
-    const e = this.shadowRoot.getElementById("resultScore"), t = this.shadowRoot.getElementById("checkScoreContainer"), o = this.shadowRoot.getElementById("resultArea"), s = this.shadowRoot.getElementById("postScoreActions"), r = this.shadowRoot.getElementById("sendButton"), i = this.shadowRoot.getElementById("tryAgainButton"), n = this.shadowRoot.getElementById("studentInfoSection"), a = this.getTotalVocabWords(), c = this.clozeSections.reduce((v, y) => v + y.words.length, 0), h = this.totalQuestions, d = a + c + h, l = this.vocabScore + this.clozeScore + this.score, u = this.shadowRoot.getElementById("nickname").value || "-", p = this.shadowRoot.getElementById("homeroom").value || "-", g = this.shadowRoot.getElementById("studentId").value || "-", f = (/* @__PURE__ */ new Date()).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
-    if (n) {
+    const e = this.shadowRoot.getElementById("resultScore"), t = this.shadowRoot.getElementById("checkScoreContainer"), o = this.shadowRoot.getElementById("resultArea"), s = this.shadowRoot.getElementById("postScoreActions"), r = this.shadowRoot.getElementById("sendButton"), n = this.shadowRoot.getElementById("tryAgainButton"), i = this.shadowRoot.getElementById("studentInfoSection"), a = this.getTotalVocabWords(), l = this.clozeSections.reduce((v, y) => v + y.words.length, 0), c = this.currentQuestions.filter((v) => v.o && v.o.length > 0).length, d = a + l + c, h = this.vocabScore + this.clozeScore + this.score, u = this.shadowRoot.getElementById("nickname").value || "-", m = this.shadowRoot.getElementById("homeroom").value || "-", f = this.shadowRoot.getElementById("studentId").value || "-", p = (/* @__PURE__ */ new Date()).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    if (i) {
       const v = this.getStudentInputs(), y = this.getTeacherCodeInput();
-      v.forEach((w) => {
-        w && (w.disabled = !0);
+      v.forEach((k) => {
+        k && (k.disabled = !0);
       }), y && (y.disabled = !0);
     }
     s && s.classList.remove("hidden");
     const b = this.shadowRoot.getElementById("retrySubmissionSection");
-    if (b && (this.scoreSentToServer ? b.classList.add("hidden") : b.classList.remove("hidden")), d > 0) {
-      const v = Math.round(l / d * 100);
+    b && (this.scoreSentToServer ? b.classList.add("hidden") : b.classList.remove("hidden"));
+    const w = this.currentQuestions.filter((v) => v.o && v.o.length === 0), C = w.length > 0;
+    let x = "", S = "";
+    if (C && (x = `
+                <div class="score-note-written">
+                    *Written answers are not included in the score.
+                </div>`, S = `
+                <div class="written-answers-section">
+                    <div class="written-answers-title">Written Answers (Not graded)</div>
+                    ${w.map((y, k) => {
+      const z = this.currentQuestions.indexOf(y), I = this.userQuestionAnswers[z] || "-";
+      return `
+                    <div class="written-qa">
+                        <div class="written-question">Q: ${y.q}</div>
+                        <div class="written-answer">A: ${I}</div>
+                    </div>
+                `;
+    }).join("")}
+                </div>
+            `), d > 0 || C) {
+      let v = "";
+      if (d > 0) {
+        const z = Math.round(h / d * 100);
+        v = `
+                    <div class="score-summary">
+                        <div class="score-main-compact">${h} / ${d}</div>
+                        <div class="score-percentage">${z}% Accuracy</div>
+                    </div>
+                `;
+      }
       let y = "";
       a > 0 && (y += `
                     <div class="score-section">
                         <span class="score-label">Vocabulary</span>
                         <span class="score-value">${this.vocabScore}/${a}</span>
-                    </div>`), c > 0 && (y += `
+                    </div>`), l > 0 && (y += `
                     <div class="score-section">
                         <span class="score-label">Fill-in-the-blank</span>
-                        <span class="score-value">${this.clozeScore}/${c}</span>
-                    </div>`), h > 0 && (y += `
+                        <span class="score-value">${this.clozeScore}/${l}</span>
+                    </div>`), c > 0 && (y += `
                     <div class="score-section">
                         <span class="score-label">Questions</span>
-                        <span class="score-value">${this.score}/${h}</span>
-                    </div>`), e.innerHTML = `
+                        <span class="score-value">${this.score}/${c}</span>
+                    </div>`);
+      let k = "";
+      y && (k = `
+                    <div class="score-breakdown-compact">
+                        ${y}
+                    </div>
+                `), e.innerHTML = `
                 <div class="score-report-card">
                     <div class="result-title">${this.title}</div>
                     <div class="result-subtitle">Performance Report</div>
                     <div class="student-details">
                         <div><strong>NAME:</strong> ${u}</div>
-                        <div><strong>ID:</strong> ${g}</div>
-                        <div><strong>CLASS:</strong> ${p}</div>
-                        <div><strong>DATE:</strong> ${f}</div>
+                        <div><strong>ID:</strong> ${f}</div>
+                        <div><strong>CLASS:</strong> ${m}</div>
+                        <div><strong>DATE:</strong> ${p}</div>
                     </div>
-                    <div class="score-summary">
-                        <div class="score-main-compact">${l} / ${d}</div>
-                        <div class="score-percentage">${v}% Accuracy</div>
-                    </div>
-                    <div class="score-breakdown-compact">
-                        ${y}
-                    </div>
+                    ${v}
+                    ${k}
+                    ${S}
+                    ${x}
                 </div>
             `;
     } else
       e.innerHTML = '<div class="score-report-card"><div class="score-main-compact">No score data available</div></div>';
-    if (e.className = "", t && t.classList.add("hidden"), s && s.classList.remove("hidden"), o && o.classList.remove("hidden"), r && (r.disabled = !0, r.textContent = "Resend Score to Teacher", r.classList.add("hidden")), i && (i.disabled = !1), o)
+    if (e.className = "", t && t.classList.add("hidden"), s && s.classList.remove("hidden"), o && o.classList.remove("hidden"), r && (r.disabled = !0, r.textContent = "Resend Score to Teacher", r.classList.add("hidden")), n && (n.disabled = !1), o)
       try {
         o.scrollIntoView({ behavior: "smooth", block: "start" });
       } catch {
@@ -877,35 +957,36 @@ class L extends HTMLElement {
   async sendScore(e = !1, t = !1) {
     if (this.autoSubmissionInProgress)
       return;
-    const o = this.shadowRoot.getElementById("validationMessage"), s = this.shadowRoot.getElementById("sendButton"), r = this.shadowRoot.getElementById("tryAgainButton"), i = this.shadowRoot.getElementById("retrySubmissionSection");
+    const o = this.shadowRoot.getElementById("validationMessage"), s = this.shadowRoot.getElementById("sendButton"), r = this.shadowRoot.getElementById("tryAgainButton"), n = this.shadowRoot.getElementById("retrySubmissionSection");
     if (this.shadowRoot.getElementById("retrySendButton"), !this.validateStudentInfoFields({ showAlert: !0 })) {
       o && (o.textContent = "Please fill out all student information fields.", o.className = "error"), s && e && (s.classList.remove("hidden"), s.disabled = !1);
       return;
     }
     let a = "";
     if (t) {
-      const m = this.shadowRoot.getElementById("retryTeacherCode");
-      a = m ? m.value.trim() : "";
+      const g = this.shadowRoot.getElementById("retryTeacherCode");
+      a = g ? g.value.trim() : "";
     } else {
-      const m = this.getTeacherCodeInput();
-      a = m ? m.value.trim() : "";
+      const g = this.getTeacherCodeInput();
+      a = g ? g.value.trim() : "";
     }
     this.vocabScore;
-    const h = this.getTotalVocabWords(), d = this.clozeSections.reduce((m, f) => m + f.words.length, 0), l = this.totalQuestions, u = h + d + l, p = this.vocabScore + this.clozeScore + this.score, g = {
+    const c = this.getTotalVocabWords(), d = this.clozeSections.reduce((g, p) => g + p.words.length, 0), h = this.currentQuestions.filter((g) => g.o && g.o.length > 0).length, u = c + d + h, m = this.vocabScore + this.clozeScore + this.score, f = {
       quizName: this.title,
       nickname: this.shadowRoot.getElementById("nickname").value,
       homeroom: this.shadowRoot.getElementById("homeroom").value,
       studentId: this.shadowRoot.getElementById("studentId").value,
-      score: p,
+      score: m,
       total: u,
       teacherCode: a,
-      timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+      writtenAnswers: this.getWrittenAnswersString()
     };
     if (a !== "6767") {
       t ? o && (o.textContent = "❌ Invalid Teacher Code. Please try again.", o.className = "error") : (o && (o.innerHTML = `
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         <span>Report card generated. Not sent to teacher (no valid code).</span>
-                    `, o.className = "success"), i && i.classList.remove("hidden")), r && (r.disabled = !1), this.scoreSubmitted = !0, this.autoSubmissionInProgress = !1;
+                    `, o.className = "success"), n && n.classList.remove("hidden")), r && (r.disabled = !1), this.scoreSubmitted = !0, this.autoSubmissionInProgress = !1;
       return;
     }
     if (!this.submissionUrl) {
@@ -914,31 +995,31 @@ class L extends HTMLElement {
     }
     this.autoSubmissionInProgress = !0, s && (e ? s.classList.add("hidden") : (s.disabled = !0, s.textContent = "Sending...")), o && (o.innerHTML = e ? "<span>Submitting score to teacher...</span>" : "", o.className = ""), r && (r.disabled = !0);
     try {
-      const m = await fetch(this.submissionUrl, {
+      const g = await fetch(this.submissionUrl, {
         method: "POST",
         mode: "cors",
-        body: JSON.stringify(g)
+        body: JSON.stringify(f)
       });
-      if (!m.ok)
-        throw new Error(`HTTP error! status: ${m.status}`);
-      let f;
-      const b = m.headers.get("content-type");
+      if (!g.ok)
+        throw new Error(`HTTP error! status: ${g.status}`);
+      let p;
+      const b = g.headers.get("content-type");
       if (b && b.includes("application/json"))
-        f = await m.json();
+        p = await g.json();
       else {
-        const v = await m.text();
-        console.warn("Non-JSON response received:", v), f = { message: "Submission received (non-JSON response)" };
+        const w = await g.text();
+        console.warn("Non-JSON response received:", w), p = { message: "Submission received (non-JSON response)" };
       }
-      if (this.scoreSentToServer = !0, i && i.classList.add("hidden"), o) {
-        const v = e ? "Score automatically submitted to your teacher" : f.message || "Submission successful!";
+      if (this.scoreSentToServer = !0, n && n.classList.add("hidden"), o) {
+        const w = e ? "Score automatically submitted to your teacher" : p.message || "Submission successful!";
         o.innerHTML = `
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span>${v}</span>
+                    <span>${w}</span>
                 `, o.className = "success";
       }
       s && (s.textContent = "Score Sent", s.disabled = !0, s.classList.add("hidden")), r && (r.disabled = !1), this.scoreSubmitted = !0;
-    } catch (m) {
-      console.error("Error:", m), o && (o.innerHTML = `
+    } catch (g) {
+      console.error("Error:", g), o && (o.innerHTML = `
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                     <span>Could not submit score. Please try again.</span>
                 `, o.className = "error"), s && (s.textContent = e ? "Send Score Again" : "Try Sending Again", s.disabled = !1, s.classList.remove("hidden")), r && (r.disabled = !1);
@@ -947,33 +1028,49 @@ class L extends HTMLElement {
     }
   }
   resetQuiz() {
-    const e = this.shadowRoot.getElementById("quizForm"), t = this.shadowRoot.getElementById("resultArea"), o = this.shadowRoot.getElementById("postScoreActions"), s = this.shadowRoot.getElementById("checkScoreContainer"), r = this.shadowRoot.getElementById("validationMessage"), i = this.shadowRoot.getElementById("sendButton"), n = this.shadowRoot.getElementById("tryAgainButton"), a = this.getStudentInputs(), c = this.shadowRoot.getElementById("studentInfoSection");
-    if (e.reset(), c) {
-      c.style.display = "";
-      const m = this.getStudentInputs(), f = this.getTeacherCodeInput();
-      m.forEach((b) => {
-        b && (b.disabled = !1);
-      }), f && (f.disabled = !1);
+    const e = this.shadowRoot.getElementById("quizForm"), t = this.shadowRoot.getElementById("resultArea"), o = this.shadowRoot.getElementById("postScoreActions"), s = this.shadowRoot.getElementById("checkScoreContainer"), r = this.shadowRoot.getElementById("validationMessage"), n = this.shadowRoot.getElementById("sendButton"), i = this.shadowRoot.getElementById("tryAgainButton"), a = this.getStudentInputs(), l = this.shadowRoot.getElementById("studentInfoSection");
+    if (e.reset(), l) {
+      l.style.display = "";
+      const p = this.getStudentInputs(), b = this.getTeacherCodeInput();
+      p.forEach((w) => {
+        w && (w.disabled = !1);
+      }), b && (b.disabled = !1);
     }
-    t && t.classList.add("hidden"), o && o.classList.add("hidden"), s && s.classList.remove("hidden"), r && (r.textContent = "", r.className = ""), a.forEach((m) => {
-      m.classList.remove("invalid"), m.disabled = !1;
+    t && t.classList.add("hidden"), o && o.classList.add("hidden"), s && s.classList.remove("hidden"), r && (r.textContent = "", r.className = ""), a.forEach((p) => {
+      p.classList.remove("invalid"), p.disabled = !1;
     }), this.showStudentInfoAlert(), this.userQuestionAnswers = {}, this.questionsAnswered = 0, this.score = 0, this.vocabUserChoices = {}, this.vocabScore = 0, this.vocabSubmitted = !1, this.clozeAnswers = {}, this.clozeScore = 0, this.clozeSubmitted = !1, this.scoreSubmitted = !1, this.scoreSentToServer = !1, this.autoSubmissionInProgress = !1, this.clearLocalStorage();
-    const h = this.shadowRoot.getElementById("retrySubmissionSection");
-    h && h.classList.add("hidden");
+    const c = this.shadowRoot.getElementById("retrySubmissionSection");
+    c && c.classList.add("hidden");
     const d = this.shadowRoot.getElementById("retryTeacherCode");
-    d && (d.value = ""), Array.from(this.shadowRoot.querySelectorAll('input[type="radio"]')).forEach((m) => {
-      m.disabled = !1;
+    d && (d.value = ""), Array.from(this.shadowRoot.querySelectorAll('input[type="radio"]')).forEach((p) => {
+      p.disabled = !1;
       try {
-        delete m.dataset.answered;
+        delete p.dataset.answered;
       } catch {
       }
-    }), Array.from(this.shadowRoot.querySelectorAll(".option-label")).forEach((m) => {
-      m.classList.remove("correct", "incorrect");
-      const f = m.querySelector(".feedback-icon");
-      f && f.remove(), m.style.cursor = "";
-    }), Array.from(this.shadowRoot.querySelectorAll(".explanation")).forEach((m) => m.classList.add("hidden")), i && (i.disabled = !1, i.textContent = "Resend Score to Teacher", i.classList.add("hidden")), n && (n.disabled = !1), this.stopAllAudio(), this.generateQuiz();
+    }), Array.from(this.shadowRoot.querySelectorAll(".short-answer-input")).forEach((p) => {
+      p.disabled = !1, p.value = "";
+      try {
+        delete p.dataset.answered;
+      } catch {
+      }
+    }), Array.from(this.shadowRoot.querySelectorAll(".option-label")).forEach((p) => {
+      p.classList.remove("correct", "incorrect");
+      const b = p.querySelector(".feedback-icon");
+      b && b.remove(), p.style.cursor = "";
+    }), Array.from(this.shadowRoot.querySelectorAll(".explanation")).forEach((p) => p.classList.add("hidden")), n && (n.disabled = !1, n.textContent = "Resend Score to Teacher", n.classList.add("hidden")), i && (i.disabled = !1), this.stopAllAudio(), this.generateQuiz();
     const g = this.shadowRoot.getElementById("checkScoreButton");
     g && (g.disabled = !0), this.lockQuizContent();
+  }
+  getWrittenAnswersString() {
+    const e = this.currentQuestions.filter((t) => t.o && t.o.length === 0);
+    return e.length === 0 ? "" : e.map((t, o) => {
+      const s = this.currentQuestions.indexOf(t), r = this.userQuestionAnswers[s] || "";
+      return `Q: ${t.q}
+A: ${r}`;
+    }).join(`
+
+`);
   }
   toggleTheme() {
     this.classList.toggle("dark");
@@ -981,4 +1078,4 @@ class L extends HTMLElement {
     this.shadowRoot.querySelector(".light-icon").classList.toggle("hidden", e), this.shadowRoot.querySelector(".dark-icon").classList.toggle("hidden", !e);
   }
 }
-customElements.define("tj-quiz-element", L);
+customElements.define("tj-quiz-element", R);

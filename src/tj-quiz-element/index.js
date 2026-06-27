@@ -884,6 +884,29 @@ class TjQuizElement extends HTMLElement {
         }
     }
 
+    handleShortAnswer(e) {
+        if (!e.target.classList.contains('short-answer-input')) return;
+
+        const input = e.target;
+        const questionName = input.name;
+        const questionIndex = parseInt(questionName.substring(1));
+        const val = input.value.trim();
+
+        if (val) {
+            this.userQuestionAnswers[questionIndex] = val;
+            input.dataset.answered = 'true';
+        } else {
+            delete this.userQuestionAnswers[questionIndex];
+            delete input.dataset.answered;
+        }
+
+        // Count unique answered questions
+        const answeredCount = Object.keys(this.userQuestionAnswers).length;
+        this.questionsAnswered = answeredCount;
+
+        this.updateCheckScoreButtonState();
+    }
+
     checkAllClozeAnswered() {
         const totalBlanks = this.clozeSections.reduce((total, section) =>
             total + section.words.length, 0);
@@ -1031,6 +1054,7 @@ class TjQuizElement extends HTMLElement {
             quizForm.addEventListener('input', (e) => {
                 this.handleClozeAnswer(e);
                 this.handleVocabAnswer(e);
+                this.handleShortAnswer(e);
             });
             quizForm.addEventListener('submit', (e) => this.handleSubmit(e));
         }
@@ -1275,14 +1299,25 @@ class TjQuizElement extends HTMLElement {
 
     createQuestionBlock(q, index) {
         const questionId = `q${index}`;
-        const shuffledOptions = [...q.o];
-        this.shuffleArray(shuffledOptions);
-        const optionsHtml = shuffledOptions.map(option => `
-            <label class="option-label">
-                <input type="radio" name="${questionId}" value="${option}" class="form-radio" required>
-                <span>${option}</span>
-            </label>
-        `).join('');
+        const isShortAnswer = !q.o || q.o.length === 0;
+        let optionsHtml = '';
+
+        if (isShortAnswer) {
+            optionsHtml = `
+                <div class="short-answer-container">
+                    <input type="text" name="${questionId}" class="form-input short-answer-input" placeholder="Type your answer here" required>
+                </div>
+            `;
+        } else {
+            const shuffledOptions = [...q.o];
+            this.shuffleArray(shuffledOptions);
+            optionsHtml = shuffledOptions.map(option => `
+                <label class="option-label">
+                    <input type="radio" name="${questionId}" value="${option}" class="form-radio" required>
+                    <span>${option}</span>
+                </label>
+            `).join('');
+        }
 
         const explanationHtml = q.e ? `<div class="explanation hidden" id="explanation-${questionId}">
             <div class="explanation-content">
@@ -1292,8 +1327,9 @@ class TjQuizElement extends HTMLElement {
 
         const questionBlock = document.createElement('div');
         questionBlock.className = 'question-block';
+        const badgeHtml = isShortAnswer ? ` <span class="short-answer-badge">(Written - Not graded)</span>` : '';
         questionBlock.innerHTML = `
-            <p class="question-text">${q.q}</p>
+            <p class="question-text">${q.q}${badgeHtml}</p>
             <div class="options-group">${optionsHtml}</div>
             ${explanationHtml}
         `;
@@ -1490,15 +1526,71 @@ class TjQuizElement extends HTMLElement {
         const nickname = this.shadowRoot.getElementById('nickname');
         const homeroom = this.shadowRoot.getElementById('homeroom');
         const studentId = this.shadowRoot.getElementById('studentId');
+        const teacherCode = this.getTeacherCodeInput();
 
         if (nickname) nickname.value = data.nickname || '';
         if (homeroom) homeroom.value = data.homeroom || '';
         if (studentId) studentId.value = data.studentId || '';
+        if (teacherCode) teacherCode.value = data.teacherCode || '';
 
         this.vocabScore = data.vocabScore || 0;
         this.clozeScore = data.clozeScore || 0;
         this.score = data.score || 0;
         this.scoreSentToServer = data.scoreSentToServer || false;
+
+        // Restore answers objects
+        this.userQuestionAnswers = data.userQuestionAnswers || {};
+        this.clozeAnswers = data.clozeAnswers || {};
+        this.vocabUserChoices = data.vocabUserChoices || {};
+
+        // Re-populate question answers in UI
+        for (let i = 0; i < this.totalQuestions; i++) {
+            const qName = `q${i}`;
+            const answer = this.userQuestionAnswers[i];
+            if (answer !== undefined) {
+                const questionData = this.currentQuestions[i];
+                if (questionData.o && questionData.o.length > 0) {
+                    const radio = this.shadowRoot.querySelector(`input[name="${qName}"][value="${answer}"]`);
+                    if (radio) {
+                        radio.checked = true;
+                        radio.dataset.answered = 'true';
+                    }
+                } else {
+                    const input = this.shadowRoot.querySelector(`input[name="${qName}"]`);
+                    if (input) {
+                        input.value = answer;
+                        input.dataset.answered = 'true';
+                    }
+                }
+            }
+        }
+
+        // Re-populate vocabulary answers in UI
+        Object.keys(this.vocabUserChoices).forEach(key => {
+            const val = this.vocabUserChoices[key];
+            const parts = key.split('-');
+            const sectionId = parts[0];
+            const word = parts.slice(1).join('-');
+            const input = this.shadowRoot.querySelector(`.vocab-matching-input[data-section-id="${sectionId}"][data-word="${word}"]`);
+            if (input) {
+                input.value = val;
+            }
+        });
+
+        // Re-populate cloze answers in UI
+        Object.keys(this.clozeAnswers).forEach(key => {
+            const val = this.clozeAnswers[key];
+            const parts = key.split('-');
+            const sectionId = parts[0];
+            const blankIndex = parts[1];
+            const input = this.shadowRoot.querySelector(`.cloze-blank[data-section-id="${sectionId}"][data-blank-index="${blankIndex}"]`);
+            if (input) {
+                input.value = val;
+            }
+        });
+
+        this.vocabSubmitted = data.vocabSubmitted || false;
+        this.clozeSubmitted = data.clozeSubmitted || false;
 
         this.showFinalScore();
     }
@@ -1580,35 +1672,44 @@ class TjQuizElement extends HTMLElement {
             const questionData = this.currentQuestions[i];
             const qName = `q${i}`;
             const userAnswer = this.userQuestionAnswers[i];
+            const isShortAnswer = !questionData.o || questionData.o.length === 0;
 
-            const radioButtons = this.shadowRoot.querySelectorAll(`input[name="${qName}"]`);
-            radioButtons.forEach(radio => {
-                const label = radio.closest('.option-label');
-                // disable inputs now to prevent changes after checking
-                radio.disabled = true;
-                let feedbackIcon = label.querySelector('.feedback-icon');
-                if (!feedbackIcon) {
-                    feedbackIcon = document.createElement('span');
-                    feedbackIcon.className = 'feedback-icon';
-                    label.appendChild(feedbackIcon);
+            if (isShortAnswer) {
+                const textInput = this.shadowRoot.querySelector(`input[name="${qName}"]`);
+                if (textInput) {
+                    textInput.disabled = true;
+                    textInput.classList.add('submitted');
                 }
-
-                if (userAnswer === radio.value) {
-                    if (userAnswer === questionData.a) {
-                        label.classList.add('correct');
-                        feedbackIcon.textContent = '✅';
-                    } else {
-                        label.classList.add('incorrect');
-                        feedbackIcon.textContent = '❌';
+            } else {
+                const radioButtons = this.shadowRoot.querySelectorAll(`input[name="${qName}"]`);
+                radioButtons.forEach(radio => {
+                    const label = radio.closest('.option-label');
+                    // disable inputs now to prevent changes after checking
+                    radio.disabled = true;
+                    let feedbackIcon = label.querySelector('.feedback-icon');
+                    if (!feedbackIcon) {
+                        feedbackIcon = document.createElement('span');
+                        feedbackIcon.className = 'feedback-icon';
+                        label.appendChild(feedbackIcon);
                     }
-                }
-            });
+
+                    if (userAnswer === radio.value) {
+                        if (userAnswer === questionData.a) {
+                            label.classList.add('correct');
+                            feedbackIcon.textContent = '✅';
+                        } else {
+                            label.classList.add('incorrect');
+                            feedbackIcon.textContent = '❌';
+                        }
+                    }
+                });
+
+                if (userAnswer === questionData.a) this.score++;
+            }
 
             // Hide explanation if available (commented out or removed to satisfy "show what was wrong" requirement)
             const explanation = this.shadowRoot.getElementById(`explanation-q${i}`);
             if (explanation) explanation.classList.add('hidden');
-
-            if (userAnswer === questionData.a) this.score++;
         }
     }
 
@@ -1654,19 +1755,26 @@ class TjQuizElement extends HTMLElement {
         const totalVocabEarned = this.vocabScore;
         const totalVocabPossible = this.getTotalVocabWords();
         const clozeTotal = this.clozeSections.reduce((total, section) => total + section.words.length, 0);
-        const questionTotal = this.totalQuestions;
+        const questionTotal = this.currentQuestions.filter(q => q.o && q.o.length > 0).length;
         const totalEarned = this.vocabScore + this.clozeScore + this.score;
+        const teacherCodeEl = this.getTeacherCodeInput();
 
         this.saveToLocalStorage({
             nickname: this.shadowRoot.getElementById('nickname').value,
             homeroom: this.shadowRoot.getElementById('homeroom').value,
             studentId: this.shadowRoot.getElementById('studentId').value,
+            teacherCode: teacherCodeEl ? teacherCodeEl.value : '',
             vocabScore: this.vocabScore,
             clozeScore: this.clozeScore,
             score: this.score,
             totalPossible: totalVocabPossible + clozeTotal + questionTotal,
             totalEarned: totalEarned,
-            scoreSentToServer: this.scoreSentToServer
+            scoreSentToServer: this.scoreSentToServer,
+            userQuestionAnswers: this.userQuestionAnswers,
+            clozeAnswers: this.clozeAnswers,
+            vocabUserChoices: this.vocabUserChoices,
+            vocabSubmitted: this.vocabSubmitted,
+            clozeSubmitted: this.clozeSubmitted
         });
 
         this.showFinalScore();
@@ -1698,7 +1806,7 @@ class TjQuizElement extends HTMLElement {
         // Calculate total score (vocabulary + cloze + questions)
         const vocabTotal = this.getTotalVocabWords();
         const clozeTotal = this.clozeSections.reduce((total, section) => total + section.words.length, 0);
-        const questionTotal = this.totalQuestions;
+        const questionTotal = this.currentQuestions.filter(q => q.o && q.o.length > 0).length;
         const totalPossible = vocabTotal + clozeTotal + questionTotal;
         const totalEarned = this.vocabScore + this.clozeScore + this.score;
 
@@ -1731,9 +1839,48 @@ class TjQuizElement extends HTMLElement {
             }
         }
 
+        const shortAnswerQuestions = this.currentQuestions.filter(q => q.o && q.o.length === 0);
+        const hasShortAnswer = shortAnswerQuestions.length > 0;
+        let writtenNoteHTML = '';
+        let writtenAnswersHTML = '';
+
+        if (hasShortAnswer) {
+            writtenNoteHTML = `
+                <div class="score-note-written">
+                    *Written answers are not included in the score.
+                </div>`;
+
+            const QAs = shortAnswerQuestions.map((q, idx) => {
+                const originalIndex = this.currentQuestions.indexOf(q);
+                const answer = this.userQuestionAnswers[originalIndex] || '-';
+                return `
+                    <div class="written-qa">
+                        <div class="written-question">Q: ${q.q}</div>
+                        <div class="written-answer">A: ${answer}</div>
+                    </div>
+                `;
+            }).join('');
+
+            writtenAnswersHTML = `
+                <div class="written-answers-section">
+                    <div class="written-answers-title">Written Answers (Not graded)</div>
+                    ${QAs}
+                </div>
+            `;
+        }
+
         // Update score display
-        if (totalPossible > 0) {
-            const percentage = Math.round((totalEarned / totalPossible) * 100);
+        if (totalPossible > 0 || hasShortAnswer) {
+            let scoreSummaryHTML = '';
+            if (totalPossible > 0) {
+                const percentage = Math.round((totalEarned / totalPossible) * 100);
+                scoreSummaryHTML = `
+                    <div class="score-summary">
+                        <div class="score-main-compact">${totalEarned} / ${totalPossible}</div>
+                        <div class="score-percentage">${percentage}% Accuracy</div>
+                    </div>
+                `;
+            }
 
             let breakdownHTML = '';
             if (vocabTotal > 0) {
@@ -1758,6 +1905,15 @@ class TjQuizElement extends HTMLElement {
                     </div>`;
             }
 
+            let scoreBreakdownContainerHTML = '';
+            if (breakdownHTML) {
+                scoreBreakdownContainerHTML = `
+                    <div class="score-breakdown-compact">
+                        ${breakdownHTML}
+                    </div>
+                `;
+            }
+
             resultScore.innerHTML = `
                 <div class="score-report-card">
                     <div class="result-title">${this.title}</div>
@@ -1768,13 +1924,10 @@ class TjQuizElement extends HTMLElement {
                         <div><strong>CLASS:</strong> ${homeroom}</div>
                         <div><strong>DATE:</strong> ${timestamp}</div>
                     </div>
-                    <div class="score-summary">
-                        <div class="score-main-compact">${totalEarned} / ${totalPossible}</div>
-                        <div class="score-percentage">${percentage}% Accuracy</div>
-                    </div>
-                    <div class="score-breakdown-compact">
-                        ${breakdownHTML}
-                    </div>
+                    ${scoreSummaryHTML}
+                    ${scoreBreakdownContainerHTML}
+                    ${writtenAnswersHTML}
+                    ${writtenNoteHTML}
                 </div>
             `;
         } else {
@@ -1856,7 +2009,7 @@ class TjQuizElement extends HTMLElement {
 
         const clozeTotal = this.clozeSections.reduce((total, section) => total + section.words.length, 0);
 
-        const questionTotal = this.totalQuestions;
+        const questionTotal = this.currentQuestions.filter(q => q.o && q.o.length > 0).length;
 
         const totalPossible = vocabTotal + clozeTotal + questionTotal;
         const totalEarned = this.vocabScore + this.clozeScore + this.score;
@@ -1869,7 +2022,8 @@ class TjQuizElement extends HTMLElement {
             score: totalEarned,
             total: totalPossible,
             teacherCode: teacherCode,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            writtenAnswers: this.getWrittenAnswersString()
         };
 
         // IF Teacher Code is NOT 6767 AND it's not a retry, we skip submission and just show local success
@@ -2055,6 +2209,13 @@ class TjQuizElement extends HTMLElement {
             try { delete radio.dataset.answered; } catch (e) { }
         });
 
+        const allShortInputs = Array.from(this.shadowRoot.querySelectorAll('.short-answer-input'));
+        allShortInputs.forEach(input => {
+            input.disabled = false;
+            input.value = '';
+            try { delete input.dataset.answered; } catch (e) { }
+        });
+
         const allLabels = Array.from(this.shadowRoot.querySelectorAll('.option-label'));
         allLabels.forEach(label => {
             label.classList.remove('correct', 'incorrect');
@@ -2083,6 +2244,17 @@ class TjQuizElement extends HTMLElement {
             checkBtn.disabled = true;
         }
         this.lockQuizContent();
+    }
+
+    getWrittenAnswersString() {
+        const shortAnswerQuestions = this.currentQuestions.filter(q => q.o && q.o.length === 0);
+        if (shortAnswerQuestions.length === 0) return '';
+
+        return shortAnswerQuestions.map((q, idx) => {
+            const originalIndex = this.currentQuestions.indexOf(q);
+            const answer = this.userQuestionAnswers[originalIndex] || '';
+            return `Q: ${q.q}\nA: ${answer}`;
+        }).join('\n\n');
     }
 
     toggleTheme() {
