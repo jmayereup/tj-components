@@ -73,11 +73,11 @@ class TjQuizElement extends HTMLElement {
                 } else {
                     this.originalContent = String(this.config);
                 }
-            } 
+            }
             // 2. Attribute
             else if (this.hasAttribute('config')) {
                 this.originalContent = this.getAttribute('config');
-            } 
+            }
             // 3. Script tag
             else if (this.querySelector('script[type="text/markdown"]')) {
                 this.originalContent = this.querySelector('script[type="text/markdown"]').textContent;
@@ -114,7 +114,7 @@ class TjQuizElement extends HTMLElement {
             this.setupEventListeners();
             this.generateQuiz();
             this.unlockQuizContent();
-            
+
             // Restore state if available
             const savedData = this.loadFromLocalStorage();
             if (savedData) {
@@ -1327,9 +1327,8 @@ class TjQuizElement extends HTMLElement {
 
         const questionBlock = document.createElement('div');
         questionBlock.className = 'question-block';
-        const badgeHtml = isShortAnswer ? ` <span class="short-answer-badge">(Written - Not graded)</span>` : '';
         questionBlock.innerHTML = `
-            <p class="question-text">${q.q}${badgeHtml}</p>
+            <p class="question-text">${q.q}</p>
             <div class="options-group">${optionsHtml}</div>
             ${explanationHtml}
         `;
@@ -1863,7 +1862,7 @@ class TjQuizElement extends HTMLElement {
 
             writtenAnswersHTML = `
                 <div class="written-answers-section">
-                    <div class="written-answers-title">Written Answers (Not graded)</div>
+                    <div class="written-answers-title">Written Answers (To Be Graded Manually)</div>
                     ${QAs}
                 </div>
             `;
