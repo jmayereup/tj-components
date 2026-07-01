@@ -907,6 +907,12 @@ class TjQuizElement extends HTMLElement {
         this.updateCheckScoreButtonState();
     }
 
+    autoExpandTextarea(textarea) {
+        if (!textarea) return;
+        textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+
     checkAllClozeAnswered() {
         const totalBlanks = this.clozeSections.reduce((total, section) =>
             total + section.words.length, 0);
@@ -1055,6 +1061,9 @@ class TjQuizElement extends HTMLElement {
                 this.handleClozeAnswer(e);
                 this.handleVocabAnswer(e);
                 this.handleShortAnswer(e);
+                if (e.target.classList.contains('short-answer-input') && e.target.tagName.toLowerCase() === 'textarea') {
+                    this.autoExpandTextarea(e.target);
+                }
             });
             quizForm.addEventListener('submit', (e) => this.handleSubmit(e));
         }
@@ -1305,7 +1314,7 @@ class TjQuizElement extends HTMLElement {
         if (isShortAnswer) {
             optionsHtml = `
                 <div class="short-answer-container">
-                    <input type="text" name="${questionId}" class="form-input short-answer-input" placeholder="Type your answer here" required>
+                    <textarea name="${questionId}" class="form-input short-answer-input" rows="3" placeholder="Type your answer here" required></textarea>
                 </div>
             `;
         } else {
@@ -1555,10 +1564,13 @@ class TjQuizElement extends HTMLElement {
                         radio.dataset.answered = 'true';
                     }
                 } else {
-                    const input = this.shadowRoot.querySelector(`input[name="${qName}"]`);
+                    const input = this.shadowRoot.querySelector(`.short-answer-input[name="${qName}"]`);
                     if (input) {
                         input.value = answer;
                         input.dataset.answered = 'true';
+                        if (input.tagName.toLowerCase() === 'textarea') {
+                            this.autoExpandTextarea(input);
+                        }
                     }
                 }
             }
@@ -1674,7 +1686,7 @@ class TjQuizElement extends HTMLElement {
             const isShortAnswer = !questionData.o || questionData.o.length === 0;
 
             if (isShortAnswer) {
-                const textInput = this.shadowRoot.querySelector(`input[name="${qName}"]`);
+                const textInput = this.shadowRoot.querySelector(`.short-answer-input[name="${qName}"]`);
                 if (textInput) {
                     textInput.disabled = true;
                     textInput.classList.add('submitted');
@@ -2213,6 +2225,9 @@ class TjQuizElement extends HTMLElement {
             input.disabled = false;
             input.value = '';
             try { delete input.dataset.answered; } catch (e) { }
+            if (input.tagName.toLowerCase() === 'textarea') {
+                this.autoExpandTextarea(input);
+            }
         });
 
         const allLabels = Array.from(this.shadowRoot.querySelectorAll('.option-label'));
