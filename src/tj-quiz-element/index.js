@@ -5,7 +5,19 @@ import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../
 
 class TjQuizElement extends HTMLElement {
     static get observedAttributes() {
-        return ['submission-url'];
+        return ['submission-url', 'test-mode'];
+    }
+
+    get testMode() {
+        return this.hasAttribute('test-mode');
+    }
+
+    set testMode(value) {
+        if (value) {
+            this.setAttribute('test-mode', '');
+        } else {
+            this.removeAttribute('test-mode');
+        }
     }
 
     constructor() {
@@ -989,20 +1001,25 @@ class TjQuizElement extends HTMLElement {
 
                 input.disabled = true;
 
-                let feedbackIcon = row.querySelector('.feedback-icon');
-                if (!feedbackIcon) {
-                    feedbackIcon = document.createElement('span');
-                    feedbackIcon.className = 'feedback-icon';
-                    row.appendChild(feedbackIcon);
+                if (!this.testMode) {
+                    let feedbackIcon = row.querySelector('.feedback-icon');
+                    if (!feedbackIcon) {
+                        feedbackIcon = document.createElement('span');
+                        feedbackIcon.className = 'feedback-icon';
+                        row.appendChild(feedbackIcon);
+                    }
+
+                    if (userChoice === correctLetter) {
+                        row.classList.add('correct');
+                        feedbackIcon.textContent = ' ✅';
+                    } else {
+                        row.classList.add('incorrect');
+                        feedbackIcon.textContent = ' ❌';
+                    }
                 }
 
                 if (userChoice === correctLetter) {
                     this.vocabScore++;
-                    row.classList.add('correct');
-                    feedbackIcon.textContent = ' ✅';
-                } else {
-                    row.classList.add('incorrect');
-                    feedbackIcon.textContent = ' ❌';
                 }
             });
         });
@@ -1025,9 +1042,14 @@ class TjQuizElement extends HTMLElement {
 
             if (isCorrect) {
                 this.clozeScore++;
-                input.classList.add('correct');
-            } else {
-                input.classList.add('incorrect');
+            }
+
+            if (!this.testMode) {
+                if (isCorrect) {
+                    input.classList.add('correct');
+                } else {
+                    input.classList.add('incorrect');
+                }
             }
 
             input.disabled = true;
@@ -1530,6 +1552,32 @@ class TjQuizElement extends HTMLElement {
         }
     }
 
+    saveCurrentStateToLocalStorage() {
+        const totalVocabPossible = this.getTotalVocabWords();
+        const clozeTotal = this.clozeSections.reduce((total, section) => total + section.words.length, 0);
+        const questionTotal = this.currentQuestions.filter(q => q.o && q.o.length > 0).length;
+        const totalEarned = this.vocabScore + this.clozeScore + this.score;
+        const teacherCodeEl = this.getTeacherCodeInput();
+
+        this.saveToLocalStorage({
+            nickname: this.shadowRoot.getElementById('nickname') ? this.shadowRoot.getElementById('nickname').value : '',
+            homeroom: this.shadowRoot.getElementById('homeroom') ? this.shadowRoot.getElementById('homeroom').value : '',
+            studentId: this.shadowRoot.getElementById('studentId') ? this.shadowRoot.getElementById('studentId').value : '',
+            teacherCode: teacherCodeEl ? teacherCodeEl.value : '',
+            vocabScore: this.vocabScore,
+            clozeScore: this.clozeScore,
+            score: this.score,
+            totalPossible: totalVocabPossible + clozeTotal + questionTotal,
+            totalEarned: totalEarned,
+            scoreSentToServer: this.scoreSentToServer,
+            userQuestionAnswers: this.userQuestionAnswers,
+            clozeAnswers: this.clozeAnswers,
+            vocabUserChoices: this.vocabUserChoices,
+            vocabSubmitted: this.vocabSubmitted,
+            clozeSubmitted: this.clozeSubmitted
+        });
+    }
+
     restoreQuizState(data) {
         const nickname = this.shadowRoot.getElementById('nickname');
         const homeroom = this.shadowRoot.getElementById('homeroom');
@@ -1603,7 +1651,7 @@ class TjQuizElement extends HTMLElement {
         this.vocabSubmitted = data.vocabSubmitted || false;
         this.clozeSubmitted = data.clozeSubmitted || false;
 
-        this.showFinalScore();
+        this.showFinalScore(false);
     }
 
     showStudentInfoAlert(message = '', type = '') {
@@ -1697,20 +1745,23 @@ class TjQuizElement extends HTMLElement {
                     const label = radio.closest('.option-label');
                     // disable inputs now to prevent changes after checking
                     radio.disabled = true;
-                    let feedbackIcon = label.querySelector('.feedback-icon');
-                    if (!feedbackIcon) {
-                        feedbackIcon = document.createElement('span');
-                        feedbackIcon.className = 'feedback-icon';
-                        label.appendChild(feedbackIcon);
-                    }
 
-                    if (userAnswer === radio.value) {
-                        if (userAnswer === questionData.a) {
-                            label.classList.add('correct');
-                            feedbackIcon.textContent = '✅';
-                        } else {
-                            label.classList.add('incorrect');
-                            feedbackIcon.textContent = '❌';
+                    if (!this.testMode) {
+                        let feedbackIcon = label.querySelector('.feedback-icon');
+                        if (!feedbackIcon) {
+                            feedbackIcon = document.createElement('span');
+                            feedbackIcon.className = 'feedback-icon';
+                            label.appendChild(feedbackIcon);
+                        }
+
+                        if (userAnswer === radio.value) {
+                            if (userAnswer === questionData.a) {
+                                label.classList.add('correct');
+                                feedbackIcon.textContent = '✅';
+                            } else {
+                                label.classList.add('incorrect');
+                                feedbackIcon.textContent = '❌';
+                            }
                         }
                     }
                 });
@@ -1763,35 +1814,12 @@ class TjQuizElement extends HTMLElement {
         }
 
         // Save progress to local storage before showing final score
-        const totalVocabEarned = this.vocabScore;
-        const totalVocabPossible = this.getTotalVocabWords();
-        const clozeTotal = this.clozeSections.reduce((total, section) => total + section.words.length, 0);
-        const questionTotal = this.currentQuestions.filter(q => q.o && q.o.length > 0).length;
-        const totalEarned = this.vocabScore + this.clozeScore + this.score;
-        const teacherCodeEl = this.getTeacherCodeInput();
-
-        this.saveToLocalStorage({
-            nickname: this.shadowRoot.getElementById('nickname').value,
-            homeroom: this.shadowRoot.getElementById('homeroom').value,
-            studentId: this.shadowRoot.getElementById('studentId').value,
-            teacherCode: teacherCodeEl ? teacherCodeEl.value : '',
-            vocabScore: this.vocabScore,
-            clozeScore: this.clozeScore,
-            score: this.score,
-            totalPossible: totalVocabPossible + clozeTotal + questionTotal,
-            totalEarned: totalEarned,
-            scoreSentToServer: this.scoreSentToServer,
-            userQuestionAnswers: this.userQuestionAnswers,
-            clozeAnswers: this.clozeAnswers,
-            vocabUserChoices: this.vocabUserChoices,
-            vocabSubmitted: this.vocabSubmitted,
-            clozeSubmitted: this.clozeSubmitted
-        });
+        this.saveCurrentStateToLocalStorage();
 
         this.showFinalScore();
     }
 
-    showFinalScore() {
+    showFinalScore(autoSubmit = true) {
         // Reveal question feedback before calculating final question score
         if (this.totalQuestions > 0) {
             this.showQuestionFeedback();
@@ -1855,7 +1883,7 @@ class TjQuizElement extends HTMLElement {
         let writtenNoteHTML = '';
         let writtenAnswersHTML = '';
 
-        if (hasShortAnswer) {
+        if (hasShortAnswer && !this.testMode) {
             writtenNoteHTML = `
                 <div class="score-note-written">
                     *Written answers are not included in the score.
@@ -1884,36 +1912,47 @@ class TjQuizElement extends HTMLElement {
         if (totalPossible > 0 || hasShortAnswer) {
             let scoreSummaryHTML = '';
             if (totalPossible > 0) {
-                const percentage = Math.round((totalEarned / totalPossible) * 100);
-                scoreSummaryHTML = `
-                    <div class="score-summary">
-                        <div class="score-main-compact">${totalEarned} / ${totalPossible}</div>
-                        <div class="score-percentage">${percentage}% Accuracy</div>
-                    </div>
-                `;
+                if (this.testMode) {
+                    scoreSummaryHTML = `
+                        <div class="score-summary">
+                            <div class="score-main-compact">Test Submitted</div>
+                            <div class="score-percentage">Your responses have been recorded and sent to your teacher.</div>
+                        </div>
+                    `;
+                } else {
+                    const percentage = Math.round((totalEarned / totalPossible) * 100);
+                    scoreSummaryHTML = `
+                        <div class="score-summary">
+                            <div class="score-main-compact">${totalEarned} / ${totalPossible}</div>
+                            <div class="score-percentage">${percentage}% Accuracy</div>
+                        </div>
+                    `;
+                }
             }
 
             let breakdownHTML = '';
-            if (vocabTotal > 0) {
-                breakdownHTML += `
-                    <div class="score-section">
-                        <span class="score-label">Vocabulary</span>
-                        <span class="score-value">${this.vocabScore}/${vocabTotal}</span>
-                    </div>`;
-            }
-            if (clozeTotal > 0) {
-                breakdownHTML += `
-                    <div class="score-section">
-                        <span class="score-label">Fill-in-the-blank</span>
-                        <span class="score-value">${this.clozeScore}/${clozeTotal}</span>
-                    </div>`;
-            }
-            if (questionTotal > 0) {
-                breakdownHTML += `
-                    <div class="score-section">
-                        <span class="score-label">Questions</span>
-                        <span class="score-value">${this.score}/${questionTotal}</span>
-                    </div>`;
+            if (!this.testMode) {
+                if (vocabTotal > 0) {
+                    breakdownHTML += `
+                        <div class="score-section">
+                            <span class="score-label">Vocabulary</span>
+                            <span class="score-value">${this.vocabScore}/${vocabTotal}</span>
+                        </div>`;
+                }
+                if (clozeTotal > 0) {
+                    breakdownHTML += `
+                        <div class="score-section">
+                            <span class="score-label">Fill-in-the-blank</span>
+                            <span class="score-value">${this.clozeScore}/${clozeTotal}</span>
+                        </div>`;
+                }
+                if (questionTotal > 0) {
+                    breakdownHTML += `
+                        <div class="score-section">
+                            <span class="score-label">Questions</span>
+                            <span class="score-value">${this.score}/${questionTotal}</span>
+                        </div>`;
+                }
             }
 
             let scoreBreakdownContainerHTML = '';
@@ -1968,6 +2007,18 @@ class TjQuizElement extends HTMLElement {
         }
         if (tryAgainButton) {
             tryAgainButton.disabled = false;
+            if (this.testMode) {
+                tryAgainButton.classList.add('hidden');
+            } else {
+                tryAgainButton.classList.remove('hidden');
+            }
+        }
+
+        if (this.testMode) {
+            const dynamicContent = this.shadowRoot.getElementById('dynamicContent');
+            if (dynamicContent) {
+                dynamicContent.classList.add('hidden');
+            }
         }
 
         if (resultArea) {
@@ -1978,10 +2029,15 @@ class TjQuizElement extends HTMLElement {
             }
         }
         this.stopAllAudio();
-        this.sendScore(true);
+        if (autoSubmit) {
+            this.sendScore(true);
+        }
     }
 
     async sendScore(autoTriggered = false, isRetry = false) {
+        if (this.scoreSentToServer && !isRetry) {
+            return;
+        }
         if (this.autoSubmissionInProgress) {
             return;
         }
@@ -2059,6 +2115,7 @@ class TjQuizElement extends HTMLElement {
                 tryAgainButton.disabled = false;
             }
             this.scoreSubmitted = true;
+            this.saveCurrentStateToLocalStorage();
             this.autoSubmissionInProgress = false;
             return;
         }
@@ -2141,6 +2198,7 @@ class TjQuizElement extends HTMLElement {
                 tryAgainButton.disabled = false;
             }
             this.scoreSubmitted = true;
+            this.saveCurrentStateToLocalStorage();
         } catch (error) {
             console.error('Error:', error);
             if (validationMessage) {
@@ -2158,6 +2216,7 @@ class TjQuizElement extends HTMLElement {
             if (tryAgainButton) {
                 tryAgainButton.disabled = false;
             }
+            this.saveCurrentStateToLocalStorage();
         } finally {
             this.autoSubmissionInProgress = false;
         }
@@ -2175,6 +2234,10 @@ class TjQuizElement extends HTMLElement {
         const studentInfoSection = this.shadowRoot.getElementById('studentInfoSection');
 
         quizForm.reset();
+        const dynamicContent = this.shadowRoot.getElementById('dynamicContent');
+        if (dynamicContent) {
+            dynamicContent.classList.remove('hidden');
+        }
         if (studentInfoSection) {
             studentInfoSection.style.display = '';
             const inputs = this.getStudentInputs();
