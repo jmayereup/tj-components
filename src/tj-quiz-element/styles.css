@@ -17,6 +17,8 @@
     --red-color: #ef4444;
     --red-light-bg: #fee2e2;
     --yellow-color: #eab308;
+    --warning-color: #854d0e;
+    --warning-light-bg: #fef9c3;
     --slate-color: #64748b;
     --slate-hover: #475569;
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -38,6 +40,8 @@
     --subtle-text-light: #87abdd;
     --green-light-bg: #14532d;
     --red-light-bg: #7f1d1d;
+    --warning-color: #facc15;
+    --warning-light-bg: #422006;
 }
 
 .quiz-wrapper * {
@@ -657,6 +661,10 @@ fieldset>legend {
     color: var(--red-color);
 }
 
+#validationMessage.warning {
+    color: var(--warning-color);
+}
+
 .hidden {
     display: none !important;
 }
@@ -1067,6 +1075,21 @@ fieldset>legend {
     font-size: 0.95rem;
     display: inline-flex;
     margin-bottom: 0;
+}
+
+#validationMessage.warning {
+    color: var(--warning-color);
+    background-color: var(--warning-light-bg);
+    border: 1px solid var(--warning-color);
+    padding: 0.9rem 1.8rem;
+    border-radius: 2rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 /* Voice Selection Overlay */
