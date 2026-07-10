@@ -206,9 +206,67 @@ class u extends HTMLElement {
 
         .header {
           display: flex;
+          flex-direction: column;
+          gap: 1em;
+          margin-bottom: 2em;
+        }
+
+        .header-top-row {
+          display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 2em;
+          width: 100%;
+        }
+
+        .question-indicator {
+          font-weight: 700;
+          color: #64748b;
+          font-size: 0.95em;
+          display: flex;
+          align-items: center;
+          gap: 0.4em;
+        }
+
+        .question-indicator span {
+          color: #1e293b;
+        }
+
+        .score-pill {
+          background: rgba(59, 130, 246, 0.1);
+          color: #3b82f6;
+          padding: 0.35em 0.8em;
+          border-radius: 9999px;
+          font-weight: 700;
+          font-size: 0.85em;
+          border: 1px solid rgba(59, 130, 246, 0.2);
+          display: flex;
+          align-items: center;
+          gap: 0.3em;
+          box-shadow: 0 2px 4px rgba(59, 130, 246, 0.05);
+        }
+
+        .score-pill span {
+          color: #1d4ed8;
+        }
+
+        .progress-bar-container {
+          width: 100%;
+          margin-top: 0.2em;
+        }
+
+        .progress-bar-track {
+          height: 8px;
+          background: #e2e8f0;
+          border-radius: 9999px;
+          overflow: hidden;
+          position: relative;
+        }
+
+        .progress-bar-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+          border-radius: 9999px;
+          transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .badge {
@@ -751,17 +809,26 @@ class u extends HTMLElement {
         <div class="version-text">v1.1</div>
       `;
     else if (this.gameState === "playing") {
-      const s = this.currentPool[this.currentIndex];
+      const s = this.currentPool[this.currentIndex], r = (this.currentIndex + 1) / this.currentPool.length * 100;
       t = `
         <div class="header">
-          <div style="font-weight: 600; color: #64748b;">
-            ${this.isRetryPhase ? "Retry Question" : "Question"}: ${this.currentIndex + 1} / ${this.currentPool.length}
+          <div class="header-top-row">
+            <div class="question-indicator">
+              ${this.isRetryPhase ? "Retry Question" : "Question"}: <span>${this.currentIndex + 1} / ${this.currentPool.length}</span>
+            </div>
+            <div class="score-pill">
+              Score: <span>${this.score} / ${this.totalQuestionsInRound}</span>
+            </div>
+            <div class="hearts">
+              ${Array.from({ length: this.maxHearts }).map((i, n) => `
+                <span class="heart ${n < this.maxHearts - this.hearts ? "lost" : ""}">❤️</span>
+              `).join("")}
+            </div>
           </div>
-          <div class="score-display">Score: ${this.score}</div>
-          <div class="hearts">
-            ${Array.from({ length: this.maxHearts }).map((r, i) => `
-              <span class="heart ${i < this.maxHearts - this.hearts ? "lost" : ""}">❤️</span>
-            `).join("")}
+          <div class="progress-bar-container">
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" style="width: ${r}%"></div>
+            </div>
           </div>
         </div>
 
