@@ -68,6 +68,8 @@ class TjQuizElement extends HTMLElement {
         this.scoreSubmitted = false;
         this.scoreSentToServer = false; // Track if actually POSTed successfully
         this.ttsPaused = false; // explicitly track paused state for robustness
+        this.tabAwayCount = 0; // Number of times student left the quiz (test mode only)
+        this._visibilityHandler = null; // Bound handler for cleanup
     }
 
     attributeChangedCallback(name, newValue) {
@@ -95,6 +97,10 @@ class TjQuizElement extends HTMLElement {
     }
 
     connectedCallback() {
+        // Register visibilitychange listener for tab-away tracking (test mode only)
+        this._visibilityHandler = () => this._handleVisibilityChange();
+        document.addEventListener('visibilitychange', this._visibilityHandler);
+
         // Use setTimeout to ensure children (text content) are parsed by the browser
         requestAnimationFrame(() => {
             // 1. Property
@@ -157,6 +163,36 @@ class TjQuizElement extends HTMLElement {
                 this.restoreQuizState(savedData);
             }
         });
+    }
+
+    disconnectedCallback() {
+        if (this._visibilityHandler) {
+            document.removeEventListener('visibilitychange', this._visibilityHandler);
+            this._visibilityHandler = null;
+        }
+    }
+
+    _handleVisibilityChange() {
+        if (!this.testMode) return;
+        if (document.hidden) {
+            this.tabAwayCount++;
+            this.classList.add('tab-away');
+            this._updateTabAwayBanner();
+        } else {
+            this.classList.remove('tab-away');
+        }
+    }
+
+    _updateTabAwayBanner() {
+        const banner = this.shadowRoot.getElementById('tabAwayBanner');
+        if (!banner) return;
+        if (this.tabAwayCount > 0) {
+            const timesLabel = this.tabAwayCount === 1 ? 'time' : 'times';
+            banner.textContent = `⚠️ Warning: You left the quiz ${this.tabAwayCount} ${timesLabel}. Please stay focused on the test.`;
+            banner.classList.remove('hidden');
+        } else {
+            banner.classList.add('hidden');
+        }
     }
 
     loadTemplate() {
@@ -2349,6 +2385,9 @@ class TjQuizElement extends HTMLElement {
         this.scoreSubmitted = false;
         this.scoreSentToServer = false;
         this.autoSubmissionInProgress = false;
+        this.tabAwayCount = 0;
+        this.classList.remove('tab-away');
+        this._updateTabAwayBanner();
         this.clearLocalStorage();
         const retrySection = this.shadowRoot.getElementById('retrySubmissionSection');
         if (retrySection) retrySection.classList.add('hidden');
@@ -2411,13 +2450,18 @@ class TjQuizElement extends HTMLElement {
 
     getWrittenAnswersString() {
         const shortAnswerQuestions = this.currentQuestions.filter(q => q.o && q.o.length === 0);
-        if (shortAnswerQuestions.length === 0) return '';
-
-        return shortAnswerQuestions.map((q, idx) => {
+        const baseString = shortAnswerQuestions.map((q, idx) => {
             const originalIndex = this.currentQuestions.indexOf(q);
             const answer = this.userQuestionAnswers[originalIndex] || '';
             return `Q: ${q.q}\nA: ${answer}`;
         }).join('\n\n');
+
+        const tabAwayNote = (this.testMode && this.tabAwayCount > 0)
+            ? `[Tab Away Count: ${this.tabAwayCount}]`
+            : '';
+
+        if (!tabAwayNote) return baseString;
+        return baseString ? `${baseString}\n\n${tabAwayNote}` : tabAwayNote;
     }
 
     toggleTheme() {
