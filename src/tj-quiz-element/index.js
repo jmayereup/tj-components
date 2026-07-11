@@ -73,6 +73,14 @@ class TjQuizElement extends HTMLElement {
     attributeChangedCallback(name, newValue) {
         if (name === 'submission-url') {
             this.submissionUrl = newValue;
+        } else if (name === 'test-mode') {
+            if (this.isConnected) {
+                if (newValue !== null) {
+                    this.lockQuizContent();
+                } else {
+                    this.unlockQuizContent();
+                }
+            }
         }
     }
 
@@ -137,7 +145,11 @@ class TjQuizElement extends HTMLElement {
             this.parseContent();
             this.setupEventListeners();
             this.generateQuiz();
-            this.unlockQuizContent();
+            if (this.testMode) {
+                this.lockQuizContent();
+            } else {
+                this.unlockQuizContent();
+            }
 
             // Restore state if available
             const savedData = this.loadFromLocalStorage();
@@ -1109,6 +1121,38 @@ class TjQuizElement extends HTMLElement {
             startQuizButton.addEventListener('click', () => this.handleStartQuiz());
         }
 
+        const unlockTestButton = this.shadowRoot.getElementById('unlockTestButton');
+        const lockTeacherCode = this.shadowRoot.getElementById('lockTeacherCode');
+        const lockErrorAlert = this.shadowRoot.getElementById('lockErrorAlert');
+
+        if (unlockTestButton) {
+            unlockTestButton.addEventListener('click', () => {
+                const codeValue = lockTeacherCode ? lockTeacherCode.value.trim() : '';
+                if (codeValue === this.code) {
+                    if (lockErrorAlert) lockErrorAlert.classList.add('hidden');
+                    const teacherCodeInput = this.getTeacherCodeInput();
+                    if (teacherCodeInput) {
+                        teacherCodeInput.value = codeValue;
+                    }
+                    this.unlockQuizContent();
+                } else {
+                    if (lockErrorAlert) {
+                        lockErrorAlert.textContent = '❌ Invalid Teacher Code / รหัสผ่านไม่ถูกต้อง';
+                        lockErrorAlert.classList.remove('hidden');
+                    }
+                }
+            });
+        }
+
+        if (lockTeacherCode) {
+            lockTeacherCode.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (unlockTestButton) unlockTestButton.click();
+                }
+            });
+        }
+
         this.getStudentInputs().forEach(input => {
             input.addEventListener('input', () => {
                 if (input.value.trim() !== '') {
@@ -1699,16 +1743,38 @@ class TjQuizElement extends HTMLElement {
     }
 
     lockQuizContent() {
-        // Content is always unlocked now, but we can use this to hide/show for resets if needed
         const quizContent = this.shadowRoot.getElementById('quizContent');
-        if (quizContent) quizContent.classList.remove('hidden');
-        this.quizUnlocked = true;
+        if (quizContent) quizContent.classList.add('hidden');
+
+        const testModeLockSection = this.shadowRoot.getElementById('testModeLockSection');
+        if (testModeLockSection) {
+            testModeLockSection.classList.remove('hidden');
+        }
+        this.quizUnlocked = false;
+        this.updateTeacherCodeInputVisibility();
     }
 
     unlockQuizContent() {
         const quizContent = this.shadowRoot.getElementById('quizContent');
         if (quizContent) quizContent.classList.remove('hidden');
+
+        const testModeLockSection = this.shadowRoot.getElementById('testModeLockSection');
+        if (testModeLockSection) {
+            testModeLockSection.classList.add('hidden');
+        }
         this.quizUnlocked = true;
+        this.updateTeacherCodeInputVisibility();
+    }
+
+    updateTeacherCodeInputVisibility() {
+        const group = this.shadowRoot.getElementById('teacherCodeGroup');
+        if (group) {
+            if (this.testMode) {
+                group.classList.add('hidden');
+            } else {
+                group.classList.remove('hidden');
+            }
+        }
     }
 
     handleStartQuiz() {
@@ -2332,7 +2398,15 @@ class TjQuizElement extends HTMLElement {
         if (checkBtn) {
             checkBtn.disabled = true;
         }
-        this.lockQuizContent();
+        if (this.testMode) {
+            const lockTeacherCode = this.shadowRoot.getElementById('lockTeacherCode');
+            if (lockTeacherCode) lockTeacherCode.value = '';
+            const lockErrorAlert = this.shadowRoot.getElementById('lockErrorAlert');
+            if (lockErrorAlert) lockErrorAlert.classList.add('hidden');
+            this.lockQuizContent();
+        } else {
+            this.unlockQuizContent();
+        }
     }
 
     getWrittenAnswersString() {
