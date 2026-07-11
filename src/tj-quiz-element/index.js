@@ -5,7 +5,7 @@ import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../
 
 class TjQuizElement extends HTMLElement {
     static get observedAttributes() {
-        return ['submission-url', 'test-mode'];
+        return ['submission-url', 'test-mode', 'code'];
     }
 
     get testMode() {
@@ -17,6 +17,18 @@ class TjQuizElement extends HTMLElement {
             this.setAttribute('test-mode', '');
         } else {
             this.removeAttribute('test-mode');
+        }
+    }
+
+    get code() {
+        return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+    }
+
+    set code(value) {
+        if (value !== null && value !== undefined) {
+            this.setAttribute('code', value);
+        } else {
+            this.removeAttribute('code');
         }
     }
 
@@ -2093,9 +2105,9 @@ class TjQuizElement extends HTMLElement {
             writtenAnswers: this.getWrittenAnswersString()
         };
 
-        // IF Teacher Code is NOT 6767 AND it's not a retry, we skip submission and just show local success
+        // IF Teacher Code is NOT valid AND it's not a retry, we skip submission and just show local success
         // If it IS a retry and code is wrong, we show error
-        if (teacherCode !== '6767') {
+        if (teacherCode !== this.code) {
             if (isRetry) {
                 if (validationMessage) {
                     validationMessage.textContent = '❌ Invalid Teacher Code. Please try again.';

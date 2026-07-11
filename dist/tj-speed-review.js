@@ -1,8 +1,14 @@
-import { c as d } from "./chunks/tj-config-JtFGQ6Kt.js";
-class n extends HTMLElement {
+import { c as n } from "./chunks/tj-config-DtZWnqEi.js";
+class a extends HTMLElement {
+  get code() {
+    return this.getAttribute("code") !== null ? this.getAttribute("code") : n.teacherCode;
+  }
+  set code(e) {
+    e != null ? this.setAttribute("code", e) : this.removeAttribute("code");
+  }
   constructor() {
     var e;
-    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = (e = d) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
+    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = (e = n) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
   }
   connectedCallback() {
     this.timeLimit = parseInt(this.getAttribute("time-limit")) || 15, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 10, this.bestScore = 0, this.loadLibrary("marked", "https://cdn.jsdelivr.net/npm/marked/marked.min.js"), this.loadLibrary("Tone", "https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js", () => {
@@ -53,12 +59,12 @@ class n extends HTMLElement {
   }
   startGame() {
     if (!this.identityLocked) {
-      const i = this.shadowRoot.querySelector("#nickname"), t = this.shadowRoot.querySelector("#student-number"), s = this.shadowRoot.querySelector("#homeroom"), r = i ? i.value.trim() : "", o = t ? t.value.trim() : "", a = s ? s.value.trim() : "";
+      const i = this.shadowRoot.querySelector("#nickname"), t = this.shadowRoot.querySelector("#student-number"), s = this.shadowRoot.querySelector("#homeroom"), r = i ? i.value.trim() : "", o = t ? t.value.trim() : "", d = s ? s.value.trim() : "";
       if (!r || !o) {
         alert("Please enter both nickname and student number to begin.");
         return;
       }
-      this.nickname = r, this.studentNumber = o, this.homeroom = a, this.identityLocked = !0;
+      this.nickname = r, this.studentNumber = o, this.homeroom = d, this.identityLocked = !0;
     }
     this.score = 0, this.currentIndex = 0;
     const e = [...this.questions].sort(() => 0.5 - Math.random());
@@ -114,7 +120,7 @@ class n extends HTMLElement {
   }
   async _submitScore() {
     const e = this.shadowRoot.getElementById("report-teacher-code");
-    if ((e ? e.value.trim() : "") !== "6767") {
+    if ((e ? e.value.trim() : "") !== this.code) {
       alert("Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.");
       return;
     }
@@ -752,6 +758,6 @@ class n extends HTMLElement {
     `;
   }
 }
-customElements.get("tj-speed-review") || customElements.define("tj-speed-review", n);
-customElements.get("speed-review") || customElements.define("speed-review", class extends n {
+customElements.get("tj-speed-review") || customElements.define("tj-speed-review", a);
+customElements.get("speed-review") || customElements.define("speed-review", class extends a {
 });

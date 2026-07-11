@@ -1,4 +1,4 @@
-import { c as A } from "./chunks/tj-config-JtFGQ6Kt.js";
+import { c as I } from "./chunks/tj-config-DtZWnqEi.js";
 import { i as T, a as $, s as q, g as M, b as P } from "./chunks/audio-utils-BwH2sOvH.js";
 const _ = ":host{--tj-primary-color: #2563eb;--tj-primary-hover: #1d4ed8;--tj-primary-light: #eff6ff;--tj-primary-border: #bfdbfe;--tj-success-color: #22c55e;--tj-success-hover: #16a34a;--tj-success-light: #f0fdf4;--tj-success-border: #bbf7d0;--tj-error-color: #ef4444;--tj-error-hover: #dc2626;--tj-error-light: #fef2f2;--tj-error-border: #fecaca;--tj-text-main: #1e293b;--tj-text-muted: #64748b;--tj-text-light: #94a3b8;--tj-bg-main: ghostwhite;--tj-bg-card: rgba(255, 255, 255, .95);--tj-bg-alt: #f8fafc;--tj-border-light: #f1f5f9;--tj-border-main: #e2e8f0;--tj-border-dark: #cbd5e1;--tj-font-family: inherit;--tj-font-size-base: 16px;--tj-border-radius-sm: .5em;--tj-border-radius-md: .8em;--tj-border-radius-lg: 1.2em;--tj-border-radius-full: 50%;--tj-shadow-sm: 0 1px 3px rgba(0,0,0,.1);--tj-shadow-md: 0 4px 12px rgba(0,0,0,.05);--tj-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, .1);--tj-shadow-glass: 0 4px 20px rgba(0,0,0,.05);--tj-backdrop-blur: blur(10px);--tj-transition-fast: all .2s cubic-bezier(.4, 0, .2, 1);--tj-transition-normal: all .3s ease;display:block;font-family:var(--tj-font-family);color:var(--tj-text-main);background-color:var(--tj-bg-main);position:relative;box-sizing:border-box}@media (prefers-color-scheme: dark){:host{--tj-primary-light: #1e3a8a;--tj-primary-border: #1e40af;--tj-success-light: #14532d;--tj-success-border: #166534;--tj-error-light: #7f1d1d;--tj-error-border: #991b1b;--tj-text-main: #f8fafc;--tj-text-muted: #94a3b8;--tj-text-light: #cbd5e1;--tj-bg-main: #0f172a;--tj-bg-card: rgba(30, 41, 59, .95);--tj-bg-alt: #1e293b;--tj-border-light: #334155;--tj-border-main: #475569;--tj-border-dark: #64748b}}:host *{box-sizing:border-box}.tj-card{background:var(--tj-bg-card);-webkit-backdrop-filter:var(--tj-backdrop-blur);backdrop-filter:var(--tj-backdrop-blur);border-radius:var(--tj-border-radius-lg);padding:1.5em;box-shadow:var(--tj-shadow-md);border:1px solid var(--tj-border-main);transition:var(--tj-transition-normal)}.tj-btn{font-family:inherit;font-size:1em;padding:.6em 1.2em;font-weight:600;cursor:pointer;border-radius:var(--tj-border-radius-md);transition:var(--tj-transition-fast);outline:none;display:inline-flex;align-items:center;justify-content:center;gap:.5em}.tj-btn-primary{background:var(--tj-primary-color);color:#fff;border:1px solid var(--tj-primary-hover);box-shadow:var(--tj-shadow-sm)}.tj-btn-primary:hover:not(:disabled){background:var(--tj-primary-hover);transform:translateY(-1px);box-shadow:var(--tj-shadow-md)}.tj-btn-secondary{background:var(--tj-bg-alt);color:#475569;border:1px solid var(--tj-border-main)}.tj-btn-secondary:hover:not(:disabled){background:var(--tj-border-light);border-color:var(--tj-border-dark);color:var(--tj-primary-color)}.tj-btn-success{background:var(--tj-success-color);color:#fff;border:1px solid var(--tj-success-hover)}.tj-btn-error{background:var(--tj-error-color);color:#fff;border:1px solid var(--tj-error-hover)}.tj-icon-btn{background:var(--tj-bg-alt);border:1px solid var(--tj-border-light);padding:.5em;border-radius:var(--tj-border-radius-full);width:3.5em;height:3.5em;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--tj-transition-fast);color:var(--tj-text-muted);flex-shrink:0}.tj-icon-btn:hover{background:var(--tj-primary-light);color:var(--tj-primary-color);border-color:var(--tj-primary-border);transform:scale(1.1)}.tj-input{width:100%;padding:1em;border:1px solid var(--tj-border-main);border-radius:var(--tj-border-radius-sm);font-size:1em;outline:none;transition:var(--tj-transition-fast)}.tj-input:focus{border-color:var(--tj-primary-color);box-shadow:0 0 0 3px var(--tj-primary-light)}.tj-sticky-bar{position:sticky;top:0;background:#ffffffe6;-webkit-backdrop-filter:var(--tj-backdrop-blur);backdrop-filter:var(--tj-backdrop-blur);padding:.8em 1.2em;border-radius:var(--tj-border-radius-md);box-shadow:var(--tj-shadow-glass);z-index:100;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(226,232,240,.8);max-height:8rem;overflow-y:auto}.tj-h2{font-size:1.5em;color:var(--tj-text-main);margin-top:0;margin-bottom:1em}.tj-h3{font-size:1.2em;color:var(--tj-primary-color);margin-top:0;margin-bottom:.5em}.tj-text-muted{color:var(--tj-text-muted)}.tj-flex-center{display:flex;align-items:center;justify-content:center}.tj-flex-between{display:flex;align-items:center;justify-content:space-between}.tj-divider{border:none;border-top:2px dashed var(--tj-border-main);margin:2em 0;position:relative}.tj-divider:after{content:attr(data-label);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:0 1em;color:var(--tj-text-light);font-weight:600;font-size:.9em;text-transform:uppercase;letter-spacing:.1em}.tj-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172acc;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000;animation:tj-fadeIn .3s ease}.tj-overlay.active{display:flex}@keyframes tj-fadeIn{0%{opacity:0}to{opacity:1}}@keyframes tj-shake{0%,to{transform:translate(0)}25%{transform:translate(-5px)}75%{transform:translate(5px)}}@keyframes tj-bounce{0%,to{transform:scale(1)}50%{transform:scale(1.1)}}.tj-anim-shake{animation:tj-shake .4s ease}.tj-anim-bounce{animation:tj-bounce .4s ease}", O = '@import"https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap";:host{display:block;max-width:80em;margin:1em auto;font-family:Outfit,sans-serif}.pronunciation-wrapper{padding-bottom:4rem}.activities-wrapper{display:flex;flex-direction:column;gap:2em;padding:1em 1em 5em}.header-main{flex:1}.progress-text{font-weight:700;color:var(--tj-primary-color);font-size:1.1em;white-space:nowrap}.play-audio-btn.playing{animation:pulse 1s infinite alternate}@keyframes pulse{0%{transform:scale(1);box-shadow:0 0 #2563eb66}to{transform:scale(1.05);box-shadow:0 0 0 10px #2563eb00}}.lr-container{display:flex;flex-direction:column;align-items:center;gap:1.5rem}.lr-target-word{font-size:2em;font-family:Inter,sans-serif;font-weight:500;text-align:center;margin-bottom:.5rem;color:var(--tj-text-main)}.lr-phonetic{font-size:1.25em;color:var(--tj-text-muted);font-family:monospace;margin-top:.2rem}.lr-translation{color:var(--tj-text-muted);font-style:italic;margin-top:.8rem;font-size:1.5em}.translation-toggle{font-size:.8em;padding:.4em 1em;border-radius:var(--tj-border-radius-full)}.lr-controls{display:flex;gap:2rem;align-items:center;justify-content:center;width:100%;margin-top:1rem}.lr-control-group{display:flex;flex-direction:column;align-items:center;gap:.5rem}.lr-label{font-size:.75em;font-weight:700;color:var(--tj-text-muted);text-transform:uppercase;letter-spacing:.05em}.record-btn{color:var(--tj-error-color)}.record-btn:hover{background:var(--tj-error-light);color:var(--tj-error-hover);border-color:var(--tj-error-border)}.record-btn.recording{background:var(--tj-error-color);color:#fff;border-color:var(--tj-error-hover);animation:pulse-record 1.5s infinite}@keyframes pulse-record{0%{box-shadow:0 0 #ef444466;transform:scale(1)}70%{box-shadow:0 0 0 15px #ef444400;transform:scale(1.05)}to{box-shadow:0 0 #ef444400;transform:scale(1)}}.playback-btn.ready{color:var(--tj-success-color)}.playback-btn.ready:hover{background:var(--tj-success-light);color:var(--tj-success-hover);border-color:var(--tj-success-border)}.playback-btn.playing{background:var(--tj-success-color);color:#fff;animation:pulse-success 1s infinite alternate}@keyframes pulse-success{0%{transform:scale(1);box-shadow:0 0 #22c55e66}to{transform:scale(1.05);box-shadow:0 0 0 10px #22c55e00}}.mp-container{display:flex;flex-direction:column;align-items:center;gap:1.5rem}.mp-options{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;width:100%}.mp-option-btn{padding:.8rem 1.5rem;min-width:120px}.mp-option-btn.highlight{border-color:var(--tj-primary-color);background:var(--tj-primary-light);transform:translateY(-2px)}.mp-focus{font-size:1.2em;color:var(--tj-text-muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700}.mp-instr{font-size:1.2em;color:var(--tj-text-muted);font-style:italic}.feedback-msg{min-height:1.2em;font-weight:700;font-size:1.1em}.feedback-msg.correct{color:var(--tj-success-color)}.feedback-msg.wrong{color:var(--tj-error-color)}.scramble-container{display:flex;flex-direction:column;align-items:center;gap:1.5rem;width:100%}.scramble-dropzone{min-height:80px;width:100%;border:2px dashed var(--tj-border-main);border-radius:var(--tj-border-radius-lg);padding:1rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center;background:var(--tj-bg-alt);transition:var(--tj-transition-fast)}.scramble-dropzone.success{border-color:var(--tj-success-color);background:var(--tj-success-light)}.scramble-bank{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;width:100%}.scramble-word{background:var(--tj-bg-card);border:1px solid var(--tj-border-main);padding:.6rem 1.2rem;border-radius:var(--tj-border-radius-md);font-weight:600;cursor:pointer;-webkit-user-select:none;user-select:none;box-shadow:var(--tj-shadow-sm);transition:var(--tj-transition-fast)}.scramble-word:hover{border-color:var(--tj-primary-color);transform:translateY(-2px);box-shadow:var(--tj-shadow-md);color:var(--tj-primary-color)}.scramble-word.in-dropzone{background:var(--tj-primary-light);border-color:var(--tj-primary-border);color:var(--tj-primary-color)}.scramble-controls{display:flex;gap:1rem}.voice-card{max-height:80vh;display:flex;flex-direction:column}.voice-list{padding:.5rem;overflow-y:auto;flex:1}.voice-option-btn{width:100%;text-align:left;padding:.8rem 1.2rem;margin-bottom:.5rem;border:1px solid var(--tj-border-main);border-radius:var(--tj-border-radius-md);background:var(--tj-bg-card);color:var(--tj-text-main);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:var(--tj-transition-fast)}.voice-option-btn:hover{background-color:var(--tj-bg-alt);border-color:var(--tj-primary-color);color:var(--tj-primary-color)}.voice-option-btn.active{background:var(--tj-primary-light);border-color:var(--tj-primary-color);color:var(--tj-primary-color);font-weight:700}.badge{background:var(--tj-primary-color);color:#fff;font-size:.7em;padding:.2rem .6rem;border-radius:var(--tj-border-radius-full);font-weight:800;text-transform:uppercase}.close-voice-btn{padding:0;width:2em;height:2em;display:flex;align-items:center;justify-content:center}.tj-card.completed{border-color:var(--tj-success-color);background:var(--tj-success-light);box-shadow:var(--tj-shadow-md),0 0 0 1px var(--tj-success-border)}.report-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:var(--tj-primary-color);color:#fff;border:none;border-radius:var(--tj-border-radius-md);font-size:1.1em;font-weight:700;cursor:pointer;transition:background .2s;margin-top:2em;align-self:center}.report-btn:hover{filter:brightness(.9)}.report-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172acc;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1000}.report-modal{background:var(--tj-bg-card);color:var(--tj-text-main);border:1px solid var(--tj-border-main);width:92%;max-width:420px;padding:28px 24px;border-radius:16px;box-shadow:0 25px 50px -12px #0000004d;text-align:center;max-height:90vh;overflow-y:auto}.report-modal h2{margin:8px 0 4px;color:var(--tj-text-main)}.report-modal p{color:var(--tj-text-muted);margin:0 0 16px;font-size:.95em}.report-icon{font-size:2.5em;margin-bottom:4px}.report-modal input{display:block;width:100%;box-sizing:border-box;padding:12px 14px;margin-bottom:12px;background:var(--tj-bg-main);color:var(--tj-text-main);border:1px solid var(--tj-border-main);border-radius:8px;font-size:1em;outline:none;transition:border-color .2s}.report-modal input:focus{border-color:var(--tj-primary-color)}.generate-btn{display:block;width:100%;padding:14px;background:var(--tj-primary-color);color:#fff;border:none;border-radius:8px;font-size:1.05em;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s}.generate-btn:hover{filter:brightness(.9)}.generate-btn:disabled{opacity:.7;cursor:not-allowed}.cancel-btn{display:block;width:100%;padding:12px;background:transparent;color:var(--tj-text-muted);border:none;font-size:.95em;font-weight:600;cursor:pointer;margin-top:8px}.cancel-btn:hover{color:var(--tj-text-main)}.report-area{text-align:left}.rc-header{text-align:center;margin-bottom:24px}.rc-icon{font-size:2.5em;margin-bottom:8px}.rc-title{font-size:1.4em;font-weight:700;color:var(--tj-text-main);margin-bottom:4px}.rc-subtitle{color:var(--tj-text-muted);font-weight:600;font-size:.9em;text-transform:uppercase;letter-spacing:.05em}.rc-activity{display:inline-block;background:var(--tj-bg-alt);padding:4px 12px;border-radius:20px;font-size:.85em;font-weight:600;color:var(--tj-text-main);margin-top:12px}.rc-student{background:var(--tj-bg-card);border:1px solid var(--tj-border-main);border-radius:12px;padding:16px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}.rc-label{color:var(--tj-text-muted);font-size:.9em;font-weight:600}.rc-value{font-weight:700;color:var(--tj-text-main)}.rc-number{color:var(--tj-text-muted);font-weight:500;font-size:.9em}.rc-score-row{display:flex;align-items:center;gap:20px;margin-bottom:16px}.rc-score-circle{width:80px;height:80px;border-radius:50%;background:var(--tj-primary-light);color:var(--tj-primary-color);display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid var(--tj-primary-color);flex-shrink:0}.rc-score-val{font-size:1.5em;font-weight:800;line-height:1}.rc-score-pct{font-size:.85em;font-weight:700;margin-top:2px}.rc-score-label{font-size:1.1em;font-weight:700;color:var(--tj-text-main)}.rc-bar-track{height:8px;background:var(--tj-bg-alt);border-radius:4px;overflow:hidden}.rc-bar-fill{height:100%;background:var(--tj-primary-color);border-radius:4px}.rc-details{background:var(--tj-bg-alt);padding:16px;border-radius:12px;margin-bottom:24px;font-size:.9em}.rc-detail-row{display:flex;justify-content:space-between;margin-bottom:8px}.rc-detail-row:last-child{margin-bottom:0}.rc-detail-row span:first-child{color:var(--tj-text-muted);font-weight:500}.rc-detail-row span:last-child{font-weight:600;color:var(--tj-text-main)}.rc-actions{display:flex;flex-direction:column;gap:8px}.rc-close-btn{display:block;width:100%;padding:14px;background:transparent;color:var(--tj-text-main);border:2px solid var(--tj-border-main);border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s}.rc-close-btn:hover{background:var(--tj-bg-alt)}.tj-speed-control{display:inline-flex;align-items:center;gap:.25em;background:var(--tj-bg-alt);border:1px solid var(--tj-border-main);border-radius:2em;padding:.25em .5em .25em .75em;height:2.5em;transition:var(--tj-transition-fast);color:var(--tj-text-muted);position:relative;cursor:pointer}.tj-speed-control:hover{background:var(--tj-primary-light);color:var(--tj-primary-color);border-color:var(--tj-primary-border)}.tj-speed-icon{flex-shrink:0;opacity:.85}.tj-speed-select{background:transparent;border:none;font-family:inherit;font-size:.9em;font-weight:700;color:inherit;cursor:pointer;outline:none;padding:0 1.2em 0 .2em;appearance:none;-webkit-appearance:none;-moz-appearance:none}.tj-speed-control:after{content:"";position:absolute;right:.8em;top:50%;transform:translateY(-50%);border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid currentColor;pointer-events:none}@media (max-width: 600px){.tj-sticky-bar{flex-direction:column;align-items:flex-start;gap:.6em;padding:.6em .8em}.tj-sticky-bar .tj-flex-center{width:100%;justify-content:space-between;gap:.5em}.tj-speed-control{padding:.25em .4em .25em .6em;height:2.2em;font-size:.85em}.tj-speed-control:after{right:.5em}.tj-speed-select{padding-right:.9em}#voice-btn.tj-icon-btn{width:2.2em;height:2.2em;padding:.3em}}', V = `<div class="pronunciation-wrapper" translate="no">
     <div class="tj-sticky-bar">
@@ -112,113 +112,119 @@ const _ = ":host{--tj-primary-color: #2563eb;--tj-primary-hover: #1d4ed8;--tj-pr
   headphones: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>'
 };
 class H extends HTMLElement {
+  get code() {
+    return this.getAttribute("code") !== null ? this.getAttribute("code") : I.teacherCode;
+  }
+  set code(t) {
+    t != null ? this.setAttribute("code", t) : this.removeAttribute("code");
+  }
   constructor() {
-    var t;
-    super(), this.attachShadow({ mode: "open" }), this.synth = window.speechSynthesis, this.language = "en-US", this.mediaRecorder = null, this.audioChunks = [], this.recordings = /* @__PURE__ */ new Map(), this.lrState = /* @__PURE__ */ new Map(), this.selectedVoiceName = localStorage.getItem("tj-pronunciation-voice"), this.isPlaying = !1, this.submissionUrl = (t = A) == null ? void 0 : t.submissionUrl, this.studentInfo = { nickname: "", number: "", homeroom: "" }, this.isSubmitting = !1;
-    const e = parseFloat(localStorage.getItem("tj-pronunciation-speed"));
-    this.playbackSpeed = isNaN(e) ? 0.7 : e, this.synth && (this.synth.onvoiceschanged = () => this._updateVoiceList());
+    var e;
+    super(), this.attachShadow({ mode: "open" }), this.synth = window.speechSynthesis, this.language = "en-US", this.mediaRecorder = null, this.audioChunks = [], this.recordings = /* @__PURE__ */ new Map(), this.lrState = /* @__PURE__ */ new Map(), this.selectedVoiceName = localStorage.getItem("tj-pronunciation-voice"), this.isPlaying = !1, this.submissionUrl = (e = I) == null ? void 0 : e.submissionUrl, this.studentInfo = { nickname: "", number: "", homeroom: "" }, this.isSubmitting = !1;
+    const t = parseFloat(localStorage.getItem("tj-pronunciation-speed"));
+    this.playbackSpeed = isNaN(t) ? 0.7 : t, this.synth && (this.synth.onvoiceschanged = () => this._updateVoiceList());
   }
   connectedCallback() {
-    const e = this.getAttribute("src");
+    const t = this.getAttribute("src");
     requestAnimationFrame(() => {
-      let t = "";
+      let e = "";
       if (this.config)
         if (typeof this.config == "object") {
           this.render(this.config);
           return;
         } else
-          t = String(this.config);
-      else this.hasAttribute("config") ? t = this.getAttribute("config") : this.querySelector('script[type="application/json"]') ? t = this.querySelector('script[type="application/json"]').textContent.trim() : e || (t = this.textContent.trim());
-      if (t)
+          e = String(this.config);
+      else this.hasAttribute("config") ? e = this.getAttribute("config") : this.querySelector('script[type="application/json"]') ? e = this.querySelector('script[type="application/json"]').textContent.trim() : t || (e = this.textContent.trim());
+      if (e)
         try {
-          const o = JSON.parse(t);
+          const o = JSON.parse(e);
           this.render(o);
         } catch (o) {
           console.error("Error parsing inline JSON data", o), this.shadowRoot.innerHTML = '<p style="color: red;">Error loading pronunciation data: Invalid JSON.</p>';
         }
-      else e && this.loadData(e);
+      else t && this.loadData(t);
     });
   }
-  async loadData(e) {
+  async loadData(t) {
     try {
-      const o = await (await fetch(e)).json();
+      const o = await (await fetch(t)).json();
       this.render(o);
-    } catch (t) {
-      console.error("Error loading pronunciation data:", t), this.shadowRoot.innerHTML = '<p style="color: red;">Error loading pronunciation data.</p>';
+    } catch (e) {
+      console.error("Error loading pronunciation data:", e), this.shadowRoot.innerHTML = '<p style="color: red;">Error loading pronunciation data.</p>';
     }
   }
-  render(e) {
-    e.language && (this.language = e.language);
-    const t = document.createElement("template");
-    t.innerHTML = `<style>${_}</style><style>${O}</style>${V}`, this.shadowRoot.firstChild && (this.shadowRoot.innerHTML = ""), this.shadowRoot.appendChild(t.content.cloneNode(!0)), e.title && (this.shadowRoot.getElementById("pronunciationTitle").textContent = e.title);
+  render(t) {
+    t.language && (this.language = t.language);
+    const e = document.createElement("template");
+    e.innerHTML = `<style>${_}</style><style>${O}</style>${V}`, this.shadowRoot.firstChild && (this.shadowRoot.innerHTML = ""), this.shadowRoot.appendChild(e.content.cloneNode(!0)), t.title && (this.shadowRoot.getElementById("pronunciationTitle").textContent = t.title);
     let o = "";
-    if (e.activities && Array.isArray(e.activities) && (o = e.activities.map((r, a) => this.renderActivity(r, a)).join("")), this.shadowRoot.getElementById("activitiesContainer").innerHTML = o, this.updateProgress(), this.attachEventListeners(), this._updateVoiceList(), !this._shouldShowAudioControls()) {
+    if (t.activities && Array.isArray(t.activities) && (o = t.activities.map((r, a) => this.renderActivity(r, a)).join("")), this.shadowRoot.getElementById("activitiesContainer").innerHTML = o, this.updateProgress(), this.attachEventListeners(), this._updateVoiceList(), !this._shouldShowAudioControls()) {
       const r = this.shadowRoot.getElementById("voice-btn");
       r && (r.style.display = "none");
       const a = this.shadowRoot.querySelector(".tj-speed-control");
       a && (a.style.display = "none"), this.checkBrowserSupport();
     }
   }
-  renderActivity(e, t) {
-    switch (e.type) {
+  renderActivity(t, e) {
+    switch (t.type) {
       case "listen_record":
-        return this.renderListenRecord(e, t);
+        return this.renderListenRecord(t, e);
       case "minimal_pair":
-        return this.renderMinimalPair(e, t);
+        return this.renderMinimalPair(t, e);
       case "stress_match":
         return '<div class="tj-card"><h2 class="tj-h3">Stress Match Activity (Coming Soon)</h2></div>';
       case "scramble":
-        return this.renderScramble(e, t);
+        return this.renderScramble(t, e);
       case "odd_one_out":
         return '<div class="tj-card"><h2 class="tj-h3">Odd One Out Activity (Coming Soon)</h2></div>';
       default:
-        return `<div class="tj-card"><p>Unknown activity type: ${e.type}</p></div>`;
+        return `<div class="tj-card"><p>Unknown activity type: ${t.type}</p></div>`;
     }
   }
   updateProgress() {
-    const e = this.shadowRoot.querySelectorAll(".tj-card[id^='act-']"), t = e.length;
+    const t = this.shadowRoot.querySelectorAll(".tj-card[id^='act-']"), e = t.length;
     let o = 0;
-    e.forEach((i) => {
+    t.forEach((i) => {
       i.classList.contains("completed") && o++;
     });
     const r = this.shadowRoot.querySelector(".progress-text");
-    r && (r.textContent = `${o} / ${t}`);
+    r && (r.textContent = `${o} / ${e}`);
     const a = this.shadowRoot.getElementById("show-report-btn");
-    a && (t > 0 ? a.style.display = "inline-flex" : a.style.display = "none");
+    a && (e > 0 ? a.style.display = "inline-flex" : a.style.display = "none");
   }
-  renderListenRecord(e, t) {
+  renderListenRecord(t, e) {
     return `
-            <div class="tj-card" id="act-${t}">
+            <div class="tj-card" id="act-${e}">
                 <div class="activity-title tj-h3">${L.headphones} Listen & Record</div>
                 <div class="lr-container">
                     <div style="text-align: center;">
-                        <div class="lr-target-word">${e.targetText}</div>
-                        ${e.phoneticHint ? `<div class="lr-phonetic">/[${e.phoneticHint}]/</div>` : ""}
+                        <div class="lr-target-word">${t.targetText}</div>
+                        ${t.phoneticHint ? `<div class="lr-phonetic">/[${t.phoneticHint}]/</div>` : ""}
                         
-                        ${e.translation ? `
-                            <button class="tj-btn tj-btn-secondary translation-toggle" data-index="${t}" style="margin-top: 1em;">Show Translation</button>
-                            <div class="lr-translation hidden" id="trans-${t}" style="display: none;">${e.translation}</div>
+                        ${t.translation ? `
+                            <button class="tj-btn tj-btn-secondary translation-toggle" data-index="${e}" style="margin-top: 1em;">Show Translation</button>
+                            <div class="lr-translation hidden" id="trans-${e}" style="display: none;">${t.translation}</div>
                         ` : ""}
                     </div>
 
                     <div class="lr-controls">
                         <div class="lr-control-group">
                             <span class="lr-label">Listen</span>
-                            <button class="tj-icon-btn play-audio-btn" data-action="play" data-index="${t}" data-text="${e.targetText.replace(/"/g, "&quot;")}">
+                            <button class="tj-icon-btn play-audio-btn" data-action="play" data-index="${e}" data-text="${t.targetText.replace(/"/g, "&quot;")}">
                                 ${L.play}
                             </button>
                         </div>
 
                         <div class="lr-control-group">
                             <span class="lr-label">Record</span>
-                            <button class="tj-icon-btn record-btn" data-action="record" data-index="${t}" disabled style="opacity: 0.5; cursor: not-allowed;">
+                            <button class="tj-icon-btn record-btn" data-action="record" data-index="${e}" disabled style="opacity: 0.5; cursor: not-allowed;">
                                 ${L.mic}
                             </button>
                         </div>
 
                         <div class="lr-control-group">
                             <span class="lr-label">Playback</span>
-                            <button class="tj-icon-btn playback-btn" id="playback-${t}" data-action="playback" data-index="${t}" disabled style="opacity: 0.5; cursor: not-allowed;">
+                            <button class="tj-icon-btn playback-btn" id="playback-${e}" data-action="playback" data-index="${e}" disabled style="opacity: 0.5; cursor: not-allowed;">
                                 ${L.play}
                             </button>
                         </div>
@@ -227,80 +233,80 @@ class H extends HTMLElement {
             </div>
         `;
   }
-  renderMinimalPair(e, t) {
-    return !e.options || !Array.isArray(e.options) ? `<div class="tj-card"><p>Error: Minimal Pair requires 'options' array.</p></div>` : `
-            <div class="tj-card" id="act-${t}">
+  renderMinimalPair(t, e) {
+    return !t.options || !Array.isArray(t.options) ? `<div class="tj-card"><p>Error: Minimal Pair requires 'options' array.</p></div>` : `
+            <div class="tj-card" id="act-${e}">
                 <div class="activity-title tj-h3">
                     <span style="display:inline-block; margin-right: 0.5rem;">⚖️</span> Minimal Pair
                 </div>
                 <div class="mp-container">
-                    ${e.focus ? `<div class="mp-focus">Focus: ${e.focus}</div>` : ""}
+                    ${t.focus ? `<div class="mp-focus">Focus: ${t.focus}</div>` : ""}
                     <div class="mp-instr">Click on the last word that you hear.</div>
                     
-                    <button class="tj-icon-btn play-audio-btn" data-action="play-mp" data-index="${t}" 
-                            data-options="${e.options.join(",").replace(/"/g, "&quot;")}">
+                    <button class="tj-icon-btn play-audio-btn" data-action="play-mp" data-index="${e}" 
+                            data-options="${t.options.join(",").replace(/"/g, "&quot;")}">
                         ${L.play}
                     </button>
 
                     <div class="mp-options">
-                        ${e.options.map(
+                        ${t.options.map(
       (o) => `
-                            <button class="tj-btn tj-btn-secondary mp-option-btn" data-action="mp-guess" data-index="${t}">${o}</button>
+                            <button class="tj-btn tj-btn-secondary mp-option-btn" data-action="mp-guess" data-index="${e}">${o}</button>
                         `
     ).join("")}
                     </div>
-                    <div class="feedback-msg" id="feedback-${t}"></div>
+                    <div class="feedback-msg" id="feedback-${e}"></div>
                 </div>
             </div>
         `;
   }
-  renderScramble(e, t) {
-    if (!e.words || !Array.isArray(e.words))
+  renderScramble(t, e) {
+    if (!t.words || !Array.isArray(t.words))
       return `<div class="tj-card"><p>Error: Scramble requires 'words' array.</p></div>`;
-    let o = [...e.words];
-    e.distractors && Array.isArray(e.distractors) && (o = o.concat(e.distractors));
+    let o = [...t.words];
+    t.distractors && Array.isArray(t.distractors) && (o = o.concat(t.distractors));
     for (let r = o.length - 1; r > 0; r--) {
       const a = Math.floor(Math.random() * (r + 1));
       [o[r], o[a]] = [o[a], o[r]];
     }
     return `
-            <div class="tj-card" id="act-${t}">
+            <div class="tj-card" id="act-${e}">
                 <div class="activity-title tj-h3">
                     <span style="display:inline-block; margin-right: 0.5rem;">🧩</span> Dictation Scramble
                 </div>
                 <div class="scramble-container">
-                    <button class="tj-icon-btn play-audio-btn" data-action="play" data-text="${e.audioText.replace(/"/g, "&quot;")}">
+                    <button class="tj-icon-btn play-audio-btn" data-action="play" data-text="${t.audioText.replace(/"/g, "&quot;")}">
                         ${L.play}
                     </button>
 
                     <!-- Hidden data store for correct answer -->
-                    <div id="scramble-ans-${t}" style="display:none;" data-answer="${e.words.join(" ").replace(/"/g, "&quot;")}"></div>
+                    <div id="scramble-ans-${e}" style="display:none;" data-answer="${t.words.join(" ").replace(/"/g, "&quot;")}"></div>
 
-                    <div class="scramble-dropzone" id="dropzone-${t}">
+                    <div class="scramble-dropzone" id="dropzone-${e}">
                         <!-- Words dropped here -->
                     </div>
 
-                    <div class="scramble-bank" id="bank-${t}">
+                    <div class="scramble-bank" id="bank-${e}">
                         ${o.map(
       (r, a) => `
-                            <div class="scramble-word" data-action="scramble-move" data-index="${t}" data-word-id="${a}">${r}</div>
+                            <div class="scramble-word" data-action="scramble-move" data-index="${e}" data-word-id="${a}">${r}</div>
                         `
     ).join("")}
                     </div>
 
                     <div class="scramble-controls">
-                        <button class="tj-btn tj-btn-secondary scramble-btn" data-action="scramble-reset" data-index="${t}">Reset</button>
-                        <button class="tj-btn tj-btn-primary scramble-btn" data-action="scramble-check" data-index="${t}">Check</button>
+                        <button class="tj-btn tj-btn-secondary scramble-btn" data-action="scramble-reset" data-index="${e}">Reset</button>
+                        <button class="tj-btn tj-btn-primary scramble-btn" data-action="scramble-check" data-index="${e}">Check</button>
                     </div>
                     
-                    <div class="feedback-msg" id="feedback-${t}"></div>
+                    <div class="feedback-msg" id="feedback-${e}"></div>
                 </div>
             </div>
         `;
   }
   attachEventListeners() {
-    const e = this.shadowRoot.getElementById("voice-btn"), t = this.shadowRoot.getElementById("close-voice-btn"), o = this.shadowRoot.getElementById("voice-overlay");
-    e && (e.onclick = () => this._showVoiceOverlay()), t && (t.onclick = () => this._hideVoiceOverlay()), o && (o.onclick = (s) => {
+    const t = this.shadowRoot.getElementById("voice-btn"), e = this.shadowRoot.getElementById("close-voice-btn"), o = this.shadowRoot.getElementById("voice-overlay");
+    t && (t.onclick = () => this._showVoiceOverlay()), e && (e.onclick = () => this._hideVoiceOverlay()), o && (o.onclick = (s) => {
       s.target === o && this._hideVoiceOverlay();
     });
     const r = this.shadowRoot.getElementById("speed-select");
@@ -409,23 +415,23 @@ class H extends HTMLElement {
     });
   }
   _showReportOverlay() {
-    const e = this.shadowRoot.getElementById("report-overlay");
-    if (e && (e.style.display = "flex"), this.studentInfo.nickname) {
-      const t = this.shadowRoot.getElementById("nickname-input"), o = this.shadowRoot.getElementById("number-input"), r = this.shadowRoot.getElementById("homeroom-input");
-      t && (t.value = this.studentInfo.nickname), o && (o.value = this.studentInfo.number), r && (r.value = this.studentInfo.homeroom), this._generateReport();
+    const t = this.shadowRoot.getElementById("report-overlay");
+    if (t && (t.style.display = "flex"), this.studentInfo.nickname) {
+      const e = this.shadowRoot.getElementById("nickname-input"), o = this.shadowRoot.getElementById("number-input"), r = this.shadowRoot.getElementById("homeroom-input");
+      e && (e.value = this.studentInfo.nickname), o && (o.value = this.studentInfo.number), r && (r.value = this.studentInfo.homeroom), this._generateReport();
     } else {
-      const t = this.shadowRoot.getElementById("initial-form"), o = this.shadowRoot.getElementById("report-area"), r = this.shadowRoot.getElementById("submit-actions");
-      t && (t.style.display = "block"), o && (o.style.display = "none"), r && (r.style.display = "none");
+      const e = this.shadowRoot.getElementById("initial-form"), o = this.shadowRoot.getElementById("report-area"), r = this.shadowRoot.getElementById("submit-actions");
+      e && (e.style.display = "block"), o && (o.style.display = "none"), r && (r.style.display = "none");
     }
   }
   _hideReportOverlay() {
-    const e = this.shadowRoot.getElementById("report-overlay");
-    e && (e.style.display = "none"), this._currentPlayingAudio && (this._currentPlayingAudio.pause(), this._currentPlayingAudio = null), this.shadowRoot.querySelectorAll(".recording-play-btn.playing").forEach((t) => {
-      t.classList.remove("playing"), t.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+    const t = this.shadowRoot.getElementById("report-overlay");
+    t && (t.style.display = "none"), this._currentPlayingAudio && (this._currentPlayingAudio.pause(), this._currentPlayingAudio = null), this.shadowRoot.querySelectorAll(".recording-play-btn.playing").forEach((e) => {
+      e.classList.remove("playing"), e.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
     });
   }
   _generateReport() {
-    const e = this.shadowRoot.getElementById("nickname-input"), t = this.shadowRoot.getElementById("number-input"), o = this.shadowRoot.getElementById("homeroom-input"), r = this.shadowRoot.getElementById("teacher-code-input"), a = e ? e.value.trim() : this.studentInfo.nickname, i = t ? t.value.trim() : this.studentInfo.number, l = o ? o.value.trim() : this.studentInfo.homeroom, h = r ? r.value.trim() : "";
+    const t = this.shadowRoot.getElementById("nickname-input"), e = this.shadowRoot.getElementById("number-input"), o = this.shadowRoot.getElementById("homeroom-input"), r = this.shadowRoot.getElementById("teacher-code-input"), a = t ? t.value.trim() : this.studentInfo.nickname, i = e ? e.value.trim() : this.studentInfo.number, l = o ? o.value.trim() : this.studentInfo.homeroom, h = r ? r.value.trim() : "";
     if (!a || !i) {
       alert("Please enter both nickname and student number.");
       return;
@@ -482,27 +488,27 @@ class H extends HTMLElement {
     }
     f && (f.style.display = "block");
   }
-  _playReportRecording(e, t) {
-    const o = this.recordings.get(e);
+  _playReportRecording(t, e) {
+    const o = this.recordings.get(t);
     if (!o) return;
     if (this._currentPlayingAudio && (this._currentPlayingAudio.pause(), this.shadowRoot.querySelectorAll(".recording-play-btn.playing").forEach((a) => {
       a.classList.remove("playing"), a.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-    }), this._currentPlayingBtn === t)) {
+    }), this._currentPlayingBtn === e)) {
       this._currentPlayingAudio = null, this._currentPlayingBtn = null;
       return;
     }
     const r = new Audio(o);
-    this._currentPlayingAudio = r, this._currentPlayingBtn = t, r.onplay = () => {
-      t.classList.add("playing"), t.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="6" y="6" width="12" height="12"></rect></svg>';
+    this._currentPlayingAudio = r, this._currentPlayingBtn = e, r.onplay = () => {
+      e.classList.add("playing"), e.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="6" y="6" width="12" height="12"></rect></svg>';
     }, r.onended = () => {
-      t.classList.remove("playing"), t.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>', this._currentPlayingAudio = null, this._currentPlayingBtn = null;
+      e.classList.remove("playing"), e.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>', this._currentPlayingAudio = null, this._currentPlayingBtn = null;
     }, r.play().catch((a) => {
-      console.error("Error playing recording:", a), t.classList.remove("playing"), t.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+      console.error("Error playing recording:", a), e.classList.remove("playing"), e.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
     });
   }
   async _submitScore() {
-    const e = this.shadowRoot.getElementById("report-teacher-code"), t = e ? e.value.trim() : this.studentInfo.teacherCode;
-    if (!(t === "6767")) {
+    const t = this.shadowRoot.getElementById("report-teacher-code"), e = t ? t.value.trim() : this.studentInfo.teacherCode;
+    if (!(e === this.code)) {
       alert("Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.");
       return;
     }
@@ -516,7 +522,7 @@ class H extends HTMLElement {
       quizName: "Pron- " + h,
       score: l,
       total: i,
-      teacherCode: t
+      teacherCode: e
     };
     try {
       await fetch(this.submissionUrl, {
@@ -528,49 +534,49 @@ class H extends HTMLElement {
       console.error("Error submitting score:", y), alert("There was an error submitting your score. Please try again."), r.textContent = a, r.disabled = !1, this.isSubmitting = !1;
     }
   }
-  playTTS(e, t) {
+  playTTS(t, e) {
     return !this.synth || !this._shouldShowAudioControls() ? Promise.resolve() : new Promise((o, r) => {
       this.synth.cancel();
-      const a = new SpeechSynthesisUtterance(e);
+      const a = new SpeechSynthesisUtterance(t);
       a.lang = this.language, a.rate = this.playbackSpeed;
       let l = this.synth.getVoices().find((c) => c.name === this.selectedVoiceName);
       l || (l = this._getBestVoice(this.language)), l && (a.voice = l);
       let h = !1;
       const g = () => {
-        h || (h = !0, clearTimeout(s), t.classList.remove("playing"), this.isPlaying = !1, o());
+        h || (h = !0, clearTimeout(s), e.classList.remove("playing"), this.isPlaying = !1, o());
       };
       a.onstart = () => {
-        t.classList.add("playing"), this.isPlaying = !0;
+        e.classList.add("playing"), this.isPlaying = !0;
       }, a.onend = () => g(), a.onerror = (c) => {
-        h || (h = !0, clearTimeout(s), t.classList.remove("playing"), this.isPlaying = !1, c.error === "interrupted" || c.error === "canceled" ? o() : r(c));
+        h || (h = !0, clearTimeout(s), e.classList.remove("playing"), this.isPlaying = !1, c.error === "interrupted" || c.error === "canceled" ? o() : r(c));
       };
-      const y = Math.max(3e3, e.length * 120), s = T() ? setTimeout(() => g(), y) : setTimeout(() => g(), y + 5e3);
+      const y = Math.max(3e3, t.length * 120), s = T() ? setTimeout(() => g(), y) : setTimeout(() => g(), y + 5e3);
       this.synth.speak(a);
     });
   }
   // TTS Guide 1.3 Methods
-  _getBestVoice(e) {
-    return $(this.synth, e);
+  _getBestVoice(t) {
+    return $(this.synth, t);
   }
   _showVoiceOverlay() {
-    const e = this.shadowRoot.getElementById("voice-overlay");
-    e && (e.style.display = "flex", this._updateVoiceList());
+    const t = this.shadowRoot.getElementById("voice-overlay");
+    t && (t.style.display = "flex", this._updateVoiceList());
   }
   _hideVoiceOverlay() {
-    const e = this.shadowRoot.getElementById("voice-overlay");
-    e && (e.style.display = "none");
+    const t = this.shadowRoot.getElementById("voice-overlay");
+    t && (t.style.display = "none");
   }
   _updateVoiceList() {
-    const e = this.shadowRoot.getElementById("voice-list");
-    if (!e) return;
-    const t = this.synth.getVoices(), o = this.language.split(/[-_]/)[0].toLowerCase(), r = t.filter(
+    const t = this.shadowRoot.getElementById("voice-list");
+    if (!t) return;
+    const e = this.synth.getVoices(), o = this.language.split(/[-_]/)[0].toLowerCase(), r = e.filter(
       (i) => i.lang.split(/[-_]/)[0].toLowerCase() === o
     ), a = this._getBestVoice(this.language);
-    e.innerHTML = "", r.sort((i, l) => i.name.localeCompare(l.name)), r.forEach((i) => {
+    t.innerHTML = "", r.sort((i, l) => i.name.localeCompare(l.name)), r.forEach((i) => {
       const l = document.createElement("button");
       l.classList.add("voice-option-btn"), (this.selectedVoiceName === i.name || !this.selectedVoiceName && a && i.name === a.name) && l.classList.add("active"), l.innerHTML = `<span>${i.name}</span>`, a && i.name === a.name && (l.innerHTML += '<span class="badge">Best</span>'), l.onclick = () => {
         this.selectedVoiceName = i.name, localStorage.setItem("tj-pronunciation-voice", i.name), this._updateVoiceList(), this._hideVoiceOverlay();
-      }, e.appendChild(l);
+      }, t.appendChild(l);
     });
   }
   _shouldShowAudioControls() {
@@ -581,11 +587,11 @@ class H extends HTMLElement {
   }
   checkBrowserSupport() {
     if (!this._shouldShowAudioControls()) {
-      const e = this.shadowRoot.getElementById("browser-prompt-overlay");
-      if (e) {
-        e.classList.add("active");
-        const t = this._getAndroidIntentLink(), o = this.shadowRoot.getElementById("browser-action-btn");
-        t ? (o.href = t, o.textContent = "Open in Chrome") : (o.onclick = (r) => {
+      const t = this.shadowRoot.getElementById("browser-prompt-overlay");
+      if (t) {
+        t.classList.add("active");
+        const e = this._getAndroidIntentLink(), o = this.shadowRoot.getElementById("browser-action-btn");
+        e ? (o.href = e, o.textContent = "Open in Chrome") : (o.onclick = (r) => {
           (!o.href || o.href === "javascript:void(0)") && (r.preventDefault(), alert(
             "Please open this page in Safari or Chrome for the best experience with audio features."
           ));
@@ -593,12 +599,12 @@ class H extends HTMLElement {
       }
     }
   }
-  async playMinimalPairSequence(e, t, o) {
+  async playMinimalPairSequence(t, e, o) {
     if (o.classList.contains("playing")) return;
     const a = o.closest(".mp-container").querySelectorAll(".mp-option-btn");
     try {
       for (let i = 0; i < 2; i++) {
-        for (const l of e) {
+        for (const l of t) {
           const h = Array.from(a).find(
             (g) => g.textContent.trim() === l.trim()
           );
@@ -606,14 +612,14 @@ class H extends HTMLElement {
         }
         await new Promise((l) => setTimeout(l, 400));
       }
-      await new Promise((i) => setTimeout(i, 500)), await this.playTTS(t, o);
+      await new Promise((i) => setTimeout(i, 500)), await this.playTTS(e, o);
     } catch (i) {
       console.error("Audio sequence error:", i), o.classList.remove("playing"), a.forEach((l) => l.classList.remove("highlight"));
     }
   }
-  async toggleRecording(e, t) {
-    if (e.classList.contains("recording"))
-      this.mediaRecorder && this.mediaRecorder.state !== "inactive" && this.mediaRecorder.stop(), e.classList.remove("recording");
+  async toggleRecording(t, e) {
+    if (t.classList.contains("recording"))
+      this.mediaRecorder && this.mediaRecorder.state !== "inactive" && this.mediaRecorder.stop(), t.classList.remove("recording");
     else
       try {
         this.audioChunks = [], this.mediaRecorder = await P(
@@ -622,35 +628,35 @@ class H extends HTMLElement {
           },
           (o) => {
             const r = new Blob(this.audioChunks, { type: o }), a = URL.createObjectURL(r);
-            this.recordings.has(t) && URL.revokeObjectURL(this.recordings.get(t)), this.recordings.set(t, a);
+            this.recordings.has(e) && URL.revokeObjectURL(this.recordings.get(e)), this.recordings.set(e, a);
             const i = this.shadowRoot.querySelector(
-              `#playback-${t}`
+              `#playback-${e}`
             );
             i && (i.classList.add("ready"), i.disabled = !1, i.style.opacity = "1", i.style.cursor = "pointer"), this.audioChunks = null;
           }
-        ), e.classList.add("recording");
+        ), t.classList.add("recording");
       } catch (o) {
         console.error("Error accessing microphone:", o), alert(
           "Could not access microphone. Please ensure you have granted permission."
         );
       }
   }
-  playRecording(e, t) {
-    const o = this.recordings.get(e);
+  playRecording(t, e) {
+    const o = this.recordings.get(t);
     if (!o) return;
     const r = new Audio();
     r.oncanplaythrough = () => {
       r.play().catch((a) => {
-        console.error("Error playing recording:", a), t.classList.remove("playing");
+        console.error("Error playing recording:", a), e.classList.remove("playing");
       });
     }, r.onplay = () => {
-      t.classList.add("playing");
+      e.classList.add("playing");
     }, r.onended = () => {
-      t.classList.remove("playing");
-      const a = t.closest(".tj-card");
+      e.classList.remove("playing");
+      const a = e.closest(".tj-card");
       a && !a.classList.contains("completed") && (a.classList.add("completed"), this.updateProgress());
     }, r.onerror = (a) => {
-      console.error("Error loading recording for playback:", a), t.classList.remove("playing");
+      console.error("Error loading recording for playback:", a), e.classList.remove("playing");
     }, r.src = o, r.load();
   }
 }

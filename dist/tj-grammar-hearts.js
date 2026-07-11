@@ -1,8 +1,14 @@
-import { c as b } from "./chunks/tj-config-JtFGQ6Kt.js";
-class u extends HTMLElement {
+import { c as u } from "./chunks/tj-config-DtZWnqEi.js";
+class b extends HTMLElement {
+  get code() {
+    return this.getAttribute("code") !== null ? this.getAttribute("code") : u.teacherCode;
+  }
+  set code(e) {
+    e != null ? this.setAttribute("code", e) : this.removeAttribute("code");
+  }
   constructor() {
     var e;
-    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.hearts = 0, this.maxHearts = 3, this.questionsPerRound = 5, this.score = 0, this.bestScore = 0, this.grammarHint = { summary: "", content: "" }, this.studentInfo = { nickname: "", number: "", homeroom: "", teacherCode: "" }, this.title = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = (e = b) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
+    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.hearts = 0, this.maxHearts = 3, this.questionsPerRound = 5, this.score = 0, this.bestScore = 0, this.grammarHint = { summary: "", content: "" }, this.studentInfo = { nickname: "", number: "", homeroom: "", teacherCode: "" }, this.title = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = (e = u) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
   }
   connectedCallback() {
     if (this.maxHearts = parseInt(this.getAttribute("hearts")) || 3, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 5, this.hearts = this.maxHearts, typeof window.marked > "u") {
@@ -141,7 +147,7 @@ class u extends HTMLElement {
   }
   async _submitScore() {
     const e = this.shadowRoot.getElementById("report-teacher-code"), t = e ? e.value.trim() : this.studentInfo.teacherCode;
-    if (this.studentInfo.teacherCode = t, t !== "6767") {
+    if (this.studentInfo.teacherCode = t, t !== this.code) {
       this.submissionError = "Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.", this.render();
       return;
     }
@@ -961,6 +967,6 @@ class u extends HTMLElement {
     this.isHintOpen = !this.isHintOpen, this.render();
   }
 }
-customElements.get("tj-grammar-hearts") || customElements.define("tj-grammar-hearts", u);
-customElements.get("grammar-hearts") || customElements.define("grammar-hearts", class extends u {
+customElements.get("tj-grammar-hearts") || customElements.define("tj-grammar-hearts", b);
+customElements.get("grammar-hearts") || customElements.define("grammar-hearts", class extends b {
 });

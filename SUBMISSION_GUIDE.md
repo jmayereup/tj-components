@@ -111,8 +111,11 @@ Your components are now ready to successfully send data straight to your Google 
 The system is designed with a "Proof of Work" mechanism:
 - **Teacher Code (Optional for Reports)**: Students can generate their report card even without entering the teacher code. This allows them to see their progress immediately.
 - **Updating the Code**: If a student missed the code or entered it wrong at the start, they can **update it directly on the report card screen** before submitting.
-- **Submission (Locked)**: To officially submit the score to your Google Spreadsheet, the student **must** enter the correct Teacher Code (`6767`) in the report form (either at the start or on the report screen).
+- **Submission (Locked)**: To officially submit the score to your Google Spreadsheet, the student **must** enter the correct Teacher Code (`6767` by default) in the report form (either at the start or on the report screen).
 - **Screenshot Fallback**: If a student does not have the teacher code or enters it incorrectly, they will be prompted with an alert to **take a screenshot** of their report card and show it to you manually. This ensures that even without a "verified" database submission, you can still verify their work.
 
 > [!TIP]
-> You can change the required teacher code in `src/tj-pronunciation/index.js` by searching for the string `'6767'`.
+> You can override the required teacher code in three ways:
+> 1. **Per Component**: Set the `code` attribute on the element (e.g., `<tj-quiz-element code="1234">`) or programmatically set `element.code = '1234'`.
+> 2. **Environment Variable**: Define `VITE_TEACHER_CODE=YOUR_CODE` in your `.env` file when building/bundling.
+> 3. **Global Config Fallback**: Modify the default value of `teacherCode` in [tj-config.js](file:///var/home/jmayer/Dev/tj-components/src/tj-config.js).
