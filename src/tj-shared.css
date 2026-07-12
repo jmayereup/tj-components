@@ -39,7 +39,7 @@
   --tj-text-muted: #64748b;          /* Slate 500 */
   --tj-text-light: #94a3b8;          /* Slate 400 */
   
-  --tj-bg-main: ghostwhite;
+  --tj-bg-main: transparent;
   --tj-bg-card: rgba(255, 255, 255, 0.95);
   --tj-bg-alt: #f8fafc;              /* Slate 50 */
   
@@ -72,7 +72,7 @@
   display: block;
   font-family: var(--tj-font-family);
   color: var(--tj-text-main);
-  background-color: var(--tj-bg-main);
+  background-color: transparent;
   position: relative;
   box-sizing: border-box;
 }
