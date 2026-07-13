@@ -1,4 +1,5 @@
 <div class="quiz-wrapper" translate="no">
+    <div id="tabAwayBanner" class="tab-away-banner hidden" role="alert"></div>
     <div class="container" id="mainContainer">
         <div class="quiz-header">
             <span class="theme-toggle" title="Toggle Light/Dark Mode">
@@ -17,6 +18,19 @@
         </div>
 
         <form id="quizForm">
+            <div id="testModeLockSection" class="section-card hidden">
+                <div class="section-card-header">Test Mode Locked / ล็อกโหมดทำข้อสอบ</div>
+                <p class="student-instructions instruction">This quiz is in Test Mode. Please enter the Teacher Code to unlock the questions. / แบบทดสอบนี้อยู่ในโหมดการสอบ กรุณาใส่รหัสผ่านครูผู้สอนเพื่อเริ่มทำข้อสอบ</p>
+                <div class="input-group">
+                    <label for="lockTeacherCode" class="input-label">Teacher Code</label>
+                    <input type="text" id="lockTeacherCode" class="form-input" placeholder="Enter code to unlock test">
+                </div>
+                <p id="lockErrorAlert" style="color: var(--red-color, #ef4444); margin-top: 0.5rem; font-size: 0.9em; min-height: 1.5rem; font-weight: 500;" class="hidden"></p>
+                <div style="margin-top: 1rem;">
+                    <button type="button" id="unlockTestButton" class="button button-primary">Unlock Test / เริ่มทำข้อสอบ</button>
+                </div>
+            </div>
+
             <div id="quizContent" class="hidden">
                 <!-- Dynamic sections will be appended here as .section-card elements -->
                 <div id="dynamicContent"></div>
@@ -39,7 +53,7 @@
                             <input type="text" id="studentId" name="studentId" class="form-input" placeholder="01">
                         </div>
                     </div>
-                    <div class="input-group" style="margin-top: 1rem;">
+                    <div id="teacherCodeGroup" class="input-group" style="margin-top: 1rem;">
                         <label for="teacherCode" class="input-label">Teacher Code (Optional)</label>
                         <input type="text" id="teacherCode" name="teacherCode" class="form-input" placeholder="Enter code for submission">
                     </div>

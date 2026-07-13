@@ -5,7 +5,7 @@ import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../
 
 class TjQuizElement extends HTMLElement {
     static get observedAttributes() {
-        return ['submission-url', 'test-mode'];
+        return ['submission-url', 'test-mode', 'code'];
     }
 
     get testMode() {
@@ -17,6 +17,18 @@ class TjQuizElement extends HTMLElement {
             this.setAttribute('test-mode', '');
         } else {
             this.removeAttribute('test-mode');
+        }
+    }
+
+    get code() {
+        return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+    }
+
+    set code(value) {
+        if (value !== null && value !== undefined) {
+            this.setAttribute('code', value);
+        } else {
+            this.removeAttribute('code');
         }
     }
 
@@ -56,11 +68,21 @@ class TjQuizElement extends HTMLElement {
         this.scoreSubmitted = false;
         this.scoreSentToServer = false; // Track if actually POSTed successfully
         this.ttsPaused = false; // explicitly track paused state for robustness
+        this.tabAwayCount = 0; // Number of times student left the quiz (test mode only)
+        this._visibilityHandler = null; // Bound handler for cleanup
     }
 
     attributeChangedCallback(name, newValue) {
         if (name === 'submission-url') {
             this.submissionUrl = newValue;
+        } else if (name === 'test-mode') {
+            if (this.isConnected) {
+                if (newValue !== null) {
+                    this.lockQuizContent();
+                } else {
+                    this.unlockQuizContent();
+                }
+            }
         }
     }
 
@@ -75,6 +97,10 @@ class TjQuizElement extends HTMLElement {
     }
 
     connectedCallback() {
+        // Register visibilitychange listener for tab-away tracking (test mode only)
+        this._visibilityHandler = () => this._handleVisibilityChange();
+        document.addEventListener('visibilitychange', this._visibilityHandler);
+
         // Use setTimeout to ensure children (text content) are parsed by the browser
         requestAnimationFrame(() => {
             // 1. Property
@@ -125,7 +151,11 @@ class TjQuizElement extends HTMLElement {
             this.parseContent();
             this.setupEventListeners();
             this.generateQuiz();
-            this.unlockQuizContent();
+            if (this.testMode) {
+                this.lockQuizContent();
+            } else {
+                this.unlockQuizContent();
+            }
 
             // Restore state if available
             const savedData = this.loadFromLocalStorage();
@@ -133,6 +163,36 @@ class TjQuizElement extends HTMLElement {
                 this.restoreQuizState(savedData);
             }
         });
+    }
+
+    disconnectedCallback() {
+        if (this._visibilityHandler) {
+            document.removeEventListener('visibilitychange', this._visibilityHandler);
+            this._visibilityHandler = null;
+        }
+    }
+
+    _handleVisibilityChange() {
+        if (!this.testMode) return;
+        if (document.hidden) {
+            this.tabAwayCount++;
+            this.classList.add('tab-away');
+            this._updateTabAwayBanner();
+        } else {
+            this.classList.remove('tab-away');
+        }
+    }
+
+    _updateTabAwayBanner() {
+        const banner = this.shadowRoot.getElementById('tabAwayBanner');
+        if (!banner) return;
+        if (this.tabAwayCount > 0) {
+            const timesLabel = this.tabAwayCount === 1 ? 'time' : 'times';
+            banner.textContent = `⚠️ Warning: You left the quiz ${this.tabAwayCount} ${timesLabel}. Please stay focused on the test.`;
+            banner.classList.remove('hidden');
+        } else {
+            banner.classList.add('hidden');
+        }
     }
 
     loadTemplate() {
@@ -1097,6 +1157,38 @@ class TjQuizElement extends HTMLElement {
             startQuizButton.addEventListener('click', () => this.handleStartQuiz());
         }
 
+        const unlockTestButton = this.shadowRoot.getElementById('unlockTestButton');
+        const lockTeacherCode = this.shadowRoot.getElementById('lockTeacherCode');
+        const lockErrorAlert = this.shadowRoot.getElementById('lockErrorAlert');
+
+        if (unlockTestButton) {
+            unlockTestButton.addEventListener('click', () => {
+                const codeValue = lockTeacherCode ? lockTeacherCode.value.trim() : '';
+                if (codeValue === this.code) {
+                    if (lockErrorAlert) lockErrorAlert.classList.add('hidden');
+                    const teacherCodeInput = this.getTeacherCodeInput();
+                    if (teacherCodeInput) {
+                        teacherCodeInput.value = codeValue;
+                    }
+                    this.unlockQuizContent();
+                } else {
+                    if (lockErrorAlert) {
+                        lockErrorAlert.textContent = '❌ Invalid Teacher Code / รหัสผ่านไม่ถูกต้อง';
+                        lockErrorAlert.classList.remove('hidden');
+                    }
+                }
+            });
+        }
+
+        if (lockTeacherCode) {
+            lockTeacherCode.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (unlockTestButton) unlockTestButton.click();
+                }
+            });
+        }
+
         this.getStudentInputs().forEach(input => {
             input.addEventListener('input', () => {
                 if (input.value.trim() !== '') {
@@ -1687,16 +1779,38 @@ class TjQuizElement extends HTMLElement {
     }
 
     lockQuizContent() {
-        // Content is always unlocked now, but we can use this to hide/show for resets if needed
         const quizContent = this.shadowRoot.getElementById('quizContent');
-        if (quizContent) quizContent.classList.remove('hidden');
-        this.quizUnlocked = true;
+        if (quizContent) quizContent.classList.add('hidden');
+
+        const testModeLockSection = this.shadowRoot.getElementById('testModeLockSection');
+        if (testModeLockSection) {
+            testModeLockSection.classList.remove('hidden');
+        }
+        this.quizUnlocked = false;
+        this.updateTeacherCodeInputVisibility();
     }
 
     unlockQuizContent() {
         const quizContent = this.shadowRoot.getElementById('quizContent');
         if (quizContent) quizContent.classList.remove('hidden');
+
+        const testModeLockSection = this.shadowRoot.getElementById('testModeLockSection');
+        if (testModeLockSection) {
+            testModeLockSection.classList.add('hidden');
+        }
         this.quizUnlocked = true;
+        this.updateTeacherCodeInputVisibility();
+    }
+
+    updateTeacherCodeInputVisibility() {
+        const group = this.shadowRoot.getElementById('teacherCodeGroup');
+        if (group) {
+            if (this.testMode) {
+                group.classList.add('hidden');
+            } else {
+                group.classList.remove('hidden');
+            }
+        }
     }
 
     handleStartQuiz() {
@@ -2093,9 +2207,9 @@ class TjQuizElement extends HTMLElement {
             writtenAnswers: this.getWrittenAnswersString()
         };
 
-        // IF Teacher Code is NOT 6767 AND it's not a retry, we skip submission and just show local success
+        // IF Teacher Code is NOT valid AND it's not a retry, we skip submission and just show local success
         // If it IS a retry and code is wrong, we show error
-        if (teacherCode !== '6767') {
+        if (teacherCode !== this.code) {
             if (isRetry) {
                 if (validationMessage) {
                     validationMessage.textContent = '❌ Invalid Teacher Code. Please try again.';
@@ -2271,6 +2385,9 @@ class TjQuizElement extends HTMLElement {
         this.scoreSubmitted = false;
         this.scoreSentToServer = false;
         this.autoSubmissionInProgress = false;
+        this.tabAwayCount = 0;
+        this.classList.remove('tab-away');
+        this._updateTabAwayBanner();
         this.clearLocalStorage();
         const retrySection = this.shadowRoot.getElementById('retrySubmissionSection');
         if (retrySection) retrySection.classList.add('hidden');
@@ -2320,18 +2437,31 @@ class TjQuizElement extends HTMLElement {
         if (checkBtn) {
             checkBtn.disabled = true;
         }
-        this.lockQuizContent();
+        if (this.testMode) {
+            const lockTeacherCode = this.shadowRoot.getElementById('lockTeacherCode');
+            if (lockTeacherCode) lockTeacherCode.value = '';
+            const lockErrorAlert = this.shadowRoot.getElementById('lockErrorAlert');
+            if (lockErrorAlert) lockErrorAlert.classList.add('hidden');
+            this.lockQuizContent();
+        } else {
+            this.unlockQuizContent();
+        }
     }
 
     getWrittenAnswersString() {
         const shortAnswerQuestions = this.currentQuestions.filter(q => q.o && q.o.length === 0);
-        if (shortAnswerQuestions.length === 0) return '';
-
-        return shortAnswerQuestions.map((q, idx) => {
+        const baseString = shortAnswerQuestions.map((q, idx) => {
             const originalIndex = this.currentQuestions.indexOf(q);
             const answer = this.userQuestionAnswers[originalIndex] || '';
             return `Q: ${q.q}\nA: ${answer}`;
         }).join('\n\n');
+
+        const tabAwayNote = (this.testMode && this.tabAwayCount > 0)
+            ? `[Tab Away Count: ${this.tabAwayCount}]`
+            : '';
+
+        if (!tabAwayNote) return baseString;
+        return baseString ? `${baseString}\n\n${tabAwayNote}` : tabAwayNote;
     }
 
     toggleTheme() {

@@ -1268,6 +1268,32 @@ fieldset>legend {
     white-space: nowrap;
 }
 
+/* Tab-away warning banner */
+.tab-away-banner {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    max-width: 800px;
+    margin: 0 auto 1rem auto;
+    padding: 0.875rem 1.25rem;
+    background-color: var(--red-light-bg);
+    color: var(--red-color);
+    border: 1px solid var(--red-color);
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95em;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+/* Red border around the entire quiz container when the student has left the tab (test mode) */
+:host(.tab-away) .container {
+    border: 3px solid var(--red-color);
+    border-radius: 0.75rem;
+    box-shadow: 0 0 0 4px var(--red-light-bg);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
 .browser-prompt-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;

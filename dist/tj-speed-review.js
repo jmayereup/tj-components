@@ -1,8 +1,14 @@
-import { c } from "./chunks/tj-config-BapMvaer.js";
-class n extends HTMLElement {
+import { c as n } from "./chunks/tj-config-DtZWnqEi.js";
+class a extends HTMLElement {
+  get code() {
+    return this.getAttribute("code") !== null ? this.getAttribute("code") : n.teacherCode;
+  }
+  set code(e) {
+    e != null ? this.setAttribute("code", e) : this.removeAttribute("code");
+  }
   constructor() {
     var e;
-    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = ((e = c) == null ? void 0 : e.submissionUrl) || "https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec", this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
+    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = (e = n) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
   }
   connectedCallback() {
     this.timeLimit = parseInt(this.getAttribute("time-limit")) || 15, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 10, this.bestScore = 0, this.loadLibrary("marked", "https://cdn.jsdelivr.net/npm/marked/marked.min.js"), this.loadLibrary("Tone", "https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js", () => {
@@ -11,15 +17,15 @@ class n extends HTMLElement {
       this.loadData(), this.render();
     });
   }
-  loadLibrary(e, i, t) {
+  loadLibrary(e, r, t) {
     if (window[e]) {
       t && t();
       return;
     }
-    const s = document.createElement("script");
-    s.src = i, s.async = !0, s.onload = () => {
+    const i = document.createElement("script");
+    i.src = r, i.async = !0, i.onload = () => {
       t && t(), this.render();
-    }, document.head.appendChild(s);
+    }, document.head.appendChild(i);
   }
   initAudio() {
     window.Tone && !this.audioInitialized && (this.synthCorrect = new window.Tone.Synth().toDestination(), this.synthIncorrect = new window.Tone.Synth({ oscillator: { type: "square" } }).toDestination(), this.audioInitialized = !0);
@@ -38,8 +44,8 @@ class n extends HTMLElement {
           e = String(this.config);
       else this.hasAttribute("config") ? e = this.getAttribute("config") : this.querySelector('script[type="application/json"]') ? e = this.querySelector('script[type="application/json"]').textContent.trim() : e = this.textContent.trim();
       if (!e) return;
-      const i = e.replace(/"((?:\\.|[^"\\])*)"/gs, (s, r) => '"' + r.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"');
-      let t = JSON.parse(i);
+      const r = e.replace(/"((?:\\.|[^"\\])*)"/gs, (i, s) => '"' + s.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"');
+      let t = JSON.parse(r);
       this._processParsedData(t), this.innerHTML = "";
     } catch (e) {
       console.error("Failed to parse JSON for tj-speed-review", e), this.shadowRoot.innerHTML = '<div class="error-msg">Error loading quiz data. Check console.</div>';
@@ -53,12 +59,12 @@ class n extends HTMLElement {
   }
   startGame() {
     if (!this.identityLocked) {
-      const i = this.shadowRoot.querySelector("#nickname"), t = this.shadowRoot.querySelector("#student-number"), s = this.shadowRoot.querySelector("#homeroom"), r = i ? i.value.trim() : "", o = t ? t.value.trim() : "", a = s ? s.value.trim() : "";
-      if (!r || !o) {
+      const r = this.shadowRoot.querySelector("#nickname"), t = this.shadowRoot.querySelector("#student-number"), i = this.shadowRoot.querySelector("#homeroom"), s = r ? r.value.trim() : "", o = t ? t.value.trim() : "", d = i ? i.value.trim() : "";
+      if (!s || !o) {
         alert("Please enter both nickname and student number to begin.");
         return;
       }
-      this.nickname = r, this.studentNumber = o, this.homeroom = a, this.identityLocked = !0;
+      this.nickname = s, this.studentNumber = o, this.homeroom = d, this.identityLocked = !0;
     }
     this.score = 0, this.currentIndex = 0;
     const e = [...this.questions].sort(() => 0.5 - Math.random());
@@ -77,8 +83,8 @@ class n extends HTMLElement {
   updateTimerBar() {
     const e = this.shadowRoot.querySelector(".timer-inner");
     if (e) {
-      const i = this.timeLeft / this.timeLimit * 100;
-      e.style.width = `${i}%`, this.timeLeft < 5 ? e.style.background = "#ef4444" : e.style.background = "#22d3ee";
+      const r = this.timeLeft / this.timeLimit * 100;
+      e.style.width = `${r}%`, this.timeLeft < 5 ? e.style.background = "#ef4444" : e.style.background = "#22d3ee";
     }
   }
   handleTimeout() {
@@ -89,13 +95,13 @@ class n extends HTMLElement {
   async selectAnswer(e) {
     if (this.isAnswered) return;
     clearInterval(this.timerInterval), this.isAnswered = !0, this.userAnswer = e;
-    const i = this.currentPool[this.currentIndex];
-    if (e === i.answer) {
+    const r = this.currentPool[this.currentIndex];
+    if (e === r.answer) {
       this.isCorrect = !0;
       const t = Math.max(10, Math.round(this.timeLeft * 10));
-      this.score += t, this.feedbackText = `+${t} points!`, this.feedbackExplanation = i.explanation || "Perfect!", this.playSound("correct");
+      this.score += t, this.feedbackText = `+${t} points!`, this.feedbackExplanation = r.explanation || "Perfect!", this.playSound("correct");
     } else
-      this.isCorrect = !1, this.feedbackText = "Not quite!", this.feedbackExplanation = i.explanation || `The correct answer was **${i.answer}**.`, this.playSound("incorrect");
+      this.isCorrect = !1, this.feedbackText = "Not quite!", this.feedbackExplanation = r.explanation || `The correct answer was **${r.answer}**.`, this.playSound("incorrect");
     this.render();
   }
   nextQuestion() {
@@ -114,14 +120,14 @@ class n extends HTMLElement {
   }
   async _submitScore() {
     const e = this.shadowRoot.getElementById("report-teacher-code");
-    if ((e ? e.value.trim() : "") !== "6767") {
+    if ((e ? e.value.trim() : "") !== this.code) {
       alert("Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.");
       return;
     }
     if (this.isSubmitting) return;
-    const t = this.shadowRoot.getElementById("submit-score-btn"), s = t ? t.textContent : "Submit";
+    const t = this.shadowRoot.getElementById("submit-score-btn"), i = t ? t.textContent : "Submit";
     this.isSubmitting = !0, t && (t.textContent = "Submitting...", t.disabled = !0);
-    const r = {
+    const s = {
       nickname: this.nickname,
       homeroom: this.homeroom || "",
       studentId: this.studentNumber,
@@ -134,10 +140,10 @@ class n extends HTMLElement {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(r)
+        body: JSON.stringify(s)
       }), alert("Score successfully submitted!"), t && (t.textContent = "Submitted ✓", t.style.background = "#64748b");
     } catch (o) {
-      console.error("Error submitting score:", o), alert("There was an error submitting your score. Please try again."), t && (t.textContent = s, t.disabled = !1), this.isSubmitting = !1;
+      console.error("Error submitting score:", o), alert("There was an error submitting your score. Please try again."), t && (t.textContent = i, t.disabled = !1), this.isSubmitting = !1;
     }
   }
   render() {
@@ -147,17 +153,66 @@ class n extends HTMLElement {
           display: block;
           font-family: 'Inter', sans-serif;
           margin: 2em auto;
-          color: black;
-          background: whitesmoke;
+          color: #1e293b;
+          background: transparent;
+
+          --sr-text: #1e293b;
+          --sr-text-muted: #64748b;
+          --sr-container-bg: #f8fafc;
+          --sr-container-border: rgba(0,0,0,0.08);
+          --sr-option-bg: #ffffff;
+          --sr-option-border: #cbd5e1;
+          --sr-timer-track: #334155;
+          --sr-feedback-bg: rgba(0,0,0,0.03);
+          --sr-explanation-color: #475569;
+          --sr-badge-bg: #f1f5f9;
+          --sr-badge-border: #e2e8f0;
+          --sr-badge-color: #64748b;
+          --sr-input-bg: #f5f5f5;
+          --sr-input-border: #b2b2b2;
+          --sr-input-color: #1e293b;
+          --sr-label-color: #1e293b;
+          --sr-identity-bg: rgba(0,0,0,0.03);
+          --sr-identity-border: rgba(0,0,0,0.08);
+          --sr-secondary-bg: #334155;
+          --sr-secondary-color: #f1f5f9;
+          --sr-secondary-border: #475569;
+        }
+        @media (prefers-color-scheme: dark) {
+          :host {
+            color: #e2e8f0;
+            --sr-text: #e2e8f0;
+            --sr-text-muted: #94a3b8;
+            --sr-container-bg: #1e293b;
+            --sr-container-border: rgba(255,255,255,0.08);
+            --sr-option-bg: #0f172a;
+            --sr-option-border: #475569;
+            --sr-timer-track: #0f172a;
+            --sr-feedback-bg: rgba(255,255,255,0.05);
+            --sr-explanation-color: #94a3b8;
+            --sr-badge-bg: #334155;
+            --sr-badge-border: #475569;
+            --sr-badge-color: #94a3b8;
+            --sr-input-bg: #0f172a;
+            --sr-input-border: #475569;
+            --sr-input-color: #e2e8f0;
+            --sr-label-color: #94a3b8;
+            --sr-identity-bg: rgba(255,255,255,0.03);
+            --sr-identity-border: rgba(255,255,255,0.1);
+            --sr-secondary-bg: #475569;
+            --sr-secondary-color: #f1f5f9;
+            --sr-secondary-border: #64748b;
+          }
         }
         .container {
-          background: white;
+          background: var(--sr-container-bg);
           border-radius: 1.5em;
           padding: 2em;
           box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-          border: 1px solid rgba(0,0,0,0.05);
+          border: 1px solid var(--sr-container-border);
           overflow: hidden;
           position: relative;
+          color: var(--sr-text);
         }
         .header {
           display: flex;
@@ -175,12 +230,12 @@ class n extends HTMLElement {
         .title-area h1 {
           margin: 0;
           font-size: 1.5em;
-          color: black;
+          color: var(--sr-text);
           overflow-wrap: break-word;
         }
         .best-score {
           font-size: 0.7em;
-          color: black;
+          color: var(--sr-text-muted);
           text-transform: uppercase;
         }
         .score-display {
@@ -197,7 +252,7 @@ class n extends HTMLElement {
         .timer-bar {
           width: 100%;
           height: 6px;
-          background: #334155;
+          background: var(--sr-timer-track);
           border-radius: 3px;
           margin-bottom: 2em;
           overflow: hidden;
@@ -236,9 +291,9 @@ class n extends HTMLElement {
           .options-grid { grid-template-columns: 1fr; }
         }
         .option-btn {
-          background: whitesmoke;
-          border: 2px solid grey;
-          color: black;
+          background: var(--sr-option-bg);
+          border: 2px solid var(--sr-option-border);
+          color: var(--sr-text);
           padding: .5em;
           border-radius: 0.8em;
           font-weight: 600;
@@ -248,7 +303,7 @@ class n extends HTMLElement {
           font-size: 1.2em;
         }
         .option-btn:hover:not(:disabled) {
-          background: #f8fafc;
+          background: var(--sr-container-bg);
           transform: translateY(-2px);
           border-color: #10b981;
         }
@@ -268,7 +323,7 @@ class n extends HTMLElement {
           margin-top: 2em;
           text-align: center;
           padding: 1.5em;
-          background: rgba(255,255,255,0.05);
+          background: var(--sr-feedback-bg);
           border-radius: 1em;
           animation: slideUp 0.3s ease-out;
         }
@@ -285,7 +340,7 @@ class n extends HTMLElement {
         .feedback-status.incorrect { color: #ef4444; }
         .explanation {
           font-size: 0.95em;
-          color: #475569;
+          color: var(--sr-explanation-color);
           line-height: 1.5;
         }
         .btn-large {
@@ -340,14 +395,14 @@ class n extends HTMLElement {
           margin: 0.5em 0;
         }
         .best-score-badge {
-          background: #f1f5f9;
+          background: var(--sr-badge-bg);
           padding: 0.5em 1.2em;
           border-radius: 2em;
           display: inline-block;
           font-size: 0.9em;
-          color: #64748b;
+          color: var(--sr-badge-color);
           font-weight: 600;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--sr-badge-border);
         }
         .error-msg { color: #ef4444; text-align: center; padding: 2em; }
         
@@ -355,10 +410,10 @@ class n extends HTMLElement {
         .identity-form {
           margin: 1.5em 0;
           text-align: left;
-          background: rgba(255,255,255,0.05);
+          background: var(--sr-identity-bg);
           padding: 1.5em;
           border-radius: 1em;
-          border: 1px solid rgba(255,255,255,0.1);
+          border: 1px solid var(--sr-identity-border);
         }
         .input-group {
           margin-bottom: 1em;
@@ -369,16 +424,16 @@ class n extends HTMLElement {
         .input-group label {
           display: block;
           font-size: 0.8em;
-          color: black;
+          color: var(--sr-label-color);
           margin-bottom: 0.4em;
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
         .input-field {
           width: 100%;
-          background: whitesmoke;
-          border: 1px solid #b2b2b2ff;
-          color: black;
+          background: var(--sr-input-bg);
+          border: 1px solid var(--sr-input-border);
+          color: var(--sr-input-color);
           padding: 0.8em;
           border-radius: 0.5em;
           font-size: 1em;
@@ -618,9 +673,9 @@ class n extends HTMLElement {
         }
       </style>
     `;
-    let i = "";
+    let r = "";
     if (this.gameState === "start")
-      i = `
+      r = `
         <div class="start-screen">
           <h1>${this.title} 🏎️</h1>
           <p>Think fast! Points based on speed.</p>
@@ -652,7 +707,7 @@ class n extends HTMLElement {
       `;
     else if (this.gameState === "playing") {
       const t = this.currentPool[this.currentIndex];
-      i = `
+      r = `
         <div class="header">
           <div class="title-area">
             <h1>${this.title}</h1>
@@ -673,9 +728,9 @@ class n extends HTMLElement {
         <div class="question-text">${this.parseMD(t.question)}</div>
 
         <div class="options-grid">
-          ${this.shuffledOptions.map((s) => {
-        let r = "option-btn";
-        return this.isAnswered && (s === t.answer ? r += " correct" : s === this.userAnswer && (r += " incorrect")), `<button class="${r}" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.selectAnswer('${s.replace(/'/g, "\\'")}')"> ${s}</button>`;
+          ${this.shuffledOptions.map((i) => {
+        let s = "option-btn";
+        return this.isAnswered && (i === t.answer ? s += " correct" : i === this.userAnswer && (s += " incorrect")), `<button class="${s}" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.selectAnswer('${i.replace(/'/g, "\\'")}')"> ${i}</button>`;
       }).join("")}
         </div>
 
@@ -690,8 +745,8 @@ class n extends HTMLElement {
         ` : ""}
       `;
     } else if (this.gameState === "gameover") {
-      const t = this.score >= this.bestScore && this.score > 0, s = (/* @__PURE__ */ new Date()).toLocaleString();
-      i = `
+      const t = this.score >= this.bestScore && this.score > 0, i = (/* @__PURE__ */ new Date()).toLocaleString();
+      r = `
         <div class="end-screen">
           <h1>Quiz Complete!</h1>
           <div class="result-identity">
@@ -732,7 +787,7 @@ class n extends HTMLElement {
             <div class="rc-details">
               <div class="rc-detail-row"><span>Best Score</span><span>${this.bestScore} pts</span></div>
               <div class="rc-detail-row"><span>Latest Score</span><span>${this.score} pts</span></div>
-              <div class="rc-detail-row"><span>Completed On</span><span>${s}</span></div>
+              <div class="rc-detail-row"><span>Completed On</span><span>${i}</span></div>
             </div>
             <div class="rc-submission-box">
               <p>Submission (Optional)</p>
@@ -747,11 +802,11 @@ class n extends HTMLElement {
     this.shadowRoot.innerHTML = `
       ${e}
       <div class="container">
-        ${i}
+        ${r}
       </div>
     `;
   }
 }
-customElements.get("tj-speed-review") || customElements.define("tj-speed-review", n);
-customElements.get("speed-review") || customElements.define("speed-review", class extends n {
+customElements.get("tj-speed-review") || customElements.define("tj-speed-review", a);
+customElements.get("speed-review") || customElements.define("speed-review", class extends a {
 });

@@ -1,9 +1,9 @@
-var x = Object.defineProperty;
-var v = (h, e, t) => e in h ? x(h, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : h[e] = t;
-var m = (h, e, t) => v(h, typeof e != "symbol" ? e + "" : e, t);
-import { s as y, g as w, a as k } from "./chunks/audio-utils-BwH2sOvH.js";
-import { c as z } from "./chunks/tj-config-BapMvaer.js";
-const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;max-width:800px;margin:0 auto;margin-bottom:2rem;color:#000;background-color:#fff}.container{border:1px solid #e2e8f0;padding:24px;border-radius:8px;background-color:#fff;box-shadow:0 4px 6px -1px #0000001a}.header-row{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #f1f5f9;margin-bottom:10px;padding-bottom:10px}.header-info h2{margin:0;color:#1e293b}.phase-badge{font-size:.8em;color:#64748b;font-weight:600;text-transform:uppercase;margin-top:4px}.header-controls{display:flex;align-items:center;gap:12px}.progress-info{background:#f1f5f9;padding:6px 14px;border-radius:12px;font-size:.9em;font-weight:600;color:#64748b;white-space:nowrap}.icon-btn{background:none;border:1px solid #e2e8f0;padding:8px;border-radius:8px;cursor:pointer;color:#475569;transition:all .2s}.icon-btn:hover{background-color:#f1f5f9;color:#2563eb;border-color:#2563eb}.phase-dots{display:flex;align-items:center;justify-content:center;gap:0;margin:20px 0}.phase-dot-group{display:flex;flex-direction:column;align-items:center;gap:6px}.phase-dot{width:32px;height:32px;border-radius:50%;background:#f1f5f9;border:2px solid #cbd5e1;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85em;color:#94a3b8;transition:all .3s}.phase-dot-group.active .phase-dot{background:#2563eb;border-color:#2563eb;color:#fff;box-shadow:0 0 0 4px #2563eb26}.phase-dot-group.completed .phase-dot{background:#dcfce7;border-color:#22c55e;color:#166534}.phase-dot-label{font-size:.7em;color:#94a3b8;font-weight:600;text-transform:uppercase}.phase-dot-group.active .phase-dot-label{color:#2563eb}.phase-dot-group.completed .phase-dot-label{color:#22c55e}.phase-dot-line{width:48px;height:2px;background:#e2e8f0;margin:0 4px 20px}.phase-nav{display:flex;justify-content:space-between;margin-top:24px;padding-top:16px;border-top:1px solid #f1f5f9}.nav-btn{display:flex;align-items:center;gap:6px;padding:10px 20px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;font-weight:600;color:#475569;transition:all .2s;font-size:.95em}.nav-btn:hover:not([disabled]){background-color:#f1f5f9;border-color:#cbd5e1}.nav-btn:disabled{opacity:.4;cursor:default}.nav-btn-primary{background:#2563eb;color:#fff;border-color:#2563eb}.nav-btn-primary:hover{background:#1d4ed8}.intro-section{text-align:center}.context-card{display:flex;align-items:center;gap:10px;background:#f0f9ff;border:1px solid #bae6fd;color:#0369a1;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:.95em;text-align:left}.context-card svg{flex-shrink:0;color:#0284c7}.intro-text{font-size:1.1em;line-height:1.7;color:#334155;margin-bottom:24px;padding:0 8px}.intro-text p{margin:0}.tts-play-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;padding:14px 28px;border-radius:12px;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px #2563eb4d}.tts-play-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px #2563eb66}.tts-play-btn:active{transform:translateY(0)}.audio-player{margin:16px 0;display:flex;justify-content:center}.audio-el{width:100%;max-width:500px;border-radius:8px}.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}.vocab-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;transition:all .2s}.vocab-card:hover{border-color:#cbd5e1;box-shadow:0 2px 8px #0000000f}.vocab-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.vocab-word{margin:0;font-size:1.15em;color:#1e293b}.vocab-definition{color:#475569;margin:0 0 8px;line-height:1.5}.vocab-example{color:#64748b;font-style:italic;margin:0;font-size:.9em;line-height:1.5}.transcript-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin:16px 0;overflow:hidden}.transcript-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px}.transcript-label{font-weight:600;color:#475569;font-size:.9em}.transcript-toggle{background:none;border:1px solid #cbd5e1;border-radius:6px;padding:4px 12px;font-size:.85em;font-weight:600;color:#475569;cursor:pointer;transition:all .2s}.transcript-toggle:hover{background:#f1f5f9}.transcript-body{padding:12px 16px 16px;border-top:1px solid #e2e8f0}.transcript-line{margin:0 0 8px;color:#334155;line-height:1.6;font-size:.95em}.transcript-line:last-child{margin-bottom:0}.instruction-banner{display:flex;align-items:center;gap:8px;background:#f5f3ff;color:#5b21b6;padding:10px 14px;border-radius:6px;margin-bottom:16px;font-size:.9em;font-weight:500;border:1px solid #ddd6fe}.instruction-banner svg{flex-shrink:0}.section-title{font-size:1.1em;font-weight:700;color:#0f172a;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid #e2e8f0}.tts-btn{display:flex;align-items:center;gap:6px;background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:.85em;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}.tts-btn:hover{background:#1d4ed8}.tts-btn svg{width:16px;height:16px}.question-card{background-color:#f8fafc;border:1px solid #e2e8f0;padding:16px;margin-bottom:16px;border-radius:6px}.question-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:10px}.question-text{margin:0;color:#1e293b;line-height:1.4}.options-group{display:flex;flex-direction:column;gap:8px}.mc-option{display:flex;align-items:center;padding:10px 12px;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;transition:all .2s;background-color:#fff}.mc-option:hover:not(.correct):not(.incorrect):not(.correct-highlight){background-color:#f1f5f9}.mc-option input{margin-right:12px;cursor:pointer}.mc-option.correct{background-color:#dcfce7;border-color:#22c55e;color:#166534;font-weight:700}.mc-option.correct-highlight{border:2px dashed #22c55e;background-color:#f0fdf4}.mc-option.incorrect{background-color:#fee2e2;border-color:#ef4444;color:#991b1b}.score-screen{text-align:center;padding:40px 24px}.score-circle{width:150px;height:150px;border-radius:50%;background:#f1f5f9;border:8px solid #2563eb;margin:0 auto 24px;display:flex;flex-direction:column;justify-content:center;align-items:center}.score-value{font-size:2em;font-weight:800;color:#1e293b}.score-percent{font-size:1.2em;font-weight:600;color:#2563eb}.score-actions{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:8px}.role-btn{padding:12px 28px;font-size:1em;font-weight:700;cursor:pointer;background-color:#f1f5f9;border:2px solid #cbd5e1;border-radius:8px;transition:all .2s}.role-btn:hover{background-color:#e2e8f0;border-color:#94a3b8}.report-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.report-btn:hover{background:#1d4ed8}.share-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:none;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;color:#475569;transition:all .2s;white-space:nowrap;font-size:.9em;font-weight:600;height:42px;box-sizing:border-box}.share-btn:hover{background-color:#f1f5f9;color:#2563eb;border-color:#2563eb}.share-btn svg{color:#475569}.share-btn:hover svg{color:#2563eb}.report-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172acc;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000}.report-modal{background:#fff;width:92%;max-width:420px;padding:28px 24px;border-radius:16px;box-shadow:0 25px 50px -12px #0000004d;text-align:center;max-height:90vh;overflow-y:auto}.report-modal h2{margin:8px 0 4px;color:#1e293b}.report-modal p{color:#64748b;margin:0 0 16px;font-size:.95em}.report-icon{font-size:2.5em;margin-bottom:4px}.report-modal input{display:block;width:100%;box-sizing:border-box;padding:12px 14px;margin-bottom:12px;border:1px solid #e2e8f0;border-radius:8px;font-size:1em;outline:none;transition:border-color .2s}.report-modal input:focus{border-color:#2563eb}.generate-btn{width:100%;padding:13px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s;margin-bottom:8px}.generate-btn:hover{background:#1d4ed8}.cancel-btn{background:none;border:none;color:#94a3b8;font-size:.9em;cursor:pointer;text-decoration:underline}.rc-header{text-align:center;margin-bottom:16px}.rc-icon{font-size:2em}.rc-title{font-size:1.3em;font-weight:800;color:#1e293b;margin:4px 0 2px}.rc-subtitle{font-size:.9em;font-weight:600;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}.rc-activity{font-size:.85em;color:#94a3b8}.rc-student{display:flex;justify-content:space-between;align-items:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin-bottom:16px}.rc-label{font-size:.8em;font-weight:700;color:#94a3b8;text-transform:uppercase}.rc-value{font-weight:700;color:#1e293b}.rc-number{color:#64748b;font-weight:400}.rc-score-row{display:flex;align-items:center;gap:16px;margin-bottom:10px}.rc-score-circle{width:80px;height:80px;border-radius:50%;background:#f1f5f9;border:6px solid #2563eb;display:flex;flex-direction:column;justify-content:center;align-items:center;flex-shrink:0}.rc-score-val{font-size:1.1em;font-weight:800;color:#1e293b;line-height:1.1}.rc-score-pct{font-size:.85em;font-weight:700;color:#2563eb}.rc-score-label{font-size:1.1em;font-weight:700;color:#1e293b}.rc-bar-track{height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}.rc-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:4px;transition:width .6s ease}.rc-details{border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:16px}.rc-detail-row{display:flex;justify-content:space-between;padding:9px 14px;font-size:.9em;border-bottom:1px solid #f1f5f9}.rc-detail-row:last-child{border-bottom:none}.rc-detail-row span:first-child{color:#64748b}.rc-detail-row span:last-child{font-weight:600;color:#1e293b}.rc-combined{background:linear-gradient(135deg,#f0f9ff,#eff6ff);border:1px solid #bae6fd;border-radius:10px;padding:14px 16px;margin-bottom:16px;text-align:center}.rc-combined-title{font-size:.95em;font-weight:700;color:#0c4a6e;margin-bottom:8px}.rc-combined-score{font-size:1.4em;font-weight:800;color:#1e293b;margin-bottom:8px}.rc-combined-pct{color:#2563eb}.rc-actions{margin-top:16px}.rc-close-btn{width:100%;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.rc-close-btn:hover{background:#16a34a}.rc-submission-box{margin-top:20px;padding:20px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;text-align:left;box-shadow:inset 0 2px 4px #00000005}.rc-submission-header{margin:0 0 12px;font-size:.85em;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em}.rc-teacher-code-input{width:100%;box-sizing:border-box;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:1em;margin-bottom:8px;background:#fff;transition:all .2s ease;outline:none;font-family:inherit;color:#1e293b}.rc-teacher-code-input:focus{border-color:#2563eb;box-shadow:0 0 0 4px #2563eb1a}.rc-teacher-code-input::placeholder{color:#94a3b8}.rc-help-text{margin:4px 0 0;font-size:.85em;color:#64748b;line-height:1.4}.rc-submit-btn{width:100%;padding:16px;background:#90ee90;color:#1e293b;border:none;border-radius:12px;font-size:1.1em;font-weight:700;cursor:pointer;transition:all .2s ease;box-shadow:0 4px 6px #0000001a;margin-bottom:8px}.rc-submit-btn:hover:not(:disabled){background:#1d4ed8;transform:translateY(-1px);box-shadow:0 6px 12px #2563eb4d}.rc-submit-btn:active:not(:disabled){transform:translateY(0)}.rc-submit-btn:disabled{opacity:.6;cursor:default;background:#94a3b8;box-shadow:none}.rc-secondary-btn{width:100%;padding:14px;background:#d3d3d3;color:#1e293b;border:2px solid #e2e8f0;border-radius:12px;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s ease}.rc-secondary-btn:hover{background:#f1f5f9;border-color:#cbd5e1}.footer-actions{margin-top:30px;display:none;justify-content:center;padding-top:20px;border-top:1px solid #f1f5f9}.complete-btn{background-color:#2563eb;color:#fff;border:none;padding:12px 32px;border-radius:6px;font-weight:700;cursor:pointer;font-size:1.1em;transition:background .2s}.complete-btn:hover{background-color:#1d4ed8}.combined-score{margin-top:30px;padding:20px 24px;background:linear-gradient(135deg,#f0f9ff,#eff6ff);border:1px solid #bae6fd;border-radius:12px;text-align:center}.combined-header{font-size:1.1em;font-weight:700;color:#0c4a6e;margin-bottom:12px}.combined-stats{display:flex;justify-content:center;gap:24px;margin-bottom:12px}.combined-value{font-size:1.8em;font-weight:800;color:#1e293b}.combined-percent{font-size:1.8em;font-weight:800;color:#2563eb}.combined-bar-track{height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden}.combined-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:5px;transition:width .6s ease}.combined-pending{background:#f8fafc;border-color:#e2e8f0}.combined-note{color:#64748b;font-size:.9em;margin:0}.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%);background:#1e293b;color:#fff;padding:12px 20px;border-radius:10px;display:flex;align-items:center;gap:8px;font-size:.9em;font-weight:600;box-shadow:0 8px 24px #00000040;z-index:2000;animation:toastIn .3s ease}.toast-url{background:#334155;border:none;color:#fff;padding:6px 10px;border-radius:6px;font-size:.85em;width:260px;max-width:60vw}@keyframes toastIn{0%{opacity:0;transform:translate(-50%) translateY(12px)}to{opacity:1;transform:translate(-50%) translateY(0)}}.empty-state{color:#94a3b8;font-style:italic}.voice-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ab3;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1000}.voice-card{background:#fff;width:90%;max-width:400px;max-height:80vh;border-radius:1.2em;box-shadow:0 20px 25px -5px #0003;display:flex;flex-direction:column;overflow:hidden}.voice-card-header{padding:16px 20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center}.voice-card-header h3{margin:0;font-size:1.2em;color:#1e293b}.close-voice-btn{background:none;border:none;font-size:24px;cursor:pointer;color:#64748b}.voice-list{padding:10px;overflow-y:auto;flex:1}.voice-option-btn{width:100%;text-align:left;padding:12px 16px;margin-bottom:6px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .2s}.voice-option-btn:hover{background-color:#f8fafc;border-color:#cbd5e1}.voice-option-btn.active{background:#eff6ff;border-color:#3b82f6;color:#2563eb;font-weight:600}.badge{background:#dcfce7;color:#166534;font-size:.7em;padding:2px 8px;border-radius:10px;font-weight:700}@media (max-width: 600px){.container{padding:16px}.vocab-grid{grid-template-columns:1fr}.phase-dots{gap:0}.phase-dot-line{width:24px}.phase-dot-label{font-size:.6em}.nav-btn{padding:8px 14px;font-size:.85em}}.browser-prompt-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ae6;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:10000;color:#fff;padding:2em;text-align:center}.browser-prompt-card{background:#fff;color:#1e293b;padding:2.5em;border-radius:1.5em;max-width:400px;box-shadow:0 20px 25px -5px #0000001a,0 10px 10px -5px #0000000a}.browser-prompt-card h2{color:#b45309;margin-bottom:.5em;font-size:1.5em;background:none;-webkit-text-fill-color:initial}.browser-prompt-card p{margin-bottom:1.5em;line-height:1.5;color:#475569}.browser-action-btn{display:inline-block;background-color:#ca8a04;color:#fff;padding:.75em 1.5em;border-radius:9999px;text-decoration:none;font-weight:700;transition:background-color .2s;cursor:pointer}.browser-action-btn:hover{background-color:#a16207}", L = `<div id="lesson-container" class="container">
+var v = Object.defineProperty;
+var y = (b, e, t) => e in b ? v(b, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : b[e] = t;
+var f = (b, e, t) => y(b, typeof e != "symbol" ? e + "" : e, t);
+import { s as w, g as k, a as z } from "./chunks/audio-utils-BwH2sOvH.js";
+import { c as x } from "./chunks/tj-config-DtZWnqEi.js";
+const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;max-width:800px;margin:0 auto;margin-bottom:2rem;color:#1e293b;background-color:transparent;--ls-bg: #ffffff;--ls-container-bg: #ffffff;--ls-border: #e2e8f0;--ls-border-light: #f1f5f9;--ls-text: #1e293b;--ls-text-muted: #64748b;--ls-text-sub: #334155;--ls-alt-bg: #f8fafc;--ls-progress-bg: #f1f5f9;--ls-nav-btn-bg: white;--ls-mc-option-bg: white;--ls-transcript-bg: #f8fafc;--ls-vocab-card-bg: #f8fafc;--ls-score-circle-bg: #f1f5f9;--ls-report-modal-bg: white;--ls-voice-card-bg: white;--ls-voice-btn-bg: white;--ls-browser-prompt-bg: white;--ls-rc-student-bg: #f8fafc;--ls-rc-detail-border: #f1f5f9;--ls-combined-bg: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%);--ls-combined-border: #bae6fd;--ls-combined-title: #0c4a6e;--ls-combined-val: #1e293b;--ls-rc-sub-bg: #f8fafc;--ls-rc-sub-border: #e2e8f0;--ls-submit-bg: lightgreen;--ls-submit-color: #1e293b;--ls-secondary-bg: lightgrey;--ls-secondary-color: #1e293b}@media (prefers-color-scheme: dark){:host{color:#e2e8f0;--ls-bg: #0f172a;--ls-container-bg: #1e293b;--ls-border: #475569;--ls-border-light: #334155;--ls-text: #e2e8f0;--ls-text-muted: #94a3b8;--ls-text-sub: #cbd5e1;--ls-alt-bg: #0f172a;--ls-progress-bg: #334155;--ls-nav-btn-bg: #1e293b;--ls-mc-option-bg: #1e293b;--ls-transcript-bg: #0f172a;--ls-vocab-card-bg: #0f172a;--ls-score-circle-bg: #0f172a;--ls-report-modal-bg: #1e293b;--ls-voice-card-bg: #1e293b;--ls-voice-btn-bg: #1e293b;--ls-browser-prompt-bg: #1e293b;--ls-rc-student-bg: #0f172a;--ls-rc-detail-border: #334155;--ls-combined-bg: linear-gradient(135deg, #0c2340 0%, #1e1b4b 100%);--ls-combined-border: #1e40af;--ls-combined-title: #93c5fd;--ls-combined-val: #e2e8f0;--ls-rc-sub-bg: #0f172a;--ls-rc-sub-border: #475569;--ls-submit-bg: #16a34a;--ls-submit-color: white;--ls-secondary-bg: #334155;--ls-secondary-color: #e2e8f0}}.container{border:1px solid var(--ls-border);padding:24px;border-radius:8px;background-color:var(--ls-container-bg);box-shadow:0 4px 6px -1px #0000001a}.header-row{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #f1f5f9;margin-bottom:10px;padding-bottom:10px}.header-info h2{margin:0;color:var(--ls-text)}.phase-badge{font-size:.8em;color:#64748b;font-weight:600;text-transform:uppercase;margin-top:4px}.header-controls{display:flex;align-items:center;gap:12px}.progress-info{background:var(--ls-progress-bg);padding:6px 14px;border-radius:12px;font-size:.9em;font-weight:600;color:var(--ls-text-muted);white-space:nowrap}.icon-btn{background:none;border:1px solid var(--ls-border);padding:8px;border-radius:8px;cursor:pointer;color:var(--ls-text-muted);transition:all .2s}.icon-btn:hover{background-color:#f1f5f9;color:#2563eb;border-color:#2563eb}.phase-dots{display:flex;align-items:center;justify-content:center;gap:0;margin:20px 0}.phase-dot-group{display:flex;flex-direction:column;align-items:center;gap:6px}.phase-dot{width:32px;height:32px;border-radius:50%;background:#f1f5f9;border:2px solid #cbd5e1;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85em;color:#94a3b8;transition:all .3s}.phase-dot-group.active .phase-dot{background:#2563eb;border-color:#2563eb;color:#fff;box-shadow:0 0 0 4px #2563eb26}.phase-dot-group.completed .phase-dot{background:#dcfce7;border-color:#22c55e;color:#166534}.phase-dot-label{font-size:.7em;color:#94a3b8;font-weight:600;text-transform:uppercase}.phase-dot-group.active .phase-dot-label{color:#2563eb}.phase-dot-group.completed .phase-dot-label{color:#22c55e}.phase-dot-line{width:48px;height:2px;background:#e2e8f0;margin:0 4px 20px}.phase-nav{display:flex;justify-content:space-between;margin-top:24px;padding-top:16px;border-top:1px solid #f1f5f9}.nav-btn{display:flex;align-items:center;gap:6px;padding:10px 20px;border:1px solid var(--ls-border);border-radius:8px;background:var(--ls-nav-btn-bg);cursor:pointer;font-weight:600;color:var(--ls-text-muted);transition:all .2s;font-size:.95em}.nav-btn:hover:not([disabled]){background-color:#f1f5f9;border-color:#cbd5e1}.nav-btn:disabled{opacity:.4;cursor:default}.nav-btn-primary{background:#2563eb;color:#fff;border-color:#2563eb}.nav-btn-primary:hover{background:#1d4ed8}.intro-section{text-align:center}.context-card{display:flex;align-items:center;gap:10px;background:#f0f9ff;border:1px solid #bae6fd;color:#0369a1;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:.95em;text-align:left}.context-card svg{flex-shrink:0;color:#0284c7}.intro-text{font-size:1.1em;line-height:1.7;color:#334155;margin-bottom:24px;padding:0 8px}.intro-text p{margin:0}.tts-play-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;padding:14px 28px;border-radius:12px;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px #2563eb4d}.tts-play-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px #2563eb66}.tts-play-btn:active{transform:translateY(0)}.audio-player{margin:16px 0;display:flex;justify-content:center}.audio-el{width:100%;max-width:500px;border-radius:8px}.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}.vocab-card{background:var(--ls-vocab-card-bg);border:1px solid var(--ls-border);border-radius:8px;padding:16px;transition:all .2s}.vocab-card:hover{border-color:#cbd5e1;box-shadow:0 2px 8px #0000000f}.vocab-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.vocab-word{margin:0;font-size:1.15em;color:var(--ls-text)}.vocab-definition{color:var(--ls-text-muted);margin:0 0 8px;line-height:1.5}.vocab-example{color:var(--ls-text-muted);font-style:italic;margin:0;font-size:.9em;line-height:1.5}.transcript-box{background:var(--ls-transcript-bg);border:1px solid var(--ls-border);border-radius:8px;margin:16px 0;overflow:hidden}.transcript-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px}.transcript-label{font-weight:600;color:var(--ls-text-muted);font-size:.9em}.transcript-toggle{background:none;border:1px solid var(--ls-border);border-radius:6px;padding:4px 12px;font-size:.85em;font-weight:600;color:var(--ls-text-muted);cursor:pointer;transition:all .2s}.transcript-toggle:hover{background:var(--ls-progress-bg)}.transcript-body{padding:12px 16px 16px;border-top:1px solid var(--ls-border)}.transcript-line{margin:0 0 8px;color:var(--ls-text-sub);line-height:1.6;font-size:.95em}.transcript-line:last-child{margin-bottom:0}.instruction-banner{display:flex;align-items:center;gap:8px;background:#f5f3ff;color:#5b21b6;padding:10px 14px;border-radius:6px;margin-bottom:16px;font-size:.9em;font-weight:500;border:1px solid #ddd6fe}.instruction-banner svg{flex-shrink:0}.section-title{font-size:1.1em;font-weight:700;color:#0f172a;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid #e2e8f0}.tts-btn{display:flex;align-items:center;gap:6px;background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:.85em;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap;flex-shrink:0}.tts-btn:hover{background:#1d4ed8}.tts-btn svg{width:16px;height:16px}.question-card{background-color:var(--ls-alt-bg);border:1px solid var(--ls-border);padding:16px;margin-bottom:16px;border-radius:6px}.question-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:10px}.question-text{margin:0;color:var(--ls-text);line-height:1.4}.options-group{display:flex;flex-direction:column;gap:8px}.mc-option{display:flex;align-items:center;padding:10px 12px;border:1px solid var(--ls-border);border-radius:4px;cursor:pointer;transition:all .2s;background-color:var(--ls-mc-option-bg);color:var(--ls-text)}.mc-option:hover:not(.correct):not(.incorrect):not(.correct-highlight){background-color:var(--ls-progress-bg)}.mc-option input{margin-right:12px;cursor:pointer}.mc-option.correct{background-color:#dcfce7;border-color:#22c55e;color:#166534;font-weight:700}.mc-option.correct-highlight{border:2px dashed #22c55e;background-color:#f0fdf4}.mc-option.incorrect{background-color:#fee2e2;border-color:#ef4444;color:#991b1b}.score-screen{text-align:center;padding:40px 24px}.score-circle{width:150px;height:150px;border-radius:50%;background:var(--ls-score-circle-bg);border:8px solid #2563eb;margin:0 auto 24px;display:flex;flex-direction:column;justify-content:center;align-items:center}.score-value{font-size:2em;font-weight:800;color:var(--ls-text)}.score-percent{font-size:1.2em;font-weight:600;color:#2563eb}.score-actions{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:8px}.role-btn{padding:12px 28px;font-size:1em;font-weight:700;cursor:pointer;background-color:#f1f5f9;border:2px solid #cbd5e1;border-radius:8px;transition:all .2s}.role-btn:hover{background-color:#e2e8f0;border-color:#94a3b8}.report-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.report-btn:hover{background:#1d4ed8}.share-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:none;border:1px solid var(--ls-border);border-radius:8px;cursor:pointer;color:var(--ls-text-muted);transition:all .2s;white-space:nowrap;font-size:.9em;font-weight:600;height:42px;box-sizing:border-box}.share-btn:hover{background-color:#f1f5f9;color:#2563eb;border-color:#2563eb}.share-btn svg{color:#475569}.share-btn:hover svg{color:#2563eb}.report-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172acc;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000}.report-modal{background:var(--ls-report-modal-bg);width:92%;max-width:420px;padding:28px 24px;border-radius:16px;box-shadow:0 25px 50px -12px #0000004d;text-align:center;max-height:90vh;overflow-y:auto}.report-modal h2{margin:8px 0 4px;color:var(--ls-text)}.report-modal p{color:var(--ls-text-muted);margin:0 0 16px;font-size:.95em}.report-icon{font-size:2.5em;margin-bottom:4px}.report-modal input{display:block;width:100%;box-sizing:border-box;padding:12px 14px;margin-bottom:12px;border:1px solid var(--ls-border);border-radius:8px;font-size:1em;outline:none;transition:border-color .2s;background:var(--ls-container-bg);color:var(--ls-text)}.report-modal input:focus{border-color:#2563eb}.generate-btn{width:100%;padding:13px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s;margin-bottom:8px}.generate-btn:hover{background:#1d4ed8}.cancel-btn{background:none;border:none;color:#94a3b8;font-size:.9em;cursor:pointer;text-decoration:underline}.rc-header{text-align:center;margin-bottom:16px}.rc-icon{font-size:2em}.rc-title{font-size:1.3em;font-weight:800;color:var(--ls-text);margin:4px 0 2px}.rc-subtitle{font-size:.9em;font-weight:600;color:var(--ls-text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}.rc-activity{font-size:.85em;color:#94a3b8}.rc-student{display:flex;justify-content:space-between;align-items:center;background:var(--ls-rc-student-bg);border:1px solid var(--ls-border);border-radius:8px;padding:10px 14px;margin-bottom:16px}.rc-label{font-size:.8em;font-weight:700;color:var(--ls-text-muted);text-transform:uppercase}.rc-value{font-weight:700;color:var(--ls-text)}.rc-number{color:var(--ls-text-muted);font-weight:400}.rc-score-row{display:flex;align-items:center;gap:16px;margin-bottom:10px}.rc-score-circle{width:80px;height:80px;border-radius:50%;background:var(--ls-score-circle-bg);border:6px solid #2563eb;display:flex;flex-direction:column;justify-content:center;align-items:center;flex-shrink:0}.rc-score-val{font-size:1.1em;font-weight:800;color:var(--ls-text);line-height:1.1}.rc-score-pct{font-size:.85em;font-weight:700;color:#2563eb}.rc-score-label{font-size:1.1em;font-weight:700;color:var(--ls-text)}.rc-bar-track{height:8px;background:var(--ls-border);border-radius:4px;overflow:hidden}.rc-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:4px;transition:width .6s ease}.rc-details{border:1px solid var(--ls-border);border-radius:8px;overflow:hidden;margin-bottom:16px}.rc-detail-row{display:flex;justify-content:space-between;padding:9px 14px;font-size:.9em;border-bottom:1px solid var(--ls-rc-detail-border)}.rc-detail-row:last-child{border-bottom:none}.rc-detail-row span:first-child{color:var(--ls-text-muted)}.rc-detail-row span:last-child{font-weight:600;color:var(--ls-text)}.rc-combined{background:var(--ls-combined-bg);border:1px solid var(--ls-combined-border);border-radius:10px;padding:14px 16px;margin-bottom:16px;text-align:center}.rc-combined-title{font-size:.95em;font-weight:700;color:var(--ls-combined-title);margin-bottom:8px}.rc-combined-score{font-size:1.4em;font-weight:800;color:var(--ls-combined-val);margin-bottom:8px}.rc-combined-pct{color:#2563eb}.rc-actions{margin-top:16px}.rc-close-btn{width:100%;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.rc-close-btn:hover{background:#16a34a}.rc-submission-box{margin-top:20px;padding:20px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;text-align:left;box-shadow:inset 0 2px 4px #00000005}.rc-submission-header{margin:0 0 12px;font-size:.85em;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em}.rc-teacher-code-input{width:100%;box-sizing:border-box;padding:12px 16px;border:2px solid var(--ls-border);border-radius:10px;font-size:1em;margin-bottom:8px;background:var(--ls-container-bg);color:var(--ls-text);transition:all .2s ease;outline:none;font-family:inherit}.rc-teacher-code-input:focus{border-color:#2563eb;box-shadow:0 0 0 4px #2563eb1a}.rc-teacher-code-input::placeholder{color:#94a3b8}.rc-help-text{margin:4px 0 0;font-size:.85em;color:#64748b;line-height:1.4}.rc-submit-btn{width:100%;padding:16px;background:var(--ls-submit-bg);color:var(--ls-submit-color);border:none;border-radius:12px;font-size:1.1em;font-weight:700;cursor:pointer;transition:all .2s ease;box-shadow:0 4px 6px #0000001a;margin-bottom:8px}.rc-submit-btn:hover:not(:disabled){background:#1d4ed8;transform:translateY(-1px);box-shadow:0 6px 12px #2563eb4d}.rc-submit-btn:active:not(:disabled){transform:translateY(0)}.rc-submit-btn:disabled{opacity:.6;cursor:default;background:#94a3b8;box-shadow:none}.rc-secondary-btn{width:100%;padding:14px;background:var(--ls-secondary-bg);color:var(--ls-secondary-color);border:2px solid var(--ls-border);border-radius:12px;font-size:1em;font-weight:700;cursor:pointer;transition:all .2s ease}.rc-secondary-btn:hover{background:var(--ls-progress-bg);border-color:var(--ls-text-muted)}.footer-actions{margin-top:30px;display:none;justify-content:center;padding-top:20px;border-top:1px solid #f1f5f9}.complete-btn{background-color:#2563eb;color:#fff;border:none;padding:12px 32px;border-radius:6px;font-weight:700;cursor:pointer;font-size:1.1em;transition:background .2s}.complete-btn:hover{background-color:#1d4ed8}.combined-score{margin-top:30px;padding:20px 24px;background:var(--ls-combined-bg);border:1px solid var(--ls-combined-border);border-radius:12px;text-align:center}.combined-header{font-size:1.1em;font-weight:700;color:var(--ls-combined-title);margin-bottom:12px}.combined-stats{display:flex;justify-content:center;gap:24px;margin-bottom:12px}.combined-value{font-size:1.8em;font-weight:800;color:var(--ls-combined-val)}.combined-percent{font-size:1.8em;font-weight:800;color:#2563eb}.combined-bar-track{height:10px;background:var(--ls-border);border-radius:5px;overflow:hidden}.combined-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:5px;transition:width .6s ease}.combined-pending{background:#f8fafc;border-color:#e2e8f0}.combined-note{color:#64748b;font-size:.9em;margin:0}.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%);background:#1e293b;color:#fff;padding:12px 20px;border-radius:10px;display:flex;align-items:center;gap:8px;font-size:.9em;font-weight:600;box-shadow:0 8px 24px #00000040;z-index:2000;animation:toastIn .3s ease}.toast-url{background:#334155;border:none;color:#fff;padding:6px 10px;border-radius:6px;font-size:.85em;width:260px;max-width:60vw}@keyframes toastIn{0%{opacity:0;transform:translate(-50%) translateY(12px)}to{opacity:1;transform:translate(-50%) translateY(0)}}.empty-state{color:#94a3b8;font-style:italic}.voice-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ab3;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1000}.voice-card{background:var(--ls-voice-card-bg);width:90%;max-width:400px;max-height:80vh;border-radius:1.2em;box-shadow:0 20px 25px -5px #0003;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--ls-border)}.voice-card-header{padding:16px 20px;border-bottom:1px solid var(--ls-border);display:flex;justify-content:space-between;align-items:center}.voice-card-header h3{margin:0;font-size:1.2em;color:var(--ls-text)}.close-voice-btn{background:none;border:none;font-size:24px;cursor:pointer;color:var(--ls-text-muted)}.voice-list{padding:10px;overflow-y:auto;flex:1}.voice-option-btn{width:100%;text-align:left;padding:12px 16px;margin-bottom:6px;border:1px solid var(--ls-border);border-radius:8px;background:var(--ls-voice-btn-bg);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .2s;color:var(--ls-text)}.voice-option-btn:hover{background-color:var(--ls-alt-bg);border-color:var(--ls-text-muted)}.voice-option-btn.active{background:#eff6ff;border-color:#3b82f6;color:#2563eb;font-weight:600}.badge{background:#dcfce7;color:#166534;font-size:.7em;padding:2px 8px;border-radius:10px;font-weight:700}@media (max-width: 600px){.container{padding:16px}.vocab-grid{grid-template-columns:1fr}.phase-dots{gap:0}.phase-dot-line{width:24px}.phase-dot-label{font-size:.6em}.nav-btn{padding:8px 14px;font-size:.85em}}.browser-prompt-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ae6;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:10000;color:#fff;padding:2em;text-align:center}.browser-prompt-card{background:var(--ls-browser-prompt-bg);color:var(--ls-text);padding:2.5em;border-radius:1.5em;max-width:400px;box-shadow:0 20px 25px -5px #0000001a,0 10px 10px -5px #0000000a}.browser-prompt-card h2{color:#b45309;margin-bottom:.5em;font-size:1.5em;background:none;-webkit-text-fill-color:initial}.browser-prompt-card p{margin-bottom:1.5em;line-height:1.5;color:var(--ls-text-muted)}.browser-action-btn{display:inline-block;background-color:#ca8a04;color:#fff;padding:.75em 1.5em;border-radius:9999px;text-decoration:none;font-weight:700;transition:background-color .2s;cursor:pointer}.browser-action-btn:hover{background-color:#a16207}", L = `<div id="lesson-container" class="container">
     <div class="header-row">
         <div class="header-info">
             <h2 id="lesson-title">Listening Lesson</h2>
@@ -80,12 +80,18 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
         <button class="close-prompt" style="display: block; width: 100%; margin-top: 1.5em; border: none; background: transparent; text-decoration: underline; cursor: pointer; color: #64748b; font-weight: 600; font-size: 0.95em;" onclick="this.closest('.browser-prompt-overlay').style.display='none'">Continue anyway / ใช้งานต่อ</button>
     </div>
 </div>
-`, l = class l extends HTMLElement {
+`, d = class d extends HTMLElement {
+  get code() {
+    return this.getAttribute("code") !== null ? this.getAttribute("code") : x.teacherCode;
+  }
+  set code(e) {
+    e != null ? this.setAttribute("code", e) : this.removeAttribute("code");
+  }
   constructor() {
     var t;
-    super(), this.attachShadow({ mode: "open" }), this.lessonData = null, this.currentPhase = 0, this.score = 0, this.answeredCount = 0, this.totalQuestions = 0, this.isCompleted = !1, this.studentInfo = { nickname: "", number: "", homeroom: "", teacherCode: "" }, this.submissionUrl = ((t = z) == null ? void 0 : t.submissionUrl) || "https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec", this.isSubmitting = !1, this.selectedVoiceName = null, this.isPlaying = !1, this._currentAudioEl = null;
+    super(), this.attachShadow({ mode: "open" }), this.lessonData = null, this.currentPhase = 0, this.score = 0, this.answeredCount = 0, this.totalQuestions = 0, this.isCompleted = !1, this.studentInfo = { nickname: "", number: "", homeroom: "", teacherCode: "" }, this.submissionUrl = (t = x) == null ? void 0 : t.submissionUrl, this.isSubmitting = !1, this.selectedVoiceName = null, this.isPlaying = !1, this._currentAudioEl = null;
     const e = new URLSearchParams(window.location.search);
-    this.isQuizMode = e.get("quiz") === "1", l._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList());
+    this.isQuizMode = e.get("quiz") === "1", d._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList());
   }
   connectedCallback() {
     requestAnimationFrame(() => {
@@ -109,10 +115,10 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
     this.totalQuestions = ((t = (e = this.lessonData.listening) == null ? void 0 : e.questions) == null ? void 0 : t.length) || 0, this.render(), this.checkBrowserSupport(), this._updateVoiceList(), setTimeout(() => this._updateVoiceList(), 500), setTimeout(() => this._updateVoiceList(), 1500);
   }
   _shouldShowAudioControls() {
-    return y(window.speechSynthesis);
+    return w(window.speechSynthesis);
   }
   _getAndroidIntentLink() {
-    return w();
+    return k();
   }
   checkBrowserSupport() {
     if (!this._shouldShowAudioControls()) {
@@ -120,8 +126,8 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
       if (e) {
         e.style.display = "flex";
         const t = this._getAndroidIntentLink(), o = this.shadowRoot.getElementById("browser-action-btn");
-        t ? (o.href = t, o.textContent = "Open in Chrome") : (o.onclick = (n) => {
-          n.preventDefault(), this._showToast("Please open this page in Safari or Chrome for audio features.");
+        t ? (o.href = t, o.textContent = "Open in Chrome") : (o.onclick = (s) => {
+          s.preventDefault(), this._showToast("Please open this page in Safari or Chrome for audio features.");
         }, o.textContent = "Use Safari / Chrome");
       }
     }
@@ -145,20 +151,20 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
     this.shadowRoot.getElementById("lesson-container").style.display = "block";
     const o = this.shadowRoot.getElementById("score-screen");
     o && (o.style.display = "none"), this.shadowRoot.getElementById("lesson-title").textContent = e.title || "Listening Lesson", this.shadowRoot.getElementById("phase-badge").textContent = t[this.currentPhase];
-    const n = this.shadowRoot.getElementById("progress-info");
-    this.currentPhase === 2 ? (n.style.display = "block", n.textContent = `${this.answeredCount} / ${this.totalQuestions} Answered`) : n.style.display = "none";
+    const s = this.shadowRoot.getElementById("progress-info");
+    this.currentPhase === 2 ? (s.style.display = "block", s.textContent = `${this.answeredCount} / ${this.totalQuestions} Answered`) : s.style.display = "none";
     const a = this.shadowRoot.getElementById("phase-dots");
-    a.innerHTML = t.map((d, c) => `
-            <div class="phase-dot-group ${c === this.currentPhase ? "active" : ""} ${c < this.currentPhase ? "completed" : ""}">
-                <div class="phase-dot">${c < this.currentPhase ? "✓" : c + 1}</div>
-                <span class="phase-dot-label">${d}</span>
+    a.innerHTML = t.map((c, l) => `
+            <div class="phase-dot-group ${l === this.currentPhase ? "active" : ""} ${l < this.currentPhase ? "completed" : ""}">
+                <div class="phase-dot">${l < this.currentPhase ? "✓" : l + 1}</div>
+                <span class="phase-dot-label">${c}</span>
             </div>
-            ${c < t.length - 1 ? '<div class="phase-dot-line"></div>' : ""}
+            ${l < t.length - 1 ? '<div class="phase-dot-line"></div>' : ""}
         `).join("");
-    const s = this.shadowRoot.getElementById("phase-content");
-    this.currentPhase === 0 ? s.innerHTML = this._renderIntroPhase() : this.currentPhase === 1 ? s.innerHTML = this._renderVocabPhase() : s.innerHTML = this._renderListeningPhase();
-    const i = this.shadowRoot.getElementById("prev-btn"), r = this.shadowRoot.getElementById("next-btn");
-    i && (i.disabled = this.currentPhase === 0), r && (this.currentPhase < 2 ? r.style.display = "flex" : r.style.display = "none"), this._attachPhaseListeners();
+    const n = this.shadowRoot.getElementById("phase-content");
+    this.currentPhase === 0 ? n.innerHTML = this._renderIntroPhase() : this.currentPhase === 1 ? n.innerHTML = this._renderVocabPhase() : n.innerHTML = this._renderListeningPhase();
+    const r = this.shadowRoot.getElementById("prev-btn"), i = this.shadowRoot.getElementById("next-btn");
+    r && (r.disabled = this.currentPhase === 0), i && (this.currentPhase < 2 ? i.style.display = "flex" : i.style.display = "none"), this._attachPhaseListeners();
   }
   // ─── PHASE RENDERERS ───────────────────────────────────
   _renderIntroPhase() {
@@ -185,7 +191,7 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
                 Review the vocabulary before listening. Tap the speaker to hear each word.
             </div>
             <div class="vocab-grid">
-                ${e.map((o, n) => `
+                ${e.map((o, s) => `
             <div class="vocab-card">
                 <div class="vocab-header">
                     <h3 class="vocab-word">${o.word}</h3>
@@ -218,8 +224,8 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
                     <span>Play Dialogue</span>
                 </button>
             `;
-    let n = "";
-    e.transcript && !this.isQuizMode && (n = `
+    let s = "";
+    e.transcript && !this.isQuizMode && (s = `
                 <div class="transcript-box">
                     <div class="transcript-header">
                         <span class="transcript-label">Transcript</span>
@@ -227,30 +233,30 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
                     </div>
                     <div class="transcript-body" id="transcript-body" style="display: none;">
                         ${e.transcript.split(`
-`).filter((i) => i.trim()).map((i) => `<p class="transcript-line">${i}</p>`).join("")}
+`).filter((r) => r.trim()).map((r) => `<p class="transcript-line">${r}</p>`).join("")}
                     </div>
                 </div>
             `);
     let a = "";
-    return e.questions && e.questions.length > 0 && (a = e.questions.map((s, i) => {
-      const r = `q_${i}`, d = s.options.map((c, p) => `
-                    <label class="mc-option" id="label_${r}_${p}">
-                        <input type="radio" name="${r}" value="${c}" data-correct="${s.correct}" data-label-id="label_${r}_${p}">
-                        ${c}
+    return e.questions && e.questions.length > 0 && (a = e.questions.map((n, r) => {
+      const i = `q_${r}`, c = n.options.map((l, p) => `
+                    <label class="mc-option" id="label_${i}_${p}">
+                        <input type="radio" name="${i}" value="${l}" data-correct="${n.correct}" data-label-id="label_${i}_${p}">
+                        ${l}
                     </label>
                 `).join("");
       return `
                     <div class="question-card">
                         <div class="question-header">
-                            <p class="question-text"><strong>Q${i + 1}.</strong> ${s.question}</p>
-                            <button class="tts-btn" data-text="${s.question}" title="Listen to question">
+                            <p class="question-text"><strong>Q${r + 1}.</strong> ${n.question}</p>
+                            <button class="tts-btn" data-text="${n.question}" title="Listen to question">
                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                                     <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                                 </svg>
                             </button>
                         </div>
                         <div class="options-group">
-                            ${d}
+                            ${c}
                         </div>
                     </div>
                 `;
@@ -263,7 +269,7 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
                     Listen to the dialogue, then answer the comprehension questions below.
                 </div>
                 ${o}
-                ${n}
+                ${s}
                 <div class="section-title">Comprehension Questions</div>
                 ${a}
                 <div id="footer-actions" class="footer-actions" style="display: ${this.answeredCount === this.totalQuestions && this.totalQuestions > 0 ? "flex" : "none"}">
@@ -277,24 +283,24 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
     const e = this.shadowRoot.getElementById("prev-btn"), t = this.shadowRoot.getElementById("next-btn");
     e && (e.onclick = () => this._navigatePhase(-1)), t && (t.onclick = () => this._navigatePhase(1));
     const o = this.shadowRoot.getElementById("share-quiz-btn");
-    o && (o.onclick = () => this._shareAsQuiz()), this.shadowRoot.getElementById("voice-btn").onclick = () => this._showVoiceOverlay(), this.shadowRoot.getElementById("close-voice-btn").onclick = () => this._hideVoiceOverlay(), this.shadowRoot.getElementById("voice-overlay").onclick = (n) => {
-      n.target.id === "voice-overlay" && this._hideVoiceOverlay();
+    o && (o.onclick = () => this._shareAsQuiz()), this.shadowRoot.getElementById("voice-btn").onclick = () => this._showVoiceOverlay(), this.shadowRoot.getElementById("close-voice-btn").onclick = () => this._hideVoiceOverlay(), this.shadowRoot.getElementById("voice-overlay").onclick = (s) => {
+      s.target.id === "voice-overlay" && this._hideVoiceOverlay();
     };
   }
   _attachPhaseListeners() {
-    this.shadowRoot.querySelectorAll(".tts-btn, .vocab-play-btn").forEach((n) => {
-      n.onclick = () => this._playTTS(n.getAttribute("data-text"));
+    this.shadowRoot.querySelectorAll(".tts-btn, .vocab-play-btn").forEach((s) => {
+      s.onclick = () => this._playTTS(s.getAttribute("data-text"));
     });
     const e = this.shadowRoot.getElementById("listening-play-btn");
     e && (e.onclick = () => {
       var a;
-      const n = ((a = this.lessonData.listening) == null ? void 0 : a.transcript) || "";
-      this._playTTS(n);
+      const s = ((a = this.lessonData.listening) == null ? void 0 : a.transcript) || "";
+      this._playTTS(s);
     });
     const t = this.shadowRoot.getElementById("transcript-toggle");
     t && (t.onclick = () => {
-      const n = this.shadowRoot.getElementById("transcript-body");
-      n.style.display === "none" ? (n.style.display = "block", t.textContent = "Hide") : (n.style.display = "none", t.textContent = "Show");
+      const s = this.shadowRoot.getElementById("transcript-body");
+      s.style.display === "none" ? (s.style.display = "block", t.textContent = "Hide") : (s.style.display = "none", t.textContent = "Show");
     }), this._attachValidationListeners();
     const o = this.shadowRoot.getElementById("complete-btn");
     o && (o.onclick = () => {
@@ -308,12 +314,12 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
   _attachValidationListeners() {
     this.shadowRoot.querySelectorAll('input[type="radio"]').forEach((t) => {
       t.addEventListener("change", (o) => {
-        const n = o.target.value, a = o.target.getAttribute("data-correct"), s = o.target.getAttribute("data-label-id"), i = this.shadowRoot.getElementById(s), r = o.target.name, d = this.shadowRoot.querySelectorAll(`input[name="${r}"]`);
-        d.forEach((c) => {
-          c.disabled = !0;
-        }), n === a ? (i.classList.add("correct"), this.score++) : (i.classList.add("incorrect"), d.forEach((c) => {
-          if (c.value === c.getAttribute("data-correct")) {
-            const p = c.getAttribute("data-label-id");
+        const s = o.target.value, a = o.target.getAttribute("data-correct"), n = o.target.getAttribute("data-label-id"), r = this.shadowRoot.getElementById(n), i = o.target.name, c = this.shadowRoot.querySelectorAll(`input[name="${i}"]`);
+        c.forEach((l) => {
+          l.disabled = !0;
+        }), s === a ? (r.classList.add("correct"), this.score++) : (r.classList.add("incorrect"), c.forEach((l) => {
+          if (l.value === l.getAttribute("data-correct")) {
+            const p = l.getAttribute("data-label-id");
             this.shadowRoot.getElementById(p).classList.add("correct-highlight");
           }
         })), this.answeredCount++, this._updateProgress(), this._checkCompletion();
@@ -331,15 +337,15 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
     }
   }
   _isLastInstance() {
-    const e = l._instances;
+    const e = d._instances;
     return e.length > 1 && e[e.length - 1] === this;
   }
   _getCombinedScore() {
-    const e = l._instances;
-    let t = 0, o = 0, n = !0;
+    const e = d._instances;
+    let t = 0, o = 0, s = !0;
     return e.forEach((a) => {
-      t += a.score, o += a.totalQuestions, a.isCompleted || (n = !1);
-    }), { totalScore: t, totalQuestions: o, allDone: n, count: e.length };
+      t += a.score, o += a.totalQuestions, a.isCompleted || (s = !1);
+    }), { totalScore: t, totalQuestions: o, allDone: s, count: e.length };
   }
   renderScoreScreen() {
     const e = Math.round(this.score / this.totalQuestions * 100) || 0;
@@ -347,19 +353,19 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
     e < 50 ? t = "💪" : e < 80 && (t = "👍");
     let o = "";
     if (this._isLastInstance()) {
-      const s = this._getCombinedScore();
-      if (s.allDone) {
-        const i = Math.round(s.totalScore / s.totalQuestions * 100) || 0;
-        let r = "🏆";
-        i < 50 ? r = "💪" : i < 80 && (r = "⭐"), o = `
+      const n = this._getCombinedScore();
+      if (n.allDone) {
+        const r = Math.round(n.totalScore / n.totalQuestions * 100) || 0;
+        let i = "🏆";
+        r < 50 ? i = "💪" : r < 80 && (i = "⭐"), o = `
                     <div class="combined-score">
-                        <div class="combined-header">${r} Combined Score — All ${s.count} Lessons</div>
+                        <div class="combined-header">${i} Combined Score — All ${n.count} Lessons</div>
                         <div class="combined-stats">
-                            <div class="combined-value">${s.totalScore} / ${s.totalQuestions}</div>
-                            <div class="combined-percent">${i}%</div>
+                            <div class="combined-value">${n.totalScore} / ${n.totalQuestions}</div>
+                            <div class="combined-percent">${r}%</div>
                         </div>
                         <div class="combined-bar-track">
-                            <div class="combined-bar-fill" style="width: ${i}%"></div>
+                            <div class="combined-bar-fill" style="width: ${r}%"></div>
                         </div>
                     </div>
                 `;
@@ -367,11 +373,11 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
         o = `
                     <div class="combined-score combined-pending">
                         <div class="combined-header">📋 Lesson Progress</div>
-                        <p class="combined-note">${l._instances.filter((r) => r.isCompleted).length} of ${s.count} lessons completed. Finish all to see your combined score.</p>
+                        <p class="combined-note">${d._instances.filter((i) => i.isCompleted).length} of ${n.count} lessons completed. Finish all to see your combined score.</p>
                     </div>
                 `;
     }
-    const n = this._isLastInstance();
+    const s = this._isLastInstance();
     this.shadowRoot.getElementById("lesson-container").style.display = "none";
     const a = this.shadowRoot.getElementById("score-screen");
     a.style.display = "block", a.innerHTML = `
@@ -383,19 +389,19 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
             <p>You completed the "${this.lessonData.title || "Listening Lesson"}" activity.</p>
             <div class="score-actions">
                 <button class="role-btn" id="restart-btn">Try Again</button>
-                ${n ? '<button class="report-btn" id="report-btn">📄 See Report Card</button>' : ""}
+                ${s ? '<button class="report-btn" id="report-btn">📄 See Report Card</button>' : ""}
             </div>
             ${o}
         `, this.scrollIntoView({ behavior: "smooth", block: "start" }), this.shadowRoot.getElementById("restart-btn").addEventListener("click", () => {
       this.score = 0, this.answeredCount = 0, this.isCompleted = !1, this.currentPhase = 0, this.render();
-    }), n && (this.shadowRoot.getElementById("report-btn").addEventListener("click", () => {
+    }), s && (this.shadowRoot.getElementById("report-btn").addEventListener("click", () => {
       this._showReportOverlay();
     }), this.shadowRoot.getElementById("generate-btn").addEventListener("click", () => {
       this._generateReport();
     }), this.shadowRoot.getElementById("cancel-btn").addEventListener("click", () => {
       this.shadowRoot.getElementById("report-overlay").style.display = "none";
-    }), this.shadowRoot.getElementById("report-overlay").addEventListener("click", (s) => {
-      s.target.id === "report-overlay" && (this.shadowRoot.getElementById("report-overlay").style.display = "none");
+    }), this.shadowRoot.getElementById("report-overlay").addEventListener("click", (n) => {
+      n.target.id === "report-overlay" && (this.shadowRoot.getElementById("report-overlay").style.display = "none");
     }));
   }
   _showReportOverlay() {
@@ -409,37 +415,37 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
     }
   }
   _generateReport() {
-    const e = this.shadowRoot.getElementById("nickname-input"), t = this.shadowRoot.getElementById("number-input"), o = this.shadowRoot.getElementById("homeroom-input"), n = e ? e.value.trim() : this.studentInfo.nickname, a = t ? t.value.trim() : this.studentInfo.number, s = o ? o.value.trim() : this.studentInfo.homeroom;
-    if (!n || !a) {
+    const e = this.shadowRoot.getElementById("nickname-input"), t = this.shadowRoot.getElementById("number-input"), o = this.shadowRoot.getElementById("homeroom-input"), s = e ? e.value.trim() : this.studentInfo.nickname, a = t ? t.value.trim() : this.studentInfo.number, n = o ? o.value.trim() : this.studentInfo.homeroom;
+    if (!s || !a) {
       alert("Please enter both nickname and student number.");
       return;
     }
-    this.studentInfo = { ...this.studentInfo, nickname: n, number: a, homeroom: s };
-    const i = this._getCombinedScore(), r = Math.round(i.totalScore / i.totalQuestions * 100) || 0, d = (/* @__PURE__ */ new Date()).toLocaleString();
-    let c = "🏆";
-    r < 50 ? c = "💪" : r < 80 && (c = "⭐");
+    this.studentInfo = { ...this.studentInfo, nickname: s, number: a, homeroom: n };
+    const r = this._getCombinedScore(), i = Math.round(r.totalScore / r.totalQuestions * 100) || 0, c = (/* @__PURE__ */ new Date()).toLocaleString();
+    let l = "🏆";
+    i < 50 ? l = "💪" : i < 80 && (l = "⭐");
     const p = `
             <div class="rc-header">
                 <div class="rc-icon">📄</div>
                 <div class="rc-title">${this.lessonData.title || "Listening Practice"}</div>
                 <div class="rc-subtitle">Report Card</div>
-                <div class="rc-activity">All ${i.count} Lessons</div>
+                <div class="rc-activity">All ${r.count} Lessons</div>
             </div>
             <div class="rc-student">
                 <span class="rc-label">Student</span>
-                <span class="rc-value">${n} <span class="rc-number">(${a}) ${s ? `- ${s}` : ""}</span></span>
+                <span class="rc-value">${s} <span class="rc-number">(${a}) ${n ? `- ${n}` : ""}</span></span>
             </div>
             <div class="rc-score-row">
                 <div class="rc-score-circle">
-                    <div class="rc-score-val">${i.totalScore}/${i.totalQuestions}</div>
-                    <div class="rc-score-pct">${r}%</div>
+                    <div class="rc-score-val">${r.totalScore}/${r.totalQuestions}</div>
+                    <div class="rc-score-pct">${i}%</div>
                 </div>
-                <div class="rc-score-label">${c} ${r >= 80 ? "Excellent!" : r >= 50 ? "Good effort!" : "Keep practicing!"}</div>
+                <div class="rc-score-label">${l} ${i >= 80 ? "Excellent!" : i >= 50 ? "Good effort!" : "Keep practicing!"}</div>
             </div>
-            <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${r}%"></div></div>
+            <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${i}%"></div></div>
             <div class="rc-details">
-                <div class="rc-detail-row"><span>Total Correct</span><span>${i.totalScore} / ${i.totalQuestions}</span></div>
-                <div class="rc-detail-row"><span>Completed On</span><span>${d}</span></div>
+                <div class="rc-detail-row"><span>Total Correct</span><span>${r.totalScore} / ${r.totalQuestions}</span></div>
+                <div class="rc-detail-row"><span>Completed On</span><span>${c}</span></div>
             </div>
 
             <div class="rc-submission-box">
@@ -452,30 +458,30 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
                 <button class="rc-submit-btn" id="submit-score-btn">Submit Score Online</button>
                 <button class="rc-secondary-btn" id="rc-close-btn" style="margin-top: 8px;">↩ Return to Activity</button>
             </div>
-        `, g = this.shadowRoot.getElementById("initial-form"), b = this.shadowRoot.getElementById("report-area");
-    g && (g.style.display = "none"), b && (b.style.display = "block", b.innerHTML = p);
-    const u = this.shadowRoot.getElementById("submit-score-btn");
-    u && (u.onclick = () => this._submitScore()), this.shadowRoot.getElementById("rc-close-btn").addEventListener("click", () => {
+        `, u = this.shadowRoot.getElementById("initial-form"), h = this.shadowRoot.getElementById("report-area");
+    u && (u.style.display = "none"), h && (h.style.display = "block", h.innerHTML = p);
+    const m = this.shadowRoot.getElementById("submit-score-btn");
+    m && (m.onclick = () => this._submitScore()), this.shadowRoot.getElementById("rc-close-btn").addEventListener("click", () => {
       this.shadowRoot.getElementById("report-overlay").style.display = "none";
     });
   }
   async _submitScore() {
     const e = this.shadowRoot.getElementById("report-teacher-code"), t = e ? e.value.trim() : this.studentInfo.teacherCode;
-    if (this.studentInfo.teacherCode = t, t !== "6767") {
+    if (this.studentInfo.teacherCode = t, t !== this.code) {
       alert("Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.");
       return;
     }
     if (this.isSubmitting) return;
     const o = this.shadowRoot.getElementById("submit-score-btn");
     if (!o) return;
-    const n = o.textContent;
+    const s = o.textContent;
     this.isSubmitting = !0, o.textContent = "Submitting...", o.disabled = !0;
-    const a = this._getCombinedScore(), s = Math.round(a.totalScore / a.totalQuestions * 100) || 0, i = {
+    const a = this._getCombinedScore(), n = Math.round(a.totalScore / a.totalQuestions * 100) || 0, r = {
       nickname: this.studentInfo.nickname,
       homeroom: this.studentInfo.homeroom || "",
       studentId: this.studentInfo.number,
       quizName: "Listening- " + (this.lessonData.title || "Lesson"),
-      score: s,
+      score: n,
       total: 100
     };
     try {
@@ -485,22 +491,22 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(i)
+        body: JSON.stringify(r)
       }), alert("Score successfully submitted!"), o.textContent = "Submitted ✓", o.style.background = "#64748b";
-    } catch (r) {
-      console.error("Error submitting score:", r), alert("There was an error submitting your score. Please try again."), o.textContent = n, o.disabled = !1, this.isSubmitting = !1;
+    } catch (i) {
+      console.error("Error submitting score:", i), alert("There was an error submitting your score. Please try again."), o.textContent = s, o.disabled = !1, this.isSubmitting = !1;
     }
   }
   // ─── TTS LOGIC ─────────────────────────────────────────
   _getBestVoice(e) {
-    return k(window.speechSynthesis, e);
+    return z(window.speechSynthesis, e);
   }
   _playTTS(e) {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const t = new SpeechSynthesisUtterance(e), o = this._getLang();
     t.lang = o, t.rate = 0.85;
-    let a = window.speechSynthesis.getVoices().find((s) => s.name === this.selectedVoiceName);
+    let a = window.speechSynthesis.getVoices().find((n) => n.name === this.selectedVoiceName);
     a || (a = this._getBestVoice(o)), a && (t.voice = a), t.onstart = () => {
       this.isPlaying = !0;
     }, t.onend = () => {
@@ -520,11 +526,11 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
   _showToast(e, t = !1) {
     const o = this.shadowRoot.querySelector(".toast");
     o && o.remove();
-    const n = document.createElement("div");
-    n.className = "toast", t ? (n.innerHTML = `<span>Quiz link:</span><input type="text" value="${e}" readonly class="toast-url" />`, n.querySelector(".toast-url").onclick = function() {
+    const s = document.createElement("div");
+    s.className = "toast", t ? (s.innerHTML = `<span>Quiz link:</span><input type="text" value="${e}" readonly class="toast-url" />`, s.querySelector(".toast-url").onclick = function() {
       this.select();
-    }) : n.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><span>${e}</span>`, this.shadowRoot.appendChild(n), setTimeout(() => {
-      n.parentNode && n.remove();
+    }) : s.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><span>${e}</span>`, this.shadowRoot.appendChild(s), setTimeout(() => {
+      s.parentNode && s.remove();
     }, 3e3);
   }
   _showVoiceOverlay() {
@@ -538,18 +544,18 @@ const I = ":host{display:block;font-family:system-ui,-apple-system,sans-serif;ma
   _updateVoiceList() {
     const e = this.shadowRoot.getElementById("voice-list");
     if (!e) return;
-    const t = window.speechSynthesis.getVoices(), o = this._getLang(), n = o.split(/[-_]/)[0].toLowerCase();
-    let a = t.filter((i) => i.lang.split(/[-_]/)[0].toLowerCase() === n);
-    const s = this._getBestVoice(o);
-    e.innerHTML = "", a.sort((i, r) => i.name.localeCompare(r.name)), a.forEach((i) => {
-      const r = document.createElement("button");
-      r.classList.add("voice-option-btn"), (this.selectedVoiceName === i.name || !this.selectedVoiceName && s && i.name === s.name) && r.classList.add("active"), r.innerHTML = `<span>${i.name}</span>`, s && i.name === s.name && (r.innerHTML += '<span class="badge">Best</span>'), r.onclick = () => {
-        this.selectedVoiceName = i.name, this._updateVoiceList(), this._hideVoiceOverlay();
-      }, e.appendChild(r);
+    const t = window.speechSynthesis.getVoices(), o = this._getLang(), s = o.split(/[-_]/)[0].toLowerCase();
+    let a = t.filter((r) => r.lang.split(/[-_]/)[0].toLowerCase() === s);
+    const n = this._getBestVoice(o);
+    e.innerHTML = "", a.sort((r, i) => r.name.localeCompare(i.name)), a.forEach((r) => {
+      const i = document.createElement("button");
+      i.classList.add("voice-option-btn"), (this.selectedVoiceName === r.name || !this.selectedVoiceName && n && r.name === n.name) && i.classList.add("active"), i.innerHTML = `<span>${r.name}</span>`, n && r.name === n.name && (i.innerHTML += '<span class="badge">Best</span>'), i.onclick = () => {
+        this.selectedVoiceName = r.name, this._updateVoiceList(), this._hideVoiceOverlay();
+      }, e.appendChild(i);
     });
   }
 };
 // Static registry of all instances on the page
-m(l, "_instances", []);
-let f = l;
-customElements.define("tj-listening", f);
+f(d, "_instances", []);
+let g = d;
+customElements.define("tj-listening", g);

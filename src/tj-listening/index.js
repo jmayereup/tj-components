@@ -7,6 +7,18 @@ class TjListening extends HTMLElement {
     // Static registry of all instances on the page
     static _instances = [];
 
+    get code() {
+        return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+    }
+
+    set code(value) {
+        if (value !== null && value !== undefined) {
+            this.setAttribute('code', value);
+        } else {
+            this.removeAttribute('code');
+        }
+    }
+
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
@@ -679,7 +691,7 @@ class TjListening extends HTMLElement {
         // Cache for reuse
         this.studentInfo.teacherCode = currentTeacherCode;
 
-        if (currentTeacherCode !== '6767') {
+        if (currentTeacherCode !== this.code) {
             alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
             return;
         }

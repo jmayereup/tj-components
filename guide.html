@@ -166,6 +166,7 @@
 &lt;script src="https://scripts.teacherjake.com/tj-speed-review.js" defer&gt;&lt;/script&gt;
 &lt;script src="https://scripts.teacherjake.com/tj-quiz-element.js" defer&gt;&lt;/script&gt;
 &lt;script src="https://scripts.teacherjake.com/tj-chapter-book.js" defer&gt;&lt;/script&gt;
+&lt;script src="https://scripts.teacherjake.com/tj-pronunciation.js" defer&gt;&lt;/script&gt;
 
 &lt;!-- Required Fonts --&gt;
 &lt;link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"&gt;</code></pre>
@@ -268,22 +269,31 @@
 &lt;/tj-listening&gt;</code></pre>
 
             <!-- Speed Review -->
-            <h3>5. Speed Review (&lt;tj-speed-review&gt;)</h3>
-            <p>Fast-paced review activity with a countdown timer. Points awarded based on speed.</p>
-            <pre><code>&lt;tj-speed-review time-limit="15" round-size="10"&gt;
+            <h3>5. Speed Review (&lt;tj-speed-review&gt; / &lt;speed-review&gt;)</h3>
+            <p>Fast-paced review activity with a countdown timer where students earn points based on how quickly they can answer questions.</p>
+            <pre><code>&lt;tj-speed-review time-limit="15" round-size="3"&gt;
 [
   {
-    "title": "Topic Title",
+    "title": "Suffix Speed Run: Noun Builder",
     "questions": [
       {
-        "question": "The question text...",
-        "options": ["Choice A", "Choice B"],
-        "answer": "Choice A"
+        "category": "Verb → Noun",
+        "question": "The act of **defining** a word is its ____.",
+        "options": ["definition", "definement", "wisdom", "arrival"],
+        "answer": "definition",
+        "explanation": "To turn the verb **define** into a noun, we add the suffix **-tion**."
+      },
+      {
+        "category": "Verb → Noun",
+        "question": "Please provide a ____ of the stolen item.",
+        "options": ["description", "describement", "freedom", "artist"],
+        "answer": "description",
+        "explanation": "The noun form of the verb **describe** is 'description'."
       }
     ]
   }
 ]
-&lt;/tj-speed-review&gt;
+&lt;/tj-speed-review&gt;</code></pre>
 
             <!-- Quiz Element -->
             <h3>6. Quiz Element (&lt;tj-quiz-element&gt;)</h3>
@@ -318,6 +328,10 @@
                     <h4>🔤 Vocab Syntax</h4>
                     <p>Format as <code>Word: Definition</code> (one per line) for matching activities.</p>
                 </div>
+                <div class="feature-item">
+                    <h4>🔒 Test Mode</h4>
+                    <p>Add <code>test-mode</code> attribute to hide correctness feedback, score details, and the "Try Again" button to secure assessments.</p>
+                </div>
             </div>
 
             <!-- Chapter Book -->
@@ -338,6 +352,52 @@
   ]
 }
 &lt;/tj-chapter-book&gt;</code></pre>
+
+            <!-- Pronunciation -->
+            <h3>8. Pronunciation (&lt;tj-pronunciation&gt;)</h3>
+            <p>Practice speaking with native audio comparison, minimal pair discrimination, and sentence scrambles.</p>
+            <pre><code>&lt;tj-pronunciation&gt;
+{
+  "title": "Unit 1: Basic Listening & Recording",
+  "instructions": "Listen carefully. For Minimal Pairs, choose the final word spoken.",
+  "language": "en-US",
+  "activities": [
+    {
+      "type": "listen_record",
+      "targetText": "The ship is leaving the port.",
+      "phoneticHint": "ðə ʃɪp ɪz ˈliːvɪŋ ðə pɔːt",
+      "translation": "เรือกำลังออกจากท่าเรือ"
+    },
+    {
+      "type": "minimal_pair",
+      "focus": "Vowel /ɪ/ vs /iː/",
+      "options": ["ship", "sheep"],
+      "correctAnswer": "ship"
+    },
+    {
+      "type": "scramble",
+      "audioText": "Where are you going tonight?",
+      "words": ["Where", "are", "you", "going", "tonight?"],
+      "distractors": ["wear", "your", "go"]
+    }
+  ]
+}
+&lt;/tj-pronunciation&gt;</code></pre>
+
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h4>🎙️ Listen &amp; Record</h4>
+                    <p>Practice speaking with a recording and TTS comparison, with optional IPA hint and translation.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>👂 Minimal Pairs</h4>
+                    <p>Discriminate between similar sounds with options and a targeted sound contrast focus.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🧩 Dictation Scrambles</h4>
+                    <p>Drag and drop words in order with audio prompt playback and optional distractors.</p>
+                </div>
+            </div>
         </section>
 
         <section id="blog-embedding">

@@ -1,6 +1,18 @@
 import { config } from '../tj-config.js';
 
 class TjSpeedReview extends HTMLElement {
+  get code() {
+    return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+  }
+
+  set code(value) {
+    if (value !== null && value !== undefined) {
+      this.setAttribute('code', value);
+    } else {
+      this.removeAttribute('code');
+    }
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -279,7 +291,7 @@ class TjSpeedReview extends HTMLElement {
     const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
     const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : '';
 
-    if (currentTeacherCode !== '6767') {
+    if (currentTeacherCode !== this.code) {
       alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
       return;
     }
@@ -334,17 +346,66 @@ class TjSpeedReview extends HTMLElement {
           display: block;
           font-family: 'Inter', sans-serif;
           margin: 2em auto;
-          color: black;
-          background: whitesmoke;
+          color: #1e293b;
+          background: transparent;
+
+          --sr-text: #1e293b;
+          --sr-text-muted: #64748b;
+          --sr-container-bg: #f8fafc;
+          --sr-container-border: rgba(0,0,0,0.08);
+          --sr-option-bg: #ffffff;
+          --sr-option-border: #cbd5e1;
+          --sr-timer-track: #334155;
+          --sr-feedback-bg: rgba(0,0,0,0.03);
+          --sr-explanation-color: #475569;
+          --sr-badge-bg: #f1f5f9;
+          --sr-badge-border: #e2e8f0;
+          --sr-badge-color: #64748b;
+          --sr-input-bg: #f5f5f5;
+          --sr-input-border: #b2b2b2;
+          --sr-input-color: #1e293b;
+          --sr-label-color: #1e293b;
+          --sr-identity-bg: rgba(0,0,0,0.03);
+          --sr-identity-border: rgba(0,0,0,0.08);
+          --sr-secondary-bg: #334155;
+          --sr-secondary-color: #f1f5f9;
+          --sr-secondary-border: #475569;
+        }
+        @media (prefers-color-scheme: dark) {
+          :host {
+            color: #e2e8f0;
+            --sr-text: #e2e8f0;
+            --sr-text-muted: #94a3b8;
+            --sr-container-bg: #1e293b;
+            --sr-container-border: rgba(255,255,255,0.08);
+            --sr-option-bg: #0f172a;
+            --sr-option-border: #475569;
+            --sr-timer-track: #0f172a;
+            --sr-feedback-bg: rgba(255,255,255,0.05);
+            --sr-explanation-color: #94a3b8;
+            --sr-badge-bg: #334155;
+            --sr-badge-border: #475569;
+            --sr-badge-color: #94a3b8;
+            --sr-input-bg: #0f172a;
+            --sr-input-border: #475569;
+            --sr-input-color: #e2e8f0;
+            --sr-label-color: #94a3b8;
+            --sr-identity-bg: rgba(255,255,255,0.03);
+            --sr-identity-border: rgba(255,255,255,0.1);
+            --sr-secondary-bg: #475569;
+            --sr-secondary-color: #f1f5f9;
+            --sr-secondary-border: #64748b;
+          }
         }
         .container {
-          background: white;
+          background: var(--sr-container-bg);
           border-radius: 1.5em;
           padding: 2em;
           box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-          border: 1px solid rgba(0,0,0,0.05);
+          border: 1px solid var(--sr-container-border);
           overflow: hidden;
           position: relative;
+          color: var(--sr-text);
         }
         .header {
           display: flex;
@@ -362,12 +423,12 @@ class TjSpeedReview extends HTMLElement {
         .title-area h1 {
           margin: 0;
           font-size: 1.5em;
-          color: black;
+          color: var(--sr-text);
           overflow-wrap: break-word;
         }
         .best-score {
           font-size: 0.7em;
-          color: black;
+          color: var(--sr-text-muted);
           text-transform: uppercase;
         }
         .score-display {
@@ -384,7 +445,7 @@ class TjSpeedReview extends HTMLElement {
         .timer-bar {
           width: 100%;
           height: 6px;
-          background: #334155;
+          background: var(--sr-timer-track);
           border-radius: 3px;
           margin-bottom: 2em;
           overflow: hidden;
@@ -423,9 +484,9 @@ class TjSpeedReview extends HTMLElement {
           .options-grid { grid-template-columns: 1fr; }
         }
         .option-btn {
-          background: whitesmoke;
-          border: 2px solid grey;
-          color: black;
+          background: var(--sr-option-bg);
+          border: 2px solid var(--sr-option-border);
+          color: var(--sr-text);
           padding: .5em;
           border-radius: 0.8em;
           font-weight: 600;
@@ -435,7 +496,7 @@ class TjSpeedReview extends HTMLElement {
           font-size: 1.2em;
         }
         .option-btn:hover:not(:disabled) {
-          background: #f8fafc;
+          background: var(--sr-container-bg);
           transform: translateY(-2px);
           border-color: #10b981;
         }
@@ -455,7 +516,7 @@ class TjSpeedReview extends HTMLElement {
           margin-top: 2em;
           text-align: center;
           padding: 1.5em;
-          background: rgba(255,255,255,0.05);
+          background: var(--sr-feedback-bg);
           border-radius: 1em;
           animation: slideUp 0.3s ease-out;
         }
@@ -472,7 +533,7 @@ class TjSpeedReview extends HTMLElement {
         .feedback-status.incorrect { color: #ef4444; }
         .explanation {
           font-size: 0.95em;
-          color: #475569;
+          color: var(--sr-explanation-color);
           line-height: 1.5;
         }
         .btn-large {
@@ -527,14 +588,14 @@ class TjSpeedReview extends HTMLElement {
           margin: 0.5em 0;
         }
         .best-score-badge {
-          background: #f1f5f9;
+          background: var(--sr-badge-bg);
           padding: 0.5em 1.2em;
           border-radius: 2em;
           display: inline-block;
           font-size: 0.9em;
-          color: #64748b;
+          color: var(--sr-badge-color);
           font-weight: 600;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--sr-badge-border);
         }
         .error-msg { color: #ef4444; text-align: center; padding: 2em; }
         
@@ -542,10 +603,10 @@ class TjSpeedReview extends HTMLElement {
         .identity-form {
           margin: 1.5em 0;
           text-align: left;
-          background: rgba(255,255,255,0.05);
+          background: var(--sr-identity-bg);
           padding: 1.5em;
           border-radius: 1em;
-          border: 1px solid rgba(255,255,255,0.1);
+          border: 1px solid var(--sr-identity-border);
         }
         .input-group {
           margin-bottom: 1em;
@@ -556,16 +617,16 @@ class TjSpeedReview extends HTMLElement {
         .input-group label {
           display: block;
           font-size: 0.8em;
-          color: black;
+          color: var(--sr-label-color);
           margin-bottom: 0.4em;
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
         .input-field {
           width: 100%;
-          background: whitesmoke;
-          border: 1px solid #b2b2b2ff;
-          color: black;
+          background: var(--sr-input-bg);
+          border: 1px solid var(--sr-input-border);
+          color: var(--sr-input-color);
           padding: 0.8em;
           border-radius: 0.5em;
           font-size: 1em;

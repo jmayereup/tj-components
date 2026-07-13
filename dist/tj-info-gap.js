@@ -1,8 +1,8 @@
 var k = Object.defineProperty;
 var R = (h, e, t) => e in h ? k(h, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : h[e] = t;
 var w = (h, e, t) => R(h, typeof e != "symbol" ? e + "" : e, t);
-import { b as S, s as I, g as B, a as C } from "./chunks/audio-utils-BwH2sOvH.js";
-const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-apple-system,sans-serif;max-width:800px;margin:0 auto;margin-bottom:2rem;background-color:transparent!important;--tj-primary: #2563eb;--tj-bg-color: #f8fafc;--tj-card-bg: #ffffff;--tj-text-color: #1e293b;--tj-text-muted: #64748b;--tj-border-color: #e2e8f0;--tj-accent-color: #2563eb}.container,.container *,.container *:before,.container *:after{box-sizing:border-box;background-color:transparent}.container{border:1px solid var(--tj-border-color, #e2e8f0);padding:24px;border-radius:8px;background-color:var(--tj-card-bg, #ffffff)!important;box-shadow:0 4px 6px -1px #0000001a;color:var(--tj-text-color, #1e293b);position:relative;overflow:hidden}.header-row{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #f1f5f9;margin-bottom:10px;padding-bottom:10px}.header-info h2{margin:0;color:var(--tj-primary, #1e293b);font-family:Outfit,sans-serif}.mode-badge{font-size:.8em;color:#64748b;font-weight:600;text-transform:uppercase;margin-top:4px}.header-controls{display:flex;align-items:center;gap:12px}.progress-info{background:#f1f5f9;padding:6px 14px;border-radius:12px;font-size:.9em;font-weight:600;color:#64748b;white-space:nowrap}.icon-btn{background:none;border:1px solid #e2e8f0;padding:8px;border-radius:8px;cursor:pointer;color:#475569;transition:all .2s}.icon-btn:hover{background-color:#f1f5f9;color:#2563eb;border-color:#2563eb}.scenario{color:#475569;font-style:italic;margin-bottom:24px}.section-title{font-size:1.1em;font-weight:700;color:#0f172a;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid #e2e8f0}.mode-selection{margin-bottom:24px;padding:16px;background:#ffffff08;border-radius:8px;border:1px solid var(--tj-border-color);color:var(--tj-text-color)}.mode-buttons{display:flex;gap:12px;margin-top:10px}.mode-btn{flex:1;padding:12px;border:2px solid var(--tj-border-color);border-radius:6px;background:#ffffff0d;color:var(--tj-text-color);cursor:pointer;font-weight:600;transition:all .2s}.mode-btn.active{border-color:var(--tj-primary);background:#22d3ee1a;color:var(--tj-primary)}.info-card{background-color:#f0f9ff;border-left:4px solid #0284c7;padding:12px 16px;margin-bottom:12px;border-radius:0 4px 4px 0;color:#0369a1;font-weight:500}.question-card{background-color:#f8fafc;border:1px solid #e2e8f0;padding:16px;margin-bottom:16px;border-radius:6px}.question-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:10px}.question-text{margin:0;color:#1e293b;line-height:1.4}.tts-btn{display:flex;align-items:center;gap:6px;background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:.85em;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap}.tts-btn:hover{background:#1d4ed8}.tts-btn svg{width:16px;height:16px}.options-group{display:flex;flex-direction:column;gap:8px}.mc-option{display:flex;align-items:center;padding:10px 12px;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;transition:all .2s;background-color:#fff}.mc-option:hover:not(.correct):not(.incorrect):not(.correct-highlight){background-color:#f1f5f9}.mc-option input{margin-right:12px;cursor:pointer}.mc-option.correct{background-color:#dcfce7;border-color:#22c55e;color:#166534;font-weight:700}.mc-option.correct-highlight{border:2px dashed #22c55e;background-color:#f0fdf4}.mc-option.incorrect{background-color:#fee2e2;border-color:#ef4444;color:#991b1b}.mc-option[disabled],.mc-option input[disabled],.verbal-check[disabled]{cursor:default}.partner-question{border-left:4px solid #8b5cf6}.recording-controls{margin-top:12px}.btn-group{display:flex;gap:10px}.record-btn,.play-recorded-btn,.skip-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;border:1px solid #e2e8f0;font-weight:600;cursor:pointer;transition:all .2s;font-size:.9em}.skip-btn{background:#f8fafc;color:#64748b}.skip-btn:hover{background:#f1f5f9;border-color:#cbd5e1}.skipped-label{display:inline-flex;align-items:center;padding:8px 16px;border-radius:8px;background:#f8fafc;border:1px dashed #cbd5e1;color:#94a3b8;font-weight:600;font-size:.9em}.record-btn{background:#fff;color:#475569}.record-btn:hover{background:#f8fafc;border-color:#cbd5e1}.record-btn.recording{background:#fee2e2;border-color:#ef4444;color:#dc2626;animation:pulse 1.5s infinite}.record-btn.has-recording{border-color:#8b5cf6;color:#7c3aed}.play-recorded-btn{background:#f5f3ff;color:#7c3aed;border-color:#ddd6fe}.play-recorded-btn:hover{background:#ede9fe}.play-recorded-btn.playing{background:#7c3aed;color:#fff}@keyframes pulse{0%{opacity:1}50%{opacity:.7}to{opacity:1}}.instruction-banner{display:flex;align-items:center;gap:8px;background:#f5f3ff;color:#5b21b6;padding:10px 14px;border-radius:6px;margin-bottom:16px;font-size:.9em;font-weight:500;border:1px solid #ddd6fe}.instruction-banner svg{flex-shrink:0}.footer-actions{margin-top:30px;display:none;justify-content:center;padding-top:20px;border-top:1px solid #f1f5f9}.complete-btn{background-color:#2563eb;color:#fff;border:none;padding:12px 32px;border-radius:6px;font-weight:700;cursor:pointer;font-size:1.1em;transition:background .2s}.complete-btn:hover{background-color:#1d4ed8}.score-screen{text-align:center;padding:40px}.score-circle{width:150px;height:150px;border-radius:50%;background:#ffffff0d;border:8px solid var(--tj-primary);margin:0 auto 30px;display:flex;flex-direction:column;justify-content:center;align-items:center}.score-value{font-size:2em;font-weight:800;color:var(--tj-text-color)}.score-percent{font-size:1.2em;font-weight:600;color:var(--tj-primary)}.score-actions{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:8px}.empty-state{color:#94a3b8;font-style:italic}.role-grid{display:flex;gap:12px;margin-top:15px}.role-btn{flex:1;padding:16px;font-size:16px;font-weight:700;cursor:pointer;background-color:#f1f5f9;border:2px solid #cbd5e1;border-radius:8px;transition:all .2s}.role-btn:hover{background-color:#e2e8f0;border-color:#94a3b8}.report-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.report-btn:hover{background:#1d4ed8}.report-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172acc;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1000}.report-modal{background:var(--tj-card-bg);color:var(--tj-text-color);width:92%;max-width:420px;padding:28px 24px;border-radius:16px;box-shadow:0 25px 50px -12px #00000080;text-align:center;max-height:90vh;overflow-y:auto;border:1px solid var(--tj-border-color)}.report-modal h2{margin:8px 0 4px;color:var(--tj-primary)}.report-modal p{color:var(--tj-text-muted);margin:0 0 16px;font-size:.95em}.report-icon{font-size:2.5em;margin-bottom:4px}.report-modal input{display:block;width:100%;box-sizing:border-box;padding:12px 14px;margin-bottom:12px;border:1px solid #e2e8f0;border-radius:8px;font-size:1em;outline:none;transition:border-color .2s}.report-modal input:focus{border-color:#2563eb}.generate-btn{width:100%;padding:13px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s;margin-bottom:8px}.generate-btn:hover{background:#1d4ed8}.cancel-btn{background:none;border:none;color:#94a3b8;font-size:.9em;cursor:pointer;text-decoration:underline}.report-area{text-align:left}.rc-header{text-align:center;margin-bottom:16px}.rc-icon{font-size:2em}.rc-title{font-size:1.3em;font-weight:800;color:var(--tj-text-color);margin:4px 0 2px}.rc-subtitle{font-size:.9em;font-weight:600;color:var(--tj-text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}.rc-activity{font-size:.9em;color:var(--tj-text-muted)}.rc-student{display:flex;justify-content:space-between;align-items:center;background:#ffffff0d;border:1px solid var(--tj-border-color);border-radius:8px;padding:10px 14px;margin-bottom:16px}.rc-label{font-size:.8em;font-weight:700;color:var(--tj-text-muted);text-transform:uppercase}.rc-value{font-weight:700;color:var(--tj-text-color)}.rc-number{color:var(--tj-text-muted);font-weight:400}.rc-score-row{display:flex;align-items:center;gap:16px;margin-bottom:10px}.rc-score-circle{width:80px;height:80px;border-radius:50%;background:#ffffff0d;border:6px solid var(--tj-primary);display:flex;flex-direction:column;justify-content:center;align-items:center;flex-shrink:0}.rc-score-val{font-size:1.1em;font-weight:800;color:var(--tj-text-color);line-height:1.1}.rc-score-pct{font-size:.85em;font-weight:700;color:var(--tj-primary)}.rc-score-label{font-size:1.1em;font-weight:700;color:var(--tj-text-color)}.rc-bar-track{height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}.rc-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:4px;transition:width .6s ease}.rc-details{border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:16px}.rc-detail-row{display:flex;justify-content:space-between;padding:9px 14px;font-size:.9em;border-bottom:1px solid #f1f5f9}.rc-detail-row:last-child{border-bottom:none}.rc-detail-row span:first-child{color:#64748b}.rc-detail-row span:last-child{font-weight:600;color:#1e293b}.rc-combined{background:linear-gradient(135deg,#f0f9ff,#eff6ff);border:1px solid #bae6fd;border-radius:10px;padding:14px 16px;margin-bottom:16px;text-align:center}.rc-combined-title{font-size:.95em;font-weight:700;color:#0c4a6e;margin-bottom:8px}.rc-combined-score{font-size:1.4em;font-weight:800;color:#1e293b;margin-bottom:8px}.rc-combined-pct{color:#2563eb}.rc-actions{margin-top:16px}.rc-close-btn{width:100%;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.rc-close-btn:hover{background:#16a34a}.single-player-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}@media (max-width: 768px){.single-player-layout{grid-template-columns:1fr;gap:0}.single-player-layout .section-title:first-child{margin-top:12px}}.voice-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ab3;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000}.voice-card{background:var(--tj-card-bg);color:var(--tj-text-color);width:90%;max-width:400px;max-height:80vh;border-radius:1.2em;box-shadow:0 20px 25px -5px #0006;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--tj-border-color)}.voice-card-header{padding:16px 20px;border-bottom:1px solid var(--tj-border-color);display:flex;justify-content:space-between;align-items:center}.voice-card-header h3{margin:0;font-size:1.2em;color:var(--tj-primary)}.close-voice-btn{background:none;border:none;font-size:24px;cursor:pointer;color:var(--tj-text-muted)}.voice-list{padding:10px;overflow-y:auto;flex:1}.voice-option-btn{width:100%;text-align:left;padding:12px 16px;margin-bottom:6px;border:1px solid var(--tj-border-color);border-radius:8px;background:#ffffff08;color:var(--tj-text-color);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .2s}.voice-option-btn:hover{background-color:#ffffff14;border-color:var(--tj-primary)}.voice-option-btn.active{background:#22d3ee1a;border-color:var(--tj-primary);color:var(--tj-primary);font-weight:600}.badge{background:#dcfce7;color:#166534;font-size:.7em;padding:2px 8px;border-radius:10px;font-weight:700}.combined-score{margin-top:30px;padding:20px 24px;background:#ffffff08;border:1px solid var(--tj-border-color);border-radius:12px;text-align:center}.combined-header{font-size:1.1em;font-weight:700;color:var(--tj-primary);margin-bottom:12px}.combined-stats{display:flex;justify-content:center;gap:24px;margin-bottom:12px}.combined-value{font-size:1.8em;font-weight:800;color:#1e293b}.combined-percent{font-size:1.8em;font-weight:800;color:#2563eb}.combined-bar-track{height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden}.combined-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:5px;transition:width .6s ease}.combined-pending{background:#ffffff05;border-color:var(--tj-border-color)}.combined-note{color:#64748b;font-size:.9em;margin:0}.browser-prompt-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ae6;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:10000;color:#fff;padding:2em;text-align:center}.browser-prompt-card{background:#fff;color:#1e293b;padding:2.5em;border-radius:1.5em;max-width:400px;box-shadow:0 20px 25px -5px #0000001a,0 10px 10px -5px #0000000a}.browser-prompt-card h2{color:#b45309;margin-bottom:.5em;font-size:1.5em;background:none;-webkit-text-fill-color:initial}.browser-prompt-card p{margin-bottom:1.5em;line-height:1.5;color:#475569}.browser-action-btn{display:inline-block;background-color:#ca8a04;color:#fff;padding:.75em 1.5em;border-radius:9999px;text-decoration:none;font-weight:700;transition:background-color .2s;cursor:pointer}.browser-action-btn:hover{background-color:#a16207}", $ = `<div class="container">
+import { b as S, s as j, g as I, a as B } from "./chunks/audio-utils-BwH2sOvH.js";
+const C = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-apple-system,sans-serif;max-width:800px;margin:0 auto;margin-bottom:2rem;background-color:transparent!important;--tj-primary: #2563eb;--tj-bg-color: #f8fafc;--tj-card-bg: #ffffff;--tj-text-color: #1e293b;--tj-text-muted: #64748b;--tj-border-color: #e2e8f0;--tj-accent-color: #2563eb}@media (prefers-color-scheme: dark){:host{--tj-bg-color: #0f172a;--tj-card-bg: #1e293b;--tj-text-color: #e2e8f0;--tj-text-muted: #94a3b8;--tj-border-color: #475569}}.container,.container *,.container *:before,.container *:after{box-sizing:border-box;background-color:transparent}.container{border:1px solid var(--tj-border-color, #e2e8f0);padding:24px;border-radius:8px;background-color:var(--tj-card-bg, #ffffff)!important;box-shadow:0 4px 6px -1px #0000001a;color:var(--tj-text-color, #1e293b);position:relative;overflow:hidden}.header-row{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #f1f5f9;margin-bottom:10px;padding-bottom:10px}.header-info h2{margin:0;color:var(--tj-primary, #1e293b);font-family:Outfit,sans-serif}.mode-badge{font-size:.8em;color:#64748b;font-weight:600;text-transform:uppercase;margin-top:4px}.header-controls{display:flex;align-items:center;gap:12px}.progress-info{background:#f1f5f9;padding:6px 14px;border-radius:12px;font-size:.9em;font-weight:600;color:#64748b;white-space:nowrap}.icon-btn{background:none;border:1px solid #e2e8f0;padding:8px;border-radius:8px;cursor:pointer;color:#475569;transition:all .2s}.icon-btn:hover{background-color:#f1f5f9;color:#2563eb;border-color:#2563eb}.scenario{color:#475569;font-style:italic;margin-bottom:24px}.section-title{font-size:1.1em;font-weight:700;color:#0f172a;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid #e2e8f0}.mode-selection{margin-bottom:24px;padding:16px;background:#ffffff08;border-radius:8px;border:1px solid var(--tj-border-color);color:var(--tj-text-color)}.mode-buttons{display:flex;gap:12px;margin-top:10px}.mode-btn{flex:1;padding:12px;border:2px solid var(--tj-border-color);border-radius:6px;background:#ffffff0d;color:var(--tj-text-color);cursor:pointer;font-weight:600;transition:all .2s}.mode-btn.active{border-color:var(--tj-primary);background:#22d3ee1a;color:var(--tj-primary)}.info-card{background-color:#f0f9ff;border-left:4px solid #0284c7;padding:12px 16px;margin-bottom:12px;border-radius:0 4px 4px 0;color:#0369a1;font-weight:500}.question-card{background-color:#f8fafc;border:1px solid #e2e8f0;padding:16px;margin-bottom:16px;border-radius:6px}.question-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:10px}.question-text{margin:0;color:#1e293b;line-height:1.4}.tts-btn{display:flex;align-items:center;gap:6px;background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:.85em;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap}.tts-btn:hover{background:#1d4ed8}.tts-btn svg{width:16px;height:16px}.options-group{display:flex;flex-direction:column;gap:8px}.mc-option{display:flex;align-items:center;padding:10px 12px;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;transition:all .2s;background-color:#fff}.mc-option:hover:not(.correct):not(.incorrect):not(.correct-highlight){background-color:#f1f5f9}.mc-option input{margin-right:12px;cursor:pointer}.mc-option.correct{background-color:#dcfce7;border-color:#22c55e;color:#166534;font-weight:700}.mc-option.correct-highlight{border:2px dashed #22c55e;background-color:#f0fdf4}.mc-option.incorrect{background-color:#fee2e2;border-color:#ef4444;color:#991b1b}.mc-option[disabled],.mc-option input[disabled],.verbal-check[disabled]{cursor:default}.partner-question{border-left:4px solid #8b5cf6}.recording-controls{margin-top:12px}.btn-group{display:flex;gap:10px}.record-btn,.play-recorded-btn,.skip-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;border:1px solid #e2e8f0;font-weight:600;cursor:pointer;transition:all .2s;font-size:.9em}.skip-btn{background:#f8fafc;color:#64748b}.skip-btn:hover{background:#f1f5f9;border-color:#cbd5e1}.skipped-label{display:inline-flex;align-items:center;padding:8px 16px;border-radius:8px;background:#f8fafc;border:1px dashed #cbd5e1;color:#94a3b8;font-weight:600;font-size:.9em}.record-btn{background:#fff;color:#475569}.record-btn:hover{background:#f8fafc;border-color:#cbd5e1}.record-btn.recording{background:#fee2e2;border-color:#ef4444;color:#dc2626;animation:pulse 1.5s infinite}.record-btn.has-recording{border-color:#8b5cf6;color:#7c3aed}.play-recorded-btn{background:#f5f3ff;color:#7c3aed;border-color:#ddd6fe}.play-recorded-btn:hover{background:#ede9fe}.play-recorded-btn.playing{background:#7c3aed;color:#fff}@keyframes pulse{0%{opacity:1}50%{opacity:.7}to{opacity:1}}.instruction-banner{display:flex;align-items:center;gap:8px;background:#f5f3ff;color:#5b21b6;padding:10px 14px;border-radius:6px;margin-bottom:16px;font-size:.9em;font-weight:500;border:1px solid #ddd6fe}.instruction-banner svg{flex-shrink:0}.footer-actions{margin-top:30px;display:none;justify-content:center;padding-top:20px;border-top:1px solid #f1f5f9}.complete-btn{background-color:#2563eb;color:#fff;border:none;padding:12px 32px;border-radius:6px;font-weight:700;cursor:pointer;font-size:1.1em;transition:background .2s}.complete-btn:hover{background-color:#1d4ed8}.score-screen{text-align:center;padding:40px}.score-circle{width:150px;height:150px;border-radius:50%;background:#ffffff0d;border:8px solid var(--tj-primary);margin:0 auto 30px;display:flex;flex-direction:column;justify-content:center;align-items:center}.score-value{font-size:2em;font-weight:800;color:var(--tj-text-color)}.score-percent{font-size:1.2em;font-weight:600;color:var(--tj-primary)}.score-actions{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:8px}.empty-state{color:#94a3b8;font-style:italic}.role-grid{display:flex;gap:12px;margin-top:15px}.role-btn{flex:1;padding:16px;font-size:16px;font-weight:700;cursor:pointer;background-color:var(--tj-bg-color);border:2px solid var(--tj-border-color);border-radius:8px;transition:all .2s;color:var(--tj-text-color)}.role-btn:hover{background-color:var(--tj-card-bg);border-color:var(--tj-text-muted)}.report-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.report-btn:hover{background:#1d4ed8}.report-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172acc;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1000}.report-modal{background:var(--tj-card-bg);color:var(--tj-text-color);width:92%;max-width:420px;padding:28px 24px;border-radius:16px;box-shadow:0 25px 50px -12px #00000080;text-align:center;max-height:90vh;overflow-y:auto;border:1px solid var(--tj-border-color)}.report-modal h2{margin:8px 0 4px;color:var(--tj-primary)}.report-modal p{color:var(--tj-text-muted);margin:0 0 16px;font-size:.95em}.report-icon{font-size:2.5em;margin-bottom:4px}.report-modal input{display:block;width:100%;box-sizing:border-box;padding:12px 14px;margin-bottom:12px;border:1px solid var(--tj-border-color);border-radius:8px;font-size:1em;outline:none;transition:border-color .2s;background:var(--tj-card-bg);color:var(--tj-text-color)}.report-modal input:focus{border-color:#2563eb}.generate-btn{width:100%;padding:13px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s;margin-bottom:8px}.generate-btn:hover{background:#1d4ed8}.cancel-btn{background:none;border:none;color:#94a3b8;font-size:.9em;cursor:pointer;text-decoration:underline}.report-area{text-align:left}.rc-header{text-align:center;margin-bottom:16px}.rc-icon{font-size:2em}.rc-title{font-size:1.3em;font-weight:800;color:var(--tj-text-color);margin:4px 0 2px}.rc-subtitle{font-size:.9em;font-weight:600;color:var(--tj-text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}.rc-activity{font-size:.9em;color:var(--tj-text-muted)}.rc-student{display:flex;justify-content:space-between;align-items:center;background:#ffffff0d;border:1px solid var(--tj-border-color);border-radius:8px;padding:10px 14px;margin-bottom:16px}.rc-label{font-size:.8em;font-weight:700;color:var(--tj-text-muted);text-transform:uppercase}.rc-value{font-weight:700;color:var(--tj-text-color)}.rc-number{color:var(--tj-text-muted);font-weight:400}.rc-score-row{display:flex;align-items:center;gap:16px;margin-bottom:10px}.rc-score-circle{width:80px;height:80px;border-radius:50%;background:#ffffff0d;border:6px solid var(--tj-primary);display:flex;flex-direction:column;justify-content:center;align-items:center;flex-shrink:0}.rc-score-val{font-size:1.1em;font-weight:800;color:var(--tj-text-color);line-height:1.1}.rc-score-pct{font-size:.85em;font-weight:700;color:var(--tj-primary)}.rc-score-label{font-size:1.1em;font-weight:700;color:var(--tj-text-color)}.rc-bar-track{height:8px;background:var(--tj-border-color);border-radius:4px;overflow:hidden}.rc-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:4px;transition:width .6s ease}.rc-details{border:1px solid var(--tj-border-color);border-radius:8px;overflow:hidden;margin-bottom:16px}.rc-detail-row{display:flex;justify-content:space-between;padding:9px 14px;font-size:.9em;border-bottom:1px solid var(--tj-border-color);background:var(--tj-card-bg);color:var(--tj-text-color)}.rc-detail-row:last-child{border-bottom:none}.rc-detail-row span:first-child{color:var(--tj-text-muted)}.rc-detail-row span:last-child{font-weight:600;color:var(--tj-text-color)}.rc-combined{background:var(--tj-bg-color);border:1px solid var(--tj-border-color);border-radius:10px;padding:14px 16px;margin-bottom:16px;text-align:center}.rc-combined-title{font-size:.95em;font-weight:700;color:var(--tj-text-muted);margin-bottom:8px}.rc-combined-score{font-size:1.4em;font-weight:800;color:var(--tj-text-color);margin-bottom:8px}.rc-combined-pct{color:#2563eb}.rc-actions{margin-top:16px}.rc-close-btn{width:100%;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;transition:background .2s}.rc-close-btn:hover{background:#16a34a}.single-player-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}@media (max-width: 768px){.single-player-layout{grid-template-columns:1fr;gap:0}.single-player-layout .section-title:first-child{margin-top:12px}}.voice-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ab3;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000}.voice-card{background:var(--tj-card-bg);color:var(--tj-text-color);width:90%;max-width:400px;max-height:80vh;border-radius:1.2em;box-shadow:0 20px 25px -5px #0006;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--tj-border-color)}.voice-card-header{padding:16px 20px;border-bottom:1px solid var(--tj-border-color);display:flex;justify-content:space-between;align-items:center}.voice-card-header h3{margin:0;font-size:1.2em;color:var(--tj-primary)}.close-voice-btn{background:none;border:none;font-size:24px;cursor:pointer;color:var(--tj-text-muted)}.voice-list{padding:10px;overflow-y:auto;flex:1}.voice-option-btn{width:100%;text-align:left;padding:12px 16px;margin-bottom:6px;border:1px solid var(--tj-border-color);border-radius:8px;background:#ffffff08;color:var(--tj-text-color);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .2s}.voice-option-btn:hover{background-color:#ffffff14;border-color:var(--tj-primary)}.voice-option-btn.active{background:#22d3ee1a;border-color:var(--tj-primary);color:var(--tj-primary);font-weight:600}.badge{background:#dcfce7;color:#166534;font-size:.7em;padding:2px 8px;border-radius:10px;font-weight:700}.combined-score{margin-top:30px;padding:20px 24px;background:#ffffff08;border:1px solid var(--tj-border-color);border-radius:12px;text-align:center}.combined-header{font-size:1.1em;font-weight:700;color:var(--tj-primary);margin-bottom:12px}.combined-stats{display:flex;justify-content:center;gap:24px;margin-bottom:12px}.combined-value{font-size:1.8em;font-weight:800;color:#1e293b}.combined-percent{font-size:1.8em;font-weight:800;color:#2563eb}.combined-bar-track{height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden}.combined-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:5px;transition:width .6s ease}.combined-pending{background:#ffffff05;border-color:var(--tj-border-color)}.combined-note{color:#64748b;font-size:.9em;margin:0}.browser-prompt-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172ae6;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:10000;color:#fff;padding:2em;text-align:center}.browser-prompt-card{background:#fff;color:#1e293b;padding:2.5em;border-radius:1.5em;max-width:400px;box-shadow:0 20px 25px -5px #0000001a,0 10px 10px -5px #0000000a}.browser-prompt-card h2{color:#b45309;margin-bottom:.5em;font-size:1.5em;background:none;-webkit-text-fill-color:initial}.browser-prompt-card p{margin-bottom:1.5em;line-height:1.5;color:#475569}.browser-action-btn{display:inline-block;background-color:#ca8a04;color:#fff;padding:.75em 1.5em;border-radius:9999px;text-decoration:none;font-weight:700;transition:background-color .2s;cursor:pointer}.browser-action-btn:hover{background-color:#a16207}", E = `<div class="container">
   <!-- Selection Screen -->
   <div id="selection-screen" style="display: none;">
     <h2 id="topic-title"></h2>
@@ -120,8 +120,8 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
 `, p = class p extends HTMLElement {
   constructor() {
     super(), this.attachShadow({ mode: "open" }), this.activityData = null, this.currentPlayerId = null, this.score = 0, this.answeredCount = 0, this.totalQuestions = 0, this.isCompleted = !1, this.studentInfo = { nickname: "", number: "" }, this.isSinglePlayer = !1, this.selectedVoiceName = null, this.isPlaying = !1, p._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList()), this.recordedBlobs = /* @__PURE__ */ new Map(), this.skippedRecordings = /* @__PURE__ */ new Set(), this.mediaRecorder = null, this.isRecordingId = null, this.recordingStartTime = 0, this.isPlayingRecordingId = null, this.shadowRoot.innerHTML = `
-          <style>${E}</style>
-          ${$}
+          <style>${C}</style>
+          ${E}
         `;
   }
   connectedCallback() {
@@ -153,13 +153,13 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
     }, n.onclick = () => {
       this.isSinglePlayer = !0, this.render();
     };
-    const i = this.shadowRoot.getElementById("button-container");
-    i.innerHTML = "";
-    for (let r = 1; r <= e.player_count; r++) {
+    const r = this.shadowRoot.getElementById("button-container");
+    r.innerHTML = "";
+    for (let i = 1; i <= e.player_count; i++) {
       const s = document.createElement("button");
-      s.className = "role-btn", s.textContent = `Player ${r}`, s.onclick = () => {
-        this.currentPlayerId = r, this.calculateTotalQuestions(), this.render();
-      }, i.appendChild(s);
+      s.className = "role-btn", s.textContent = `Player ${i}`, s.onclick = () => {
+        this.currentPlayerId = i, this.calculateTotalQuestions(), this.render();
+      }, r.appendChild(s);
     }
   }
   calculateTotalQuestions() {
@@ -174,29 +174,29 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
     o.style.display = "block", this.shadowRoot.getElementById("game-topic").textContent = `${e.topic} - Player ${t}`, this.shadowRoot.getElementById("mode-badge").textContent = this.isSinglePlayer ? "Single Player" : "Collaborative", this.shadowRoot.getElementById("progress-info").textContent = `${this.answeredCount} / ${this.totalQuestions} Answered`;
     const n = this.shadowRoot.getElementById("voice-btn");
     this.isSinglePlayer && this._shouldShowAudioControls() ? (n.style.display = "block", n.onclick = () => this._showVoiceOverlay()) : n.style.display = "none";
-    let i = "", r = "", s = "";
+    let r = "", i = "", s = "";
     e.blocks.forEach((a, l) => {
-      a.text_holder_id === t && (i += `<div class="info-card"><p>${a.text}</p></div>`), a.questions.forEach((b, m) => {
-        const f = `q_${l}_${m}`;
+      a.text_holder_id === t && (r += `<div class="info-card"><p>${a.text}</p></div>`), a.questions.forEach((b, m) => {
+        const u = `q_${l}_${m}`;
         if (b.asker_id === t) {
-          let g = b.options.map((v, x) => `
-                        <label class="mc-option" id="label_${f}_${x}">
-                          <input type="radio" name="${f}" value="${v}" data-correct="${b.correct_answer}" data-label-id="label_${f}_${x}">
-                          ${v}
+          let g = b.options.map((y, x) => `
+                        <label class="mc-option" id="label_${u}_${x}">
+                          <input type="radio" name="${u}" value="${y}" data-correct="${b.correct_answer}" data-label-id="label_${u}_${x}">
+                          ${y}
                         </label>
-                    `).join(""), y = "";
-          this.isSinglePlayer && (y = `
+                    `).join(""), v = "";
+          this.isSinglePlayer && (v = `
                             <button class="tts-btn" data-text="${a.text}" title="Listen to Partner">
                                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                                     <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                                 </svg>
                                 Info
                             </button>
-                        `), r += `
+                        `), i += `
                         <div class="question-card">
                           <div class="question-header">
                             <p class="question-text"><strong>Ask:</strong> "${b.question}"</p>
-                            ${y}
+                            ${v}
                           </div>
                           <div class="options-group">
                             ${g}
@@ -223,7 +223,7 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
                     `;
         }
       });
-    }), this.shadowRoot.getElementById("my-texts").innerHTML = i || '<p class="empty-state">You have no texts to read. Listen to your partners.</p>', this.shadowRoot.getElementById("my-questions").innerHTML = r || '<p class="empty-state">You have no questions to ask right now.</p>';
+    }), this.shadowRoot.getElementById("my-texts").innerHTML = r || '<p class="empty-state">You have no texts to read. Listen to your partners.</p>', this.shadowRoot.getElementById("my-questions").innerHTML = i || '<p class="empty-state">You have no questions to ask right now.</p>';
     const c = this.shadowRoot.getElementById("partner-column"), d = this.shadowRoot.getElementById("layout-container");
     this.isSinglePlayer && s ? (c.style.display = "block", this.shadowRoot.getElementById("partner-questions").innerHTML = s, d.classList.add("single-player-layout")) : (c.style.display = "none", d.classList.remove("single-player-layout")), this.shadowRoot.getElementById("footer-actions").style.display = this.answeredCount === this.totalQuestions && this.totalQuestions > 0 ? "flex" : "none", this.attachValidationListeners(), this.shadowRoot.querySelectorAll(".tts-btn").forEach((a) => {
       a.onclick = () => this._playTTS(a.getAttribute("data-text"));
@@ -240,8 +240,8 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
   _getCombinedScore() {
     const e = p._instances;
     let t = 0, o = 0, n = !0;
-    return e.forEach((i) => {
-      t += i.score, o += i.totalQuestions, i.isCompleted || (n = !1);
+    return e.forEach((r) => {
+      t += r.score, o += r.totalQuestions, r.isCompleted || (n = !1);
     }), { totalScore: t, totalQuestions: o, allDone: n, count: e.length };
   }
   renderScoreScreen() {
@@ -250,15 +250,15 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
     const t = Math.round(this.score / this.totalQuestions * 100) || 0;
     let o = "🎉";
     t < 50 ? o = "💪" : t < 80 && (o = "👍"), this.shadowRoot.getElementById("final-score").textContent = `${this.score}/${this.totalQuestions}`, this.shadowRoot.getElementById("final-percent").textContent = `${t}%`, this.shadowRoot.getElementById("score-msg").textContent = `${o} ${t >= 80 ? "Excellent!" : t >= 50 ? "Good effort!" : "Keep practicing!"}`, this.shadowRoot.getElementById("score-details").textContent = `You completed the "${this.activityData.topic}" activity as Player ${this.currentPlayerId}.`;
-    const n = this._isLastInstance(), i = this.shadowRoot.getElementById("report-btn");
-    n ? (i.style.display = "inline-flex", i.onclick = () => this._showReportOverlay()) : i.style.display = "none";
-    const r = this.shadowRoot.getElementById("combined-score-area");
-    if (r.innerHTML = "", n) {
+    const n = this._isLastInstance(), r = this.shadowRoot.getElementById("report-btn");
+    n ? (r.style.display = "inline-flex", r.onclick = () => this._showReportOverlay()) : r.style.display = "none";
+    const i = this.shadowRoot.getElementById("combined-score-area");
+    if (i.innerHTML = "", n) {
       const s = this._getCombinedScore();
       if (s.allDone) {
         const c = Math.round(s.totalScore / s.totalQuestions * 100) || 0;
         let d = "🏆";
-        c < 50 ? d = "💪" : c < 80 && (d = "⭐"), r.innerHTML = `
+        c < 50 ? d = "💪" : c < 80 && (d = "⭐"), i.innerHTML = `
                     <div class="combined-score">
                         <div class="combined-header">${d} Combined Score — All ${s.count} Activities</div>
                         <div class="combined-stats">
@@ -272,7 +272,7 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
                 `;
       } else {
         const c = p._instances.filter((d) => d.isCompleted).length;
-        r.innerHTML = `
+        i.innerHTML = `
                     <div class="combined-score combined-pending">
                         <div class="combined-header">📋 Activity Progress</div>
                         <p class="combined-note">${c} of ${s.count} activities completed. Finish all to see your combined score.</p>
@@ -305,15 +305,15 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
       return;
     }
     this.studentInfo = { nickname: o, number: n };
-    const i = this._getCombinedScore(), r = Math.round(i.totalScore / i.totalQuestions * 100) || 0, s = (/* @__PURE__ */ new Date()).toLocaleString();
+    const r = this._getCombinedScore(), i = Math.round(r.totalScore / r.totalQuestions * 100) || 0, s = (/* @__PURE__ */ new Date()).toLocaleString();
     let c = "🏆";
-    r < 50 ? c = "💪" : r < 80 && (c = "⭐");
+    i < 50 ? c = "💪" : i < 80 && (c = "⭐");
     const d = `
             <div class="rc-header">
                 <div class="rc-icon">📄</div>
                 <div class="rc-title">${this.activityData.topic || "Info Gap Activity"}</div>
                 <div class="rc-subtitle">Report Card</div>
-                <div class="rc-activity">All ${i.count} Activities</div>
+                <div class="rc-activity">All ${r.count} Activities</div>
             </div>
             <div class="rc-student">
                 <span class="rc-label">Student</span>
@@ -321,14 +321,14 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
             </div>
             <div class="rc-score-row">
                 <div class="rc-score-circle">
-                    <div class="rc-score-val">${i.totalScore}/${i.totalQuestions}</div>
-                    <div class="rc-score-pct">${r}%</div>
+                    <div class="rc-score-val">${r.totalScore}/${r.totalQuestions}</div>
+                    <div class="rc-score-pct">${i}%</div>
                 </div>
-                <div class="rc-score-label">${c} ${r >= 80 ? "Excellent!" : r >= 50 ? "Good effort!" : "Keep practicing!"}</div>
+                <div class="rc-score-label">${c} ${i >= 80 ? "Excellent!" : i >= 50 ? "Good effort!" : "Keep practicing!"}</div>
             </div>
-            <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${r}%"></div></div>
+            <div class="rc-bar-track" style="margin: 0 0 16px 0;"><div class="rc-bar-fill" style="width:${i}%"></div></div>
             <div class="rc-details">
-                <div class="rc-detail-row"><span>Total Correct</span><span>${i.totalScore} / ${i.totalQuestions}</span></div>
+                <div class="rc-detail-row"><span>Total Correct</span><span>${r.totalScore} / ${r.totalQuestions}</span></div>
                 <div class="rc-detail-row"><span>Completed On</span><span>${s}</span></div>
             </div>
             <div class="rc-actions">
@@ -342,10 +342,10 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
   attachValidationListeners() {
     this.shadowRoot.querySelectorAll('input[type="radio"]').forEach((t) => {
       t.addEventListener("change", (o) => {
-        const n = o.target.value, i = o.target.getAttribute("data-correct"), r = o.target.getAttribute("data-label-id"), s = this.shadowRoot.getElementById(r), c = o.target.name, d = this.shadowRoot.querySelectorAll(`input[name="${c}"]`);
+        const n = o.target.value, r = o.target.getAttribute("data-correct"), i = o.target.getAttribute("data-label-id"), s = this.shadowRoot.getElementById(i), c = o.target.name, d = this.shadowRoot.querySelectorAll(`input[name="${c}"]`);
         d.forEach((a) => {
           a.disabled = !0;
-        }), n === i ? (s.classList.add("correct"), this.score++) : (s.classList.add("incorrect"), d.forEach((a) => {
+        }), n === r ? (s.classList.add("correct"), this.score++) : (s.classList.add("incorrect"), d.forEach((a) => {
           if (a.getAttribute("data-correct") === a.value) {
             const l = a.getAttribute("data-label-id");
             this.shadowRoot.getElementById(l).classList.add("correct-highlight");
@@ -355,14 +355,14 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
     });
   }
   renderRecordingButtons(e) {
-    const t = this.isRecordingId === e, o = this.recordedBlobs.has(e), n = this.skippedRecordings.has(e), i = this.isPlayingRecordingId === e;
+    const t = this.isRecordingId === e, o = this.recordedBlobs.has(e), n = this.skippedRecordings.has(e), r = this.isPlayingRecordingId === e;
     if (n)
       return `
                 <div class="btn-group">
                     <span class="skipped-label">Skipped (No Mic)</span>
                 </div>
             `;
-    let r = `
+    let i = `
             <div class="btn-group">
                 <button class="record-btn ${t ? "recording" : ""} ${o ? "has-recording" : ""}" 
                         onclick="this.getRootNode().host.${t ? "stopRecording" : "startRecording"}('${e}')"
@@ -373,20 +373,20 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
                     ${t ? "Stop" : o ? "Re-record" : "Record"}
                 </button>
         `;
-    return !o && !t && (r += `
+    return !o && !t && (i += `
                 <button class="skip-btn" onclick="this.getRootNode().host.skipRecording('${e}')" title="Skip Recording">
                     Skip
                 </button>
-            `), o && !t && (r += `
-                <button class="play-recorded-btn ${i ? "playing" : ""}" 
+            `), o && !t && (i += `
+                <button class="play-recorded-btn ${r ? "playing" : ""}" 
                         onclick="this.getRootNode().host.playRecordedAudio('${e}')"
-                        title="${i ? "Stop Playback" : "Play Recording"}">
+                        title="${r ? "Stop Playback" : "Play Recording"}">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                        ${i ? '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>' : '<path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>'}
+                        ${r ? '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>' : '<path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>'}
                     </svg>
-                    ${i ? "Playing..." : "Play"}
+                    ${r ? "Playing..." : "Play"}
                 </button>
-            `), r += "</div>", r;
+            `), i += "</div>", i;
   }
   async startRecording(e) {
     if (this.isRecordingId === null)
@@ -398,8 +398,8 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
           (t) => {
             const o = new Blob(this._audioChunks, { type: t });
             if (Date.now() - this.recordingStartTime > 600) {
-              const i = !this.recordedBlobs.has(e);
-              this.recordedBlobs.set(e, o), i && (this.score++, this.answeredCount++, this.updateProgressDisplay(), this._checkCompletion());
+              const r = !this.recordedBlobs.has(e);
+              this.recordedBlobs.set(e, o), r && (this.score++, this.answeredCount++, this.updateProgressDisplay(), this._checkCompletion());
             }
             this.isRecordingId = null, this._audioChunks = null, this.refreshRecordingUI(e);
           },
@@ -442,10 +442,10 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
     e && (e.textContent = `${this.answeredCount} / ${this.totalQuestions} Answered`);
   }
   _shouldShowAudioControls() {
-    return I(window.speechSynthesis);
+    return j(window.speechSynthesis);
   }
   _getAndroidIntentLink() {
-    return B();
+    return I();
   }
   checkBrowserSupport() {
     if (!this._shouldShowAudioControls()) {
@@ -461,15 +461,15 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
   }
   // TTS LOGIC
   _getBestVoice(e) {
-    return C(window.speechSynthesis, e);
+    return B(window.speechSynthesis, e);
   }
   _playTTS(e) {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const t = new SpeechSynthesisUtterance(e), o = "en-US";
     t.lang = o;
-    let i = window.speechSynthesis.getVoices().find((r) => r.name === this.selectedVoiceName);
-    i || (i = this._getBestVoice(o)), i && (t.voice = i), t.onstart = () => {
+    let r = window.speechSynthesis.getVoices().find((i) => i.name === this.selectedVoiceName);
+    r || (r = this._getBestVoice(o)), r && (t.voice = r), t.onstart = () => {
       this.isPlaying = !0;
     }, t.onend = () => {
       this.isPlaying = !1;
@@ -486,16 +486,16 @@ const E = ":host{all:initial;display:block;font-family:Outfit,Inter,system-ui,-a
   _updateVoiceList() {
     const e = this.shadowRoot.getElementById("voice-list");
     if (!e) return;
-    const t = window.speechSynthesis.getVoices(), o = "en-US", n = t.filter((r) => r.lang.startsWith(o.split("-")[0])), i = this._getBestVoice(o);
-    e.innerHTML = "", n.sort((r, s) => r.name.localeCompare(s.name)), n.forEach((r) => {
+    const t = window.speechSynthesis.getVoices(), o = "en-US", n = t.filter((i) => i.lang.startsWith(o.split("-")[0])), r = this._getBestVoice(o);
+    e.innerHTML = "", n.sort((i, s) => i.name.localeCompare(s.name)), n.forEach((i) => {
       const s = document.createElement("button");
-      s.classList.add("voice-option-btn"), (this.selectedVoiceName === r.name || !this.selectedVoiceName && i && r.name === i.name) && s.classList.add("active"), s.innerHTML = `<span>${r.name}</span>`, i && r.name === i.name && (s.innerHTML += '<span class="badge">Best</span>'), s.onclick = () => {
-        this.selectedVoiceName = r.name, this._updateVoiceList(), this._hideVoiceOverlay();
+      s.classList.add("voice-option-btn"), (this.selectedVoiceName === i.name || !this.selectedVoiceName && r && i.name === r.name) && s.classList.add("active"), s.innerHTML = `<span>${i.name}</span>`, r && i.name === r.name && (s.innerHTML += '<span class="badge">Best</span>'), s.onclick = () => {
+        this.selectedVoiceName = i.name, this._updateVoiceList(), this._hideVoiceOverlay();
       }, e.appendChild(s);
     });
   }
 };
 // Static registry of all instances on the page
 w(p, "_instances", []);
-let u = p;
-customElements.define("tj-info-gap", u);
+let f = p;
+customElements.define("tj-info-gap", f);

@@ -12,6 +12,18 @@ const icons = {
 };
 
 class TjPronunciation extends HTMLElement {
+  get code() {
+    return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+  }
+
+  set code(value) {
+    if (value !== null && value !== undefined) {
+      this.setAttribute('code', value);
+    } else {
+      this.removeAttribute('code');
+    }
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -850,7 +862,7 @@ class TjPronunciation extends HTMLElement {
       const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
       const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : this.studentInfo.teacherCode;
       
-      const isTeacherCodeCorrect = currentTeacherCode === '6767';
+      const isTeacherCodeCorrect = currentTeacherCode === this.code;
 
       if (!isTeacherCodeCorrect) {
           alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');

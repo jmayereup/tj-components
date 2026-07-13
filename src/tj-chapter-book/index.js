@@ -6,6 +6,18 @@ import templateHtml from './template.html?raw';
 
 
 class TjChapterBook extends HTMLElement {
+    get code() {
+        return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+    }
+
+    set code(value) {
+        if (value !== null && value !== undefined) {
+            this.setAttribute('code', value);
+        } else {
+            this.removeAttribute('code');
+        }
+    }
+
     getLanguageName(localeStr) {
         if (!localeStr) return 'Unknown';
         try {
@@ -1257,7 +1269,7 @@ class TjChapterBook extends HTMLElement {
         // Cache for reuse
         this.studentInfo.teacherCode = currentTeacherCode;
 
-        if (currentTeacherCode !== '6767') {
+        if (currentTeacherCode !== this.code) {
             this._showToast('Invalid Teacher Code. Please show your report card screenshot to your teacher.', 'error');
             return;
         }

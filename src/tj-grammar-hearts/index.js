@@ -1,6 +1,18 @@
 import { config } from '../tj-config.js';
 
 class TjGrammarHearts extends HTMLElement {
+  get code() {
+    return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+  }
+
+  set code(value) {
+    if (value !== null && value !== undefined) {
+      this.setAttribute('code', value);
+    } else {
+      this.removeAttribute('code');
+    }
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -412,7 +424,7 @@ class TjGrammarHearts extends HTMLElement {
     // Sync back to studentInfo state
     this.studentInfo.teacherCode = currentTeacherCode;
 
-    if (currentTeacherCode !== '6767') {
+    if (currentTeacherCode !== this.code) {
       this.submissionError = 'Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.';
       this.render();
       return;
