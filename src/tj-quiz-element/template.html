@@ -81,6 +81,16 @@
                         </div>
                     </div>
 
+                    <div id="teacherActionsSection" class="teacher-actions-section hidden">
+                        <p class="teacher-actions-title">Reopen or Reset Quiz (Teacher Only)</p>
+                        <div class="teacher-actions-controls">
+                            <input type="text" id="teacherResetCode" class="form-input" placeholder="Reset Code" title="Reset Code">
+                            <button type="button" id="reopenEditButton" class="button button-slate">Reopen & Edit</button>
+                            <button type="button" id="resetTryAgainButton" class="button button-red">Reset & Try Again</button>
+                        </div>
+                        <p id="teacherResetCodeError" class="hidden"></p>
+                    </div>
+
                     <div class="post-score-actions">
                         <button type="button" id="sendButton" class="button button-green hidden">
                             Resend Score to Teacher

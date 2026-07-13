@@ -15,6 +15,7 @@
     --green-hover: #15803d;
     --green-light-bg: #dcfce7;
     --red-color: #ef4444;
+    --red-hover: #dc2626;
     --red-light-bg: #fee2e2;
     --yellow-color: #eab308;
     --warning-color: #854d0e;
@@ -514,6 +515,15 @@ fieldset>legend {
 
 .button-slate:hover:not(:disabled) {
     background-color: var(--slate-hover);
+}
+
+.button-red {
+    background-color: var(--red-color);
+    color: var(--primary-text);
+}
+
+.button-red:hover:not(:disabled) {
+    background-color: var(--red-hover);
 }
 
 .post-score-actions {
@@ -1418,4 +1428,49 @@ textarea.short-answer-input {
     color: var(--text-light);
     white-space: pre-wrap;
     word-break: break-word;
+}
+
+/* Teacher Actions Section Styles */
+.teacher-actions-section {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1.25rem;
+    background-color: var(--input-bg-light);
+    border-radius: 0.6rem;
+    border: 1px dashed var(--border-light);
+}
+
+.teacher-actions-title {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 0.95em;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.teacher-actions-controls {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.teacher-actions-controls .form-input {
+    flex: 1;
+    margin: 0;
+    min-width: 150px;
+}
+
+.teacher-actions-controls .button {
+    width: auto;
+    margin: 0;
+    white-space: nowrap;
+}
+
+#teacherResetCodeError {
+    color: var(--red-color);
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    font-size: 0.9em;
+    font-weight: 500;
 }

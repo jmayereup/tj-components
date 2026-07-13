@@ -5,7 +5,7 @@ import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../
 
 class TjQuizElement extends HTMLElement {
     static get observedAttributes() {
-        return ['submission-url', 'test-mode', 'code'];
+        return ['submission-url', 'test-mode', 'code', 'reset-code'];
     }
 
     get testMode() {
@@ -29,6 +29,18 @@ class TjQuizElement extends HTMLElement {
             this.setAttribute('code', value);
         } else {
             this.removeAttribute('code');
+        }
+    }
+
+    get resetCode() {
+        return this.getAttribute('reset-code') !== null ? this.getAttribute('reset-code') : '7676';
+    }
+
+    set resetCode(value) {
+        if (value !== null && value !== undefined) {
+            this.setAttribute('reset-code', value);
+        } else {
+            this.removeAttribute('reset-code');
         }
     }
 
@@ -1152,6 +1164,22 @@ class TjQuizElement extends HTMLElement {
         if (sendButton) sendButton.addEventListener('click', () => this.sendScore());
         if (tryAgainButton) tryAgainButton.addEventListener('click', () => this.resetQuiz());
         if (retrySendButton) retrySendButton.addEventListener('click', () => this.sendScore(false, true));
+        
+        const reopenEditButton = this.shadowRoot.getElementById('reopenEditButton');
+        const resetTryAgainButton = this.shadowRoot.getElementById('resetTryAgainButton');
+        const teacherResetCode = this.shadowRoot.getElementById('teacherResetCode');
+
+        if (reopenEditButton) reopenEditButton.addEventListener('click', () => this.handleReopenEdit());
+        if (resetTryAgainButton) resetTryAgainButton.addEventListener('click', () => this.handleResetTryAgain());
+        if (teacherResetCode) {
+            teacherResetCode.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.handleReopenEdit();
+                }
+            });
+        }
+
         if (themeToggle) themeToggle.addEventListener('click', () => this.toggleTheme());
         if (startQuizButton) {
             startQuizButton.addEventListener('click', () => this.handleStartQuiz());
@@ -1982,13 +2010,28 @@ class TjQuizElement extends HTMLElement {
 
         if (postScoreActions) postScoreActions.classList.remove('hidden');
 
-        // Show retry section if score not sent to server
+        // Show retry section if score not sent to server, or if in test mode (where it becomes a submit again box)
         const retrySection = this.shadowRoot.getElementById('retrySubmissionSection');
         if (retrySection) {
-            if (!this.scoreSentToServer) {
+            if (!this.scoreSentToServer || this.testMode) {
                 retrySection.classList.remove('hidden');
+                this.updateRetrySectionLabels();
             } else {
                 retrySection.classList.add('hidden');
+            }
+        }
+
+        // Show teacher special actions section if in test mode
+        const teacherActionsSection = this.shadowRoot.getElementById('teacherActionsSection');
+        if (teacherActionsSection) {
+            if (this.testMode) {
+                teacherActionsSection.classList.remove('hidden');
+                const teacherResetCode = this.shadowRoot.getElementById('teacherResetCode');
+                if (teacherResetCode) teacherResetCode.value = '';
+                const teacherResetCodeError = this.shadowRoot.getElementById('teacherResetCodeError');
+                if (teacherResetCodeError) teacherResetCodeError.classList.add('hidden');
+            } else {
+                teacherActionsSection.classList.add('hidden');
             }
         }
 
@@ -2291,7 +2334,14 @@ class TjQuizElement extends HTMLElement {
             }
 
             this.scoreSentToServer = true;
-            if (retrySection) retrySection.classList.add('hidden');
+            if (retrySection) {
+                if (this.testMode) {
+                    retrySection.classList.remove('hidden');
+                    this.updateRetrySectionLabels();
+                } else {
+                    retrySection.classList.add('hidden');
+                }
+            }
 
             if (validationMessage) {
                 const statusText = autoTriggered
@@ -2469,6 +2519,144 @@ class TjQuizElement extends HTMLElement {
         const isDark = this.classList.contains('dark');
         this.shadowRoot.querySelector('.light-icon').classList.toggle('hidden', isDark);
         this.shadowRoot.querySelector('.dark-icon').classList.toggle('hidden', !isDark);
+    }
+
+    updateRetrySectionLabels() {
+        const retryTitle = this.shadowRoot.querySelector('#retrySubmissionSection .retry-title');
+        const retrySendButton = this.shadowRoot.getElementById('retrySendButton');
+        const retryInput = this.shadowRoot.getElementById('retryTeacherCode');
+        
+        if (this.testMode) {
+            if (retryInput && !retryInput.value) {
+                const teacherCodeInput = this.getTeacherCodeInput();
+                retryInput.value = teacherCodeInput ? teacherCodeInput.value : this.code;
+            }
+        }
+
+        if (this.scoreSentToServer) {
+            if (retryTitle) retryTitle.textContent = 'Submit score again?';
+            if (retrySendButton) retrySendButton.textContent = 'Submit Again';
+        } else {
+            if (retryTitle) retryTitle.textContent = 'Want to send this to your teacher?';
+            if (retrySendButton) retrySendButton.textContent = 'Send Now';
+        }
+    }
+
+    handleReopenEdit() {
+        const resetCodeInput = this.shadowRoot.getElementById('teacherResetCode');
+        const codeValue = resetCodeInput ? resetCodeInput.value.trim() : '';
+        const errorAlert = this.shadowRoot.getElementById('teacherResetCodeError');
+
+        if (codeValue === this.resetCode) {
+            if (errorAlert) errorAlert.classList.add('hidden');
+            if (resetCodeInput) resetCodeInput.value = '';
+            this.reopenQuizForEditing();
+        } else {
+            if (errorAlert) {
+                errorAlert.textContent = '❌ Invalid Reset Code / รหัสผ่านไม่ถูกต้อง';
+                errorAlert.classList.remove('hidden');
+            }
+        }
+    }
+
+    handleResetTryAgain() {
+        const resetCodeInput = this.shadowRoot.getElementById('teacherResetCode');
+        const codeValue = resetCodeInput ? resetCodeInput.value.trim() : '';
+        const errorAlert = this.shadowRoot.getElementById('teacherResetCodeError');
+
+        if (codeValue === this.resetCode) {
+            if (errorAlert) errorAlert.classList.add('hidden');
+            if (resetCodeInput) resetCodeInput.value = '';
+            this.resetQuiz();
+        } else {
+            if (errorAlert) {
+                errorAlert.textContent = '❌ Invalid Reset Code / รหัสผ่านไม่ถูกต้อง';
+                errorAlert.classList.remove('hidden');
+            }
+        }
+    }
+
+    reopenQuizForEditing() {
+        const dynamicContent = this.shadowRoot.getElementById('dynamicContent');
+        if (dynamicContent) {
+            dynamicContent.classList.remove('hidden');
+        }
+
+        const studentInfoSection = this.shadowRoot.getElementById('studentInfoSection');
+        if (studentInfoSection) {
+            studentInfoSection.style.display = '';
+            const inputs = this.getStudentInputs();
+            inputs.forEach(input => { if (input) input.disabled = false; });
+            const teacherCode = this.getTeacherCodeInput();
+            if (teacherCode) teacherCode.disabled = false;
+        }
+
+        const allShortInputs = Array.from(this.shadowRoot.querySelectorAll('.short-answer-input'));
+        allShortInputs.forEach(input => {
+            input.disabled = false;
+            input.classList.remove('submitted');
+        });
+
+        const allRadios = Array.from(this.shadowRoot.querySelectorAll('input[type="radio"]'));
+        allRadios.forEach(radio => {
+            radio.disabled = false;
+        });
+
+        const vocabInputs = Array.from(this.shadowRoot.querySelectorAll('.vocab-matching-input'));
+        vocabInputs.forEach(input => {
+            input.disabled = false;
+        });
+
+        const vocabRows = Array.from(this.shadowRoot.querySelectorAll('.vocab-matching-row'));
+        vocabRows.forEach(row => {
+            row.classList.remove('correct', 'incorrect');
+            const feedback = row.querySelector('.feedback-icon');
+            if (feedback) feedback.remove();
+        });
+
+        const clozeInputs = Array.from(this.shadowRoot.querySelectorAll('.cloze-blank'));
+        clozeInputs.forEach(input => {
+            input.disabled = false;
+            input.classList.remove('correct', 'incorrect');
+        });
+
+        const allLabels = Array.from(this.shadowRoot.querySelectorAll('.option-label'));
+        allLabels.forEach(label => {
+            label.classList.remove('correct', 'incorrect');
+            const feedback = label.querySelector('.feedback-icon');
+            if (feedback) feedback.remove();
+            label.style.cursor = '';
+        });
+
+        const allExplanations = Array.from(this.shadowRoot.querySelectorAll('.explanation'));
+        allExplanations.forEach(exp => exp.classList.add('hidden'));
+
+        this.vocabSubmitted = false;
+        this.clozeSubmitted = false;
+        this.scoreSubmitted = false;
+        this.scoreSentToServer = false;
+        this.autoSubmissionInProgress = false;
+
+        const resultArea = this.shadowRoot.getElementById('resultArea');
+        if (resultArea) resultArea.classList.add('hidden');
+
+        const postScoreActions = this.shadowRoot.getElementById('postScoreActions');
+        if (postScoreActions) postScoreActions.classList.add('hidden');
+
+        const checkScoreContainer = this.shadowRoot.getElementById('checkScoreContainer');
+        if (checkScoreContainer) checkScoreContainer.classList.remove('hidden');
+
+        const checkBtn = this.shadowRoot.getElementById('checkScoreButton');
+        if (checkBtn) {
+            checkBtn.disabled = false;
+        }
+
+        const teacherResetCode = this.shadowRoot.getElementById('teacherResetCode');
+        if (teacherResetCode) teacherResetCode.value = '';
+        const teacherResetCodeError = this.shadowRoot.getElementById('teacherResetCodeError');
+        if (teacherResetCodeError) teacherResetCodeError.classList.add('hidden');
+
+        this.saveCurrentStateToLocalStorage();
     }
 }
 

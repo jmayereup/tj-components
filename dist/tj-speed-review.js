@@ -1,4 +1,4 @@
-import { c as n } from "./chunks/tj-config-DtZWnqEi.js";
+import { c as n } from "./chunks/tj-config-Daa3Dzp2.js";
 class a extends HTMLElement {
   get code() {
     return this.getAttribute("code") !== null ? this.getAttribute("code") : n.teacherCode;
@@ -8,7 +8,7 @@ class a extends HTMLElement {
   }
   constructor() {
     var e;
-    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = (e = n) == null ? void 0 : e.submissionUrl, this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
+    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = ((e = n) == null ? void 0 : e.submissionUrl) || "https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec", this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
   }
   connectedCallback() {
     this.timeLimit = parseInt(this.getAttribute("time-limit")) || 15, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 10, this.bestScore = 0, this.loadLibrary("marked", "https://cdn.jsdelivr.net/npm/marked/marked.min.js"), this.loadLibrary("Tone", "https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js", () => {
