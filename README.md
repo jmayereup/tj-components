@@ -37,6 +37,23 @@ By appending `?quiz=1` to the URL, components like `tj-listening` will hide tran
 
 ---
 
+## ✨ Gemini Gems (AI Content Generators)
+
+You can use these custom Google Gemini Gems to automatically generate formatted JSON or Markdown content for components directly from your lesson plans, reading passages, or vocabulary lists:
+
+| Component | Component Tag | Gemini Gem AI Generator Link |
+| :--- | :--- | :--- |
+| **LBL Reader** | `<lbl-reader>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/9dfd58f9fc59) |
+| **Grammar Hearts** | `<grammar-hearts>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/d8664c27f003) |
+| **Info Gap** | `<tj-info-gap>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/c4ce1f63dfd9) |
+| **Listening** | `<tj-listening>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/a282ff7b4b26) |
+| **Speed Review** | `<tj-speed-review>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/5a7412981b90) |
+| **Quiz Element** | `<tj-quiz-element>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/4bbfe190f849) |
+| **Chapter Book** | `<tj-chapter-book>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/209dda1b768d) |
+| **Pronunciation** | `<tj-pronunciation>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/d45e00c6dcb5) |
+
+---
+
 ## Components
 
 ### 1. LBL Reader (`<lbl-reader>`)
