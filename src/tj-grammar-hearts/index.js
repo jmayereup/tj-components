@@ -1,8 +1,8 @@
-import { config } from '../tj-config.js';
+import { config, resolveComponentParams } from '../tj-config.js';
 
 class TjGrammarHearts extends HTMLElement {
   get code() {
-    return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+    return resolveComponentParams(this).teacherCode;
   }
 
   set code(value) {
@@ -44,7 +44,7 @@ class TjGrammarHearts extends HTMLElement {
     this.selectedScrambleIndices = [];
 
     // Submission
-    this.submissionUrl = config?.submissionUrl || 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
+    this.submissionUrl = '';
     this.isSubmitting = false;
 
     // Retry & Continue play state
@@ -55,6 +55,9 @@ class TjGrammarHearts extends HTMLElement {
   }
 
   connectedCallback() {
+    const resolved = resolveComponentParams(this);
+    this.submissionUrl = resolved.submissionUrl;
+
     this.maxHearts = parseInt(this.getAttribute('hearts')) || 3;
     this.questionsPerRound = parseInt(this.getAttribute('round-size')) || 5;
     this.hearts = this.maxHearts;
@@ -68,8 +71,8 @@ class TjGrammarHearts extends HTMLElement {
     }
 
     // Use setTimeout to ensure children are parsed
-    requestAnimationFrame(() => {
-      this.loadData();
+    requestAnimationFrame(async () => {
+      await this.loadData();
       this.ensureMarked();
       this.render();
     });
@@ -84,8 +87,11 @@ class TjGrammarHearts extends HTMLElement {
     }
   }
 
-  loadData() {
+  async loadData() {
     try {
+      const resolved = resolveComponentParams(this);
+      this.submissionUrl = resolved.submissionUrl;
+
       let jsonText = '';
 
       // 1. Property
@@ -101,11 +107,24 @@ class TjGrammarHearts extends HTMLElement {
       else if (this.hasAttribute('config')) {
           jsonText = this.getAttribute('config');
       }
-      // 3. Script tag
+      // 3. Remote URL (url or src parameter/attribute)
+      else if (resolved.dataUrl) {
+          try {
+              const res = await fetch(resolved.dataUrl);
+              const data = await res.json();
+              this._processParsedData(data);
+              return;
+          } catch (e) {
+              console.error('Failed to fetch remote JSON for grammar-hearts', e);
+              this.shadowRoot.innerHTML = `<div class="error-msg">Error loading grammar data from URL.</div>`;
+              return;
+          }
+      }
+      // 4. Script tag
       else if (this.querySelector('script[type="application/json"]')) {
           jsonText = this.querySelector('script[type="application/json"]').textContent.trim();
       }
-      // 4. Default: Text Content
+      // 5. Default: Text Content
       else {
           jsonText = this.textContent.trim();
       }

@@ -1,25 +1,29 @@
 # Google Sheets Submission Setup Guide
 
-This guide explains how to set up a Google Apps Script to receive score submissions from the TJ Components (like `tj-pronunciation` and `tj-quiz-element`).
+This guide explains how teachers can set up their own Google Apps Script endpoint to automatically collect score submissions from any of the TJ Components (e.g., `tj-quiz-element`, `tj-grammar-hearts`, `tj-reader`, `tj-pronunciation`, etc.) into their own Google Sheet.
+
+---
 
 ## 1. Create a Google Sheet
-1. Open Google Sheets and create a new, blank spreadsheet.
-2. At the bottom, rename the default sheet (usually `Sheet1`) to exactly: **`Submissions`** (Note the capital **S**).
-3. *(Optional)* You can pre-fill the first row with headers, but the script will automatically create them for you if the sheet is completely empty: `Timestamp, Nickname, Homeroom, Student ID, Quiz Name, Score, Total Questions`.
+1. Open [Google Sheets](https://sheets.google.com) and create a new, blank spreadsheet.
+2. At the bottom, rename the default sheet tab (usually `Sheet1`) to exactly: **`Submissions`** (Note the capital **S**).
+3. *(Optional)* You can pre-fill row 1 with headers, but the script will automatically populate headers if the sheet is empty:
+   `Timestamp, Nickname, Homeroom, Student ID, Quiz Name, Score, Total Questions, Written Answers`.
+
+---
 
 ## 2. Add the Apps Script
-1. In the Google Sheet menu, click **Extensions** > **Apps Script**.
-2. Delete any existing code in the editor (e.g., `function myFunction() { ... }`).
-3. Paste the following code into the editor:
+1. In your Google Sheet, click **Extensions** > **Apps Script** from the top menu.
+2. Clear out any default code in the editor (e.g. `function myFunction() { ... }`).
+3. Copy and paste the following script into the Apps Script editor:
 
 ```javascript
-/** @OnlyCurrentDoc
-*/
+/** @OnlyCurrentDoc */
 
 /**
-* This function handles HTTP POST requests.
-* @param {Object} e - The event parameter for a POST request.
-*/
+ * This function handles HTTP POST requests sent from TJ Components.
+ * @param {Object} e - The event parameter for a POST request.
+ */
 function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) {
@@ -83,39 +87,74 @@ function doPost(e) {
   }
 }
 ```
-4. Click the **Save** icon (floppy disk) at the top of the editor.
+
+4. Click the **Save** (floppy disk) icon at the top of the editor.
+
+---
 
 ## 3. Deploy the Script as a Web App
-1. In the Apps Script editor, click the blue **Deploy** button at the top right, then select **New deployment**.
+1. In the Apps Script editor, click the blue **Deploy** button (top right) and select **New deployment**.
 2. Click the gear icon ⚙️ next to "Select type" and choose **Web app**.
-3. Under **Configuration**:
-   - **Description**: Enter a name (e.g., "TJ Components Submissions").
-   - **Execute as**: Select **Me** (your Google account).
-   - **Who has access**: Select **Anyone**. *(This is required so students can submit scores without logging into Google).*
+3. Fill out the configuration fields:
+   - **Description**: e.g., `TJ Components Submissions`
+   - **Execute as**: `Me (your_email@gmail.com)`
+   - **Who has access**: **`Anyone`** *(Crucial: allows students to submit without Google authentication)*.
 4. Click **Deploy**.
-5. You will see a prompt for **Authorize Access**. Click it, select your Google Account, click **Advanced** at the bottom, and click **Go to Untitled project (unsafe)**. Click **Allow** to give the script permission to edit your spreadsheet.
-6. Once deployed, you will be given a **Web app URL**. Copy this URL.
+5. Click **Authorize Access**, log into your Google account, click **Advanced**, click **Go to Untitled project (unsafe)**, and click **Allow**.
+6. Copy the resulting **Web App URL** (starts with `https://script.google.com/macros/s/.../exec`).
 
-## 4. Connect the URL to Your Components
-To connect the Web app URL to all your components, create a `.env` file in the root of the project and define the `VITE_SUBMISSION_URL` environment variable:
+---
 
-```env
-VITE_SUBMISSION_URL=YOUR_WEB_APP_URL_HERE
+## 4. Connecting Your Web App URL to Components
+
+You can connect your custom Apps Script URL to any TJ Component using any of the following methods:
+
+### Method A: Page URL Search Parameter (No Code Modifications Needed!)
+If you share or embed an activity page, simply append `submission-url` (or `submission_url`) to the browser URL:
+```text
+https://your-site.com/quiz.html?submission-url=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
 ```
 
-Make sure that `.env` is ignored by Git in your `.gitignore` file so that your private endpoint URL is not committed. The build system will automatically inject this URL into all the components during compiling.
+### Method B: HTML Attribute
+Add the `submission-url` (or `submission_url`) attribute directly to any TJ Component element in HTML:
+```html
+<tj-quiz-element submission-url="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
+  ...
+</tj-quiz-element>
+```
 
-Your components are now ready to successfully send data straight to your Google Sheet!
+### Method C: Data / Content URL via Parameter or Attribute
+Load activity JSON data directly from a URL using `url` or `src`:
+```html
+<!-- Via HTML attribute -->
+<tj-grammar-hearts 
+  src="https://example.com/data/lesson1.json" 
+  submission-url="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
+</tj-grammar-hearts>
 
-## 5. Student Submission Process
-The system is designed with a "Proof of Work" mechanism:
-- **Teacher Code (Optional for Reports)**: Students can generate their report card even without entering the teacher code. This allows them to see their progress immediately.
-- **Updating the Code**: If a student missed the code or entered it wrong at the start, they can **update it directly on the report card screen** before submitting.
-- **Submission (Locked)**: To officially submit the score to your Google Spreadsheet, the student **must** enter the correct Teacher Code (`6767` by default) in the report form (either at the start or on the report screen).
-- **Screenshot Fallback**: If a student does not have the teacher code or enters it incorrectly, they will be prompted with an alert to **take a screenshot** of their report card and show it to you manually. This ensures that even without a "verified" database submission, you can still verify their work.
+<!-- Or via URL parameters in browser address bar -->
+https://your-site.com/activity.html?url=https://example.com/lesson1.json&submission-url=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
+```
 
-> [!TIP]
-> You can override the required teacher code in three ways:
-> 1. **Per Component**: Set the `code` attribute on the element (e.g., `<tj-quiz-element code="1234">`) or programmatically set `element.code = '1234'`.
-> 2. **Environment Variable**: Define `VITE_TEACHER_CODE=YOUR_CODE` in your `.env` file when building/bundling.
-> 3. **Global Config Fallback**: Modify the default value of `teacherCode` in [tj-config.js](file:///var/home/jmayer/Dev/tj-components/src/tj-config.js).
+### Method D: Environment Variable (When Building/Bundling)
+Create a `.env` file in the root of the project before building:
+```env
+VITE_SUBMISSION_URL=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
+```
+
+---
+
+## 5. Parameter Lookup Precedence Order
+All 8 components evaluate configuration options in the following strict order:
+1. **Element HTML Attribute** (e.g. `submission-url="..."`, `code="..."`, `src="..."`)
+2. **Page URL Query Parameter** (e.g. `?submission-url=...`, `?code=...`, `?url=...`)
+3. **Global Configuration / Environment Variable** (`VITE_SUBMISSION_URL`, `VITE_TEACHER_CODE`)
+4. **Default System Fallback**
+
+---
+
+## 6. Student Submission & Proof of Work Process
+- **Teacher Code Verification**: To officially submit score data to Google Sheets, students enter the Teacher Code (`6767` by default).
+- **Custom Teacher Code**: Override via `code="1234"` attribute or `?code=1234` URL query parameter.
+- **Screenshot Fallback**: If the submission endpoint is unavailable or code is invalid, students are prompted to screenshot their report card for manual submission to the teacher.
+

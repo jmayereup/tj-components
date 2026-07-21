@@ -1,10 +1,23 @@
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
 import { getBestVoice, startAudioRecording, shouldShowAudioControls, getAndroidIntentLink } from "../audio-utils.js";
+import { resolveComponentParams } from "../tj-config.js";
 
 class TjInfoGap extends HTMLElement {
     // Static registry of all instances on the page
     static _instances = [];
+
+    get code() {
+        return resolveComponentParams(this).teacherCode;
+    }
+
+    set code(value) {
+        if (value !== null && value !== undefined) {
+            this.setAttribute('code', value);
+        } else {
+            this.removeAttribute('code');
+        }
+    }
 
     constructor() {
         super();
@@ -18,6 +31,7 @@ class TjInfoGap extends HTMLElement {
 
         // Student info for report card
         this.studentInfo = { nickname: '', number: '' };
+        this.submissionUrl = '';
 
         // TTS State
         this.isSinglePlayer = false;
@@ -48,6 +62,9 @@ class TjInfoGap extends HTMLElement {
     }
 
     connectedCallback() {
+        const resolved = resolveComponentParams(this);
+        this.submissionUrl = resolved.submissionUrl;
+
         // Use setTimeout to ensure children (JSON content) are parsed by the browser
         requestAnimationFrame(() => {
             let rawJson = '';
@@ -66,11 +83,24 @@ class TjInfoGap extends HTMLElement {
             else if (this.hasAttribute('config')) {
                 rawJson = this.getAttribute('config');
             }
-            // 3. Script tag (fallback for better HTML structure)
+            // 3. Remote URL (url or src attribute/param)
+            else if (resolved.dataUrl) {
+                fetch(resolved.dataUrl)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.activityData = data;
+                        this.render();
+                    })
+                    .catch(error => {
+                        this.shadowRoot.innerHTML = `<p style="color: red;">Error loading data from URL: ${error.message}</p>`;
+                    });
+                return;
+            }
+            // 4. Script tag (fallback for better HTML structure)
             else if (this.querySelector('script[type="application/json"]')) {
                 rawJson = this.querySelector('script[type="application/json"]').textContent.trim();
             }
-            // 4. Default: Text Content
+            // 5. Default: Text Content
             else {
                 rawJson = this.textContent.trim();
                 this.textContent = ''; // clear only if we used it directly

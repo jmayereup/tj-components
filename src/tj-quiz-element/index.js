@@ -1,4 +1,4 @@
-import { config } from '../tj-config.js';
+import { config, resolveComponentParams } from '../tj-config.js';
 import templateHtml from './template.html?raw';
 import stylesText from './styles.css?inline';
 import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../audio-utils.js';
@@ -21,7 +21,7 @@ class TjQuizElement extends HTMLElement {
     }
 
     get code() {
-        return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+        return resolveComponentParams(this).teacherCode;
     }
 
     set code(value) {
@@ -63,7 +63,7 @@ class TjQuizElement extends HTMLElement {
         this.utterance = null;
         this.audioSrc = '';
         this.currentAudioButton = null; // currently-playing passage audio button (for icon state)
-        this.submissionUrl = config.submissionUrl || ''; // Use config file for submission URL
+        this.submissionUrl = '';
         this.title = '';
         this.passage = '';
         this.vocabularySections = []; // Array of vocabulary sections
@@ -114,7 +114,10 @@ class TjQuizElement extends HTMLElement {
         document.addEventListener('visibilitychange', this._visibilityHandler);
 
         // Use setTimeout to ensure children (text content) are parsed by the browser
-        requestAnimationFrame(() => {
+        requestAnimationFrame(async () => {
+            const resolved = resolveComponentParams(this);
+            this.submissionUrl = resolved.submissionUrl;
+
             // 1. Property
             if (this.config) {
                 if (typeof this.config === 'object') {
@@ -128,14 +131,23 @@ class TjQuizElement extends HTMLElement {
             else if (this.hasAttribute('config')) {
                 this.originalContent = this.getAttribute('config');
             }
-            // 3. Script tag
+            // 3. Remote URL (url or src attribute/param)
+            else if (resolved.dataUrl) {
+                try {
+                    const res = await fetch(resolved.dataUrl);
+                    this.originalContent = await res.text();
+                } catch (e) {
+                    console.error('Error loading quiz content from dataUrl:', e);
+                }
+            }
+            // 4. Script tag
             else if (this.querySelector('script[type="text/markdown"]')) {
                 this.originalContent = this.querySelector('script[type="text/markdown"]').textContent;
             }
             else if (this.querySelector('script[type="application/json"]')) {
                 this.originalContent = this.querySelector('script[type="application/json"]').textContent;
             }
-            // 4. Default: Text Content
+            // 5. Default: Text Content
             else {
                 this.originalContent = this.textContent;
             }

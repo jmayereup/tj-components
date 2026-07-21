@@ -1,4 +1,4 @@
-import { config } from "../tj-config.js";
+import { config, resolveComponentParams } from "../tj-config.js";
 import sharedStyles from "../tj-shared.css?inline";
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
@@ -13,7 +13,7 @@ const icons = {
 
 class TjPronunciation extends HTMLElement {
   get code() {
-    return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+    return resolveComponentParams(this).teacherCode;
   }
 
   set code(value) {
@@ -35,7 +35,7 @@ class TjPronunciation extends HTMLElement {
     this.lrState = new Map(); // Track listen/record/playback state per activity
     this.selectedVoiceName = localStorage.getItem("tj-pronunciation-voice");
     this.isPlaying = false;
-    this.submissionUrl = config?.submissionUrl || "https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec"; // Use config or fallback
+    this.submissionUrl = '';
     this.studentInfo = { nickname: '', number: '', homeroom: '' };
     this.isSubmitting = false;
 
@@ -49,7 +49,9 @@ class TjPronunciation extends HTMLElement {
   }
 
   connectedCallback() {
-    const src = this.getAttribute("src");
+    const resolved = resolveComponentParams(this);
+    this.submissionUrl = resolved.submissionUrl;
+    const src = resolved.dataUrl;
 
     requestAnimationFrame(() => {
         let jsonText = '';

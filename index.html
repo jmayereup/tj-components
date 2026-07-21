@@ -718,6 +718,10 @@
                         <h4>🔗 Share as Quiz Mode</h4>
                         <p>Append <code>?quiz=1</code> to the URL on components like <code>tj-listening</code> to hide transcripts and enable pure assessment mode.</p>
                     </div>
+                    <div class="feature-item">
+                        <h4>📊 Apps Script &amp; URL Params</h4>
+                        <p>Supply custom Google Apps Script URLs, remote data URLs, and teacher codes via attributes (<code>submission-url</code>, <code>src</code>, <code>code</code>) or URL search parameters across all components.</p>
+                    </div>
                 </div>
             </div>
 
@@ -752,6 +756,97 @@ A: To the mountains [correct]
 A: To the beach
 &lt;/script&gt;
 &lt;/tj-quiz-element&gt;</code></pre>
+            </div>
+
+            <!-- Google Sheets & Apps Script Setup Guide -->
+            <div class="doc-card" id="apps-script">
+                <h2>Google Sheets Automatic Submissions &amp; Apps Script Setup</h2>
+                <p>Teachers can set up their own Google Sheet to automatically receive score submissions from any component (e.g., <code>&lt;tj-quiz-element&gt;</code>, <code>&lt;tj-grammar-hearts&gt;</code>, <code>&lt;tj-reader&gt;</code>, <code>&lt;tj-pronunciation&gt;</code>, etc.).</p>
+
+                <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">1. Google Apps Script Code (doPost):</h3>
+                <p>In your Google Sheet, go to <strong>Extensions &gt; Apps Script</strong>, paste the following code, and click <strong>Save</strong>:</p>
+                <pre><code>/** @OnlyCurrentDoc */
+
+function doPost(e) {
+  try {
+    if (!e || !e.postData || !e.postData.contents) {
+      throw new Error("No data provided.");
+    }
+
+    const data = JSON.parse(e.postData.contents);
+
+    const sanitize = (input) => {
+      if (input === null || input === undefined) return "";
+      let str = String(input).substring(0, 2000).trim();
+      if (/^[=\+\-@]/.test(str)) {
+        str = "'" + str;
+      }
+      return str;
+    };
+
+    const cleanScore = Number(data.score) || 0;
+    const cleanTotal = Number(data.total) || 0;
+
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Submissions');
+
+    if (!sheet) {
+      throw new Error("Target sheet not found.");
+    }
+
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        'Timestamp', 'Nickname', 'Homeroom', 'Student ID', 
+        'Quiz Name', 'Score', 'Total Questions', 'Written Answers'
+      ]);
+    }
+
+    sheet.appendRow([
+      new Date(),
+      sanitize(data.nickname),
+      sanitize(data.homeroom),
+      sanitize(data.studentId),
+      sanitize(data.quizName),
+      cleanScore,
+      cleanTotal,
+      sanitize(data.writtenAnswers)
+    ]);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        'result': 'success',
+        'message': 'Your score was submitted successfully!'
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    console.error("Submission Error: ", error);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        'result': 'error',
+        'message': 'An error occurred while processing your submission.'
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}</code></pre>
+
+                <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">2. Deploying as a Web App:</h3>
+                <ul>
+                    <li>Click <strong>Deploy &gt; New deployment</strong>. Select type: <strong>Web app</strong>.</li>
+                    <li>Set <strong>Execute as</strong>: <em>Me</em>, and <strong>Who has access</strong>: <em>Anyone</em>.</li>
+                    <li>Click <strong>Deploy</strong> and copy your <strong>Web App URL</strong>.</li>
+                </ul>
+
+                <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">3. Connecting to Components:</h3>
+                <p>Pass your Web App URL, remote JSON URL, or custom Teacher Code via HTML attributes or browser URL query parameters across all 8 components:</p>
+                <ul>
+                    <li><strong>Page URL Search Query Parameters</strong>:
+                        <br><code>https://your-site.com/quiz.html?submission-url=YOUR_GAS_URL&amp;url=https://example.com/quiz.json&amp;code=1234</code>
+                    </li>
+                    <li><strong>HTML Attributes</strong>:
+                        <br><code>&lt;tj-quiz-element submission-url="YOUR_GAS_URL" src="https://example.com/quiz.json" code="1234"&gt;&lt;/tj-quiz-element&gt;</code>
+                    </li>
+                </ul>
             </div>
 
             <!-- Component Specifications -->

@@ -1,8 +1,8 @@
-import { config } from '../tj-config.js';
+import { config, resolveComponentParams } from '../tj-config.js';
 
 class TjSpeedReview extends HTMLElement {
   get code() {
-    return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+    return resolveComponentParams(this).teacherCode;
   }
 
   set code(value) {
@@ -45,7 +45,7 @@ class TjSpeedReview extends HTMLElement {
     this.shuffledOptions = [];
 
     // Submission
-    this.submissionUrl = config?.submissionUrl || 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
+    this.submissionUrl = '';
     this.isSubmitting = false;
 
     // Audio
@@ -55,6 +55,9 @@ class TjSpeedReview extends HTMLElement {
   }
 
   connectedCallback() {
+    const resolved = resolveComponentParams(this);
+    this.submissionUrl = resolved.submissionUrl;
+
     this.timeLimit = parseInt(this.getAttribute('time-limit')) || 15;
     this.questionsPerRound = parseInt(this.getAttribute('round-size')) || 10;
     this.bestScore = 0; // Always start fresh
@@ -66,8 +69,8 @@ class TjSpeedReview extends HTMLElement {
     });
 
     // Use setTimeout to ensure children are parsed
-    requestAnimationFrame(() => {
-      this.loadData();
+    requestAnimationFrame(async () => {
+      await this.loadData();
       this.render();
     });
   }
@@ -105,8 +108,11 @@ class TjSpeedReview extends HTMLElement {
     }
   }
 
-  loadData() {
+  async loadData() {
     try {
+      const resolved = resolveComponentParams(this);
+      this.submissionUrl = resolved.submissionUrl;
+
       let jsonText = '';
 
       // 1. Property
@@ -122,11 +128,22 @@ class TjSpeedReview extends HTMLElement {
       else if (this.hasAttribute('config')) {
           jsonText = this.getAttribute('config');
       }
-      // 3. Script tag
+      // 3. Remote URL (url or src parameter/attribute)
+      else if (resolved.dataUrl) {
+          try {
+              const res = await fetch(resolved.dataUrl);
+              const data = await res.json();
+              this._processParsedData(data);
+              return;
+          } catch (e) {
+              console.error('Failed to fetch data from dataUrl for tj-speed-review', e);
+          }
+      }
+      // 4. Script tag
       else if (this.querySelector('script[type="application/json"]')) {
           jsonText = this.querySelector('script[type="application/json"]').textContent.trim();
       }
-      // 4. Default: Text Content
+      // 5. Default: Text Content
       else {
           jsonText = this.textContent.trim();
       }

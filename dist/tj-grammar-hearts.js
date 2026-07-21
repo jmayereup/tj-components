@@ -1,8 +1,8 @@
-import { t as e } from "./chunks/tj-config-C6oNQvLF.js";
+import { t as e } from "./chunks/tj-config-BQN38dTq.js";
 //#region src/tj-grammar-hearts/index.js
 var t = class extends HTMLElement {
 	get code() {
-		return this.getAttribute("code") === null ? e.teacherCode || "6767" : this.getAttribute("code");
+		return e(this).teacherCode;
 	}
 	set code(e) {
 		e == null ? this.removeAttribute("code") : this.setAttribute("code", e);
@@ -16,15 +16,16 @@ var t = class extends HTMLElement {
 			number: "",
 			homeroom: "",
 			teacherCode: ""
-		}, this.title = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = e?.submissionUrl || "https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec", this.isSubmitting = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
+		}, this.title = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = "", this.isSubmitting = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
 	}
 	connectedCallback() {
-		if (this.maxHearts = parseInt(this.getAttribute("hearts")) || 3, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 5, this.hearts = this.maxHearts, window.marked === void 0) {
+		let t = e(this);
+		if (this.submissionUrl = t.submissionUrl, this.maxHearts = parseInt(this.getAttribute("hearts")) || 3, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 5, this.hearts = this.maxHearts, window.marked === void 0) {
 			let e = document.createElement("script");
 			e.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js", e.async = !0, document.head.appendChild(e);
 		}
-		requestAnimationFrame(() => {
-			this.loadData(), this.ensureMarked(), this.render();
+		requestAnimationFrame(async () => {
+			await this.loadData(), this.ensureMarked(), this.render();
 		});
 	}
 	ensureMarked() {
@@ -33,17 +34,28 @@ var t = class extends HTMLElement {
 			e.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js", e.onload = () => this.render(), document.head.appendChild(e);
 		}
 	}
-	loadData() {
+	async loadData() {
 		try {
-			let e = "";
+			let t = e(this);
+			this.submissionUrl = t.submissionUrl;
+			let n = "";
 			if (this.config) if (typeof this.config == "object") {
 				this._processParsedData(this.config);
 				return;
-			} else e = String(this.config);
-			else e = this.hasAttribute("config") ? this.getAttribute("config") : this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.textContent.trim();
-			if (!e) return;
-			let t = e.replace(/"((?:\\.|[^"\\])*)"/gs, (e, t) => "\"" + t.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + "\""), n = JSON.parse(t);
-			this._processParsedData(n), this.innerHTML = "";
+			} else n = String(this.config);
+			else if (this.hasAttribute("config")) n = this.getAttribute("config");
+			else if (t.dataUrl) try {
+				let e = await (await fetch(t.dataUrl)).json();
+				this._processParsedData(e);
+				return;
+			} catch (e) {
+				console.error("Failed to fetch remote JSON for grammar-hearts", e), this.shadowRoot.innerHTML = "<div class=\"error-msg\">Error loading grammar data from URL.</div>";
+				return;
+			}
+			else n = this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.textContent.trim();
+			if (!n) return;
+			let r = n.replace(/"((?:\\.|[^"\\])*)"/gs, (e, t) => "\"" + t.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + "\""), i = JSON.parse(r);
+			this._processParsedData(i), this.innerHTML = "";
 		} catch (e) {
 			console.error("Failed to parse JSON for grammar-hearts", e), this.shadowRoot.innerHTML = "<div class=\"error-msg\">Error loading grammar data. Please ensure your JSON is correctly formatted.</div>";
 		}

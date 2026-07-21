@@ -1,20 +1,21 @@
-import { t as e } from "./chunks/tj-config-C6oNQvLF.js";
+import { t as e } from "./chunks/tj-config-BQN38dTq.js";
 //#region src/tj-speed-review/index.js
 var t = class extends HTMLElement {
 	get code() {
-		return this.getAttribute("code") === null ? e.teacherCode || "6767" : this.getAttribute("code");
+		return e(this).teacherCode;
 	}
 	set code(e) {
 		e == null ? this.removeAttribute("code") : this.setAttribute("code", e);
 	}
 	constructor() {
-		super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = e?.submissionUrl || "https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec", this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
+		super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = "", this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
 	}
 	connectedCallback() {
-		this.timeLimit = parseInt(this.getAttribute("time-limit")) || 15, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 10, this.bestScore = 0, this.loadLibrary("marked", "https://cdn.jsdelivr.net/npm/marked/marked.min.js"), this.loadLibrary("Tone", "https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js", () => {
+		let t = e(this);
+		this.submissionUrl = t.submissionUrl, this.timeLimit = parseInt(this.getAttribute("time-limit")) || 15, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 10, this.bestScore = 0, this.loadLibrary("marked", "https://cdn.jsdelivr.net/npm/marked/marked.min.js"), this.loadLibrary("Tone", "https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js", () => {
 			this.initAudio();
-		}), requestAnimationFrame(() => {
-			this.loadData(), this.render();
+		}), requestAnimationFrame(async () => {
+			await this.loadData(), this.render();
 		});
 	}
 	loadLibrary(e, t, n) {
@@ -33,17 +34,27 @@ var t = class extends HTMLElement {
 	async playSound(e) {
 		this.audioInitialized && (await window.Tone.start(), e === "correct" ? this.synthCorrect.triggerAttackRelease("C5", "8n") : this.synthIncorrect.triggerAttackRelease("G2", "8n"));
 	}
-	loadData() {
+	async loadData() {
 		try {
-			let e = "";
+			let t = e(this);
+			this.submissionUrl = t.submissionUrl;
+			let n = "";
 			if (this.config) if (typeof this.config == "object") {
 				this._processParsedData(this.config);
 				return;
-			} else e = String(this.config);
-			else e = this.hasAttribute("config") ? this.getAttribute("config") : this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.textContent.trim();
-			if (!e) return;
-			let t = e.replace(/"((?:\\.|[^"\\])*)"/gs, (e, t) => "\"" + t.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + "\""), n = JSON.parse(t);
-			this._processParsedData(n), this.innerHTML = "";
+			} else n = String(this.config);
+			else if (this.hasAttribute("config")) n = this.getAttribute("config");
+			else if (t.dataUrl) try {
+				let e = await (await fetch(t.dataUrl)).json();
+				this._processParsedData(e);
+				return;
+			} catch (e) {
+				console.error("Failed to fetch data from dataUrl for tj-speed-review", e);
+			}
+			else n = this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.textContent.trim();
+			if (!n) return;
+			let r = n.replace(/"((?:\\.|[^"\\])*)"/gs, (e, t) => "\"" + t.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + "\""), i = JSON.parse(r);
+			this._processParsedData(i), this.innerHTML = "";
 		} catch (e) {
 			console.error("Failed to parse JSON for tj-speed-review", e), this.shadowRoot.innerHTML = "<div class=\"error-msg\">Error loading quiz data. Check console.</div>";
 		}

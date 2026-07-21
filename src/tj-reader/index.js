@@ -1,11 +1,11 @@
 import stylesText from './styles.css?inline';
 import templateHtml from './template.html?raw';
-import { config } from '../tj-config.js';
+import { config, resolveComponentParams } from '../tj-config.js';
 import { getBestVoice, shouldShowAudioControls, startAudioRecording, getAndroidIntentLink } from '../audio-utils.js';
 
 class TjReader extends HTMLElement {
   get code() {
-    return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+    return resolveComponentParams(this).teacherCode;
   }
 
   set code(value) {
@@ -36,7 +36,7 @@ class TjReader extends HTMLElement {
 
     this.data = [];
     this.studentInfo = { nickname: '', number: '', homeroom: '', teacherCode: '' };
-    this.submissionUrl = config?.submissionUrl || 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
+    this.submissionUrl = '';
     this.isSubmitting = false;
     this.score = 0;
     this.answeredCount = 0;
@@ -112,9 +112,12 @@ class TjReader extends HTMLElement {
   }
 
   connectedCallback() {
+    const resolved = resolveComponentParams(this);
+    this.submissionUrl = resolved.submissionUrl;
+
     // Use setTimeout to ensure children (JSON content) are parsed by the browser
-    requestAnimationFrame(() => {
-      this.loadData();
+    requestAnimationFrame(async () => {
+      await this.loadData();
       this.checkBrowserSupport();
 
       // Ensure voices are loaded (Chrome/Edge can be async)
@@ -130,8 +133,11 @@ class TjReader extends HTMLElement {
     });
   }
 
-  loadData() {
+  async loadData() {
     try {
+      const resolved = resolveComponentParams(this);
+      this.submissionUrl = resolved.submissionUrl;
+
       let jsonText = '';
 
       // 1. Property
@@ -147,7 +153,18 @@ class TjReader extends HTMLElement {
       else if (this.hasAttribute('config')) {
           jsonText = this.getAttribute('config');
       }
-      // 3. Default: Text Content (saved from connect)
+      // 3. Remote URL (url or src parameter/attribute)
+      else if (resolved.dataUrl) {
+          try {
+              const res = await fetch(resolved.dataUrl);
+              const data = await res.json();
+              this._processParsedData(data);
+              return;
+          } catch (e) {
+              console.error('Failed to fetch data from dataUrl for tj-reader', e);
+          }
+      }
+      // 4. Default: Text Content (saved from connect)
       else if (!this.rawJson) {
           this.rawJson = this.innerHTML.trim();
           this.innerHTML = '';

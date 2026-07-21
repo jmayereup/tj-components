@@ -1,5 +1,5 @@
 import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../audio-utils.js';
-import { config } from '../tj-config.js';
+import { config, resolveComponentParams } from '../tj-config.js';
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
 
@@ -8,7 +8,7 @@ class TjListening extends HTMLElement {
     static _instances = [];
 
     get code() {
-        return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+        return resolveComponentParams(this).teacherCode;
     }
 
     set code(value) {
@@ -31,7 +31,7 @@ class TjListening extends HTMLElement {
 
         // Student info for report card
         this.studentInfo = { nickname: '', number: '', homeroom: '', teacherCode: '' };
-        this.submissionUrl = config?.submissionUrl || 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
+        this.submissionUrl = '';
         this.isSubmitting = false;
 
         // TTS State
@@ -42,7 +42,7 @@ class TjListening extends HTMLElement {
         this._currentAudioEl = null;
 
         // Quiz mode — hides transcript when ?quiz=1 is in URL
-        const params = new URLSearchParams(window.location.search);
+        const params = typeof window !== 'undefined' && window.location ? new URLSearchParams(window.location.search) : new URLSearchParams();
         this.isQuizMode = params.get('quiz') === '1';
 
         // Register this instance
@@ -55,6 +55,9 @@ class TjListening extends HTMLElement {
     }
 
     connectedCallback() {
+        const resolved = resolveComponentParams(this);
+        this.submissionUrl = resolved.submissionUrl;
+
         // Use setTimeout to ensure children (JSON content) are parsed by the browser
         requestAnimationFrame(() => {
             let rawJson = '';
@@ -73,11 +76,24 @@ class TjListening extends HTMLElement {
             else if (this.hasAttribute('config')) {
                 rawJson = this.getAttribute('config');
             }
-            // 3. Script tag
+            // 3. Remote URL (url or src parameter/attribute)
+            else if (resolved.dataUrl) {
+                fetch(resolved.dataUrl)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.lessonData = data;
+                        this._initDataAndRender();
+                    })
+                    .catch(error => {
+                        this.shadowRoot.innerHTML = `<p style="color: red;">Error loading data from URL: ${error.message}</p>`;
+                    });
+                return;
+            }
+            // 4. Script tag
             else if (this.querySelector('script[type="application/json"]')) {
                 rawJson = this.querySelector('script[type="application/json"]').textContent.trim();
             }
-            // 4. Default: Text Content
+            // 5. Default: Text Content
             else {
                 rawJson = this.textContent.trim();
                 this.textContent = ''; // clear only if used directly

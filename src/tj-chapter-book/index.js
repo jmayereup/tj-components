@@ -1,5 +1,5 @@
 import { getBestVoice } from '../audio-utils.js';
-import { config } from '../tj-config.js';
+import { config, resolveComponentParams } from '../tj-config.js';
 import stylesText from './styles.css?inline';
 import templateHtml from './template.html?raw';
 
@@ -7,7 +7,7 @@ import templateHtml from './template.html?raw';
 
 class TjChapterBook extends HTMLElement {
     get code() {
-        return this.getAttribute('code') !== null ? this.getAttribute('code') : (config.teacherCode || '6767');
+        return resolveComponentParams(this).teacherCode;
     }
 
     set code(value) {
@@ -73,7 +73,7 @@ class TjChapterBook extends HTMLElement {
         this.currentButtonId = null;
         this.isTextSwapped = false;
         this.studentInfo = { nickname: '', number: '', homeroom: '', teacherCode: '' };
-        this.submissionUrl = config?.submissionUrl || 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
+        this.submissionUrl = '';
         this.isSubmitting = false;
         this.ttsState = {
             status: 'idle',
@@ -97,6 +97,9 @@ class TjChapterBook extends HTMLElement {
     }
 
     connectedCallback() {
+        const resolved = resolveComponentParams(this);
+        this.submissionUrl = resolved.submissionUrl;
+
         if (this.synth && this.synth.onvoiceschanged !== undefined) {
             this.synth.onvoiceschanged = () => this._updateVoiceList();
         }
@@ -104,7 +107,7 @@ class TjChapterBook extends HTMLElement {
         // Initialize IntersectionObserver to hide checked quizzes when scrolled past
         this._initVisibilityObserver();
 
-        const src = this.getAttribute('src');
+        const src = resolved.dataUrl;
 
         // Use setTimeout to ensure children (JSON content) are parsed by the browser
         requestAnimationFrame(() => {
