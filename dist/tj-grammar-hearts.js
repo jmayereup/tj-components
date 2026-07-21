@@ -1,195 +1,334 @@
-import { c as u } from "./chunks/tj-config-Daa3Dzp2.js";
-class b extends HTMLElement {
-  get code() {
-    return this.getAttribute("code") !== null ? this.getAttribute("code") : u.teacherCode;
-  }
-  set code(e) {
-    e != null ? this.setAttribute("code", e) : this.removeAttribute("code");
-  }
-  constructor() {
-    var e;
-    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.hearts = 0, this.maxHearts = 3, this.questionsPerRound = 5, this.score = 0, this.bestScore = 0, this.grammarHint = { summary: "", content: "" }, this.studentInfo = { nickname: "", number: "", homeroom: "", teacherCode: "" }, this.title = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = ((e = u) == null ? void 0 : e.submissionUrl) || "https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec", this.isSubmitting = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
-  }
-  connectedCallback() {
-    if (this.maxHearts = parseInt(this.getAttribute("hearts")) || 3, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 5, this.hearts = this.maxHearts, typeof window.marked > "u") {
-      const e = document.createElement("script");
-      e.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js", e.async = !0, document.head.appendChild(e);
-    }
-    requestAnimationFrame(() => {
-      this.loadData(), this.ensureMarked(), this.render();
-    });
-  }
-  ensureMarked() {
-    if (!window.marked) {
-      const e = document.createElement("script");
-      e.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js", e.onload = () => this.render(), document.head.appendChild(e);
-    }
-  }
-  loadData() {
-    try {
-      let e = "";
-      if (this.config)
-        if (typeof this.config == "object") {
-          this._processParsedData(this.config);
-          return;
-        } else
-          e = String(this.config);
-      else this.hasAttribute("config") ? e = this.getAttribute("config") : this.querySelector('script[type="application/json"]') ? e = this.querySelector('script[type="application/json"]').textContent.trim() : e = this.textContent.trim();
-      if (!e) return;
-      const t = e.replace(/"((?:\\.|[^"\\])*)"/gs, (r, i) => '"' + i.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"');
-      let s = JSON.parse(t);
-      this._processParsedData(s), this.innerHTML = "";
-    } catch (e) {
-      console.error("Failed to parse JSON for grammar-hearts", e), this.shadowRoot.innerHTML = '<div class="error-msg">Error loading grammar data. Please ensure your JSON is correctly formatted.</div>';
-    }
-  }
-  _processParsedData(e) {
-    Array.isArray(e) && (e = e[0]), e.title && (this.title = e.title), e.hint && (this.grammarHint = e.hint), e.questions && Array.isArray(e.questions) && (this.questions = e.questions), this.prepRound();
-  }
-  // Simple Markdown-to-HTML helper
-  parseMD(e) {
-    return typeof window.marked < "u" ? window.marked.parse(e) : e.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>").replace(/\n/g, "<br>");
-  }
-  _getShuffleScore(e) {
-    if (e.length === 0) return 0;
-    let t = 1, s = 1, r = 0;
-    for (let i = 1; i < e.length; i++)
-      e[i].type === e[i - 1].type ? (s++, r++) : (s > t && (t = s), s = 1);
-    return s > t && (t = s), t * 1e3 + r;
-  }
-  prepRound() {
-    if (this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0, !this.questions || this.questions.length === 0) {
-      this.currentPool = [], this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.resetQuestionState();
-      return;
-    }
-    const e = {};
-    for (const o of this.questions)
-      e[o.type] || (e[o.type] = []), e[o.type].push(o);
-    for (const o in e)
-      e[o].sort(() => 0.5 - Math.random());
-    const t = [], s = Object.keys(e), r = Math.min(this.questionsPerRound, this.questions.length), i = [...s].sort(() => 0.5 - Math.random()), n = {};
-    for (const o of s)
-      n[o] = 0;
-    for (; t.length < r; ) {
-      let o = !1;
-      for (const a of i) {
-        if (t.length >= r) break;
-        n[a] < e[a].length && (t.push(e[a][n[a]]), n[a]++, o = !0);
-      }
-      if (!o) break;
-    }
-    let c = [...t], d = this._getShuffleScore(c);
-    for (let o = 0; o < 200; o++) {
-      const a = [...t].sort(() => 0.5 - Math.random()), l = this._getShuffleScore(a);
-      l < d && (d = l, c = a);
-    }
-    this.currentPool = c, this.totalQuestionsInRound = c ? c.length : 0, this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.formError = "", this.submissionError = "", this.resetQuestionState();
-  }
-  resetQuestionState() {
-    this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.selectedScrambleIndices = [], this.scrambledWords = [];
-  }
-  _normalizeText(e) {
-    return typeof e != "string" ? String(e || "") : e.trim().toLowerCase().replace(/['’‘]/g, "'").replace(/["“”]/g, '"').replace(/\s+/g, " ");
-  }
-  handleAnswer(e) {
-    if (this.isAnswered) return;
-    this.userAnswer = e;
-    const t = this.currentPool[this.currentIndex];
-    let s = !1;
-    if (t.type === "multiple-choice")
-      s = e === t.correctIndex;
-    else if (t.type === "fill-in-the-blank") {
-      const r = this._normalizeText(e);
-      Array.isArray(t.answer) ? s = t.answer.some((i) => this._normalizeText(i) === r) : typeof t.answer == "string" && (s = r === this._normalizeText(t.answer));
-    } else if (t.type === "scramble") {
-      const r = this._normalizeText(t.sentence);
-      s = this._normalizeText(e) === r;
-    }
-    if (this.isAnswered = !0, this.isCorrect = s, s)
-      this.score++, this.answerFeedback = "Correct!", this.answerExplanation = t.explanation || "Great job!";
-    else {
-      this.hearts--, this.answerFeedback = "Oops!", this.answerExplanation = t.explanation || "Not quite right.", this.isRetryPhase || this.missedQuestions.some((i) => i === t) || this.missedQuestions.push(t);
-      const r = this.shadowRoot.querySelector(".card");
-      r && (r.classList.add("shake"), setTimeout(() => r.classList.remove("shake"), 500));
-    }
-    this.render();
-  }
-  nextQuestion() {
-    if (this.hearts <= 0) {
-      this.gameState = "gameover", this.render();
-      return;
-    }
-    this.currentIndex++, this.currentIndex >= this.currentPool.length ? !this.isRetryPhase && this.missedQuestions.length > 0 ? (this.currentPool = [...this.missedQuestions], this.missedQuestions = [], this.currentIndex = 0, this.isRetryPhase = !0, this.resetQuestionState()) : this.gameState = "form" : this.resetQuestionState(), this.render();
-  }
-  startPlaying() {
-    this.gameState = "playing", this.render();
-  }
-  restart() {
-    this.prepRound(), this.gameState = "playing", this.render();
-  }
-  continuePlaying() {
-    this.continuesCount = (this.continuesCount || 0) + 1, this.hearts = this.maxHearts, this.gameState = "playing", this.currentIndex++, this.currentIndex >= this.currentPool.length ? !this.isRetryPhase && this.missedQuestions.length > 0 ? (this.currentPool = [...this.missedQuestions], this.missedQuestions = [], this.currentIndex = 0, this.isRetryPhase = !0, this.resetQuestionState()) : this.gameState = "form" : this.resetQuestionState(), this.render();
-  }
-  getAdjustedScore() {
-    const e = (this.continuesCount || 0) * this.maxHearts;
-    return Math.max(0, this.score - e);
-  }
-  showReport() {
-    var n, c, d, o, a, l, h, m;
-    const e = ((c = (n = this.shadowRoot.querySelector("#nickname")) == null ? void 0 : n.value) == null ? void 0 : c.trim()) || "", t = ((o = (d = this.shadowRoot.querySelector("#student-number")) == null ? void 0 : d.value) == null ? void 0 : o.trim()) || "", s = ((l = (a = this.shadowRoot.querySelector("#homeroom")) == null ? void 0 : a.value) == null ? void 0 : l.trim()) || "", r = ((m = (h = this.shadowRoot.querySelector("#teacher-code")) == null ? void 0 : h.value) == null ? void 0 : m.trim()) || "";
-    if (!e || !t) {
-      this.formError = "Please enter both nickname and student number.", this.render();
-      return;
-    }
-    this.formError = "", this.studentInfo = { nickname: e, number: t, homeroom: s, teacherCode: r };
-    const i = this.getAdjustedScore();
-    i > this.bestScore && (this.bestScore = i), this.gameState = "report", this.render();
-  }
-  async _submitScore() {
-    const e = this.shadowRoot.getElementById("report-teacher-code"), t = e ? e.value.trim() : this.studentInfo.teacherCode;
-    if (this.studentInfo.teacherCode = t, t !== this.code) {
-      this.submissionError = "Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.", this.render();
-      return;
-    }
-    if (this.submissionError = "", this.render(), this.isSubmitting) return;
-    const s = this.shadowRoot.getElementById("submit-score-btn"), r = s ? s.textContent : "Submit";
-    this.isSubmitting = !0, s && (s.textContent = "Submitting...", s.disabled = !0);
-    const i = {
-      nickname: this.studentInfo.nickname,
-      homeroom: this.studentInfo.homeroom || "",
-      studentId: this.studentInfo.number,
-      quizName: "Grammar- " + this.title,
-      score: this.bestScore,
-      total: this.totalQuestionsInRound,
-      teacherCode: t
-    };
-    try {
-      await fetch(this.submissionUrl, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(i)
-      }), s && (s.textContent = "Submitted ✓", s.style.background = "green");
-    } catch (n) {
-      console.error("Error submitting score:", n), this.submissionError = "There was an error submitting your score. Please try again.", s && (s.textContent = r, s.disabled = !1), this.isSubmitting = !1, this.render();
-    }
-  }
-  getInstruction(e) {
-    if (!e) return "Practice:";
-    if (e.instruction) return e.instruction;
-    switch (e.type) {
-      case "multiple-choice":
-        return "Choose the correct form:";
-      case "fill-in-the-blank":
-        return "Fill in the blank:";
-      case "scramble":
-        return "Unscramble the sentence:";
-      default:
-        return "Practice:";
-    }
-  }
-  render() {
-    const e = `
+import { t as e } from "./chunks/tj-config-C6oNQvLF.js";
+//#region src/tj-grammar-hearts/index.js
+var t = class extends HTMLElement {
+	get code() {
+		return this.getAttribute("code") === null ? e.teacherCode || "6767" : this.getAttribute("code");
+	}
+	set code(e) {
+		e == null ? this.removeAttribute("code") : this.setAttribute("code", e);
+	}
+	constructor() {
+		super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.hearts = 0, this.maxHearts = 3, this.questionsPerRound = 5, this.score = 0, this.bestScore = 0, this.grammarHint = {
+			summary: "",
+			content: ""
+		}, this.studentInfo = {
+			nickname: "",
+			number: "",
+			homeroom: "",
+			teacherCode: ""
+		}, this.title = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = e?.submissionUrl || "https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec", this.isSubmitting = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
+	}
+	connectedCallback() {
+		if (this.maxHearts = parseInt(this.getAttribute("hearts")) || 3, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 5, this.hearts = this.maxHearts, window.marked === void 0) {
+			let e = document.createElement("script");
+			e.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js", e.async = !0, document.head.appendChild(e);
+		}
+		requestAnimationFrame(() => {
+			this.loadData(), this.ensureMarked(), this.render();
+		});
+	}
+	ensureMarked() {
+		if (!window.marked) {
+			let e = document.createElement("script");
+			e.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js", e.onload = () => this.render(), document.head.appendChild(e);
+		}
+	}
+	loadData() {
+		try {
+			let e = "";
+			if (this.config) if (typeof this.config == "object") {
+				this._processParsedData(this.config);
+				return;
+			} else e = String(this.config);
+			else e = this.hasAttribute("config") ? this.getAttribute("config") : this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.textContent.trim();
+			if (!e) return;
+			let t = e.replace(/"((?:\\.|[^"\\])*)"/gs, (e, t) => "\"" + t.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + "\""), n = JSON.parse(t);
+			this._processParsedData(n), this.innerHTML = "";
+		} catch (e) {
+			console.error("Failed to parse JSON for grammar-hearts", e), this.shadowRoot.innerHTML = "<div class=\"error-msg\">Error loading grammar data. Please ensure your JSON is correctly formatted.</div>";
+		}
+	}
+	_processParsedData(e) {
+		Array.isArray(e) && (e = e[0]), e.title && (this.title = e.title), e.hint && (this.grammarHint = e.hint), e.questions && Array.isArray(e.questions) && (this.questions = e.questions), this.prepRound();
+	}
+	parseMD(e) {
+		return window.marked === void 0 ? e.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>").replace(/\n/g, "<br>") : window.marked.parse(e);
+	}
+	_getShuffleScore(e) {
+		if (e.length === 0) return 0;
+		let t = 1, n = 1, r = 0;
+		for (let i = 1; i < e.length; i++) e[i].type === e[i - 1].type ? (n++, r++) : (n > t && (t = n), n = 1);
+		return n > t && (t = n), t * 1e3 + r;
+	}
+	prepRound() {
+		if (this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0, !this.questions || this.questions.length === 0) {
+			this.currentPool = [], this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.resetQuestionState();
+			return;
+		}
+		let e = {};
+		for (let t of this.questions) e[t.type] || (e[t.type] = []), e[t.type].push(t);
+		for (let t in e) e[t].sort(() => .5 - Math.random());
+		let t = [], n = Object.keys(e), r = Math.min(this.questionsPerRound, this.questions.length), i = [...n].sort(() => .5 - Math.random()), a = {};
+		for (let e of n) a[e] = 0;
+		for (; t.length < r;) {
+			let n = !1;
+			for (let o of i) {
+				if (t.length >= r) break;
+				a[o] < e[o].length && (t.push(e[o][a[o]]), a[o]++, n = !0);
+			}
+			if (!n) break;
+		}
+		let o = [...t], s = this._getShuffleScore(o);
+		for (let e = 0; e < 200; e++) {
+			let e = [...t].sort(() => .5 - Math.random()), n = this._getShuffleScore(e);
+			n < s && (s = n, o = e);
+		}
+		this.currentPool = o, this.totalQuestionsInRound = o ? o.length : 0, this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.formError = "", this.submissionError = "", this.resetQuestionState();
+	}
+	resetQuestionState() {
+		this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.selectedScrambleIndices = [], this.scrambledWords = [];
+	}
+	_normalizeText(e) {
+		return typeof e == "string" ? e.trim().toLowerCase().replace(/['’‘]/g, "'").replace(/["“”]/g, "\"").replace(/\s+/g, " ") : String(e || "");
+	}
+	handleAnswer(e) {
+		if (this.isAnswered) return;
+		this.userAnswer = e;
+		let t = this.currentPool[this.currentIndex], n = !1;
+		if (t.type === "multiple-choice") n = e === t.correctIndex;
+		else if (t.type === "fill-in-the-blank") {
+			let r = this._normalizeText(e);
+			Array.isArray(t.answer) ? n = t.answer.some((e) => this._normalizeText(e) === r) : typeof t.answer == "string" && (n = r === this._normalizeText(t.answer));
+		} else if (t.type === "scramble") {
+			let r = this._normalizeText(t.sentence);
+			n = this._normalizeText(e) === r;
+		}
+		if (this.isAnswered = !0, this.isCorrect = n, n) this.score++, this.answerFeedback = "Correct!", this.answerExplanation = t.explanation || "Great job!";
+		else {
+			this.hearts--, this.answerFeedback = "Oops!", this.answerExplanation = t.explanation || "Not quite right.", this.isRetryPhase || this.missedQuestions.some((e) => e === t) || this.missedQuestions.push(t);
+			let e = this.shadowRoot.querySelector(".card");
+			e && (e.classList.add("shake"), setTimeout(() => e.classList.remove("shake"), 500));
+		}
+		this.render();
+	}
+	nextQuestion() {
+		if (this.hearts <= 0) {
+			this.gameState = "gameover", this.render();
+			return;
+		}
+		this.currentIndex++, this.currentIndex >= this.currentPool.length ? !this.isRetryPhase && this.missedQuestions.length > 0 ? (this.currentPool = [...this.missedQuestions], this.missedQuestions = [], this.currentIndex = 0, this.isRetryPhase = !0, this.resetQuestionState()) : this.gameState = "form" : this.resetQuestionState(), this.render();
+	}
+	startPlaying() {
+		this.gameState = "playing", this.render();
+	}
+	restart() {
+		this.prepRound(), this.gameState = "playing", this.render();
+	}
+	continuePlaying() {
+		this.continuesCount = (this.continuesCount || 0) + 1, this.hearts = this.maxHearts, this.gameState = "playing", this.currentIndex++, this.currentIndex >= this.currentPool.length ? !this.isRetryPhase && this.missedQuestions.length > 0 ? (this.currentPool = [...this.missedQuestions], this.missedQuestions = [], this.currentIndex = 0, this.isRetryPhase = !0, this.resetQuestionState()) : this.gameState = "form" : this.resetQuestionState(), this.render();
+	}
+	getAdjustedScore() {
+		let e = (this.continuesCount || 0) * this.maxHearts;
+		return Math.max(0, this.score - e);
+	}
+	showReport() {
+		let e = this.shadowRoot.querySelector("#nickname")?.value?.trim() || "", t = this.shadowRoot.querySelector("#student-number")?.value?.trim() || "", n = this.shadowRoot.querySelector("#homeroom")?.value?.trim() || "", r = this.shadowRoot.querySelector("#teacher-code")?.value?.trim() || "";
+		if (!e || !t) {
+			this.formError = "Please enter both nickname and student number.", this.render();
+			return;
+		}
+		this.formError = "", this.studentInfo = {
+			nickname: e,
+			number: t,
+			homeroom: n,
+			teacherCode: r
+		};
+		let i = this.getAdjustedScore();
+		i > this.bestScore && (this.bestScore = i), this.gameState = "report", this.render();
+	}
+	async _submitScore() {
+		let e = this.shadowRoot.getElementById("report-teacher-code"), t = e ? e.value.trim() : this.studentInfo.teacherCode;
+		if (this.studentInfo.teacherCode = t, t !== this.code) {
+			this.submissionError = "Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.", this.render();
+			return;
+		}
+		if (this.submissionError = "", this.render(), this.isSubmitting) return;
+		let n = this.shadowRoot.getElementById("submit-score-btn"), r = n ? n.textContent : "Submit";
+		this.isSubmitting = !0, n && (n.textContent = "Submitting...", n.disabled = !0);
+		let i = {
+			nickname: this.studentInfo.nickname,
+			homeroom: this.studentInfo.homeroom || "",
+			studentId: this.studentInfo.number,
+			quizName: "Grammar- " + this.title,
+			score: this.bestScore,
+			total: this.totalQuestionsInRound,
+			teacherCode: t
+		};
+		try {
+			await fetch(this.submissionUrl, {
+				method: "POST",
+				mode: "no-cors",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(i)
+			}), n && (n.textContent = "Submitted ✓", n.style.background = "green");
+		} catch (e) {
+			console.error("Error submitting score:", e), this.submissionError = "There was an error submitting your score. Please try again.", n && (n.textContent = r, n.disabled = !1), this.isSubmitting = !1, this.render();
+		}
+	}
+	getInstruction(e) {
+		if (!e) return "Practice:";
+		if (e.instruction) return e.instruction;
+		switch (e.type) {
+			case "multiple-choice": return "Choose the correct form:";
+			case "fill-in-the-blank": return "Fill in the blank:";
+			case "scramble": return "Unscramble the sentence:";
+			default: return "Practice:";
+		}
+	}
+	render() {
+		let e = "";
+		if (this.gameState === "hint") e = `
+        <div class="card">
+          <h2>Grammar Focus: ${this.grammarHint.summary}</h2>
+          <div class="hint-content">${this.parseMD(this.grammarHint.content)}</div>
+          <button class="btn" onclick="this.getRootNode().host.startPlaying()">Start Game!</button>
+        </div>
+        <div class="version-text">v1.1</div>
+      `;
+		else if (this.gameState === "playing") {
+			let t = this.currentPool[this.currentIndex], n = (this.currentIndex + 1) / this.currentPool.length * 100;
+			e = `
+        <div class="header">
+          <div class="header-top-row">
+            <div class="question-indicator">
+              ${this.isRetryPhase ? "Retry Question" : "Question"}: <span>${this.currentIndex + 1} / ${this.currentPool.length}</span>
+            </div>
+            <div class="score-pill">
+              Score: <span>${this.score} / ${this.totalQuestionsInRound}</span>
+            </div>
+            <div class="hearts">
+              ${Array.from({ length: this.maxHearts }).map((e, t) => `
+                <span class="heart ${t < this.maxHearts - this.hearts ? "lost" : ""}">❤️</span>
+              `).join("")}
+            </div>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" style="width: ${n}%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card ${this.isAnswered ? "answered" : ""}">
+          <div class="instruction">
+            ${this.getInstruction(t)}
+            ${this.isRetryPhase ? "<span class=\"badge retry-badge\">⚠️ Prior Mistake</span>" : ""}
+          </div>
+          ${this.renderMainText(t)}
+          ${this.renderQuestion(t)}
+          
+          ${this.isAnswered ? `
+            <div class="feedback-box ${this.isCorrect ? "success" : "error"}">
+              <div class="feedback-title">${this.answerFeedback}</div>
+              <div class="feedback-explanation">${this.parseMD(this.answerExplanation)}</div>
+            </div>
+            <button class="btn next-btn" onclick="this.getRootNode().host.nextQuestion()">
+              ${this.currentIndex === this.currentPool.length - 1 ? "Finish" : "Next Question"}
+            </button>
+          ` : ""}
+        </div>
+        
+        <div class="hint-collapsible">
+          <button class="hint-toggle ${this.isHintOpen ? "open" : ""}" onclick="this.getRootNode().host.toggleHint()">
+            <span>💡 Grammar Guide</span>
+            <span class="hint-toggle-icon">▼</span>
+          </button>
+          <div class="hint-drawer ${this.isHintOpen ? "open" : ""}">
+            <div class="hint-content" style="margin-bottom: 0;">
+              ${this.parseMD(this.grammarHint.content)}
+            </div>
+          </div>
+        </div>
+        <div class="version-text">v1.1</div>
+      `;
+		} else if (this.gameState === "gameover") e = "\n        <div class=\"card\" style=\"text-align: center;\">\n          <h2 style=\"color: #ef4444; background: none; -webkit-text-fill-color: initial;\">Out of Hearts!</h2>\n          <p>Don't worry! Practice makes perfect. Try again with new questions, or continue playing this round for a lower score.</p>\n          <div style=\"display: flex; flex-direction: column; gap: 0.8em; align-items: center; margin-top: 1.5em;\">\n            <button class=\"btn\" style=\"width: 100%; max-width: 300px;\" onclick=\"this.getRootNode().host.continuePlaying()\">Continue Playing</button>\n            <button class=\"btn-outline\" style=\"width: 100%; max-width: 300px; margin-top: 0;\" onclick=\"this.getRootNode().host.restart()\">Try Again (New Round)</button>\n          </div>\n        </div>\n      ";
+		else if (this.gameState === "form") e = `
+        <div class="form-card">
+          <h2>Great Job! 🎉</h2>
+          <p>You've finished the round with a score of <strong>${this.getAdjustedScore()} / ${this.totalQuestionsInRound}</strong>.</p>
+          ${this.continuesCount > 0 ? `
+            <p style="font-size: 0.9em; color: #64748b; margin-top: -0.5em; margin-bottom: 1.5em;">
+              ⚠️ Score includes a penalty of ${this.continuesCount * this.maxHearts} points for continuing after running out of hearts (Raw score: ${this.score}).
+            </p>
+          ` : ""}
+          <p>Enter your details to generate your report card.</p>
+          <div class="form-input-group">
+            <label class="form-label" for="nickname">Nickname</label>
+            <input type="text" id="nickname" class="form-field" placeholder="e.g. Jake" value="${this.studentInfo.nickname}">
+          </div>
+          <div class="form-input-group">
+            <label class="form-label" for="student-number">Student Number</label>
+            <input type="text" id="student-number" class="form-field" placeholder="e.g. 01" value="${this.studentInfo.number}">
+          </div>
+          <div class="form-input-group">
+            <label class="form-label" for="homeroom">Homeroom</label>
+            <input type="text" id="homeroom" class="form-field" placeholder="e.g. 6/1" value="${this.studentInfo.homeroom}">
+          </div>
+          <div class="form-input-group">
+            <label class="form-label" for="teacher-code">Teacher Code (Optional)</label>
+            <input type="text" id="teacher-code" class="form-field" placeholder="e.g. 1234" value="${this.studentInfo.teacherCode || ""}">
+          </div>
+          ${this.formError ? `<div class="error-msg" style="margin-bottom: 1em;">⚠️ ${this.formError}</div>` : ""}
+          <button class="btn" onclick="this.getRootNode().host.showReport()">Generate Report</button>
+        </div>
+      `;
+		else if (this.gameState === "report") {
+			let t = this.totalQuestionsInRound, n = Math.round(this.bestScore / t * 100) || 0, r = (/* @__PURE__ */ new Date()).toLocaleString(), i = "🏆";
+			n < 50 ? i = "💪" : n < 80 && (i = "⭐"), e = `
+        <div class="report-card">
+          <div class="rc-header">
+            <div class="rc-icon">📄</div>
+            <div class="rc-title">${this.title}</div>
+            <div class="rc-subtitle">Report Card</div>
+          </div>
+          <div class="rc-student">
+            <span class="rc-label">Student</span>
+            <span class="rc-value">${this.studentInfo.nickname} <span class="rc-number">(${this.studentInfo.number})${this.studentInfo.homeroom ? ` — ${this.studentInfo.homeroom}` : ""}</span></span>
+          </div>
+          <div class="best-score-highlight">🏆 Best Score: ${this.bestScore} / ${t}</div>
+          ${this.continuesCount > 0 ? `
+            <div class="best-score-highlight" style="background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2); color: #ef4444; margin-top: -0.5em;">
+              ⚠️ Completed with continues (${this.continuesCount * this.maxHearts}-point penalty applied)
+            </div>
+          ` : ""}
+          <div class="rc-score-row">
+            <div class="rc-score-circle">
+              <div class="rc-score-val">${this.bestScore}</div>
+              <div class="rc-score-denom">/ ${t}</div>
+            </div>
+            <div class="rc-score-label">
+              ${i} ${n >= 80 ? "Excellent!" : n >= 50 ? "Good effort!" : "Keep practicing!"}
+            </div>
+          </div>
+          <div class="rc-bar-track"><div class="rc-bar-fill" style="width:${n}%"></div></div>
+          <div class="rc-details">
+            <div class="rc-detail-row"><span>Score</span><span>${this.bestScore} / ${t} (${n}%)</span></div>
+            <div class="rc-detail-row"><span>Completed On</span><span>${r}</span></div>
+          </div>
+          <div class="rc-submission-box">
+            <p>Official Submission</p>
+            <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ""}">
+            <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+            ${this.submissionError ? `<div class="error-msg" style="margin-top: 8px; text-align: left; font-size: 0.9em;">⚠️ ${this.submissionError}</div>` : ""}
+          </div>
+          <button class="rc-submit-btn" id="submit-score-btn" onclick="this.getRootNode().host._submitScore()">Submit Score</button>
+          <br>
+          <button class="btn-outline" onclick="this.getRootNode().host.restart()">Play Again</button>
+        </div>
+      `;
+		}
+		this.shadowRoot.innerHTML = `
+      
       <style>
         :host {
           display: block;
@@ -803,186 +942,28 @@ class b extends HTMLElement {
           opacity: 0.9;
         }
       </style>
-    `;
-    let t = "";
-    if (this.gameState === "hint")
-      t = `
-        <div class="card">
-          <h2>Grammar Focus: ${this.grammarHint.summary}</h2>
-          <div class="hint-content">${this.parseMD(this.grammarHint.content)}</div>
-          <button class="btn" onclick="this.getRootNode().host.startPlaying()">Start Game!</button>
-        </div>
-        <div class="version-text">v1.1</div>
-      `;
-    else if (this.gameState === "playing") {
-      const s = this.currentPool[this.currentIndex], r = (this.currentIndex + 1) / this.currentPool.length * 100;
-      t = `
-        <div class="header">
-          <div class="header-top-row">
-            <div class="question-indicator">
-              ${this.isRetryPhase ? "Retry Question" : "Question"}: <span>${this.currentIndex + 1} / ${this.currentPool.length}</span>
-            </div>
-            <div class="score-pill">
-              Score: <span>${this.score} / ${this.totalQuestionsInRound}</span>
-            </div>
-            <div class="hearts">
-              ${Array.from({ length: this.maxHearts }).map((i, n) => `
-                <span class="heart ${n < this.maxHearts - this.hearts ? "lost" : ""}">❤️</span>
-              `).join("")}
-            </div>
-          </div>
-          <div class="progress-bar-container">
-            <div class="progress-bar-track">
-              <div class="progress-bar-fill" style="width: ${r}%"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card ${this.isAnswered ? "answered" : ""}">
-          <div class="instruction">
-            ${this.getInstruction(s)}
-            ${this.isRetryPhase ? '<span class="badge retry-badge">⚠️ Prior Mistake</span>' : ""}
-          </div>
-          ${this.renderMainText(s)}
-          ${this.renderQuestion(s)}
-          
-          ${this.isAnswered ? `
-            <div class="feedback-box ${this.isCorrect ? "success" : "error"}">
-              <div class="feedback-title">${this.answerFeedback}</div>
-              <div class="feedback-explanation">${this.parseMD(this.answerExplanation)}</div>
-            </div>
-            <button class="btn next-btn" onclick="this.getRootNode().host.nextQuestion()">
-              ${this.currentIndex === this.currentPool.length - 1 ? "Finish" : "Next Question"}
-            </button>
-          ` : ""}
-        </div>
-        
-        <div class="hint-collapsible">
-          <button class="hint-toggle ${this.isHintOpen ? "open" : ""}" onclick="this.getRootNode().host.toggleHint()">
-            <span>💡 Grammar Guide</span>
-            <span class="hint-toggle-icon">▼</span>
-          </button>
-          <div class="hint-drawer ${this.isHintOpen ? "open" : ""}">
-            <div class="hint-content" style="margin-bottom: 0;">
-              ${this.parseMD(this.grammarHint.content)}
-            </div>
-          </div>
-        </div>
-        <div class="version-text">v1.1</div>
-      `;
-    } else if (this.gameState === "gameover")
-      t = `
-        <div class="card" style="text-align: center;">
-          <h2 style="color: #ef4444; background: none; -webkit-text-fill-color: initial;">Out of Hearts!</h2>
-          <p>Don't worry! Practice makes perfect. Try again with new questions, or continue playing this round for a lower score.</p>
-          <div style="display: flex; flex-direction: column; gap: 0.8em; align-items: center; margin-top: 1.5em;">
-            <button class="btn" style="width: 100%; max-width: 300px;" onclick="this.getRootNode().host.continuePlaying()">Continue Playing</button>
-            <button class="btn-outline" style="width: 100%; max-width: 300px; margin-top: 0;" onclick="this.getRootNode().host.restart()">Try Again (New Round)</button>
-          </div>
-        </div>
-      `;
-    else if (this.gameState === "form")
-      t = `
-        <div class="form-card">
-          <h2>Great Job! 🎉</h2>
-          <p>You've finished the round with a score of <strong>${this.getAdjustedScore()} / ${this.totalQuestionsInRound}</strong>.</p>
-          ${this.continuesCount > 0 ? `
-            <p style="font-size: 0.9em; color: #64748b; margin-top: -0.5em; margin-bottom: 1.5em;">
-              ⚠️ Score includes a penalty of ${this.continuesCount * this.maxHearts} points for continuing after running out of hearts (Raw score: ${this.score}).
-            </p>
-          ` : ""}
-          <p>Enter your details to generate your report card.</p>
-          <div class="form-input-group">
-            <label class="form-label" for="nickname">Nickname</label>
-            <input type="text" id="nickname" class="form-field" placeholder="e.g. Jake" value="${this.studentInfo.nickname}">
-          </div>
-          <div class="form-input-group">
-            <label class="form-label" for="student-number">Student Number</label>
-            <input type="text" id="student-number" class="form-field" placeholder="e.g. 01" value="${this.studentInfo.number}">
-          </div>
-          <div class="form-input-group">
-            <label class="form-label" for="homeroom">Homeroom</label>
-            <input type="text" id="homeroom" class="form-field" placeholder="e.g. 6/1" value="${this.studentInfo.homeroom}">
-          </div>
-          <div class="form-input-group">
-            <label class="form-label" for="teacher-code">Teacher Code (Optional)</label>
-            <input type="text" id="teacher-code" class="form-field" placeholder="e.g. 1234" value="${this.studentInfo.teacherCode || ""}">
-          </div>
-          ${this.formError ? `<div class="error-msg" style="margin-bottom: 1em;">⚠️ ${this.formError}</div>` : ""}
-          <button class="btn" onclick="this.getRootNode().host.showReport()">Generate Report</button>
-        </div>
-      `;
-    else if (this.gameState === "report") {
-      const s = this.totalQuestionsInRound, r = Math.round(this.bestScore / s * 100) || 0, i = (/* @__PURE__ */ new Date()).toLocaleString();
-      let n = "🏆";
-      r < 50 ? n = "💪" : r < 80 && (n = "⭐"), t = `
-        <div class="report-card">
-          <div class="rc-header">
-            <div class="rc-icon">📄</div>
-            <div class="rc-title">${this.title}</div>
-            <div class="rc-subtitle">Report Card</div>
-          </div>
-          <div class="rc-student">
-            <span class="rc-label">Student</span>
-            <span class="rc-value">${this.studentInfo.nickname} <span class="rc-number">(${this.studentInfo.number})${this.studentInfo.homeroom ? ` — ${this.studentInfo.homeroom}` : ""}</span></span>
-          </div>
-          <div class="best-score-highlight">🏆 Best Score: ${this.bestScore} / ${s}</div>
-          ${this.continuesCount > 0 ? `
-            <div class="best-score-highlight" style="background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2); color: #ef4444; margin-top: -0.5em;">
-              ⚠️ Completed with continues (${this.continuesCount * this.maxHearts}-point penalty applied)
-            </div>
-          ` : ""}
-          <div class="rc-score-row">
-            <div class="rc-score-circle">
-              <div class="rc-score-val">${this.bestScore}</div>
-              <div class="rc-score-denom">/ ${s}</div>
-            </div>
-            <div class="rc-score-label">
-              ${n} ${r >= 80 ? "Excellent!" : r >= 50 ? "Good effort!" : "Keep practicing!"}
-            </div>
-          </div>
-          <div class="rc-bar-track"><div class="rc-bar-fill" style="width:${r}%"></div></div>
-          <div class="rc-details">
-            <div class="rc-detail-row"><span>Score</span><span>${this.bestScore} / ${s} (${r}%)</span></div>
-            <div class="rc-detail-row"><span>Completed On</span><span>${i}</span></div>
-          </div>
-          <div class="rc-submission-box">
-            <p>Official Submission</p>
-            <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ""}">
-            <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
-            ${this.submissionError ? `<div class="error-msg" style="margin-top: 8px; text-align: left; font-size: 0.9em;">⚠️ ${this.submissionError}</div>` : ""}
-          </div>
-          <button class="rc-submit-btn" id="submit-score-btn" onclick="this.getRootNode().host._submitScore()">Submit Score</button>
-          <br>
-          <button class="btn-outline" onclick="this.getRootNode().host.restart()">Play Again</button>
-        </div>
-      `;
-    }
-    this.shadowRoot.innerHTML = `
-      ${e}
+    
       <div class="container">
-        ${t}
+        ${e}
       </div>
     `, setTimeout(() => {
-      const s = this.shadowRoot.querySelector("#fib-answer");
-      s && s.focus();
-    }, 0);
-  }
-  renderMainText(e) {
-    let t = e.question || (e.type === "multiple-choice" || e.type === "scramble" ? "" : "___");
-    if (e.type === "scramble" && this.isAnswered ? t = e.sentence : e.type !== "scramble" && (t = e.question || e.sentence || (e.type === "multiple-choice" ? "" : "___")), !t) return "";
-    const s = e.type === "fill-in-the-blank" ? t.replace("___", '<span style="text-decoration: underline; font-weight: 700;">' + (this.isAnswered ? Array.isArray(e.answer) ? e.answer.join(" / ") : e.answer : "______") + "</span>") : t;
-    return `<h2>${this.parseMD(s)}</h2>`;
-  }
-  renderQuestion(e) {
-    if (!e) return '<div class="error-msg">Missing question data.</div>';
-    if (e.type === "multiple-choice")
-      return e.options.map((t, s) => {
-        let r = "option-btn";
-        return this.isAnswered && (s === e.correctIndex ? r += " success" : this.userAnswer === s && !this.isCorrect && (r += " error")), `<button class="${r}" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.handleMultipleChoice(${s})">${t}</button>`;
-      }).join("");
-    if (e.type === "fill-in-the-blank")
-      return `
+			let e = this.shadowRoot.querySelector("#fib-answer");
+			e && e.focus();
+		}, 0);
+	}
+	renderMainText(e) {
+		let t = e.question || (e.type === "multiple-choice" || e.type === "scramble" ? "" : "___");
+		if (e.type === "scramble" && this.isAnswered ? t = e.sentence : e.type !== "scramble" && (t = e.question || e.sentence || (e.type === "multiple-choice" ? "" : "___")), !t) return "";
+		let n = e.type === "fill-in-the-blank" ? t.replace("___", "<span style=\"text-decoration: underline; font-weight: 700;\">" + (this.isAnswered ? Array.isArray(e.answer) ? e.answer.join(" / ") : e.answer : "______") + "</span>") : t;
+		return `<h2>${this.parseMD(n)}</h2>`;
+	}
+	renderQuestion(e) {
+		if (!e) return "<div class=\"error-msg\">Missing question data.</div>";
+		if (e.type === "multiple-choice") return e.options.map((t, n) => {
+			let r = "option-btn";
+			return this.isAnswered && (n === e.correctIndex ? r += " success" : this.userAnswer === n && !this.isCorrect && (r += " error")), `<button class="${r}" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.handleMultipleChoice(${n})">${t}</button>`;
+		}).join("");
+		if (e.type === "fill-in-the-blank") return `
         <input type="text" class="input-field${this.isAnswered ? this.isCorrect ? " success" : " error" : ""}" id="fib-answer" placeholder="Type your answer here..." 
           ${this.isAnswered ? "readonly" : ""} 
           value="${this.isAnswered ? this.userAnswer : ""}"
@@ -991,19 +972,19 @@ class b extends HTMLElement {
             if (host.isAnswered) host.nextQuestion();
             else host.handleAnswer(this.value);
           }">
-        ${this.isAnswered ? "" : `<button class="btn" onclick="this.getRootNode().host.handleAnswer(this.parentElement.querySelector('#fib-answer').value)">Submit</button>`}
+        ${this.isAnswered ? "" : "<button class=\"btn\" onclick=\"this.getRootNode().host.handleAnswer(this.parentElement.querySelector('#fib-answer').value)\">Submit</button>"}
       `;
-    if (e.type === "scramble") {
-      const s = (e.sentence || e.question || "").trim().split(/\s+/);
-      return this.scrambledWords.length === 0 && (this.scrambledWords = [...s].sort(() => 0.5 - Math.random())), `
+		if (e.type === "scramble") {
+			let t = (e.sentence || e.question || "").trim().split(/\s+/);
+			return this.scrambledWords.length === 0 && (this.scrambledWords = [...t].sort(() => .5 - Math.random())), `
         <div class="scramble-target" style="${this.isAnswered ? "border-style: solid; border-color: " + (this.isCorrect ? "#10b981" : "#ef4444") : ""}">
-          ${this.selectedScrambleIndices.map((r, i) => `
-            <button class="scramble-token" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.unpickWord(${i})">${this.scrambledWords[r]}</button>
+          ${this.selectedScrambleIndices.map((e, t) => `
+            <button class="scramble-token" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.unpickWord(${t})">${this.scrambledWords[e]}</button>
           `).join("")}
         </div>
         ${this.isAnswered ? "" : `
           <div class="scramble-pool">
-            ${this.scrambledWords.map((r, i) => this.selectedScrambleIndices.includes(i) ? "" : `<button class="scramble-token" onclick="this.getRootNode().host.pickWord(${i})">${r}</button>`).join("")}
+            ${this.scrambledWords.map((e, t) => this.selectedScrambleIndices.includes(t) ? "" : `<button class="scramble-token" onclick="this.getRootNode().host.pickWord(${t})">${e}</button>`).join("")}
           </div>
           <div style="display: flex; gap: 0.5em;">
               <button class="btn" style="flex: 1; background: #64748b;" onclick="this.getRootNode().host.resetScramble()">Reset</button>
@@ -1011,29 +992,28 @@ class b extends HTMLElement {
           </div>
         `}
       `;
-    }
-    return "Unknown question type";
-  }
-  handleMultipleChoice(e) {
-    this.userAnswer = e, this.handleAnswer(e);
-  }
-  handleScrambleSubmit() {
-    const e = this.selectedScrambleIndices.map((t) => this.scrambledWords[t]).join(" ");
-    this.userAnswer = e, this.handleAnswer(e);
-  }
-  pickWord(e) {
-    this.selectedScrambleIndices.push(e), this.render();
-  }
-  unpickWord(e) {
-    this.selectedScrambleIndices.splice(e, 1), this.render();
-  }
-  resetScramble() {
-    this.selectedScrambleIndices = [], this.render();
-  }
-  toggleHint() {
-    this.isHintOpen = !this.isHintOpen, this.render();
-  }
-}
-customElements.get("tj-grammar-hearts") || customElements.define("tj-grammar-hearts", b);
-customElements.get("grammar-hearts") || customElements.define("grammar-hearts", class extends b {
-});
+		}
+		return "Unknown question type";
+	}
+	handleMultipleChoice(e) {
+		this.userAnswer = e, this.handleAnswer(e);
+	}
+	handleScrambleSubmit() {
+		let e = this.selectedScrambleIndices.map((e) => this.scrambledWords[e]).join(" ");
+		this.userAnswer = e, this.handleAnswer(e);
+	}
+	pickWord(e) {
+		this.selectedScrambleIndices.push(e), this.render();
+	}
+	unpickWord(e) {
+		this.selectedScrambleIndices.splice(e, 1), this.render();
+	}
+	resetScramble() {
+		this.selectedScrambleIndices = [], this.render();
+	}
+	toggleHint() {
+		this.isHintOpen = !this.isHintOpen, this.render();
+	}
+};
+customElements.get("tj-grammar-hearts") || customElements.define("tj-grammar-hearts", t), customElements.get("grammar-hearts") || customElements.define("grammar-hearts", class extends t {});
+//#endregion

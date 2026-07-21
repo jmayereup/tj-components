@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TJ Components | Interactive ELT Web Components</title>
+    <title>TJ Components | Interactive ELT Web Components & Documentation</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -14,12 +14,17 @@
             --text-main: #f1f5f9;
             --text-muted: #94a3b8;
             --border: rgba(255, 255, 255, 0.1);
+            --code-bg: #0b1120;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
@@ -30,7 +35,7 @@
             overflow-x: hidden;
         }
 
-        h1, h2, h3 {
+        h1, h2, h3, h4 {
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
         }
@@ -43,7 +48,7 @@
 
         header {
             text-align: center;
-            margin-bottom: 5rem;
+            margin-bottom: 4rem;
             position: relative;
         }
 
@@ -71,14 +76,15 @@
         .subtitle {
             font-size: 1.25rem;
             color: var(--text-muted);
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto 2rem;
         }
 
         .nav-links {
             display: flex;
             justify-content: center;
-            gap: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .btn {
@@ -90,6 +96,7 @@
             text-decoration: none;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 0.95rem;
+            cursor: pointer;
         }
 
         .btn-primary {
@@ -113,6 +120,25 @@
             border-color: var(--primary);
         }
 
+        .section-header {
+            text-align: center;
+            margin: 4rem 0 2.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            color: #fff;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Catalog Grid */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -127,7 +153,6 @@
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
-            cursor: pointer;
             position: relative;
             overflow: hidden;
         }
@@ -142,6 +167,7 @@
             background: linear-gradient(135deg, transparent 0%, rgba(34, 211, 238, 0.03) 100%);
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
         .card:hover {
@@ -172,27 +198,145 @@
             flex-grow: 1;
         }
 
-        .card-footer {
+        .card-actions {
             display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-card {
+            display: inline-flex;
             align-items: center;
-            color: var(--primary);
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1rem;
+            border-radius: 0.6rem;
             font-weight: 600;
+            font-size: 0.85rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            font-family: inherit;
+        }
+
+        .btn-demo {
+            background-color: rgba(34, 211, 238, 0.1);
+            color: var(--primary);
+            border-color: rgba(34, 211, 238, 0.2);
+        }
+
+        .btn-demo:hover {
+            background-color: var(--primary);
+            color: var(--bg);
+        }
+
+        .btn-copy {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border-color: var(--border);
+        }
+
+        .btn-copy:hover {
+            background-color: rgba(255, 255, 255, 0.12);
+            border-color: rgba(34, 211, 238, 0.4);
+            color: var(--primary);
+        }
+
+        .btn-copy.copied {
+            background-color: #10b981;
+            color: #ffffff;
+            border-color: #10b981;
+        }
+
+        /* Documentation Section */
+        .doc-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .doc-card h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .doc-card h3 {
+            font-size: 1.35rem;
+            color: #fff;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .doc-card p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .doc-card ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .doc-card li {
+            margin-bottom: 0.5rem;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 1.25rem 1.5rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin: 1rem 0 1.5rem;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.88rem;
+            color: #a5f3fc;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.25rem;
+            border-radius: 0.85rem;
+            border: 1px solid var(--border);
+        }
+
+        .feature-item h4 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-item p {
             font-size: 0.9rem;
+            margin-bottom: 0;
         }
 
-        .card-footer svg {
-            margin-left: 0.5rem;
-            transition: transform 0.2s ease;
-        }
-
-        .card:hover .card-footer svg {
-            transform: translateX(4px);
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-            font-size: 2rem;
+        hr {
+            border: 0;
+            border-top: 1px solid var(--border);
+            margin: 3rem 0;
         }
 
         footer {
@@ -204,9 +348,133 @@
             font-size: 0.85rem;
         }
 
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e293b;
+            color: #f1f5f9;
+            border: 1px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Code Preview Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            padding: 1.5rem;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            max-width: 680px;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            color: #fff;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-body pre {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            color: #a5f3fc;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
         @media (max-width: 640px) {
             h1 { font-size: 2.5rem; }
             .grid { grid-template-columns: 1fr; }
+            .toast { left: 1rem; right: 1rem; bottom: 1rem; }
+            .doc-card { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -217,123 +485,699 @@
             <h1>TJ Components</h1>
             <p class="subtitle">A library of premium, interactive web components designed for English Language Teaching (ELT) and language learning blogs.</p>
             <div class="nav-links">
-                <a href="guide.html" class="btn btn-primary">Documentation</a>
+                <a href="#catalog" class="btn btn-primary">Component Catalog</a>
+                <a href="#documentation" class="btn btn-outline">Documentation & Guides</a>
                 <a href="https://github.com/jmayereup/tj-components" class="btn btn-outline" target="_blank">View on GitHub</a>
             </div>
         </header>
 
-        <h2 class="section-title">Component Catalog</h2>
+        <!-- CATALOG SECTION -->
+        <section id="catalog">
+            <div class="section-header">
+                <h2>Component Catalog</h2>
+                <p>Explore interactive live demos or copy embed code for Google Sites & WordPress.</p>
+            </div>
 
-        <div class="grid">
-            <!-- LBL Reader -->
-            <a href="src/tj-reader/test-lbl-reader.html" style="text-decoration: none;">
+            <div class="grid">
+                <!-- LBL Reader -->
                 <div class="card">
                     <div class="card-icon">📖</div>
                     <h3>LBL Reader</h3>
                     <p>Interactive story reader with word highlighting, text-to-speech, and memory matching activities.</p>
-                    <div class="card-footer">
-                        View Demo
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="card-actions">
+                        <a href="src/tj-reader/test-lbl-reader.html" class="btn-card btn-demo">
+                            View Demo
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                        <button class="btn-card btn-copy" onclick="copyEmbedCode('lbl-reader', this)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Code (Sites / WP)
+                        </button>
                     </div>
                 </div>
-            </a>
 
-            <!-- Grammar Hearts -->
-            <a href="src/tj-grammar-hearts/test-grammar.html" style="text-decoration: none;">
+                <!-- Grammar Hearts -->
                 <div class="card">
                     <div class="card-icon">❤️</div>
                     <h3>Grammar Hearts</h3>
                     <p>Gamified grammar practice with lives, multiple-choice, and sentence scrambling challenges.</p>
-                    <div class="card-footer">
-                        View Demo
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="card-actions">
+                        <a href="src/tj-grammar-hearts/test-grammar.html" class="btn-card btn-demo">
+                            View Demo
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                        <button class="btn-card btn-copy" onclick="copyEmbedCode('grammar-hearts', this)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Code (Sites / WP)
+                        </button>
                     </div>
                 </div>
-            </a>
 
-            <!-- Info Gap -->
-            <a href="src/tj-info-gap/test-info-gap.html" style="text-decoration: none;">
+                <!-- Info Gap -->
                 <div class="card">
                     <div class="card-icon">👥</div>
                     <h3>Info Gap</h3>
                     <p>Collaborative multi-player activity for communication practice or single-player mode with AI partner.</p>
-                    <div class="card-footer">
-                        View Demo
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="card-actions">
+                        <a href="src/tj-info-gap/test-info-gap.html" class="btn-card btn-demo">
+                            View Demo
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                        <button class="btn-card btn-copy" onclick="copyEmbedCode('tj-info-gap', this)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Code (Sites / WP)
+                        </button>
                     </div>
                 </div>
-            </a>
 
-            <!-- Listening -->
-            <a href="src/tj-listening/test-listening.html" style="text-decoration: none;">
+                <!-- Listening -->
                 <div class="card">
                     <div class="card-icon">🎧</div>
                     <h3>Listening</h3>
                     <p>Comprehensive listening lesson component with vocabulary preview, dialogue, and comprehension quiz.</p>
-                    <div class="card-footer">
-                        View Demo
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="card-actions">
+                        <a href="src/tj-listening/test-listening.html" class="btn-card btn-demo">
+                            View Demo
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                        <button class="btn-card btn-copy" onclick="copyEmbedCode('tj-listening', this)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Code (Sites / WP)
+                        </button>
                     </div>
                 </div>
-            </a>
 
-            <!-- Speed Review -->
-            <a href="src/tj-speed-review/test-speed.html" style="text-decoration: none;">
+                <!-- Speed Review -->
                 <div class="card">
                     <div class="card-icon">🏎️</div>
                     <h3>Speed Review</h3>
                     <p>Fast-paced review game where students score points based on how quickly they can answer questions.</p>
-                    <div class="card-footer">
-                        View Demo
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="card-actions">
+                        <a href="src/tj-speed-review/test-speed.html" class="btn-card btn-demo">
+                            View Demo
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                        <button class="btn-card btn-copy" onclick="copyEmbedCode('tj-speed-review', this)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Code (Sites / WP)
+                        </button>
                     </div>
                 </div>
-            </a>
 
-            <!-- Quiz Element -->
-            <a href="src/tj-quiz-element/test-quiz.html" style="text-decoration: none;">
+                <!-- Quiz Element -->
                 <div class="card">
                     <div class="card-icon">📝</div>
                     <h3>Quiz Element</h3>
                     <p>Flexible quiz supporting reading passages, vocab matching, and cloze sections with optional teacher submission.</p>
-                    <div class="card-footer">
-                        View Demo
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="card-actions">
+                        <a href="src/tj-quiz-element/test-quiz.html" class="btn-card btn-demo">
+                            View Demo
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                        <button class="btn-card btn-copy" onclick="copyEmbedCode('tj-quiz-element', this)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Code (Sites / WP)
+                        </button>
                     </div>
                 </div>
-            </a>
 
-            <!-- Chapter Book -->
-            <a href="src/tj-chapter-book/test-chapter-book.html" style="text-decoration: none;">
+                <!-- Chapter Book -->
                 <div class="card">
                     <div class="card-icon">📚</div>
                     <h3>Chapter Book</h3>
                     <p>Multi-chapter reader with integrated Text-to-Speech, translation toggles, and comprehension checks.</p>
-                    <div class="card-footer">
-                        View Demo
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="card-actions">
+                        <a href="src/tj-chapter-book/test-chapter-book.html" class="btn-card btn-demo">
+                            View Demo
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                        <button class="btn-card btn-copy" onclick="copyEmbedCode('tj-chapter-book', this)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Code (Sites / WP)
+                        </button>
                     </div>
                 </div>
-            </a>
 
-            <!-- Pronunciation -->
-            <a href="src/tj-pronunciation/test-pronunciation.html" style="text-decoration: none;">
+                <!-- Pronunciation -->
                 <div class="card">
                     <div class="card-icon">🗣️</div>
                     <h3>Pronunciation</h3>
                     <p>Practice speaking with native audio comparison, minimal pair discrimination, and sentence scrambles.</p>
-                    <div class="card-footer">
-                        View Demo
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="card-actions">
+                        <a href="src/tj-pronunciation/test-pronunciation.html" class="btn-card btn-demo">
+                            View Demo
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                        <button class="btn-card btn-copy" onclick="copyEmbedCode('tj-pronunciation', this)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Code (Sites / WP)
+                        </button>
                     </div>
                 </div>
-            </a>
-        </div>
+            </div>
+        </section>
+
+        <!-- DOCUMENTATION SECTION -->
+        <section id="documentation" style="margin-top: 5rem;">
+            <div class="section-header">
+                <h2>Documentation & Integration Guides</h2>
+                <p>Complete CDN setup, global features, component attributes, and site builder integration instructions.</p>
+            </div>
+
+            <!-- CDN & Quick Start -->
+            <div class="doc-card">
+                <h2>CDN & Quick Start</h2>
+                <p>Include these script tags in your site's header or custom HTML block to enable all components:</p>
+                <pre><code>&lt;!-- Components --&gt;
+&lt;script type="module" src="https://scripts.teacherjake.com/tj-reader.js"&gt;&lt;/script&gt;
+&lt;script type="module" src="https://scripts.teacherjake.com/tj-grammar-hearts.js"&gt;&lt;/script&gt;
+&lt;script type="module" src="https://scripts.teacherjake.com/tj-info-gap.js"&gt;&lt;/script&gt;
+&lt;script type="module" src="https://scripts.teacherjake.com/tj-listening.js"&gt;&lt;/script&gt;
+&lt;script type="module" src="https://scripts.teacherjake.com/tj-speed-review.js"&gt;&lt;/script&gt;
+&lt;script type="module" src="https://scripts.teacherjake.com/tj-quiz-element.js"&gt;&lt;/script&gt;
+&lt;script type="module" src="https://scripts.teacherjake.com/tj-chapter-book.js"&gt;&lt;/script&gt;
+&lt;script type="module" src="https://scripts.teacherjake.com/tj-pronunciation.js"&gt;&lt;/script&gt;
+
+&lt;!-- Required Fonts --&gt;
+&lt;link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"&gt;</code></pre>
+            </div>
+
+            <!-- Global Features -->
+            <div class="doc-card">
+                <h2>Global Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>📄 Report Cards</h4>
+                        <p>Students enter a nickname and student number to generate a modal report card for score reporting and teacher screenshot submissions.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🎧 Unified Voices</h4>
+                        <p>Consistent icon-based voice selection overlay with automatic "Best" voice detection for target language pronunciation.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🔗 Share as Quiz Mode</h4>
+                        <p>Append <code>?quiz=1</code> to the URL on components like <code>tj-listening</code> to hide transcripts and enable pure assessment mode.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google Sites & WordPress Embedding Guide -->
+            <div class="doc-card" id="google-sites">
+                <h2>Google Sites & WordPress Embedding Guide</h2>
+                <p>When embedding components (especially <code>&lt;tj-quiz-element&gt;</code>) inside <strong>Google Sites</strong> (via <em>Embed → Embed code</em>) or <strong>WordPress</strong> (via <em>Custom HTML block</em>), follow these best practices:</p>
+                <ul>
+                    <li><strong>Use <code>type="module"</code> & Remove <code>defer</code></strong>: Ensure script tags use <code>type="module"</code> and omit <code>defer</code> inside iframe blocks so ES module scripts load synchronously within the iframe sandbox.</li>
+                    <li><strong>Wrap Markdown in <code>&lt;script type="text/markdown"&gt;</code></strong>: For <code>&lt;tj-quiz-element&gt;</code>, place quiz text inside a <code>&lt;script type="text/markdown"&gt;</code> tag to protect section dividers (<code>---</code>) and special characters (like <code>&amp;</code>) from HTML sanitizers.</li>
+                    <li><strong>Include Fonts</strong>: Include the Google Fonts <code>&lt;link&gt;</code> tag inside the embed code block so the isolated iframe renders typography correctly.</li>
+                    <li><strong>Adjust Frame Height</strong>: In the Google Sites editor, drag the bottom handle of the embedded frame down to expand its height so the component doesn't get clipped.</li>
+                </ul>
+
+                <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">Complete Google Sites Embed Example:</h3>
+                <pre><code>&lt;link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"&gt;
+&lt;script type="module" src="https://scripts.teacherjake.com/tj-quiz-element.js"&gt;&lt;/script&gt;
+
+&lt;tj-quiz-element submission-url="YOUR_GAS_URL"&gt;
+&lt;script type="text/markdown"&gt;
+B1 English Practice: Past Simple &amp; Past Continuous
+
+---instructions
+Read the passage below and answer the questions.
+
+---text
+Last weekend, Sarah decided to take a trip to the mountains.
+
+---questions-2
+Q: Where did Sarah go?
+A: To the mountains [correct]
+A: To the beach
+&lt;/script&gt;
+&lt;/tj-quiz-element&gt;</code></pre>
+            </div>
+
+            <!-- Component Specifications -->
+            <div class="doc-card">
+                <h2>Detailed Component Specifications</h2>
+
+                <!-- LBL Reader -->
+                <h3>1. LBL Reader (<code>&lt;lbl-reader&gt;</code>)</h3>
+                <p>An interactive story reader with word highlighting, Text-to-Speech, and automatic matching activities.</p>
+                <pre><code>&lt;lbl-reader 
+  lang-original="en" 
+  lang-translation="th" 
+  story-title="My Daily Routine"&gt;
+[
+  {
+    "original": "I wake up at 7 AM every day.",
+    "fullTranslation": "ฉันตื่นนอนตอน 7 โมงเช้าทุกวัน",
+    "translationOptions": ["ตื่นนอน", "นอนหลับ", "แปรงฟัน"],
+    "correctTranslationIndex": 0,
+    "highlightIndex": 1
+  }
+]
+&lt;/lbl-reader&gt;</code></pre>
+
+                <!-- Grammar Hearts -->
+                <h3>2. Grammar Hearts (<code>&lt;grammar-hearts&gt;</code>)</h3>
+                <p>A gamified grammar practice component with lives, multiple-choice, and sentence scrambling.</p>
+                <pre><code>&lt;grammar-hearts hearts="3" round-size="10"&gt;
+{
+  "title": "Daily Routines Quiz",
+  "questions": [
+    {
+      "type": "multiple-choice",
+      "question": "She ___ (work) every day.",
+      "options": ["works", "is working"],
+      "correctIndex": 0
+    }
+  ]
+}
+&lt;/grammar-hearts&gt;</code></pre>
+
+                <!-- Info Gap -->
+                <h3>3. Info Gap (<code>&lt;tj-info-gap&gt;</code>)</h3>
+                <p>Collaborative multi-player activity for communication practice or single-player mode with TTS partner.</p>
+                <pre><code>&lt;tj-info-gap&gt;
+{
+  "topic": "Ordering Delivery",
+  "blocks": [
+    {
+      "text_holder_id": 1,
+      "text": "Wanchai wants pad thai.",
+      "questions": [
+        { "asker_id": 2, "question": "What does he want?", "options": ["Pad Thai", "Rice"], "correct_answer": "Pad Thai" }
+      ]
+    }
+  ]
+}
+&lt;/tj-info-gap&gt;</code></pre>
+
+                <!-- Listening -->
+                <h3>4. Listening (<code>&lt;tj-listening&gt;</code>)</h3>
+                <p>Comprehensive listening lesson with vocabulary preview, dialogue playback, and comprehension quiz.</p>
+                <pre><code>&lt;tj-listening audio-listening="url_to_mp3"&gt;
+{
+  "title": "Ordering Food",
+  "lang": "en-US",
+  "vocab": [
+    { "word": "bill", "definition": "Charges for food.", "example": "Bill please." }
+  ],
+  "listening": {
+    "transcript": "Waiter: Hello...",
+    "questions": [
+      { "question": "What did they order?", "options": ["Food", "Drink"], "correct": "Food" }
+    ]
+  }
+}
+&lt;/tj-listening&gt;</code></pre>
+
+                <!-- Speed Review -->
+                <h3>5. Speed Review (<code>&lt;tj-speed-review&gt;</code>)</h3>
+                <p>Fast-paced review activity with a countdown timer where students earn points based on how quickly they answer questions.</p>
+                <pre><code>&lt;tj-speed-review time-limit="15" round-size="3"&gt;
+[
+  {
+    "title": "Suffix Speed Run: Noun Builder",
+    "questions": [
+      {
+        "category": "Verb → Noun",
+        "question": "The act of **defining** a word is its ____.",
+        "options": ["definition", "definement", "wisdom", "arrival"],
+        "answer": "definition",
+        "explanation": "To turn the verb **define** into a noun, we add the suffix **-tion**."
+      }
+    ]
+  }
+]
+&lt;/tj-speed-review&gt;</code></pre>
+
+                <!-- Quiz Element -->
+                <h3>6. Quiz Element (<code>&lt;tj-quiz-element&gt;</code>)</h3>
+                <p>A flexible quiz component supporting reading passages, vocabulary matching, and cloze sections. Optimized for Google Apps Script integration.</p>
+                <pre><code>&lt;tj-quiz-element submission-url="YOUR_GAS_URL"&gt;
+&lt;script type="text/markdown"&gt;
+  My Quiz Title
+  ---text
+  This is a reading passage...
+  ---instructions
+  Choose the best answer for each question.
+  ---questions-3
+  Q: What happened?
+  A: Nothing
+  A: Everything [correct]
+  ---vocab-5
+  Word: Definition
+  Concept: Explanation
+  ---cloze-2
+  The [cat] sat on the [mat].
+&lt;/script&gt;
+&lt;/tj-quiz-element&gt;</code></pre>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>🔢 Limiters</h4>
+                        <p>Append <code>-N</code> to any section (e.g., <code>---questions-3</code>) to randomly show N items.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>📝 Instructions</h4>
+                        <p>Use <code>---instructions</code> to add custom guidance between quiz sections.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🔤 Vocab Syntax</h4>
+                        <p>Format as <code>Word: Definition</code> (one per line) for matching activities.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🔒 Test Mode</h4>
+                        <p>Add <code>test-mode</code> attribute to hide correctness feedback, score details, and the "Try Again" button to secure assessments.</p>
+                    </div>
+                </div>
+
+                <!-- Chapter Book -->
+                <h3>7. Chapter Book (<code>&lt;tj-chapter-book&gt;</code>)</h3>
+                <p>A multi-chapter reading companion with built-in TTS, translation toggles, and comprehension checks.</p>
+                <pre><code>&lt;tj-chapter-book&gt;
+{
+  "title": "My Adventure",
+  "chapters": [
+    {
+      "title": "Chapter 1",
+      "text": "Once upon a time...",
+      "translation": "กาลครั้งหนึ่ง...",
+      "quiz": [
+        { "question": "Who was there?", "options": ["Hero", "Villain"], "answer": 0 }
+      ]
+    }
+  ]
+}
+&lt;/tj-chapter-book&gt;</code></pre>
+
+                <!-- Pronunciation -->
+                <h3>8. Pronunciation (<code>&lt;tj-pronunciation&gt;</code>)</h3>
+                <p>Practice speaking with native audio comparison, minimal pair discrimination, and sentence scrambles.</p>
+                <pre><code>&lt;tj-pronunciation&gt;
+{
+  "title": "Unit 1: Basic Listening & Recording",
+  "instructions": "Listen carefully. For Minimal Pairs, choose the final word spoken.",
+  "language": "en-US",
+  "activities": [
+    {
+      "type": "listen_record",
+      "targetText": "The ship is leaving the port.",
+      "phoneticHint": "ðə ʃɪp ɪz ˈliːvɪŋ ðə pɔːt",
+      "translation": "เรือกำลังออกจากท่าเรือ"
+    },
+    {
+      "type": "minimal_pair",
+      "focus": "Vowel /ɪ/ vs /iː/",
+      "options": ["ship", "sheep"],
+      "correctAnswer": "ship"
+    }
+  ]
+}
+&lt;/tj-pronunciation&gt;</code></pre>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>🎙️ Listen & Record</h4>
+                        <p>Practice speaking with recording and TTS comparison, IPA hints, and translations.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>👂 Minimal Pairs</h4>
+                        <p>Discriminate between similar sound contrasts with instant audio feedback.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🧩 Dictation Scrambles</h4>
+                        <p>Rebuild spoken sentences by dragging words into order with distractors.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <footer>
             <p>&copy; 2026 TJ Components. Designed for modern educators.</p>
         </footer>
     </div>
+
+    <!-- Floating Toast Notification -->
+    <div id="toast" class="toast">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span id="toastMsg">Code copied to clipboard! Ready to paste into Google Sites or WordPress.</span>
+    </div>
+
+    <!-- Code Inspector Modal -->
+    <div id="codeModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalTitle">Embed Code</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-subtitle">Paste this code into Google Sites (Embed → Embed code) or WordPress (Custom HTML block):</p>
+                <pre><code id="modalCode"></code></pre>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Close</button>
+                <button id="modalCopyBtn" class="btn btn-primary" onclick="copyModalCode()">Copy Code</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const snippets = {
+            'lbl-reader': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script type="module" src="https://scripts.teacherjake.com/tj-reader.js"><\/script>
+
+<lbl-reader lang-original="en" lang-translation="th" story-title="My Daily Routine">
+[
+  {
+    "original": "I wake up at 7 AM every day.",
+    "fullTranslation": "ฉันตื่นนอนตอน 7 โมงเช้าทุกวัน",
+    "translationOptions": ["ตื่นนอน", "นอนหลับ", "แปรงฟัน"],
+    "correctTranslationIndex": 0,
+    "highlightIndex": 1
+  }
+]
+</lbl-reader>`,
+
+            'grammar-hearts': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script type="module" src="https://scripts.teacherjake.com/tj-grammar-hearts.js"><\/script>
+
+<grammar-hearts hearts="3" round-size="10">
+{
+  "title": "Daily Routines Quiz",
+  "hint": {
+    "summary": "Present Simple vs Continuous",
+    "content": "Use **Present Simple** for habits."
+  },
+  "questions": [
+    {
+      "type": "multiple-choice",
+      "question": "She ___ (work) every day.",
+      "options": ["works", "is working"],
+      "correctIndex": 0
+    }
+  ]
+}
+</grammar-hearts>`,
+
+            'tj-info-gap': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script type="module" src="https://scripts.teacherjake.com/tj-info-gap.js"><\/script>
+
+<tj-info-gap>
+{
+  "topic": "Ordering Delivery",
+  "scenario_description": "Ask your partner the questions to complete your delivery ticket.",
+  "player_count": 2,
+  "blocks": [
+    {
+      "text_holder_id": 1,
+      "text": "Wanchai wants pad thai.",
+      "question": "What does Wanchai want to eat?"
+    }
+  ]
+}
+</tj-info-gap>`,
+
+            'tj-listening': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script type="module" src="https://scripts.teacherjake.com/tj-listening.js"><\/script>
+
+<tj-listening>
+{
+  "title": "At the Coffee Shop",
+  "instructions": "Listen to the dialogue and answer the questions.",
+  "audioSrc": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  "transcript": "Customer: Can I have a latte, please?\\nBarista: Sure, what size?",
+  "questions": [
+    {
+      "question": "What drink did the customer order?",
+      "options": ["Tea", "Latte", "Water"],
+      "correctIndex": 1
+    }
+  ]
+}
+</tj-listening>`,
+
+            'tj-speed-review': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script type="module" src="https://scripts.teacherjake.com/tj-speed-review.js"><\/script>
+
+<tj-speed-review>
+{
+  "title": "Vocabulary Speed Review",
+  "timer": 60,
+  "questions": [
+    {
+      "question": "Synonym for 'Fast'",
+      "options": ["Quick", "Slow", "Quiet"],
+      "correctIndex": 0
+    }
+  ]
+}
+</tj-speed-review>`,
+
+            'tj-quiz-element': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script type="module" src="https://scripts.teacherjake.com/tj-quiz-element.js"><\/script>
+
+<tj-quiz-element submission-url="YOUR_GAS_URL">
+<script type="text/markdown">
+B1 English Practice: Past Simple & Past Continuous
+
+---instructions
+Read the passage below and answer the questions.
+
+---text
+Last weekend, Sarah decided to take a trip to the mountains. While she was driving, it started to rain.
+
+---questions-2
+Q: Where did Sarah go?
+A: To the mountains [correct]
+A: To the beach
+
+Q: What was she doing when it rained?
+A: Driving [correct]
+A: Sleeping
+<\/script>
+</tj-quiz-element>`,
+
+            'tj-chapter-book': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script type="module" src="https://scripts.teacherjake.com/tj-chapter-book.js"><\/script>
+
+<tj-chapter-book>
+{
+  "title": "My Adventure",
+  "chapters": [
+    {
+      "title": "Chapter 1: The Beginning",
+      "text": "Once upon a time in a small village...",
+      "questions": [
+        {
+          "question": "Where does the story take place?",
+          "options": ["A small village", "A big city"],
+          "correctIndex": 0
+        }
+      ]
+    }
+  ]
+}
+</tj-chapter-book>`,
+
+            'tj-pronunciation': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script type="module" src="https://scripts.teacherjake.com/tj-pronunciation.js"><\/script>
+
+<tj-pronunciation>
+{
+  "title": "Unit 1: Basic Listening & Recording",
+  "instructions": "Listen carefully to the audio and practice speaking.",
+  "activities": [
+    {
+      "type": "listen_record",
+      "targetText": "The ship is leaving the port.",
+      "phoneticHint": "ðə ʃɪp ɪz ˈliːvɪŋ ðə pɔːt"
+    }
+  ]
+}
+</tj-pronunciation>`
+        };
+
+        let currentActiveSnippet = '';
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        async function copyEmbedCode(id, btnElement) {
+            const code = snippets[id];
+            if (!code) return;
+
+            try {
+                await navigator.clipboard.writeText(code);
+            } catch (e) {
+                const textarea = document.createElement('textarea');
+                textarea.value = code;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+
+            if (btnElement) {
+                const originalHtml = btnElement.innerHTML;
+                btnElement.classList.add('copied');
+                btnElement.innerHTML = `✓ Copied!`;
+                setTimeout(() => {
+                    btnElement.classList.remove('copied');
+                    btnElement.innerHTML = originalHtml;
+                }, 2000);
+            }
+
+            showToast(`Code copied to clipboard! Ready to paste into Google Sites or WordPress.`);
+        }
+
+        function previewCode(id, title) {
+            const code = snippets[id];
+            if (!code) return;
+            currentActiveSnippet = code;
+            document.getElementById('modalTitle').textContent = `Embed Code: ${title}`;
+            document.getElementById('modalCode').textContent = code;
+            document.getElementById('codeModal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('codeModal').classList.remove('open');
+        }
+
+        function closeModalOnOverlay(e) {
+            if (e.target.id === 'codeModal') {
+                closeModal();
+            }
+        }
+
+        async function copyModalCode() {
+            if (!currentActiveSnippet) return;
+            try {
+                await navigator.clipboard.writeText(currentActiveSnippet);
+            } catch (e) {
+                const textarea = document.createElement('textarea');
+                textarea.value = currentActiveSnippet;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+            const modalCopyBtn = document.getElementById('modalCopyBtn');
+            const originalText = modalCopyBtn.textContent;
+            modalCopyBtn.textContent = '✓ Copied!';
+            setTimeout(() => {
+                modalCopyBtn.textContent = originalText;
+                closeModal();
+            }, 1000);
+            showToast(`Code copied to clipboard!`);
+        }
+    </script>
 
 </body>
 </html>

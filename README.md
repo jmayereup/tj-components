@@ -21,6 +21,9 @@ You can use these components directly without downloading them by linking to the
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 ```
 
+> **Note for Google Sites & iframe embeds:** When embedding into dynamic iframe sandboxes (e.g. Google Sites "Embed Code"), remove the `defer` attribute from `<script>` tags to ensure scripts execute immediately.
+
+
 ## Global Features
 
 ### 📄 Report Cards
@@ -190,6 +193,7 @@ A flexible quiz component supporting reading passages, vocabulary matching, and 
 #### Usage
 ```html
 <tj-quiz-element submission-url="YOUR_GAS_URL">
+<script type="text/markdown">
   My Quiz Title
   ---text
   This is a reading passage...
@@ -204,6 +208,7 @@ A flexible quiz component supporting reading passages, vocabulary matching, and 
   Concept: Explanation
   ---cloze-2
   The [cat] sat on the [mat].
+</script>
 </tj-quiz-element>
 ```
 
@@ -298,11 +303,38 @@ Plays a sentence that the student must rebuild by sorting scrambled words.
 
 ---
 
-## How to use in a Blog (WordPress, Blogger, etc.)
+## How to use in a Blog or Website (WordPress, Blogger, Google Sites)
 
-1.  **Add Script Tags**: Add the CDN script tags to your blog post (Custom HTML block).
-2.  **Embed Component**: Paste the component tag and your JSON data directly into the post.
-3.  **Fonts**: Ensure the Google Fonts link is included.
+1. **Add Script Tags**: Add the CDN script tags to your blog post or site builder (Custom HTML block).
+2. **Embed Component**: Paste the component tag and your JSON or Markdown data directly into the post.
+3. **Fonts**: Ensure the Google Fonts link (`Outfit` and `Inter`) is included.
+
+### 🌐 Google Sites & Iframe Embed Guide
+
+When embedding components (especially `<tj-quiz-element>`) inside **Google Sites** via `Embed -> Embed code`, keep the following rules in mind:
+
+1. **Remove `defer` & Use `type="module"`**: Do not use `defer` on script tags in embedded iframes. Adding `type="module"` ensures the browser parses ES module JavaScript without throwing `SyntaxError: Cannot use import statement outside a module`.
+2. **Wrap Quiz Content in `<script type="text/markdown">`**: Always wrap raw text content inside `<script type="text/markdown">...</script>` inside `<tj-quiz-element>`. This prevents Google Sites' HTML parser from escaping characters (like `&`, `<`, `>`) or stripping newlines needed for `---` section headers.
+3. **Include Fonts**: Include the Google Fonts `<link>` tag inside the Embed code block so the isolated iframe renders typography correctly.
+4. **Adjust Frame Height**: In the Google Sites editor, drag the bottom handle of the embedded frame to expand its height so the component doesn't get clipped.
+
+#### Complete Google Sites Embed Example (`tj-quiz-element`):
+```html
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script type="module" src="https://scripts.teacherjake.com/tj-quiz-element.js"></script>
+
+<tj-quiz-element submission-url="YOUR_GAS_URL">
+<script type="text/markdown">
+  My Quiz Title
+  ---text
+  Reading passage here...
+  ---questions-3
+  Q: Question text?
+  A: Answer 1
+  A: Answer 2 [correct]
+</script>
+</tj-quiz-element>
+```
 
 ---
 

@@ -1,153 +1,260 @@
-import { c as n } from "./chunks/tj-config-Daa3Dzp2.js";
-class a extends HTMLElement {
-  get code() {
-    return this.getAttribute("code") !== null ? this.getAttribute("code") : n.teacherCode;
-  }
-  set code(e) {
-    e != null ? this.setAttribute("code", e) : this.removeAttribute("code");
-  }
-  constructor() {
-    var e;
-    super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = ((e = n) == null ? void 0 : e.submissionUrl) || "https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec", this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
-  }
-  connectedCallback() {
-    this.timeLimit = parseInt(this.getAttribute("time-limit")) || 15, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 10, this.bestScore = 0, this.loadLibrary("marked", "https://cdn.jsdelivr.net/npm/marked/marked.min.js"), this.loadLibrary("Tone", "https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js", () => {
-      this.initAudio();
-    }), requestAnimationFrame(() => {
-      this.loadData(), this.render();
-    });
-  }
-  loadLibrary(e, r, t) {
-    if (window[e]) {
-      t && t();
-      return;
-    }
-    const i = document.createElement("script");
-    i.src = r, i.async = !0, i.onload = () => {
-      t && t(), this.render();
-    }, document.head.appendChild(i);
-  }
-  initAudio() {
-    window.Tone && !this.audioInitialized && (this.synthCorrect = new window.Tone.Synth().toDestination(), this.synthIncorrect = new window.Tone.Synth({ oscillator: { type: "square" } }).toDestination(), this.audioInitialized = !0);
-  }
-  async playSound(e) {
-    this.audioInitialized && (await window.Tone.start(), e === "correct" ? this.synthCorrect.triggerAttackRelease("C5", "8n") : this.synthIncorrect.triggerAttackRelease("G2", "8n"));
-  }
-  loadData() {
-    try {
-      let e = "";
-      if (this.config)
-        if (typeof this.config == "object") {
-          this._processParsedData(this.config);
-          return;
-        } else
-          e = String(this.config);
-      else this.hasAttribute("config") ? e = this.getAttribute("config") : this.querySelector('script[type="application/json"]') ? e = this.querySelector('script[type="application/json"]').textContent.trim() : e = this.textContent.trim();
-      if (!e) return;
-      const r = e.replace(/"((?:\\.|[^"\\])*)"/gs, (i, s) => '"' + s.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"');
-      let t = JSON.parse(r);
-      this._processParsedData(t), this.innerHTML = "";
-    } catch (e) {
-      console.error("Failed to parse JSON for tj-speed-review", e), this.shadowRoot.innerHTML = '<div class="error-msg">Error loading quiz data. Check console.</div>';
-    }
-  }
-  _processParsedData(e) {
-    Array.isArray(e) && (e = e[0]), e.title && (this.title = e.title), e.questions && (this.questions = e.questions);
-  }
-  parseMD(e) {
-    return window.marked && e ? window.marked.parseInline(e) : e || "";
-  }
-  startGame() {
-    if (!this.identityLocked) {
-      const r = this.shadowRoot.querySelector("#nickname"), t = this.shadowRoot.querySelector("#student-number"), i = this.shadowRoot.querySelector("#homeroom"), s = r ? r.value.trim() : "", o = t ? t.value.trim() : "", d = i ? i.value.trim() : "";
-      if (!s || !o) {
-        alert("Please enter both nickname and student number to begin.");
-        return;
-      }
-      this.nickname = s, this.studentNumber = o, this.homeroom = d, this.identityLocked = !0;
-    }
-    this.score = 0, this.currentIndex = 0;
-    const e = [...this.questions].sort(() => 0.5 - Math.random());
-    this.currentPool = e.slice(0, Math.min(this.questionsPerRound, this.questions.length)), this.gameState = "playing", this.loadQuestion();
-  }
-  loadQuestion() {
-    this.isAnswered = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.timeLeft = this.timeLimit;
-    const e = this.currentPool[this.currentIndex];
-    this.shuffledOptions = [...e.options].sort(() => 0.5 - Math.random()), this.startTimer(), this.render();
-  }
-  startTimer() {
-    clearInterval(this.timerInterval), this.timerInterval = setInterval(() => {
-      this.timeLeft -= 0.1, this.updateTimerBar(), this.timeLeft <= 0 && this.handleTimeout();
-    }, 100);
-  }
-  updateTimerBar() {
-    const e = this.shadowRoot.querySelector(".timer-inner");
-    if (e) {
-      const r = this.timeLeft / this.timeLimit * 100;
-      e.style.width = `${r}%`, this.timeLeft < 5 ? e.style.background = "#ef4444" : e.style.background = "#22d3ee";
-    }
-  }
-  handleTimeout() {
-    clearInterval(this.timerInterval), this.isAnswered = !0, this.isCorrect = !1, this.playSound("incorrect"), this.feedbackText = "Time's Up!";
-    const e = this.currentPool[this.currentIndex];
-    this.feedbackExplanation = e.explanation || `The correct answer was **${e.answer}**.`, this.render();
-  }
-  async selectAnswer(e) {
-    if (this.isAnswered) return;
-    clearInterval(this.timerInterval), this.isAnswered = !0, this.userAnswer = e;
-    const r = this.currentPool[this.currentIndex];
-    if (e === r.answer) {
-      this.isCorrect = !0;
-      const t = Math.max(10, Math.round(this.timeLeft * 10));
-      this.score += t, this.feedbackText = `+${t} points!`, this.feedbackExplanation = r.explanation || "Perfect!", this.playSound("correct");
-    } else
-      this.isCorrect = !1, this.feedbackText = "Not quite!", this.feedbackExplanation = r.explanation || `The correct answer was **${r.answer}**.`, this.playSound("incorrect");
-    this.render();
-  }
-  nextQuestion() {
-    this.currentIndex++, this.currentIndex >= this.currentPool.length ? this.endGame() : this.loadQuestion();
-  }
-  endGame() {
-    this.gameState = "gameover", this.score > this.bestScore && (this.bestScore = this.score), this.render();
-  }
-  _showReportOverlay() {
-    const e = this.shadowRoot.getElementById("report-overlay");
-    e && (e.style.display = "flex");
-  }
-  _hideReportOverlay() {
-    const e = this.shadowRoot.getElementById("report-overlay");
-    e && (e.style.display = "none");
-  }
-  async _submitScore() {
-    const e = this.shadowRoot.getElementById("report-teacher-code");
-    if ((e ? e.value.trim() : "") !== this.code) {
-      alert("Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.");
-      return;
-    }
-    if (this.isSubmitting) return;
-    const t = this.shadowRoot.getElementById("submit-score-btn"), i = t ? t.textContent : "Submit";
-    this.isSubmitting = !0, t && (t.textContent = "Submitting...", t.disabled = !0);
-    const s = {
-      nickname: this.nickname,
-      homeroom: this.homeroom || "",
-      studentId: this.studentNumber,
-      quizName: "Speed- " + this.title,
-      score: this.bestScore,
-      total: this.questionsPerRound
-    };
-    try {
-      await fetch(this.submissionUrl, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(s)
-      }), alert("Score successfully submitted!"), t && (t.textContent = "Submitted ✓", t.style.background = "#64748b");
-    } catch (o) {
-      console.error("Error submitting score:", o), alert("There was an error submitting your score. Please try again."), t && (t.textContent = i, t.disabled = !1), this.isSubmitting = !1;
-    }
-  }
-  render() {
-    const e = `
+import { t as e } from "./chunks/tj-config-C6oNQvLF.js";
+//#region src/tj-speed-review/index.js
+var t = class extends HTMLElement {
+	get code() {
+		return this.getAttribute("code") === null ? e.teacherCode || "6767" : this.getAttribute("code");
+	}
+	set code(e) {
+		e == null ? this.removeAttribute("code") : this.setAttribute("code", e);
+	}
+	constructor() {
+		super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = e?.submissionUrl || "https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec", this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
+	}
+	connectedCallback() {
+		this.timeLimit = parseInt(this.getAttribute("time-limit")) || 15, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 10, this.bestScore = 0, this.loadLibrary("marked", "https://cdn.jsdelivr.net/npm/marked/marked.min.js"), this.loadLibrary("Tone", "https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js", () => {
+			this.initAudio();
+		}), requestAnimationFrame(() => {
+			this.loadData(), this.render();
+		});
+	}
+	loadLibrary(e, t, n) {
+		if (window[e]) {
+			n && n();
+			return;
+		}
+		let r = document.createElement("script");
+		r.src = t, r.async = !0, r.onload = () => {
+			n && n(), this.render();
+		}, document.head.appendChild(r);
+	}
+	initAudio() {
+		window.Tone && !this.audioInitialized && (this.synthCorrect = new window.Tone.Synth().toDestination(), this.synthIncorrect = new window.Tone.Synth({ oscillator: { type: "square" } }).toDestination(), this.audioInitialized = !0);
+	}
+	async playSound(e) {
+		this.audioInitialized && (await window.Tone.start(), e === "correct" ? this.synthCorrect.triggerAttackRelease("C5", "8n") : this.synthIncorrect.triggerAttackRelease("G2", "8n"));
+	}
+	loadData() {
+		try {
+			let e = "";
+			if (this.config) if (typeof this.config == "object") {
+				this._processParsedData(this.config);
+				return;
+			} else e = String(this.config);
+			else e = this.hasAttribute("config") ? this.getAttribute("config") : this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.textContent.trim();
+			if (!e) return;
+			let t = e.replace(/"((?:\\.|[^"\\])*)"/gs, (e, t) => "\"" + t.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + "\""), n = JSON.parse(t);
+			this._processParsedData(n), this.innerHTML = "";
+		} catch (e) {
+			console.error("Failed to parse JSON for tj-speed-review", e), this.shadowRoot.innerHTML = "<div class=\"error-msg\">Error loading quiz data. Check console.</div>";
+		}
+	}
+	_processParsedData(e) {
+		Array.isArray(e) && (e = e[0]), e.title && (this.title = e.title), e.questions && (this.questions = e.questions);
+	}
+	parseMD(e) {
+		return window.marked && e ? window.marked.parseInline(e) : e || "";
+	}
+	startGame() {
+		if (!this.identityLocked) {
+			let e = this.shadowRoot.querySelector("#nickname"), t = this.shadowRoot.querySelector("#student-number"), n = this.shadowRoot.querySelector("#homeroom"), r = e ? e.value.trim() : "", i = t ? t.value.trim() : "", a = n ? n.value.trim() : "";
+			if (!r || !i) {
+				alert("Please enter both nickname and student number to begin.");
+				return;
+			}
+			this.nickname = r, this.studentNumber = i, this.homeroom = a, this.identityLocked = !0;
+		}
+		this.score = 0, this.currentIndex = 0;
+		let e = [...this.questions].sort(() => .5 - Math.random());
+		this.currentPool = e.slice(0, Math.min(this.questionsPerRound, this.questions.length)), this.gameState = "playing", this.loadQuestion();
+	}
+	loadQuestion() {
+		this.isAnswered = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.timeLeft = this.timeLimit;
+		let e = this.currentPool[this.currentIndex];
+		this.shuffledOptions = [...e.options].sort(() => .5 - Math.random()), this.startTimer(), this.render();
+	}
+	startTimer() {
+		clearInterval(this.timerInterval), this.timerInterval = setInterval(() => {
+			this.timeLeft -= .1, this.updateTimerBar(), this.timeLeft <= 0 && this.handleTimeout();
+		}, 100);
+	}
+	updateTimerBar() {
+		let e = this.shadowRoot.querySelector(".timer-inner");
+		if (e) {
+			let t = this.timeLeft / this.timeLimit * 100;
+			e.style.width = `${t}%`, this.timeLeft < 5 ? e.style.background = "#ef4444" : e.style.background = "#22d3ee";
+		}
+	}
+	handleTimeout() {
+		clearInterval(this.timerInterval), this.isAnswered = !0, this.isCorrect = !1, this.playSound("incorrect"), this.feedbackText = "Time's Up!";
+		let e = this.currentPool[this.currentIndex];
+		this.feedbackExplanation = e.explanation || `The correct answer was **${e.answer}**.`, this.render();
+	}
+	async selectAnswer(e) {
+		if (this.isAnswered) return;
+		clearInterval(this.timerInterval), this.isAnswered = !0, this.userAnswer = e;
+		let t = this.currentPool[this.currentIndex];
+		if (e === t.answer) {
+			this.isCorrect = !0;
+			let e = Math.max(10, Math.round(this.timeLeft * 10));
+			this.score += e, this.feedbackText = `+${e} points!`, this.feedbackExplanation = t.explanation || "Perfect!", this.playSound("correct");
+		} else this.isCorrect = !1, this.feedbackText = "Not quite!", this.feedbackExplanation = t.explanation || `The correct answer was **${t.answer}**.`, this.playSound("incorrect");
+		this.render();
+	}
+	nextQuestion() {
+		this.currentIndex++, this.currentIndex >= this.currentPool.length ? this.endGame() : this.loadQuestion();
+	}
+	endGame() {
+		this.gameState = "gameover", this.score > this.bestScore && (this.bestScore = this.score), this.render();
+	}
+	_showReportOverlay() {
+		let e = this.shadowRoot.getElementById("report-overlay");
+		e && (e.style.display = "flex");
+	}
+	_hideReportOverlay() {
+		let e = this.shadowRoot.getElementById("report-overlay");
+		e && (e.style.display = "none");
+	}
+	async _submitScore() {
+		let e = this.shadowRoot.getElementById("report-teacher-code");
+		if ((e ? e.value.trim() : "") !== this.code) {
+			alert("Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.");
+			return;
+		}
+		if (this.isSubmitting) return;
+		let t = this.shadowRoot.getElementById("submit-score-btn"), n = t ? t.textContent : "Submit";
+		this.isSubmitting = !0, t && (t.textContent = "Submitting...", t.disabled = !0);
+		let r = {
+			nickname: this.nickname,
+			homeroom: this.homeroom || "",
+			studentId: this.studentNumber,
+			quizName: "Speed- " + this.title,
+			score: this.bestScore,
+			total: this.questionsPerRound
+		};
+		try {
+			await fetch(this.submissionUrl, {
+				method: "POST",
+				mode: "no-cors",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(r)
+			}), alert("Score successfully submitted!"), t && (t.textContent = "Submitted ✓", t.style.background = "#64748b");
+		} catch (e) {
+			console.error("Error submitting score:", e), alert("There was an error submitting your score. Please try again."), t && (t.textContent = n, t.disabled = !1), this.isSubmitting = !1;
+		}
+	}
+	render() {
+		let e = "";
+		if (this.gameState === "start") e = `
+        <div class="start-screen">
+          <h1>${this.title} 🏎️</h1>
+          <p>Think fast! Points based on speed.</p>
+          <div class="best-score-badge">Best Score: ${this.bestScore}</div>
+          
+          ${this.identityLocked ? `
+            <div class="locked-identity">
+              Playing as: <strong>${this.nickname}</strong> (${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ""}
+            </div>
+          ` : "\n            <div class=\"identity-form\">\n              <div class=\"input-group\">\n                <label for=\"nickname\">Nickname</label>\n                <input type=\"text\" id=\"nickname\" class=\"input-field\" placeholder=\"e.g. Jake\">\n              </div>\n              <div class=\"input-group\">\n                <label for=\"student-number\">Student Number</label>\n                <input type=\"text\" id=\"student-number\" class=\"input-field\" placeholder=\"e.g. 01\">\n              </div>\n              <div class=\"input-group\">\n                <label for=\"homeroom\">Homeroom</label>\n                <input type=\"text\" id=\"homeroom\" class=\"input-field\" placeholder=\"e.g. 6/1\">\n              </div>\n            </div>\n          "}
+
+          <button class="btn-large" onclick="this.getRootNode().host.startGame()">Start Game!</button>
+        </div>
+      `;
+		else if (this.gameState === "playing") {
+			let t = this.currentPool[this.currentIndex];
+			e = `
+        <div class="header">
+          <div class="title-area">
+            <h1>${this.title}</h1>
+            <div class="player-tag">${this.nickname} — ${this.studentNumber}</div>
+            <div class="best-score">Best: ${this.bestScore}</div>
+          </div>
+          <div class="score-display">
+            <div class="best-score">Score</div>
+            <div class="score-val">${this.score}</div>
+          </div>
+        </div>
+
+        <div class="timer-bar">
+          <div class="timer-inner" style="width: ${this.timeLeft / this.timeLimit * 100}%"></div>
+        </div>
+
+        <div class="question-meta">Question ${this.currentIndex + 1} / ${this.currentPool.length} — ${t.category || ""}</div>
+        <div class="question-text">${this.parseMD(t.question)}</div>
+
+        <div class="options-grid">
+          ${this.shuffledOptions.map((e) => {
+				let n = "option-btn";
+				return this.isAnswered && (e === t.answer ? n += " correct" : e === this.userAnswer && (n += " incorrect")), `<button class="${n}" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.selectAnswer('${e.replace(/'/g, "\\'")}')"> ${e}</button>`;
+			}).join("")}
+        </div>
+
+        ${this.isAnswered ? `
+          <div class="feedback-area">
+            <div class="feedback-status ${this.isCorrect ? "correct" : "incorrect"}">${this.feedbackText}</div>
+            <div class="explanation">${this.parseMD(this.feedbackExplanation)}</div>
+            <button class="btn-large" onclick="this.getRootNode().host.nextQuestion()">
+              ${this.currentIndex === this.currentPool.length - 1 ? "Finish" : "Next Question"}
+            </button>
+          </div>
+        ` : ""}
+      `;
+		} else if (this.gameState === "gameover") {
+			let t = this.score >= this.bestScore && this.score > 0, n = (/* @__PURE__ */ new Date()).toLocaleString();
+			e = `
+        <div class="end-screen">
+          <h1>Quiz Complete!</h1>
+          <div class="result-identity">
+            Player: <strong>${this.nickname}</strong> (${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ""}
+          </div>
+          <p>Your final score:</p>
+          <div class="final-score">${this.score}</div>
+          ${t ? "<p style=\"color: #fbbf24; font-weight: 800;\">🎉 NEW HIGH SCORE! 🎉</p>" : ""}
+          <div class="best-score-badge">Personal Best: ${this.bestScore}</div>
+
+          <button class="btn-large" onclick="this.getRootNode().host._showReportOverlay()">📄 Generate Report</button>
+          <button class="btn-secondary" onclick="this.getRootNode().host.startGame()">▶ Play Again</button>
+        </div>
+
+        <!-- Report Card Overlay -->
+        <div class="report-overlay" id="report-overlay">
+          <div class="report-modal">
+            <button class="rc-close-btn" onclick="this.getRootNode().host._hideReportOverlay()">✕</button>
+            <div class="rc-header">
+              <div class="rc-icon">📄</div>
+              <div class="rc-title">${this.title}</div>
+              <div class="rc-subtitle">Report Card</div>
+            </div>
+            <div class="rc-student">
+              <span class="rc-label">Student</span>
+              <span class="rc-value">${this.nickname} <span class="rc-number">(${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ""}</span></span>
+            </div>
+            <div class="best-score-highlight">🏆 Best Score: ${this.bestScore} pts</div>
+            <div class="rc-score-row">
+              <div class="rc-score-circle">
+                <div class="rc-score-val">${this.bestScore}</div>
+                <div class="rc-score-pct">pts</div>
+              </div>
+              <div class="rc-score-label">
+                ${this.bestScore >= 100 ? "🏆 Excellent!" : this.bestScore >= 50 ? "⭐ Good effort!" : "💪 Keep practicing!"}
+              </div>
+            </div>
+            <div class="rc-details">
+              <div class="rc-detail-row"><span>Best Score</span><span>${this.bestScore} pts</span></div>
+              <div class="rc-detail-row"><span>Latest Score</span><span>${this.score} pts</span></div>
+              <div class="rc-detail-row"><span>Completed On</span><span>${n}</span></div>
+            </div>
+            <div class="rc-submission-box">
+              <p>Submission (Optional)</p>
+              <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code">
+              <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+            </div>
+            <button class="rc-submit-btn" id="submit-score-btn" onclick="this.getRootNode().host._submitScore()">Submit Score</button>
+          </div>
+        </div>
+      `;
+		}
+		this.shadowRoot.innerHTML = `
+      
       <style>
         :host {
           display: block;
@@ -672,141 +779,12 @@ class a extends HTMLElement {
           margin-bottom: 1em;
         }
       </style>
-    `;
-    let r = "";
-    if (this.gameState === "start")
-      r = `
-        <div class="start-screen">
-          <h1>${this.title} 🏎️</h1>
-          <p>Think fast! Points based on speed.</p>
-          <div class="best-score-badge">Best Score: ${this.bestScore}</div>
-          
-          ${this.identityLocked ? `
-            <div class="locked-identity">
-              Playing as: <strong>${this.nickname}</strong> (${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ""}
-            </div>
-          ` : `
-            <div class="identity-form">
-              <div class="input-group">
-                <label for="nickname">Nickname</label>
-                <input type="text" id="nickname" class="input-field" placeholder="e.g. Jake">
-              </div>
-              <div class="input-group">
-                <label for="student-number">Student Number</label>
-                <input type="text" id="student-number" class="input-field" placeholder="e.g. 01">
-              </div>
-              <div class="input-group">
-                <label for="homeroom">Homeroom</label>
-                <input type="text" id="homeroom" class="input-field" placeholder="e.g. 6/1">
-              </div>
-            </div>
-          `}
-
-          <button class="btn-large" onclick="this.getRootNode().host.startGame()">Start Game!</button>
-        </div>
-      `;
-    else if (this.gameState === "playing") {
-      const t = this.currentPool[this.currentIndex];
-      r = `
-        <div class="header">
-          <div class="title-area">
-            <h1>${this.title}</h1>
-            <div class="player-tag">${this.nickname} — ${this.studentNumber}</div>
-            <div class="best-score">Best: ${this.bestScore}</div>
-          </div>
-          <div class="score-display">
-            <div class="best-score">Score</div>
-            <div class="score-val">${this.score}</div>
-          </div>
-        </div>
-
-        <div class="timer-bar">
-          <div class="timer-inner" style="width: ${this.timeLeft / this.timeLimit * 100}%"></div>
-        </div>
-
-        <div class="question-meta">Question ${this.currentIndex + 1} / ${this.currentPool.length} — ${t.category || ""}</div>
-        <div class="question-text">${this.parseMD(t.question)}</div>
-
-        <div class="options-grid">
-          ${this.shuffledOptions.map((i) => {
-        let s = "option-btn";
-        return this.isAnswered && (i === t.answer ? s += " correct" : i === this.userAnswer && (s += " incorrect")), `<button class="${s}" ${this.isAnswered ? "disabled" : ""} onclick="this.getRootNode().host.selectAnswer('${i.replace(/'/g, "\\'")}')"> ${i}</button>`;
-      }).join("")}
-        </div>
-
-        ${this.isAnswered ? `
-          <div class="feedback-area">
-            <div class="feedback-status ${this.isCorrect ? "correct" : "incorrect"}">${this.feedbackText}</div>
-            <div class="explanation">${this.parseMD(this.feedbackExplanation)}</div>
-            <button class="btn-large" onclick="this.getRootNode().host.nextQuestion()">
-              ${this.currentIndex === this.currentPool.length - 1 ? "Finish" : "Next Question"}
-            </button>
-          </div>
-        ` : ""}
-      `;
-    } else if (this.gameState === "gameover") {
-      const t = this.score >= this.bestScore && this.score > 0, i = (/* @__PURE__ */ new Date()).toLocaleString();
-      r = `
-        <div class="end-screen">
-          <h1>Quiz Complete!</h1>
-          <div class="result-identity">
-            Player: <strong>${this.nickname}</strong> (${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ""}
-          </div>
-          <p>Your final score:</p>
-          <div class="final-score">${this.score}</div>
-          ${t ? '<p style="color: #fbbf24; font-weight: 800;">🎉 NEW HIGH SCORE! 🎉</p>' : ""}
-          <div class="best-score-badge">Personal Best: ${this.bestScore}</div>
-
-          <button class="btn-large" onclick="this.getRootNode().host._showReportOverlay()">📄 Generate Report</button>
-          <button class="btn-secondary" onclick="this.getRootNode().host.startGame()">▶ Play Again</button>
-        </div>
-
-        <!-- Report Card Overlay -->
-        <div class="report-overlay" id="report-overlay">
-          <div class="report-modal">
-            <button class="rc-close-btn" onclick="this.getRootNode().host._hideReportOverlay()">✕</button>
-            <div class="rc-header">
-              <div class="rc-icon">📄</div>
-              <div class="rc-title">${this.title}</div>
-              <div class="rc-subtitle">Report Card</div>
-            </div>
-            <div class="rc-student">
-              <span class="rc-label">Student</span>
-              <span class="rc-value">${this.nickname} <span class="rc-number">(${this.studentNumber})${this.homeroom ? ` — ${this.homeroom}` : ""}</span></span>
-            </div>
-            <div class="best-score-highlight">🏆 Best Score: ${this.bestScore} pts</div>
-            <div class="rc-score-row">
-              <div class="rc-score-circle">
-                <div class="rc-score-val">${this.bestScore}</div>
-                <div class="rc-score-pct">pts</div>
-              </div>
-              <div class="rc-score-label">
-                ${this.bestScore >= 100 ? "🏆 Excellent!" : this.bestScore >= 50 ? "⭐ Good effort!" : "💪 Keep practicing!"}
-              </div>
-            </div>
-            <div class="rc-details">
-              <div class="rc-detail-row"><span>Best Score</span><span>${this.bestScore} pts</span></div>
-              <div class="rc-detail-row"><span>Latest Score</span><span>${this.score} pts</span></div>
-              <div class="rc-detail-row"><span>Completed On</span><span>${i}</span></div>
-            </div>
-            <div class="rc-submission-box">
-              <p>Submission (Optional)</p>
-              <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code">
-              <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
-            </div>
-            <button class="rc-submit-btn" id="submit-score-btn" onclick="this.getRootNode().host._submitScore()">Submit Score</button>
-          </div>
-        </div>
-      `;
-    }
-    this.shadowRoot.innerHTML = `
-      ${e}
+    
       <div class="container">
-        ${r}
+        ${e}
       </div>
     `;
-  }
-}
-customElements.get("tj-speed-review") || customElements.define("tj-speed-review", a);
-customElements.get("speed-review") || customElements.define("speed-review", class extends a {
-});
+	}
+};
+customElements.get("tj-speed-review") || customElements.define("tj-speed-review", t), customElements.get("speed-review") || customElements.define("speed-review", class extends t {});
+//#endregion
