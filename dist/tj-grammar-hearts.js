@@ -16,7 +16,7 @@ var t = class extends HTMLElement {
 			number: "",
 			homeroom: "",
 			teacherCode: ""
-		}, this.title = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = "", this.isSubmitting = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
+		}, this.activityTitle = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = "", this.isSubmitting = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
 	}
 	connectedCallback() {
 		let t = e(this);
@@ -61,7 +61,7 @@ var t = class extends HTMLElement {
 		}
 	}
 	_processParsedData(e) {
-		Array.isArray(e) && (e = e[0]), e.title && (this.title = e.title), e.hint && (this.grammarHint = e.hint), e.questions && Array.isArray(e.questions) && (this.questions = e.questions), this.prepRound();
+		Array.isArray(e) && (e = e[0]), e.title && (this.activityTitle = e.title), e.hint && (this.grammarHint = e.hint), e.questions && Array.isArray(e.questions) && (this.questions = e.questions), this.prepRound();
 	}
 	parseMD(e) {
 		return window.marked === void 0 ? e.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>").replace(/\n/g, "<br>") : window.marked.parse(e);
@@ -171,7 +171,7 @@ var t = class extends HTMLElement {
 			nickname: this.studentInfo.nickname,
 			homeroom: this.studentInfo.homeroom || "",
 			studentId: this.studentInfo.number,
-			quizName: "Grammar- " + this.title,
+			quizName: "Grammar- " + this.activityTitle,
 			score: this.bestScore,
 			total: this.totalQuestionsInRound,
 			teacherCode: t
@@ -300,7 +300,7 @@ var t = class extends HTMLElement {
         <div class="report-card">
           <div class="rc-header">
             <div class="rc-icon">📄</div>
-            <div class="rc-title">${this.title}</div>
+            <div class="rc-title">${this.activityTitle}</div>
             <div class="rc-subtitle">Report Card</div>
           </div>
           <div class="rc-student">

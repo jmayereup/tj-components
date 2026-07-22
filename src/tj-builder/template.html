@@ -28,107 +28,100 @@
                 <label for="setting-submission-url">Submission URL (Apps Script Endpoint)</label>
                 <input type="url" id="setting-submission-url" placeholder="https://script.google.com/macros/s/.../exec" />
             </div>
-            <div class="field-group flex-grow">
-                <label for="setting-cdn-url">Script CDN Base URL</label>
-                <input type="url" id="setting-cdn-url" placeholder="https://scripts.teacherjake.com/" value="https://scripts.teacherjake.com/" />
-            </div>
         </div>
     </section>
 
-    <!-- Main Builder Interface -->
-    <div class="builder-main-grid">
+    <!-- Top Section: Paste Input + Export Actions side-by-side -->
+    <div class="builder-top-grid">
         
-        <!-- Left Column: Gemini Paste Box -->
-        <div class="builder-col left-col">
+        <!-- Left: Gemini Paste Box -->
+        <div class="card gemini-input-card">
+            <div class="card-header">
+                <h3>✨ 1. Paste Gemini AI Output</h3>
+                <div class="sample-buttons">
+                    <button type="button" class="btn-sample" id="btn-sample-quiz">Load Sample Quiz</button>
+                    <button type="button" class="btn-sample" id="btn-sample-infogap">Load Sample Info-Gap</button>
+                    <button type="button" class="btn-sample" id="btn-sample-speed">Load Sample Speed Review</button>
+                </div>
+            </div>
+            <textarea id="gemini-input" placeholder="Paste the output from Gemini here (e.g. full element tag, raw JSON, or Markdown with --- section dividers)..."></textarea>
             
-            <div class="card gemini-input-card">
-                <div class="card-header">
-                    <h3>✨ 1. Paste Gemini AI Output</h3>
-                    <div class="sample-buttons">
-                        <button type="button" class="btn-sample" id="btn-sample-quiz">Load Sample Quiz</button>
-                        <button type="button" class="btn-sample" id="btn-sample-infogap">Load Sample Info-Gap</button>
-                        <button type="button" class="btn-sample" id="btn-sample-speed">Load Sample Speed Review</button>
-                    </div>
+            <div class="parser-controls">
+                <div class="component-selector-group">
+                    <label for="component-type-select">Target Component:</label>
+                    <select id="component-type-select">
+                        <option value="tj-quiz-element">tj-quiz-element (Markdown Quiz / Reading)</option>
+                        <option value="tj-info-gap">tj-info-gap (Interactive Information Gap)</option>
+                        <option value="tj-speed-review">tj-speed-review (Flashcards / Speed Match)</option>
+                        <option value="tj-chapter-book">tj-chapter-book (Chapter Book Reader)</option>
+                        <option value="tj-grammar-hearts">tj-grammar-hearts (Grammar Activity)</option>
+                        <option value="tj-listening">tj-listening (Listening Activity)</option>
+                        <option value="tj-progressive-test">tj-progressive-test (Progressive Test)</option>
+                        <option value="tj-pronunciation">tj-pronunciation (Pronunciation Practice)</option>
+                        <option value="tj-reader">tj-reader (Standard Reader)</option>
+                    </select>
                 </div>
-                <textarea id="gemini-input" placeholder="Paste the output from Gemini here (e.g. full element tag, raw JSON, or Markdown with --- section dividers)..."></textarea>
-                
-                <div class="parser-controls">
-                    <div class="component-selector-group">
-                        <label for="component-type-select">Target Component:</label>
-                        <select id="component-type-select">
-                            <option value="tj-quiz-element">tj-quiz-element (Markdown Quiz / Reading)</option>
-                            <option value="tj-info-gap">tj-info-gap (Interactive Information Gap)</option>
-                            <option value="tj-speed-review">tj-speed-review (Flashcards / Speed Match)</option>
-                            <option value="tj-chapter-book">tj-chapter-book (Chapter Book Reader)</option>
-                            <option value="tj-grammar-hearts">tj-grammar-hearts (Grammar Activity)</option>
-                            <option value="tj-listening">tj-listening (Listening Activity)</option>
-                            <option value="tj-progressive-test">tj-progressive-test (Progressive Test)</option>
-                            <option value="tj-pronunciation">tj-pronunciation (Pronunciation Practice)</option>
-                            <option value="tj-reader">tj-reader (Standard Reader)</option>
-                        </select>
-                    </div>
-                    <button type="button" class="btn-primary" id="btn-parse">Parse & Format</button>
-                </div>
+                <button type="button" class="btn-primary" id="btn-parse">Parse & Format</button>
             </div>
-
-            <!-- Question / Content Editor Tabs -->
-            <div class="card editor-card">
-                <div class="card-header border-bottom">
-                    <div class="tab-buttons">
-                        <button type="button" class="tab-btn active" data-tab="visual">🛠️ Visual Question Editor</button>
-                        <button type="button" class="tab-btn" data-tab="raw">💻 Raw Code Editor</button>
-                    </div>
-                    <span class="detected-badge" id="detected-type-badge">tj-quiz-element</span>
-                </div>
-
-                <!-- Tab 1: Visual Form View -->
-                <div class="tab-content active" id="tab-visual-content">
-                    <div id="visual-form-container">
-                        <!-- Dynamic Form Fields standard & component specific -->
-                    </div>
-                </div>
-
-                <!-- Tab 2: Raw Code View -->
-                <div class="tab-content" id="tab-raw-content">
-                    <textarea id="raw-code-editor" spellcheck="false"></textarea>
-                </div>
-            </div>
-
         </div>
 
-        <!-- Right Column: Actions & Embed Generator -->
-        <div class="builder-col right-col">
-            
-            <div class="card action-card">
-                <div class="card-header">
-                    <h3>📋 2. Export & Actions</h3>
-                </div>
-                <div class="action-card-body">
-                    <div class="action-options">
-                        <label class="toggle-label">
-                            <input type="checkbox" id="chk-include-script" checked />
-                            Include CDN Script Tag in Embed Code
-                        </label>
-                    </div>
-
-                    <div class="action-buttons-group">
-                        <button type="button" class="btn-copy-large" id="btn-copy-code">
-                            <span class="btn-icon">📋</span>
-                            <span class="btn-text">Copy Exact Embed Code</span>
-                        </button>
-
-                        <button type="button" class="btn-preview-modal" id="btn-open-preview">
-                            <span class="btn-icon">👁️</span>
-                            <span class="btn-text">Live Component Preview</span>
-                        </button>
-                    </div>
-
-                    <div class="embed-code-hidden" style="display:none;" id="embed-code-display"></div>
-                </div>
+        <!-- Right: Export & Actions Card -->
+        <div class="card action-card">
+            <div class="card-header">
+                <h3>📋 2. Export & Actions</h3>
             </div>
+            <div class="action-card-body">
+                <div class="action-options">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="chk-include-script" checked />
+                        Include CDN Script Tag in Embed Code
+                    </label>
+                </div>
 
+                <div class="action-buttons-group">
+                    <button type="button" class="btn-copy-large" id="btn-copy-code">
+                        <span class="btn-icon">📋</span>
+                        <span class="btn-text">Copy Exact Embed Code</span>
+                    </button>
+
+                    <button type="button" class="btn-preview-modal" id="btn-open-preview">
+                        <span class="btn-icon">👁️</span>
+                        <span class="btn-text">Live Component Preview</span>
+                    </button>
+                </div>
+
+                <div class="export-tip">
+                    <span class="tip-icon">💡</span>
+                    <span class="tip-text">Paste the embed code into your blog or website HTML editor. Use Live Preview to test interactivity before publishing.</span>
+                </div>
+
+                <div class="embed-code-hidden" style="display:none;" id="embed-code-display"></div>
+            </div>
         </div>
 
+    </div>
+
+    <!-- Question / Content Editor Tabs (Full Width) -->
+    <div class="card editor-card">
+        <div class="card-header border-bottom">
+            <div class="tab-buttons">
+                <button type="button" class="tab-btn active" data-tab="visual">🛠️ Visual Question Editor</button>
+                <button type="button" class="tab-btn" data-tab="raw">💻 Raw Code Editor</button>
+            </div>
+            <span class="detected-badge" id="detected-type-badge">tj-quiz-element</span>
+        </div>
+
+        <!-- Tab 1: Visual Form View -->
+        <div class="tab-content active" id="tab-visual-content">
+            <div id="visual-form-container">
+                <!-- Dynamic Form Fields standard & component specific -->
+            </div>
+        </div>
+
+        <!-- Tab 2: Raw Code View -->
+        <div class="tab-content" id="tab-raw-content">
+            <textarea id="raw-code-editor" spellcheck="false"></textarea>
+        </div>
     </div>
 
     <!-- Live Preview Modal -->

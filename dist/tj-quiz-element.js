@@ -44,7 +44,7 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 		this.teacherCode = e;
 	}
 	constructor() {
-		super(), this.attachShadow({ mode: "open" }), this.questionBank = [], this.passages = [], this.selectedVoiceName = null, this.isPlayingAll = !1, this.instructions = [], this.questionGroups = [], this.orderedSections = [], this.currentQuestions = [], this.score = 0, this.questionsAnswered = 0, this.questionsToDisplay = 5, this.totalQuestions = 0, this.audioPlayer = null, this.utterance = null, this.audioSrc = "", this.currentAudioButton = null, this.submissionUrl = "", this.title = "", this.passage = "", this.vocabularySections = [], this.vocabUserChoices = {}, this.vocabScore = 0, this.vocabSubmitted = !1, this.clozeSections = [], this.clozeAnswers = {}, this.clozeScore = 0, this.clozeSubmitted = !1, this.userQuestionAnswers = {}, this.quizUnlocked = !0, this.autoSubmissionInProgress = !1, this.scoreSubmitted = !1, this.scoreSentToServer = !1, this.ttsPaused = !1, this.tabAwayCount = 0, this.isVisibilityLocked = !1, this._visibilityHandler = null;
+		super(), this.attachShadow({ mode: "open" }), this.questionBank = [], this.passages = [], this.selectedVoiceName = null, this.isPlayingAll = !1, this.instructions = [], this.questionGroups = [], this.orderedSections = [], this.currentQuestions = [], this.score = 0, this.questionsAnswered = 0, this.questionsToDisplay = 5, this.totalQuestions = 0, this.audioPlayer = null, this.utterance = null, this.audioSrc = "", this.currentAudioButton = null, this.submissionUrl = "", this.activityTitle = "", this.passage = "", this.vocabularySections = [], this.vocabUserChoices = {}, this.vocabScore = 0, this.vocabSubmitted = !1, this.clozeSections = [], this.clozeAnswers = {}, this.clozeScore = 0, this.clozeSubmitted = !1, this.userQuestionAnswers = {}, this.quizUnlocked = !0, this.autoSubmissionInProgress = !1, this.scoreSubmitted = !1, this.scoreSentToServer = !1, this.ttsPaused = !1, this.tabAwayCount = 0, this.isVisibilityLocked = !1, this._visibilityHandler = null;
 	}
 	attributeChangedCallback(e, t) {
 		e === "submission-url" ? this.submissionUrl = t : e === "test-mode" && this.isConnected && (t === null ? this.unlockQuizContent() : this.lockQuizContent(this.isVisibilityLocked));
@@ -156,7 +156,7 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 		let t = e.split("---").map((e) => e.trim());
 		if (t.length >= 1) {
 			let e = t[0].trim().split("\n").map((e) => e.trim()).filter((e) => e.length > 0);
-			e.length > 0 && (this.title = e[0]);
+			e.length > 0 && (this.activityTitle = e[0]);
 		}
 		let n = null, r = null;
 		for (let e = 1; e < t.length; e++) {
@@ -242,10 +242,10 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 				default: n = null;
 			}
 		}
-		this.title && (this.shadowRoot.getElementById("quizTitle").textContent = this.title);
+		this.activityTitle && (this.shadowRoot.getElementById("quizTitle").textContent = this.activityTitle);
 		let i = this.questionGroups.reduce((e, t) => e + (t.questions ? t.questions.length : 0), 0);
 		console.log("Parsed:", {
-			title: this.title,
+			title: this.activityTitle,
 			passages: this.passages.length,
 			passageLength: this.passage.length,
 			vocabularySections: this.vocabularySections.length,
@@ -747,7 +747,7 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 		return this.shadowRoot.getElementById("teacherCode");
 	}
 	getStorageKey() {
-		return `tj-quiz-result-${(this.title || "untitled-quiz").toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
+		return `tj-quiz-result-${(this.activityTitle || "untitled-quiz").toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
 	}
 	saveToLocalStorage(e) {
 		try {
@@ -970,7 +970,7 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
                     </div>
                 `), t.innerHTML = `
                 <div class="score-report-card">
-                    <div class="result-title">${this.title}</div>
+                    <div class="result-title">${this.activityTitle}</div>
                     <div class="result-subtitle">Performance Report</div>
                     <div class="student-details">
                         <div><strong>NAME:</strong> ${p}</div>
@@ -1019,7 +1019,7 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 		}
 		this.vocabScore;
 		let s = this.getTotalVocabWords(), c = this.clozeSections.reduce((e, t) => e + t.words.length, 0), l = this.currentQuestions.filter((e) => e.o && e.o.length > 0).length, u = s + c + l, d = this.vocabScore + this.clozeScore + this.score, f = {
-			quizName: this.title,
+			quizName: this.activityTitle,
 			nickname: this.shadowRoot.getElementById("nickname").value,
 			homeroom: this.shadowRoot.getElementById("homeroom").value,
 			studentId: this.shadowRoot.getElementById("studentId").value,

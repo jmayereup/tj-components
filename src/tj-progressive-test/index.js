@@ -74,7 +74,7 @@ class TjProgressiveTest extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        this.title = 'Progressive Language Placement Test';
+        this.activityTitle = 'Progressive Language Placement Test';
         this.sections = []; // Array of section objects parsed from content
         this.activeSectionIndex = 0;
         this.sectionResults = []; // Array of result objects per section
@@ -249,9 +249,9 @@ class TjProgressiveTest extends HTMLElement {
         let firstBlock = rawSections[0];
         const lines = firstBlock.split('\n').map(l => l.trim()).filter(Boolean);
         if (lines.length > 0 && !lines[0].startsWith('section') && !lines[0].startsWith('text') && !lines[0].startsWith('questions')) {
-            this.title = lines[0];
+            this.activityTitle = lines[0];
             const titleElem = this.shadowRoot.getElementById('testTitle');
-            if (titleElem) titleElem.textContent = this.title;
+            if (titleElem) titleElem.textContent = this.activityTitle;
         }
 
         let currentSection = null;
@@ -870,7 +870,7 @@ class TjProgressiveTest extends HTMLElement {
     async submitScoreReport() {
         const msgElem = this.shadowRoot.getElementById('submitStatusMsg');
         const payload = {
-            title: this.title,
+            title: this.activityTitle,
             timestamp: new Date().toISOString(),
             tabAwayCount: this.tabAwayCount,
             sectionResults: this.sectionResults,
@@ -909,7 +909,7 @@ class TjProgressiveTest extends HTMLElement {
     }
 
     getStorageKey() {
-        return `tj_progressive_test_${location.pathname}_${this.title.replace(/\s+/g, '_')}`;
+        return `tj_progressive_test_${location.pathname}_${this.activityTitle.replace(/\s+/g, '_')}`;
     }
 
     saveStateToLocalStorage() {

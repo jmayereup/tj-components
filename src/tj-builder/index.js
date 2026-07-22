@@ -124,7 +124,6 @@ class TjBuilder extends HTMLElement {
         this.inputStartCode = this.shadowRoot.getElementById('setting-start-code');
         this.inputTeacherCode = this.shadowRoot.getElementById('setting-teacher-code');
         this.inputSubmissionUrl = this.shadowRoot.getElementById('setting-submission-url');
-        this.inputCdnUrl = this.shadowRoot.getElementById('setting-cdn-url');
         
         this.inputGemini = this.shadowRoot.getElementById('gemini-input');
         this.selectComponentType = this.shadowRoot.getElementById('component-type-select');
@@ -150,7 +149,6 @@ class TjBuilder extends HTMLElement {
         this.inputStartCode.value = this.currentSettings.startCode;
         this.inputTeacherCode.value = this.currentSettings.teacherCode;
         this.inputSubmissionUrl.value = this.currentSettings.submissionUrl;
-        this.inputCdnUrl.value = this.currentSettings.cdnBaseUrl;
     }
 
     _bindEvents() {
@@ -160,13 +158,13 @@ class TjBuilder extends HTMLElement {
                 startCode: this.inputStartCode.value.trim() || '1234',
                 teacherCode: this.inputTeacherCode.value.trim() || '7676',
                 submissionUrl: this.inputSubmissionUrl.value.trim(),
-                cdnBaseUrl: this.inputCdnUrl.value.trim() || 'https://scripts.teacherjake.com/'
+                cdnBaseUrl: 'https://scripts.teacherjake.com/'
             };
             this._saveSettings();
             this._updateOutputs();
         };
 
-        [this.inputStartCode, this.inputTeacherCode, this.inputSubmissionUrl, this.inputCdnUrl].forEach(input => {
+        [this.inputStartCode, this.inputTeacherCode, this.inputSubmissionUrl].forEach(input => {
             input.addEventListener('input', handleSettingChange);
         });
 
@@ -600,8 +598,7 @@ class TjBuilder extends HTMLElement {
     _buildExactEmbedCode() {
         const componentType = this._getCleanTagName(this.parsedState.componentType);
         const { rawContent, isJson } = this.parsedState;
-        const { startCode, teacherCode, submissionUrl, cdnBaseUrl } = this.currentSettings;
-
+        const cdnBaseUrl = this.currentSettings.cdnBaseUrl || 'https://scripts.teacherjake.com/';
         const cleanCdnBase = cdnBaseUrl.endsWith('/') ? cdnBaseUrl : `${cdnBaseUrl}/`;
         const scriptUrl = `${cleanCdnBase}${componentType}.js`;
         const includeScript = this.chkIncludeScript.checked;
@@ -609,6 +606,10 @@ class TjBuilder extends HTMLElement {
         // MUST include type="module" so browsers load ES module scripts without throwing "Cannot use import statement outside a module"
         let scriptTag = includeScript ? `<script type="module" src="${scriptUrl}"></script>\n` : '';
         
+        const startCode = this.currentSettings.startCode || '1234';
+        const teacherCode = this.currentSettings.teacherCode || '7676';
+        const submissionUrl = this.currentSettings.submissionUrl;
+
         let attrs = `start-code="${startCode}" teacher-code="${teacherCode}"`;
         if (submissionUrl) {
             attrs += ` submission-url="${submissionUrl}"`;

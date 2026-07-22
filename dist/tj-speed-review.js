@@ -8,7 +8,7 @@ var t = class extends HTMLElement {
 		e == null ? this.removeAttribute("code") : this.setAttribute("code", e);
 	}
 	constructor() {
-		super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.title = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = "", this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
+		super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.activityTitle = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = "", this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
 	}
 	connectedCallback() {
 		let t = e(this);
@@ -60,7 +60,7 @@ var t = class extends HTMLElement {
 		}
 	}
 	_processParsedData(e) {
-		Array.isArray(e) && (e = e[0]), e.title && (this.title = e.title), e.questions && (this.questions = e.questions);
+		Array.isArray(e) && (e = e[0]), e.title && (this.activityTitle = e.title), e.questions && (this.questions = e.questions);
 	}
 	parseMD(e) {
 		return window.marked && e ? window.marked.parseInline(e) : e || "";
@@ -138,7 +138,7 @@ var t = class extends HTMLElement {
 			nickname: this.nickname,
 			homeroom: this.homeroom || "",
 			studentId: this.studentNumber,
-			quizName: "Speed- " + this.title,
+			quizName: "Speed- " + this.activityTitle,
 			score: this.bestScore,
 			total: this.questionsPerRound
 		};
@@ -157,7 +157,7 @@ var t = class extends HTMLElement {
 		let e = "";
 		if (this.gameState === "start") e = `
         <div class="start-screen">
-          <h1>${this.title} 🏎️</h1>
+          <h1>${this.activityTitle} 🏎️</h1>
           <p>Think fast! Points based on speed.</p>
           <div class="best-score-badge">Best Score: ${this.bestScore}</div>
           
@@ -175,7 +175,7 @@ var t = class extends HTMLElement {
 			e = `
         <div class="header">
           <div class="title-area">
-            <h1>${this.title}</h1>
+            <h1>${this.activityTitle}</h1>
             <div class="player-tag">${this.nickname} — ${this.studentNumber}</div>
             <div class="best-score">Best: ${this.bestScore}</div>
           </div>
@@ -232,7 +232,7 @@ var t = class extends HTMLElement {
             <button class="rc-close-btn" onclick="this.getRootNode().host._hideReportOverlay()">✕</button>
             <div class="rc-header">
               <div class="rc-icon">📄</div>
-              <div class="rc-title">${this.title}</div>
+              <div class="rc-title">${this.activityTitle}</div>
               <div class="rc-subtitle">Report Card</div>
             </div>
             <div class="rc-student">

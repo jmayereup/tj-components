@@ -26,7 +26,7 @@ class TjSpeedReview extends HTMLElement {
     this.timeLeft = 15;
     this.timeLimit = 15;
     this.timerInterval = null;
-    this.title = 'Speed Review';
+    this.activityTitle = 'Speed Review';
     this.questionsPerRound = 10;
 
     // Identity state
@@ -166,7 +166,7 @@ class TjSpeedReview extends HTMLElement {
 
   _processParsedData(data) {
       if (Array.isArray(data)) data = data[0];
-      if (data.title) this.title = data.title;
+      if (data.title) this.activityTitle = data.title;
       if (data.questions) this.questions = data.questions;
   }
 
@@ -328,7 +328,7 @@ class TjSpeedReview extends HTMLElement {
       nickname: this.nickname,
       homeroom: this.homeroom || '',
       studentId: this.studentNumber,
-      quizName: 'Speed- ' + this.title,
+      quizName: 'Speed- ' + this.activityTitle,
       score: this.bestScore,
       total: this.questionsPerRound
     };
@@ -889,7 +889,7 @@ class TjSpeedReview extends HTMLElement {
     if (this.gameState === 'start') {
       content = `
         <div class="start-screen">
-          <h1>${this.title} 🏎️</h1>
+          <h1>${this.activityTitle} 🏎️</h1>
           <p>Think fast! Points based on speed.</p>
           <div class="best-score-badge">Best Score: ${this.bestScore}</div>
           
@@ -922,7 +922,7 @@ class TjSpeedReview extends HTMLElement {
       content = `
         <div class="header">
           <div class="title-area">
-            <h1>${this.title}</h1>
+            <h1>${this.activityTitle}</h1>
             <div class="player-tag">${this.nickname} — ${this.studentNumber}</div>
             <div class="best-score">Best: ${this.bestScore}</div>
           </div>
@@ -984,7 +984,7 @@ class TjSpeedReview extends HTMLElement {
             <button class="rc-close-btn" onclick="this.getRootNode().host._hideReportOverlay()">✕</button>
             <div class="rc-header">
               <div class="rc-icon">📄</div>
-              <div class="rc-title">${this.title}</div>
+              <div class="rc-title">${this.activityTitle}</div>
               <div class="rc-subtitle">Report Card</div>
             </div>
             <div class="rc-student">

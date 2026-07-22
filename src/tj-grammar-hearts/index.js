@@ -28,7 +28,7 @@ class TjGrammarHearts extends HTMLElement {
     this.bestScore = 0;
     this.grammarHint = { summary: '', content: '' };
     this.studentInfo = { nickname: '', number: '', homeroom: '', teacherCode: '' };
-    this.title = 'Grammar Practice';
+    this.activityTitle = 'Grammar Practice';
     this.formError = '';
     this.submissionError = '';
 
@@ -152,7 +152,7 @@ class TjGrammarHearts extends HTMLElement {
       }
 
       if (data.title) {
-        this.title = data.title;
+        this.activityTitle = data.title;
       }
 
       if (data.hint) {
@@ -467,7 +467,7 @@ class TjGrammarHearts extends HTMLElement {
       nickname: this.studentInfo.nickname,
       homeroom: this.studentInfo.homeroom || '',
       studentId: this.studentInfo.number,
-      quizName: 'Grammar- ' + this.title,
+      quizName: 'Grammar- ' + this.activityTitle,
       score: this.bestScore,
       total: this.totalQuestionsInRound,
       teacherCode: currentTeacherCode
@@ -1247,7 +1247,7 @@ class TjGrammarHearts extends HTMLElement {
         <div class="report-card">
           <div class="rc-header">
             <div class="rc-icon">📄</div>
-            <div class="rc-title">${this.title}</div>
+            <div class="rc-title">${this.activityTitle}</div>
             <div class="rc-subtitle">Report Card</div>
           </div>
           <div class="rc-student">

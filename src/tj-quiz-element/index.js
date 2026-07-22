@@ -92,7 +92,7 @@ class TjQuizElement extends HTMLElement {
         this.audioSrc = '';
         this.currentAudioButton = null; // currently-playing passage audio button (for icon state)
         this.submissionUrl = '';
-        this.title = '';
+        this.activityTitle = '';
         this.passage = '';
         this.vocabularySections = []; // Array of vocabulary sections
         this.vocabUserChoices = {}; // Track what user selected for each word (section-word key)
@@ -391,7 +391,7 @@ class TjQuizElement extends HTMLElement {
             const lines = titleSection.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
             if (lines.length > 0) {
-                this.title = lines[0]; // First line is title
+                this.activityTitle = lines[0]; // First line is title
             }
         }
 
@@ -476,13 +476,13 @@ class TjQuizElement extends HTMLElement {
         }
 
         // Update the rendered content title if found
-        if (this.title) {
-            this.shadowRoot.getElementById('quizTitle').textContent = this.title;
+        if (this.activityTitle) {
+            this.shadowRoot.getElementById('quizTitle').textContent = this.activityTitle;
         }
 
         const totalQuestionsParsed = this.questionGroups.reduce((sum, g) => sum + (g.questions ? g.questions.length : 0), 0);
         console.log('Parsed:', {
-            title: this.title,
+            title: this.activityTitle,
             passages: this.passages.length,
             passageLength: this.passage.length,
             vocabularySections: this.vocabularySections.length,
@@ -1732,7 +1732,7 @@ class TjQuizElement extends HTMLElement {
     }
 
     getStorageKey() {
-        const titleSlug = (this.title || 'untitled-quiz').toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const titleSlug = (this.activityTitle || 'untitled-quiz').toLowerCase().replace(/[^a-z0-9]/g, '-');
         return `tj-quiz-result-${titleSlug}`;
     }
 
@@ -2261,7 +2261,7 @@ class TjQuizElement extends HTMLElement {
 
             resultScore.innerHTML = `
                 <div class="score-report-card">
-                    <div class="result-title">${this.title}</div>
+                    <div class="result-title">${this.activityTitle}</div>
                     <div class="result-subtitle">Performance Report</div>
                     <div class="student-details">
                         <div><strong>NAME:</strong> ${nickname}</div>
@@ -2377,7 +2377,7 @@ class TjQuizElement extends HTMLElement {
         const totalEarned = this.vocabScore + this.clozeScore + this.score;
 
         const studentData = {
-            quizName: this.title,
+            quizName: this.activityTitle,
             nickname: this.shadowRoot.getElementById('nickname').value,
             homeroom: this.shadowRoot.getElementById('homeroom').value,
             studentId: this.shadowRoot.getElementById('studentId').value,
