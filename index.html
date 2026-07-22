@@ -674,6 +674,27 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Progressive Test -->
+                <div class="card">
+                    <div class="card-icon">📈</div>
+                    <h3>Progressive Test</h3>
+                    <p>Multi-stage level placement test where students unlock subsequent levels by meeting target score cutoffs.</p>
+                    <div class="card-actions">
+                        <a href="src/tj-progressive-test/test-progressive.html" class="btn-card btn-demo">
+                            View Demo
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                        <button class="btn-card btn-copy" onclick="copyEmbedCode('tj-progressive-test', this)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Code (Practice Mode)
+                        </button>
+                        <button class="btn-card btn-copy" onclick="copyEmbedCode('tj-progressive-test-test', this)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Code (Test Mode)
+                        </button>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -697,6 +718,7 @@
 &lt;script type="module" src="https://scripts.teacherjake.com/tj-quiz-element.js"&gt;&lt;/script&gt;
 &lt;script type="module" src="https://scripts.teacherjake.com/tj-chapter-book.js"&gt;&lt;/script&gt;
 &lt;script type="module" src="https://scripts.teacherjake.com/tj-pronunciation.js"&gt;&lt;/script&gt;
+&lt;script type="module" src="https://scripts.teacherjake.com/tj-progressive-test.js"&gt;&lt;/script&gt;
 
 &lt;!-- Required Fonts --&gt;
 &lt;link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"&gt;</code></pre>
@@ -1044,6 +1066,46 @@ function doPost(e) {
                         <p>Rebuild spoken sentences by dragging words into order with distractors.</p>
                     </div>
                 </div>
+
+                <!-- Progressive Test -->
+                <h3>9. Progressive Test (<code>&lt;tj-progressive-test&gt;</code>)</h3>
+                <p>Multi-stage level placement test where students unlock subsequent levels by meeting target score cutoffs.</p>
+                <pre><code>&lt;tj-progressive-test test-mode start-code="1234" teacher-code="7676" pass-threshold="75%" submission-url="YOUR_GAS_URL"&gt;
+&lt;script type="text/markdown"&gt;
+CEFR English Placement Assessment
+
+---section title="Level A1 - Beginner" pass=70%
+---text
+Hello! My name is Alex. I live in London with my family. Every morning, I wake up at 7:00 AM and have breakfast.
+
+---questions-2
+Q: What time does Alex wake up in the morning?
+A: 6:30 AM
+A: 7:00 AM [correct]
+A: 8:30 AM
+
+---vocab
+Breakfast: A meal eaten in the morning, the first meal of the day.
+
+---cloze
+1. Every morning, I wake up and eat *breakfast*.
+&lt;/script&gt;
+&lt;/tj-progressive-test&gt;</code></pre>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>📈 Progressive Sections</h4>
+                        <p>Use <code>---section title="..." pass=70%</code> to split placement levels and set unlock cutoffs.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🔒 Test Mode</h4>
+                        <p>Add <code>test-mode</code> attribute to lock behind <code>start-code</code> and track tab-switching.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🎯 Pass Threshold</h4>
+                        <p>Set default or section-specific target percentage to progress to higher levels.</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1171,7 +1233,7 @@ function doPost(e) {
             'tj-quiz-element': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <script type="module" src="https://scripts.teacherjake.com/tj-quiz-element.js"><\/script>
 
-<tj-quiz-element test-mode start-code="1234" teacher-code="7676" submission-url="YOUR_GAS_URL">
+<tj-quiz-element submission-url="YOUR_GAS_URL">
 <script type="text/markdown">
 B1 English Practice: Past Simple & Past Continuous
 
@@ -1195,7 +1257,7 @@ A: Sleeping
             'tj-quiz-element-test': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <script type="module" src="https://scripts.teacherjake.com/tj-quiz-element.js"><\/script>
 
-<tj-quiz-element test-mode start-code="6767" teacher-code="7676" submission-url="YOUR_GAS_URL">
+<tj-quiz-element test-mode start-code="1234" teacher-code="7676" submission-url="YOUR_GAS_URL">
 <script type="text/markdown">
 B1 English Practice: Past Simple & Past Continuous
 
@@ -1253,7 +1315,57 @@ A: Sleeping
     }
   ]
 }
-</tj-pronunciation>`
+</tj-pronunciation>`,
+
+            'tj-progressive-test': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script type="module" src="https://scripts.teacherjake.com/tj-progressive-test.js"><\/script>
+
+<tj-progressive-test pass-threshold="75%" submission-url="YOUR_GAS_URL">
+<script type="text/markdown">
+CEFR English Placement Assessment
+
+---section title="Level A1 - Beginner" pass=70%
+---text
+Hello! My name is Alex. I live in London with my family. Every morning, I wake up at 7:00 AM and have breakfast.
+
+---questions-2
+Q: What time does Alex wake up in the morning?
+A: 6:30 AM
+A: 7:00 AM [correct]
+A: 8:30 AM
+
+---vocab
+Breakfast: A meal eaten in the morning, the first meal of the day.
+
+---cloze
+1. Every morning, I wake up and eat *breakfast*.
+<\/script>
+</tj-progressive-test>`,
+
+            'tj-progressive-test-test': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script type="module" src="https://scripts.teacherjake.com/tj-progressive-test.js"><\/script>
+
+<tj-progressive-test test-mode start-code="1234" teacher-code="7676" pass-threshold="75%" submission-url="YOUR_GAS_URL">
+<script type="text/markdown">
+CEFR English Placement Assessment
+
+---section title="Level A1 - Beginner" pass=70%
+---text
+Hello! My name is Alex. I live in London with my family. Every morning, I wake up at 7:00 AM and have breakfast.
+
+---questions-2
+Q: What time does Alex wake up in the morning?
+A: 6:30 AM
+A: 7:00 AM [correct]
+A: 8:30 AM
+
+---vocab
+Breakfast: A meal eaten in the morning, the first meal of the day.
+
+---cloze
+1. Every morning, I wake up and eat *breakfast*.
+<\/script>
+</tj-progressive-test>`
         };
 
         let currentActiveSnippet = '';

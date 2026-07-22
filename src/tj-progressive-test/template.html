@@ -1,0 +1,87 @@
+<div class="tj-progressive-wrapper">
+    <!-- Warning Banner for Tab Switches -->
+    <div id="tabAwayBanner" class="tj-banner tj-banner-warning hidden"></div>
+
+    <!-- Start Test Lock Overlay (Test Mode) -->
+    <div id="startLockOverlay" class="tj-overlay">
+        <div class="tj-modal-card">
+            <div class="tj-modal-icon">🔒</div>
+            <h3 class="tj-h3">Language Placement Test</h3>
+            <p>Please enter the Start Code provided by your teacher/instructor to begin the test.</p>
+            <div class="tj-form-group">
+                <input type="text" id="startCodeInput" class="tj-input" placeholder="Enter Start Code (e.g. 1234)" autocomplete="off">
+            </div>
+            <div id="startCodeError" class="tj-error-msg hidden">Invalid start code. Please check and try again.</div>
+            <button id="unlockStartBtn" class="tj-btn tj-btn-primary" style="width: 100%; margin-top: 1rem;">Begin Test</button>
+        </div>
+    </div>
+
+    <!-- Teacher Lock Overlay (Tab Away / Security Trigger) -->
+    <div id="teacherLockOverlay" class="tj-overlay">
+        <div class="tj-modal-card">
+            <div class="tj-modal-icon">⚠️</div>
+            <h3 class="tj-h3" style="color: var(--tj-error-color);">Test Locked</h3>
+            <p>You left the test window or refreshed the page. A teacher must enter the Teacher Code to resume your test.</p>
+            <div class="tj-form-group">
+                <input type="password" id="teacherCodeInput" class="tj-input" placeholder="Enter Teacher Code (e.g. 7676)" autocomplete="off">
+            </div>
+            <div id="teacherCodeError" class="tj-error-msg hidden">Invalid teacher code.</div>
+            <button id="unlockTeacherBtn" class="tj-btn tj-btn-error" style="width: 100%; margin-top: 1rem;">Unlock Test</button>
+        </div>
+    </div>
+
+    <!-- Browser Support Prompt Overlay -->
+    <div id="browser-prompt-overlay" class="tj-overlay">
+        <div class="tj-modal-card">
+            <h3 class="tj-h3">Browser Feature Notice</h3>
+            <p>Audio playback and Speech synthesis require a modern browser like Chrome or Safari.</p>
+            <a id="browser-action-btn" class="tj-btn tj-btn-primary" href="#" style="text-decoration: none;">Continue</a>
+        </div>
+    </div>
+
+    <!-- Voice Selector Modal Overlay -->
+    <div id="voiceOverlay" class="tj-overlay voice-overlay hidden">
+        <div class="tj-modal-card">
+            <h3 class="tj-h3">Select Audio Voice</h3>
+            <div class="voice-list"></div>
+            <button id="closeVoiceOverlayBtn" class="tj-btn tj-btn-secondary" style="margin-top: 1rem; width: 100%;">Close</button>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="tj-header">
+        <div class="tj-header-title-row">
+            <h2 id="testTitle" class="tj-test-title">Progressive Language Placement Test</h2>
+            <button id="voice-btn" class="tj-icon-btn hidden" title="Select Voice">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Level Stepper Navigation -->
+        <div id="levelStepper" class="tj-level-stepper"></div>
+    </header>
+
+    <!-- Active Section Main Content Container -->
+    <main id="activeSectionContainer" class="tj-main-content"></main>
+
+    <!-- Section Result Transition Modal (Passed or Failed section) -->
+    <div id="sectionResultModal" class="tj-overlay">
+        <div class="tj-modal-card tj-result-modal-card">
+            <div id="resultModalIcon" class="tj-result-icon">🎉</div>
+            <h3 id="resultModalTitle" class="tj-h3">Level Passed!</h3>
+            <div id="resultModalScoreBadge" class="tj-score-badge">85%</div>
+            <p id="resultModalMessage" class="tj-result-msg">Great job! You met the passing threshold of 75% for this level.</p>
+            <div id="resultModalDetails" class="tj-result-details"></div>
+            <div class="tj-modal-actions">
+                <button id="resultModalContinueBtn" class="tj-btn tj-btn-success" style="width: 100%;">Proceed to Next Section →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Test Placement Report Container -->
+    <div id="finalReportContainer" class="tj-final-report hidden"></div>
+</div>
