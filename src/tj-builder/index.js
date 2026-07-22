@@ -60,7 +60,8 @@ class TjBuilder extends HTMLElement {
             startCode: '1234',
             teacherCode: '7676',
             submissionUrl: DEFAULT_SUBMISSION_URL,
-            cdnBaseUrl: 'https://scripts.teacherjake.com/'
+            cdnBaseUrl: 'https://scripts.teacherjake.com/',
+            isTestMode: false
         };
 
         this.parsedState = {
@@ -135,6 +136,8 @@ class TjBuilder extends HTMLElement {
         
         this.embedCodeDisplay = this.shadowRoot.getElementById('embed-code-display');
         this.chkIncludeScript = this.shadowRoot.getElementById('chk-include-script');
+        this.chkTestMode = this.shadowRoot.getElementById('chk-test-mode');
+        this.modeToggleContainer = this.shadowRoot.getElementById('mode-toggle-container');
         this.btnCopyCode = this.shadowRoot.getElementById('btn-copy-code');
         this.btnCopyModal = this.shadowRoot.getElementById('btn-copy-modal');
         
@@ -149,12 +152,16 @@ class TjBuilder extends HTMLElement {
         this.inputStartCode.value = this.currentSettings.startCode;
         this.inputTeacherCode.value = this.currentSettings.teacherCode;
         this.inputSubmissionUrl.value = this.currentSettings.submissionUrl;
+        if (this.chkTestMode) {
+            this.chkTestMode.checked = !!this.currentSettings.isTestMode;
+        }
     }
 
     _bindEvents() {
         // Setting inputs change
         const handleSettingChange = () => {
             this.currentSettings = {
+                ...this.currentSettings,
                 startCode: this.inputStartCode.value.trim() || '1234',
                 teacherCode: this.inputTeacherCode.value.trim() || '7676',
                 submissionUrl: this.inputSubmissionUrl.value.trim(),
@@ -206,8 +213,13 @@ class TjBuilder extends HTMLElement {
             this._updateOutputs({ skipRawEditorUpdate: true });
         });
 
-        // Copy button & include script toggle
+        // Copy button & include script / test mode toggles
         this.chkIncludeScript.addEventListener('change', () => this._updateOutputs());
+        this.chkTestMode?.addEventListener('change', () => {
+            this.currentSettings.isTestMode = this.chkTestMode.checked;
+            this._saveSettings();
+            this._updateOutputs();
+        });
         this.btnCopyCode.addEventListener('click', () => this._copyEmbedCode(this.btnCopyCode));
         this.btnCopyModal.addEventListener('click', () => this._copyEmbedCode(this.btnCopyModal));
 
@@ -244,6 +256,10 @@ class TjBuilder extends HTMLElement {
         const tagMatch = raw.match(/<(?:\s*)(tj-[a-z0-9-]+)[\s>]/i);
         if (tagMatch) {
             detectedType = tagMatch[1].toLowerCase();
+            if (raw.toLowerCase().includes('test-mode')) {
+                if (this.chkTestMode) this.chkTestMode.checked = true;
+                this.currentSettings.isTestMode = true;
+            }
             const closingTagRegex = new RegExp(`<${detectedType}\\b[^>]*>([\\s\\S]*?)(?:<\\/${detectedType}>|$)`, 'i');
             const innerMatch = raw.match(closingTagRegex);
             if (innerMatch && innerMatch[1].trim()) {
@@ -587,6 +603,25 @@ class TjBuilder extends HTMLElement {
             this.rawCodeEditor.value = this.parsedState.rawContent;
         }
 
+        const componentType = this._getCleanTagName(this.parsedState.componentType);
+        const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-progressive-test');
+
+        if (this.modeToggleContainer) {
+            this.modeToggleContainer.style.display = supportsTestMode ? 'flex' : 'none';
+        }
+
+        if (this.btnCopyCode) {
+            const btnText = this.btnCopyCode.querySelector('.btn-text');
+            if (btnText && !this.btnCopyCode.classList.contains('copied')) {
+                if (supportsTestMode) {
+                    const modeText = (this.chkTestMode && this.chkTestMode.checked) ? '(Test Mode)' : '(Practice Mode)';
+                    btnText.textContent = `Copy Embed Code ${modeText}`;
+                } else {
+                    btnText.textContent = 'Copy Exact Embed Code';
+                }
+            }
+        }
+
         const embedCode = this._buildExactEmbedCode();
         this.embedCodeDisplay.textContent = embedCode;
 
@@ -610,7 +645,14 @@ class TjBuilder extends HTMLElement {
         const teacherCode = this.currentSettings.teacherCode || '7676';
         const submissionUrl = this.currentSettings.submissionUrl;
 
-        let attrs = `start-code="${startCode}" teacher-code="${teacherCode}"`;
+        const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-progressive-test');
+        const isTestMode = supportsTestMode && this.chkTestMode && this.chkTestMode.checked;
+
+        let attrs = '';
+        if (isTestMode) {
+            attrs += 'test-mode ';
+        }
+        attrs += `start-code="${startCode}" teacher-code="${teacherCode}"`;
         if (submissionUrl) {
             attrs += ` submission-url="${submissionUrl}"`;
         }
@@ -666,6 +708,12 @@ class TjBuilder extends HTMLElement {
             const previewEl = document.createElement(componentType);
             
             // 3. Set standard attributes
+            const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-progressive-test');
+            if (supportsTestMode && this.chkTestMode && this.chkTestMode.checked) {
+                previewEl.setAttribute('test-mode', '');
+            } else {
+                previewEl.removeAttribute('test-mode');
+            }
             previewEl.setAttribute('start-code', this.currentSettings.startCode || '1234');
             previewEl.setAttribute('teacher-code', this.currentSettings.teacherCode || '7676');
             if (this.currentSettings.submissionUrl) {

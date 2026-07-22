@@ -1,4 +1,4 @@
-import { t as e } from "./chunks/tj-config-D6N07Ou6.js";
+import { t as e } from "./chunks/tj-config-B74ERGqP.js";
 //#region src/tj-speed-review/index.js
 var t = class extends HTMLElement {
 	get code() {
