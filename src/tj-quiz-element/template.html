@@ -1,4 +1,4 @@
-<div class="quiz-wrapper" translate="no">
+<div class="quiz-wrapper notranslate" translate="no">
     <div id="tabAwayBanner" class="tab-away-banner hidden" role="alert"></div>
     <div class="container" id="mainContainer">
         <div class="quiz-header">
@@ -19,15 +19,15 @@
 
         <form id="quizForm">
             <div id="testModeLockSection" class="section-card hidden">
-                <div class="section-card-header">Test Mode Locked / ล็อกโหมดทำข้อสอบ</div>
-                <p class="student-instructions instruction">This quiz is in Test Mode. Please enter the Teacher Code to unlock the questions. / แบบทดสอบนี้อยู่ในโหมดการสอบ กรุณาใส่รหัสผ่านครูผู้สอนเพื่อเริ่มทำข้อสอบ</p>
+                <div class="section-card-header" id="lockSectionHeader">Test Mode Locked / ล็อกโหมดทำข้อสอบ</div>
+                <p class="student-instructions instruction" id="lockSectionInstruction">This quiz is in Test Mode. Please enter the Start Quiz Code to unlock the questions. / แบบทดสอบนี้อยู่ในโหมดการสอบ กรุณากรอกรหัสเริ่มทำข้อสอบเพื่อปลดล็อก</p>
                 <div class="input-group">
-                    <label for="lockTeacherCode" class="input-label">Teacher Code</label>
-                    <input type="text" id="lockTeacherCode" class="form-input" placeholder="Enter code to unlock test">
+                    <label for="lockTeacherCode" class="input-label" id="lockTeacherCodeLabel">Start Quiz Code</label>
+                    <input type="password" id="lockTeacherCode" class="form-input" placeholder="Enter Start Quiz Code" autocomplete="off">
                 </div>
                 <p id="lockErrorAlert" style="color: var(--red-color, #ef4444); margin-top: 0.5rem; font-size: 0.9em; min-height: 1.5rem; font-weight: 500;" class="hidden"></p>
                 <div style="margin-top: 1rem;">
-                    <button type="button" id="unlockTestButton" class="button button-primary">Unlock Test / เริ่มทำข้อสอบ</button>
+                    <button type="button" id="unlockTestButton" class="button button-primary">Unlock Test / ปลดล็อกข้อสอบ</button>
                 </div>
             </div>
 

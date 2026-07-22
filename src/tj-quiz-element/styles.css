@@ -1,5 +1,11 @@
 :host {
     display: block;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-translate: no;
+    translate: no;
     --bg-light: #f1f5f9;
     --text-light: #1e293b;
     --card-bg-light: #ffffff;
@@ -23,6 +29,25 @@
     --slate-color: #64748b;
     --slate-hover: #475569;
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.quiz-wrapper,
+[translate="no"],
+.notranslate {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-translate: no;
+    translate: no;
+}
+
+input,
+textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 
 /* Utility: hide elements when not needed */

@@ -221,10 +221,12 @@ A flexible quiz component supporting reading passages, vocabulary matching, and 
 #### Attributes
 - `submission-url`: (Optional) Google Apps Script deployment URL to send scored answers to.
 - `test-mode`: (Optional) Boolean attribute. If present, disables immediate answers checking, hides visual correctness feedback (green/red ticks and correct/incorrect classes), hides the detailed score breakdown (percentage and section breakdown), and hides the "Try Again" button to prevent retakes. The dynamic quiz content is also hidden after submission so students cannot review or change answers.
+- `start-code`: (Optional) Start Quiz Code required to unlock the quiz initially when in test mode (e.g. `start-code="1234"`). Backward compatible with `code`.
+- `teacher-code`: (Optional) Teacher Code required to unlock the quiz if a tab switch or page refresh occurs, or to reset/reopen submitted tests (e.g. `teacher-code="7676"`, default `'7676'`). Backward compatible with `reset-code`.
 
 #### Usage
 ```html
-<tj-quiz-element submission-url="YOUR_GAS_URL">
+<tj-quiz-element test-mode start-code="1234" teacher-code="7676" submission-url="YOUR_GAS_URL">
 <script type="text/markdown">
   My Quiz Title
   ---text
@@ -355,7 +357,7 @@ When embedding components (especially `<tj-quiz-element>`) inside **Google Sites
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <script type="module" src="https://scripts.teacherjake.com/tj-quiz-element.js"></script>
 
-<tj-quiz-element submission-url="YOUR_GAS_URL">
+<tj-quiz-element test-mode start-code="1234" teacher-code="7676" submission-url="YOUR_GAS_URL">
 <script type="text/markdown">
   My Quiz Title
   ---text

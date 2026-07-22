@@ -5,7 +5,7 @@ import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../
 
 class TjQuizElement extends HTMLElement {
     static get observedAttributes() {
-        return ['submission-url', 'test-mode', 'code', 'reset-code'];
+        return ['submission-url', 'test-mode', 'start-code', 'start-quiz-code', 'code', 'teacher-code', 'reset-code'];
     }
 
     get testMode() {
@@ -20,28 +20,56 @@ class TjQuizElement extends HTMLElement {
         }
     }
 
-    get code() {
-        return resolveComponentParams(this).teacherCode;
+    get startCode() {
+        return this.getAttribute('start-code') || 
+               this.getAttribute('start_code') || 
+               this.getAttribute('start-quiz-code') || 
+               this.getAttribute('code') || 
+               resolveComponentParams(this).startCode || 
+               '1234';
     }
 
-    set code(value) {
+    set startCode(value) {
         if (value !== null && value !== undefined) {
-            this.setAttribute('code', value);
+            this.setAttribute('start-code', value);
         } else {
+            this.removeAttribute('start-code');
             this.removeAttribute('code');
         }
     }
 
+    get code() {
+        return this.startCode;
+    }
+
+    set code(value) {
+        this.startCode = value;
+    }
+
+    get teacherCode() {
+        return this.getAttribute('teacher-code') || 
+               this.getAttribute('teacher_code') || 
+               this.getAttribute('reset-code') || 
+               this.getAttribute('reset_code') || 
+               resolveComponentParams(this).resetCode || 
+               '7676';
+    }
+
+    set teacherCode(value) {
+        if (value !== null && value !== undefined) {
+            this.setAttribute('teacher-code', value);
+        } else {
+            this.removeAttribute('teacher-code');
+            this.removeAttribute('reset-code');
+        }
+    }
+
     get resetCode() {
-        return this.getAttribute('reset-code') !== null ? this.getAttribute('reset-code') : '7676';
+        return this.teacherCode;
     }
 
     set resetCode(value) {
-        if (value !== null && value !== undefined) {
-            this.setAttribute('reset-code', value);
-        } else {
-            this.removeAttribute('reset-code');
-        }
+        this.teacherCode = value;
     }
 
     constructor() {
@@ -81,6 +109,7 @@ class TjQuizElement extends HTMLElement {
         this.scoreSentToServer = false; // Track if actually POSTed successfully
         this.ttsPaused = false; // explicitly track paused state for robustness
         this.tabAwayCount = 0; // Number of times student left the quiz (test mode only)
+        this.isVisibilityLocked = false; // Track if test was locked due to tab away / window blur
         this._visibilityHandler = null; // Bound handler for cleanup
     }
 
@@ -90,7 +119,7 @@ class TjQuizElement extends HTMLElement {
         } else if (name === 'test-mode') {
             if (this.isConnected) {
                 if (newValue !== null) {
-                    this.lockQuizContent();
+                    this.lockQuizContent(this.isVisibilityLocked);
                 } else {
                     this.unlockQuizContent();
                 }
@@ -159,6 +188,14 @@ class TjQuizElement extends HTMLElement {
 
             this.loadTemplate();
             this.setAttribute('translate', 'no');
+            this.classList.add('notranslate');
+
+            if (!document.querySelector('meta[name="google"][content="notranslate"]')) {
+                const meta = document.createElement('meta');
+                meta.name = 'google';
+                meta.content = 'notranslate';
+                document.head.appendChild(meta);
+            }
 
             if (!this._shouldShowAudioControls()) {
                 const voiceBtn = this.shadowRoot.getElementById('voice-btn');
@@ -175,16 +212,17 @@ class TjQuizElement extends HTMLElement {
             this.parseContent();
             this.setupEventListeners();
             this.generateQuiz();
-            if (this.testMode) {
-                this.lockQuizContent();
-            } else {
-                this.unlockQuizContent();
-            }
 
             // Restore state if available
             const savedData = this.loadFromLocalStorage();
             if (savedData) {
                 this.restoreQuizState(savedData);
+            } else {
+                if (this.testMode) {
+                    this.lockQuizContent(false);
+                } else {
+                    this.unlockQuizContent();
+                }
             }
         });
     }
@@ -202,6 +240,10 @@ class TjQuizElement extends HTMLElement {
             this.tabAwayCount++;
             this.classList.add('tab-away');
             this._updateTabAwayBanner();
+            if (this.quizUnlocked) {
+                this.lockQuizContent(true);
+            }
+            this.saveCurrentStateToLocalStorage();
         } else {
             this.classList.remove('tab-away');
         }
@@ -1143,6 +1185,21 @@ class TjQuizElement extends HTMLElement {
     }
 
     setupEventListeners() {
+        // Prevent copy, cut, paste, contextmenu, dragstart, and selectstart across component
+        const preventEvents = ['copy', 'cut', 'paste', 'contextmenu', 'dragstart', 'selectstart'];
+        preventEvents.forEach(eventType => {
+            this.shadowRoot.addEventListener(eventType, (e) => e.preventDefault());
+            this.addEventListener(eventType, (e) => e.preventDefault());
+        });
+
+        const handleKeydown = (e) => {
+            if ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x', 'a', 'C', 'V', 'X', 'A'].includes(e.key)) {
+                e.preventDefault();
+            }
+        };
+        this.shadowRoot.addEventListener('keydown', handleKeydown);
+        this.addEventListener('keydown', handleKeydown);
+
         const quizForm = this.shadowRoot.getElementById('quizForm');
         const sendButton = this.shadowRoot.getElementById('sendButton');
         const tryAgainButton = this.shadowRoot.getElementById('tryAgainButton');
@@ -1162,6 +1219,7 @@ class TjQuizElement extends HTMLElement {
         if (quizForm) {
             quizForm.addEventListener('change', (e) => {
                 this.handleAnswer(e);
+                this.saveCurrentStateToLocalStorage();
             });
             quizForm.addEventListener('input', (e) => {
                 this.handleClozeAnswer(e);
@@ -1170,6 +1228,7 @@ class TjQuizElement extends HTMLElement {
                 if (e.target.classList.contains('short-answer-input') && e.target.tagName.toLowerCase() === 'textarea') {
                     this.autoExpandTextarea(e.target);
                 }
+                this.saveCurrentStateToLocalStorage();
             });
             quizForm.addEventListener('submit', (e) => this.handleSubmit(e));
         }
@@ -1204,17 +1263,43 @@ class TjQuizElement extends HTMLElement {
         if (unlockTestButton) {
             unlockTestButton.addEventListener('click', () => {
                 const codeValue = lockTeacherCode ? lockTeacherCode.value.trim() : '';
-                if (codeValue === this.code) {
-                    if (lockErrorAlert) lockErrorAlert.classList.add('hidden');
-                    const teacherCodeInput = this.getTeacherCodeInput();
-                    if (teacherCodeInput) {
-                        teacherCodeInput.value = codeValue;
+                if (this.isVisibilityLocked) {
+                    if (codeValue === this.resetCode) {
+                        if (lockErrorAlert) lockErrorAlert.classList.add('hidden');
+                        if (lockTeacherCode) lockTeacherCode.value = '';
+                        this.unlockQuizContent();
+                        this.saveCurrentStateToLocalStorage();
+                    } else if (codeValue === this.code) {
+                        if (lockErrorAlert) {
+                            lockErrorAlert.textContent = '❌ Please enter the Teacher Code, not the Start Quiz Code / กรุณากรอกรหัสครูผู้สอน ไม่ใช่รหัสเริ่มทำข้อสอบ';
+                            lockErrorAlert.classList.remove('hidden');
+                        }
+                    } else {
+                        if (lockErrorAlert) {
+                            lockErrorAlert.textContent = '❌ Invalid Teacher Code / รหัสผ่านไม่ถูกต้อง';
+                            lockErrorAlert.classList.remove('hidden');
+                        }
                     }
-                    this.unlockQuizContent();
                 } else {
-                    if (lockErrorAlert) {
-                        lockErrorAlert.textContent = '❌ Invalid Teacher Code / รหัสผ่านไม่ถูกต้อง';
-                        lockErrorAlert.classList.remove('hidden');
+                    if (codeValue === this.code) {
+                        if (lockErrorAlert) lockErrorAlert.classList.add('hidden');
+                        const teacherCodeInput = this.getTeacherCodeInput();
+                        if (teacherCodeInput) {
+                            teacherCodeInput.value = codeValue;
+                        }
+                        if (lockTeacherCode) lockTeacherCode.value = '';
+                        this.unlockQuizContent();
+                        this.saveCurrentStateToLocalStorage();
+                    } else if (codeValue === this.resetCode) {
+                        if (lockErrorAlert) {
+                            lockErrorAlert.textContent = '❌ Please enter the Start Quiz Code to start the test / กรุณากรอกรหัสเริ่มทำข้อสอบ';
+                            lockErrorAlert.classList.remove('hidden');
+                        }
+                    } else {
+                        if (lockErrorAlert) {
+                            lockErrorAlert.textContent = '❌ Invalid Start Quiz Code / รหัสผ่านไม่ถูกต้อง';
+                            lockErrorAlert.classList.remove('hidden');
+                        }
                     }
                 }
             });
@@ -1706,7 +1791,10 @@ class TjQuizElement extends HTMLElement {
             clozeAnswers: this.clozeAnswers,
             vocabUserChoices: this.vocabUserChoices,
             vocabSubmitted: this.vocabSubmitted,
-            clozeSubmitted: this.clozeSubmitted
+            clozeSubmitted: this.clozeSubmitted,
+            tabAwayCount: this.tabAwayCount,
+            isVisibilityLocked: this.isVisibilityLocked,
+            quizUnlocked: this.quizUnlocked
         });
     }
 
@@ -1725,6 +1813,8 @@ class TjQuizElement extends HTMLElement {
         this.clozeScore = data.clozeScore || 0;
         this.score = data.score || 0;
         this.scoreSentToServer = data.scoreSentToServer || false;
+        this.tabAwayCount = data.tabAwayCount || 0;
+        this._updateTabAwayBanner();
 
         // Restore answers objects
         this.userQuestionAnswers = data.userQuestionAnswers || {};
@@ -1783,6 +1873,22 @@ class TjQuizElement extends HTMLElement {
         this.vocabSubmitted = data.vocabSubmitted || false;
         this.clozeSubmitted = data.clozeSubmitted || false;
 
+        if (this.testMode) {
+            this.isVisibilityLocked = data.isVisibilityLocked || false;
+            if (data.isVisibilityLocked) {
+                this.lockQuizContent(true);
+            } else if (data.quizUnlocked && !this.scoreSubmitted) {
+                // Page refresh while test was in progress counts as leaving window
+                this.tabAwayCount++;
+                this._updateTabAwayBanner();
+                this.lockQuizContent(true);
+            } else if (!data.quizUnlocked) {
+                this.lockQuizContent(false);
+            } else {
+                this.unlockQuizContent();
+            }
+        }
+
         this.showFinalScore(false);
     }
 
@@ -1818,7 +1924,7 @@ class TjQuizElement extends HTMLElement {
         return allValid;
     }
 
-    lockQuizContent() {
+    lockQuizContent(isVisibilityChange = false) {
         const quizContent = this.shadowRoot.getElementById('quizContent');
         if (quizContent) quizContent.classList.add('hidden');
 
@@ -1827,6 +1933,25 @@ class TjQuizElement extends HTMLElement {
             testModeLockSection.classList.remove('hidden');
         }
         this.quizUnlocked = false;
+        this.isVisibilityLocked = isVisibilityChange;
+
+        const headerEl = this.shadowRoot.getElementById('lockSectionHeader');
+        const instructionEl = this.shadowRoot.getElementById('lockSectionInstruction');
+        const labelEl = this.shadowRoot.getElementById('lockTeacherCodeLabel');
+        const inputEl = this.shadowRoot.getElementById('lockTeacherCode');
+
+        if (isVisibilityChange) {
+            if (headerEl) headerEl.textContent = '⚠️ Test Mode Locked (Visibility Change Detected) / ล็อกโหมดทำข้อสอบ (ตรวจพบการสลับหน้าจอ)';
+            if (instructionEl) instructionEl.textContent = 'Student left the quiz tab/window. Please enter the Teacher Code to unlock the questions. / ตรวจพบการออกจากหน้าต่างข้อสอบ กรุณากรอกรหัสครูผู้สอนเพื่อปลดล็อกข้อสอบ';
+            if (labelEl) labelEl.textContent = 'Teacher Code';
+            if (inputEl) inputEl.placeholder = 'Enter Teacher Code';
+        } else {
+            if (headerEl) headerEl.textContent = 'Test Mode Locked / ล็อกโหมดทำข้อสอบ';
+            if (instructionEl) instructionEl.textContent = 'This quiz is in Test Mode. Please enter the Start Quiz Code to unlock the questions. / แบบทดสอบนี้อยู่ในโหมดการสอบ กรุณากรอกรหัสเริ่มทำข้อสอบเพื่อปลดล็อก';
+            if (labelEl) labelEl.textContent = 'Start Quiz Code';
+            if (inputEl) inputEl.placeholder = 'Enter Start Quiz Code';
+        }
+
         this.updateTeacherCodeInputVisibility();
     }
 
@@ -1839,6 +1964,7 @@ class TjQuizElement extends HTMLElement {
             testModeLockSection.classList.add('hidden');
         }
         this.quizUnlocked = true;
+        this.isVisibilityLocked = false;
         this.updateTeacherCodeInputVisibility();
     }
 

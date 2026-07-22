@@ -45,15 +45,28 @@ export function resolveComponentParams(element) {
         searchParams.get('src') ||
         null;
 
-    // 3. Teacher Code
-    const teacherCode = 
+    // 3. Start Quiz Code & Teacher Code
+    const startCode = 
+        element.getAttribute('start-code') ||
+        element.getAttribute('start_code') ||
+        element.getAttribute('start-quiz-code') ||
         element.getAttribute('code') ||
-        element.getAttribute('teacher_code') ||
+        searchParams.get('start-code') ||
+        searchParams.get('start_code') ||
         searchParams.get('code') ||
-        searchParams.get('teacher_code') ||
         config.teacherCode ||
-        '6767';
+        '1234';
 
-    return { submissionUrl, dataUrl, teacherCode };
+    const teacherCode = 
+        element.getAttribute('teacher-code') ||
+        element.getAttribute('teacher_code') ||
+        element.getAttribute('reset-code') ||
+        element.getAttribute('reset_code') ||
+        searchParams.get('teacher-code') ||
+        searchParams.get('teacher_code') ||
+        searchParams.get('reset-code') ||
+        '7676';
+
+    return { submissionUrl, dataUrl, teacherCode: startCode, startCode, resetCode: teacherCode };
 }
 

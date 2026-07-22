@@ -118,7 +118,7 @@ https://your-site.com/quiz.html?submission-url=https://script.google.com/macros/
 ### Method B: HTML Attribute
 Add the `submission-url` (or `submission_url`) attribute directly to any TJ Component element in HTML:
 ```html
-<tj-quiz-element submission-url="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
+<tj-quiz-element test-mode start-code="1234" teacher-code="7676" submission-url="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
   ...
 </tj-quiz-element>
 ```

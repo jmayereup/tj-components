@@ -740,7 +740,7 @@
                 <pre><code>&lt;link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"&gt;
 &lt;script type="module" src="https://scripts.teacherjake.com/tj-quiz-element.js"&gt;&lt;/script&gt;
 
-&lt;tj-quiz-element submission-url="YOUR_GAS_URL"&gt;
+&lt;tj-quiz-element test-mode start-code="1234" teacher-code="7676" submission-url="YOUR_GAS_URL"&gt;
 &lt;script type="text/markdown"&gt;
 B1 English Practice: Past Simple &amp; Past Continuous
 
@@ -844,7 +844,7 @@ function doPost(e) {
                         <br><code>https://your-site.com/quiz.html?submission-url=YOUR_GAS_URL&amp;url=https://example.com/quiz.json&amp;code=1234</code>
                     </li>
                     <li><strong>HTML Attributes</strong>:
-                        <br><code>&lt;tj-quiz-element submission-url="YOUR_GAS_URL" src="https://example.com/quiz.json" code="1234"&gt;&lt;/tj-quiz-element&gt;</code>
+                        <br><code>&lt;tj-quiz-element submission-url="YOUR_GAS_URL" src="https://example.com/quiz.json" start-code="1234" teacher-code="7676"&gt;&lt;/tj-quiz-element&gt;</code>
                     </li>
                 </ul>
             </div>
@@ -948,7 +948,7 @@ function doPost(e) {
                 <!-- Quiz Element -->
                 <h3>6. Quiz Element (<code>&lt;tj-quiz-element&gt;</code>)</h3>
                 <p>A flexible quiz component supporting reading passages, vocabulary matching, and cloze sections. Optimized for Google Apps Script integration. <a href="https://gemini.google.com/gem/4bbfe190f849" target="_blank" style="color: var(--primary); text-decoration: underline; font-weight: 600; font-size: 0.9em; margin-left: 0.5em;">✨ Generate with Gemini Gem ↗</a></p>
-                <pre><code>&lt;tj-quiz-element submission-url="YOUR_GAS_URL"&gt;
+                <pre><code>&lt;tj-quiz-element test-mode start-code="1234" teacher-code="7676" submission-url="YOUR_GAS_URL"&gt;
 &lt;script type="text/markdown"&gt;
   My Quiz Title
   ---text
@@ -1171,7 +1171,7 @@ function doPost(e) {
             'tj-quiz-element': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <script type="module" src="https://scripts.teacherjake.com/tj-quiz-element.js"><\/script>
 
-<tj-quiz-element submission-url="YOUR_GAS_URL">
+<tj-quiz-element test-mode start-code="1234" teacher-code="7676" submission-url="YOUR_GAS_URL">
 <script type="text/markdown">
 B1 English Practice: Past Simple & Past Continuous
 
@@ -1195,7 +1195,7 @@ A: Sleeping
             'tj-quiz-element-test': `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <script type="module" src="https://scripts.teacherjake.com/tj-quiz-element.js"><\/script>
 
-<tj-quiz-element test-mode code="6767" reset-code="7676" submission-url="YOUR_GAS_URL">
+<tj-quiz-element test-mode start-code="6767" teacher-code="7676" submission-url="YOUR_GAS_URL">
 <script type="text/markdown">
 B1 English Practice: Past Simple & Past Continuous
 
