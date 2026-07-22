@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TJ Components | Interactive ELT Web Components & Documentation</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <script type="module" src="/src/tj-quiz-element/index.js"></script>
-    <script type="module" src="/src/tj-info-gap/index.js"></script>
-    <script type="module" src="/src/tj-speed-review/index.js"></script>
-    <script type="module" src="/src/tj-chapter-book/index.js"></script>
-    <script type="module" src="/src/tj-grammar-hearts/index.js"></script>
-    <script type="module" src="/src/tj-listening/index.js"></script>
-    <script type="module" src="/src/tj-test/index.js"></script>
-    <script type="module" src="/src/tj-pronunciation/index.js"></script>
-    <script type="module" src="/src/tj-reader/index.js"></script>
-    <script type="module" src="/src/tj-builder/index.js"></script>
+    <script type="module" src="./tj-quiz-element.js"></script>
+    <script type="module" src="./tj-info-gap.js"></script>
+    <script type="module" src="./tj-speed-review.js"></script>
+    <script type="module" src="./tj-chapter-book.js"></script>
+    <script type="module" src="./tj-grammar-hearts.js"></script>
+    <script type="module" src="./tj-listening.js"></script>
+    <script type="module" src="./tj-test.js"></script>
+    <script type="module" src="./tj-pronunciation.js"></script>
+    <script type="module" src="./tj-reader.js"></script>
+    <script type="module" src="./tj-builder.js"></script>
     <style>
         :root {
             --primary: #22d3ee;
@@ -1541,7 +1541,7 @@ A: Sleeping
         }
     </script>
     <script type="module">
-        import { COMPONENT_CATALOG } from '/src/tj-catalog.js';
+        import { COMPONENT_CATALOG } from './tj-catalog.js';
         document.querySelectorAll('a[data-gem-id]').forEach(el => {
             const gemId = el.getAttribute('data-gem-id');
             const item = COMPONENT_CATALOG.find(c => c.id === gemId || c.tagName === gemId);

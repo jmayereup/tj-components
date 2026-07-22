@@ -2,17 +2,20 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import fs from 'fs';
 
-// Get all tj-*.js files from src/ as entry points
+// Get all tj-*.js files and directories with index.js from src/ as entry points
 const entries = {};
 const srcDir = resolve(__dirname, 'src');
 
-fs.readdirSync(srcDir).forEach((folder) => {
-  const folderPath = resolve(srcDir, folder);
-  if (fs.statSync(folderPath).isDirectory()) {
-    const indexPath = resolve(folderPath, 'index.js');
+fs.readdirSync(srcDir).forEach((item) => {
+  const itemPath = resolve(srcDir, item);
+  if (fs.statSync(itemPath).isDirectory()) {
+    const indexPath = resolve(itemPath, 'index.js');
     if (fs.existsSync(indexPath)) {
-      entries[folder] = indexPath;
+      entries[item] = indexPath;
     }
+  } else if (item.endsWith('.js')) {
+    const name = item.replace(/\.js$/, '');
+    entries[name] = itemPath;
   }
 });
 
@@ -57,6 +60,15 @@ export default defineConfig({
                   content = content.replace(/href="src\/tj-([^/]+)\/test-([^"]+)\.html"/g, 'href="demo/test-$2.html"');
                 }
                 
+                // Update script tags pointing to /src/component-name/index.js to point to ./component-name.js
+                content = content.replace(/<script\b([^>]*)src="\/src\/([^/]+)\/index\.js"([^>]*)>/g, (match, p1, componentName, p2) => {
+                  return `<script${p1}src="./${componentName}.js"${p2}>`;
+                });
+
+                // Update imports/scripts referencing /src/...
+                content = content.replace(/from ['"]\/src\/(.*?)\.js['"]/g, "from './$1.js'");
+                content = content.replace(/src="\/src\/(.*?)\.js"/g, 'src="./$1.js"');
+
                 fs.writeFileSync(resolve(distDir, file), content);
               }
             });
