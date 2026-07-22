@@ -759,3 +759,217 @@
     background-color: rgba(15, 23, 42, 0.6);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Additional TJ Test JSON Visual Editor Styling */
+.vf-test-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.vf-root-config {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+    border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+.vf-badge {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.vf-grid-2 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .vf-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.vf-sections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.vf-section-card {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.vf-section-header {
+    background: rgba(30, 41, 59, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.85rem 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.vf-section-title-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 250px;
+}
+
+.vf-section-badge {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    color: #ffffff;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.vf-sec-title-input {
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.vf-section-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.inline-field {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.inline-field label {
+    white-space: nowrap;
+    font-size: 0.8rem;
+}
+
+.vf-sec-threshold-input {
+    width: 80px !important;
+    text-align: center;
+}
+
+.vf-section-body {
+    padding: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.vf-sub-section {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 0.9rem;
+}
+
+.vf-sub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #38bdf8;
+    margin-bottom: 0.75rem;
+}
+
+.vf-sub-item-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #cbd5e1;
+}
+
+.vf-btn-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #38bdf8;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.vf-btn-secondary:hover {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: rgba(56, 189, 248, 0.4);
+}
+
+.vf-passage-row {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-bottom: 0.65rem;
+}
+
+.vf-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.vf-vocab-row, .vf-cloze-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.vf-vocab-word {
+    flex: 1;
+    max-width: 200px;
+}
+
+.vf-vocab-def, .vf-cloze-input {
+    flex: 2;
+}
+
+.vf-btn-icon-del {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+
+.vf-btn-icon-del:hover {
+    background: rgba(239, 68, 68, 0.35);
+}
+
+.vf-empty-sub {
+    font-size: 0.82rem;
+    color: #64748b;
+    margin: 0;
+    font-style: italic;
+}
+
+.vf-add-sec-bar {
+    margin-top: 0.5rem;
+}
