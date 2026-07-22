@@ -1,0 +1,152 @@
+<div class="tj-builder-container">
+    <header class="builder-header">
+        <div class="header-brand">
+            <h2>⚡ TJ Component Builder</h2>
+            <p>Paste Gemini AI outputs, visually edit questions, configure teacher codes, and copy ready-to-embed blog code.</p>
+        </div>
+        <div class="storage-badge" id="storage-status">
+            <span class="status-dot"></span> Saved to LocalStorage
+        </div>
+    </header>
+
+    <!-- Teacher Configuration Settings -->
+    <section class="settings-panel">
+        <div class="panel-header">
+            <h3>⚙️ Teacher Settings & Credentials</h3>
+            <span class="panel-subtitle">Automatically saved to your browser so you don't need to re-enter them.</span>
+        </div>
+        <div class="settings-grid">
+            <div class="field-group">
+                <label for="setting-start-code">Start Code (Student Access)</label>
+                <input type="text" id="setting-start-code" placeholder="e.g. 1234" value="1234" />
+            </div>
+            <div class="field-group">
+                <label for="setting-teacher-code">Teacher / Reset Code</label>
+                <input type="text" id="setting-teacher-code" placeholder="e.g. 7676" value="7676" />
+            </div>
+            <div class="field-group flex-grow">
+                <label for="setting-submission-url">Submission URL (Apps Script Endpoint)</label>
+                <input type="url" id="setting-submission-url" placeholder="https://script.google.com/macros/s/.../exec" />
+            </div>
+            <div class="field-group flex-grow">
+                <label for="setting-cdn-url">Script CDN Base URL</label>
+                <input type="url" id="setting-cdn-url" placeholder="https://scripts.teacherjake.com/" value="https://scripts.teacherjake.com/" />
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Builder Interface -->
+    <div class="builder-main-grid">
+        
+        <!-- Left Column: Gemini Paste Box -->
+        <div class="builder-col left-col">
+            
+            <div class="card gemini-input-card">
+                <div class="card-header">
+                    <h3>✨ 1. Paste Gemini AI Output</h3>
+                    <div class="sample-buttons">
+                        <button type="button" class="btn-sample" id="btn-sample-quiz">Load Sample Quiz</button>
+                        <button type="button" class="btn-sample" id="btn-sample-infogap">Load Sample Info-Gap</button>
+                        <button type="button" class="btn-sample" id="btn-sample-speed">Load Sample Speed Review</button>
+                    </div>
+                </div>
+                <textarea id="gemini-input" placeholder="Paste the output from Gemini here (e.g. full element tag, raw JSON, or Markdown with --- section dividers)..."></textarea>
+                
+                <div class="parser-controls">
+                    <div class="component-selector-group">
+                        <label for="component-type-select">Target Component:</label>
+                        <select id="component-type-select">
+                            <option value="tj-quiz-element">tj-quiz-element (Markdown Quiz / Reading)</option>
+                            <option value="tj-info-gap">tj-info-gap (Interactive Information Gap)</option>
+                            <option value="tj-speed-review">tj-speed-review (Flashcards / Speed Match)</option>
+                            <option value="tj-chapter-book">tj-chapter-book (Chapter Book Reader)</option>
+                            <option value="tj-grammar-hearts">tj-grammar-hearts (Grammar Activity)</option>
+                            <option value="tj-listening">tj-listening (Listening Activity)</option>
+                            <option value="tj-progressive-test">tj-progressive-test (Progressive Test)</option>
+                            <option value="tj-pronunciation">tj-pronunciation (Pronunciation Practice)</option>
+                            <option value="tj-reader">tj-reader (Standard Reader)</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn-primary" id="btn-parse">Parse & Format</button>
+                </div>
+            </div>
+
+            <!-- Question / Content Editor Tabs -->
+            <div class="card editor-card">
+                <div class="card-header border-bottom">
+                    <div class="tab-buttons">
+                        <button type="button" class="tab-btn active" data-tab="visual">🛠️ Visual Question Editor</button>
+                        <button type="button" class="tab-btn" data-tab="raw">💻 Raw Code Editor</button>
+                    </div>
+                    <span class="detected-badge" id="detected-type-badge">tj-quiz-element</span>
+                </div>
+
+                <!-- Tab 1: Visual Form View -->
+                <div class="tab-content active" id="tab-visual-content">
+                    <div id="visual-form-container">
+                        <!-- Dynamic Form Fields standard & component specific -->
+                    </div>
+                </div>
+
+                <!-- Tab 2: Raw Code View -->
+                <div class="tab-content" id="tab-raw-content">
+                    <textarea id="raw-code-editor" spellcheck="false"></textarea>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Actions & Embed Generator -->
+        <div class="builder-col right-col">
+            
+            <div class="card action-card">
+                <div class="card-header">
+                    <h3>📋 2. Export & Actions</h3>
+                </div>
+                <div class="action-card-body">
+                    <div class="action-options">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="chk-include-script" checked />
+                            Include CDN Script Tag in Embed Code
+                        </label>
+                    </div>
+
+                    <div class="action-buttons-group">
+                        <button type="button" class="btn-copy-large" id="btn-copy-code">
+                            <span class="btn-icon">📋</span>
+                            <span class="btn-text">Copy Exact Embed Code</span>
+                        </button>
+
+                        <button type="button" class="btn-preview-modal" id="btn-open-preview">
+                            <span class="btn-icon">👁️</span>
+                            <span class="btn-text">Live Component Preview</span>
+                        </button>
+                    </div>
+
+                    <div class="embed-code-hidden" style="display:none;" id="embed-code-display"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Live Preview Modal -->
+    <div class="preview-modal-overlay" id="preview-modal">
+        <div class="preview-modal-card">
+            <div class="preview-modal-header">
+                <h3>👁️ Live Preview: &lt;<span id="modal-component-name">tj-quiz-element</span>&gt;</h3>
+                <button type="button" class="modal-close-btn" id="btn-close-modal">✕</button>
+            </div>
+            <div class="preview-modal-body">
+                <div class="preview-stage" id="live-preview-container">
+                    <p class="empty-preview-msg">Loading component preview...</p>
+                </div>
+            </div>
+            <div class="preview-modal-footer">
+                <button type="button" class="btn-secondary" id="btn-close-modal-footer">Close Preview</button>
+                <button type="button" class="btn-copy" id="btn-copy-modal">📋 Copy Embed Code</button>
+            </div>
+        </div>
+    </div>
+</div>

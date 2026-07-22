@@ -121,7 +121,9 @@ class TjChapterBook extends HTMLElement {
                 this._parseAndRender(this.getAttribute('config'));
             } else if (src) {
                 this.loadData(src);
-            } else if (this.shadowRoot.querySelector('script[type="application/json"]')) {
+            } else if (this.querySelector('script[type="application/json"]')) {
+                this._parseAndRender(this.querySelector('script[type="application/json"]').textContent);
+            } else if (this.shadowRoot?.querySelector('script[type="application/json"]')) {
                 this._parseAndRender(this.shadowRoot.querySelector('script[type="application/json"]').textContent);
             } else {
                 this._parseAndRender(this.textContent);

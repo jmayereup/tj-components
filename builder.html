@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TJ Component Builder | Zero-Setup Gemini Output & Code Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #22d3ee;
+            --bg: #0f172a;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        nav {
+            background-color: rgba(15, 23, 42, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+        }
+
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 4rem;
+        }
+    </style>
+
+    <!-- Component Modules -->
+    <script type="module" src="/src/tj-quiz-element/index.js"></script>
+    <script type="module" src="/src/tj-info-gap/index.js"></script>
+    <script type="module" src="/src/tj-speed-review/index.js"></script>
+    <script type="module" src="/src/tj-chapter-book/index.js"></script>
+    <script type="module" src="/src/tj-grammar-hearts/index.js"></script>
+    <script type="module" src="/src/tj-listening/index.js"></script>
+    <script type="module" src="/src/tj-progressive-test/index.js"></script>
+    <script type="module" src="/src/tj-pronunciation/index.js"></script>
+    <script type="module" src="/src/tj-reader/index.js"></script>
+    <script type="module" src="/src/tj-builder/index.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">TJ <span>Components</span></a>
+            <div class="nav-links">
+                <a href="index.html">Home & Catalog</a>
+                <a href="builder.html" class="active">⚡ Live Builder Tool</a>
+                <a href="https://github.com/jmayereup/lbl-reader" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <tj-builder></tj-builder>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 TJ Components. Designed for Interactive Language Learning & Blog Embeds.</p>
+    </footer>
+</body>
+</html>

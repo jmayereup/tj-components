@@ -38,19 +38,24 @@ By appending `?quiz=1` to the URL, components like `tj-listening` will hide tran
 ### 📊 Custom Google Apps Script & URL Parameters
 Teachers can configure automatic submissions to their own Google Sheets and supply activity data via URL parameters or element attributes across **all 8 components**:
 
-- **Custom Submission Endpoint**: Pass `submission-url` (or `submission_url`) as an attribute or URL search parameter:
+- **Custom Submission Endpoint**: Pass `submission-url` (or `submission_url`) as an attribute or set `VITE_SUBMISSION_URL` in `.env`:
   - **HTML Attribute**: `<tj-quiz-element submission-url="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">`
-  - **URL Parameter**: `https://your-site.com/quiz.html?submission-url=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec`
+  - **Environment Variable**: Copy `.env.example` to `.env` and set `VITE_SUBMISSION_URL=...`
 - **Data / Content URL**: Pass `url` or `src` to load activity JSON/Markdown directly from a remote link:
   - **HTML Attribute**: `<tj-grammar-hearts src="https://example.com/lesson1.json">`
-  - **URL Parameter**: `https://your-site.com/activity.html?url=https://example.com/lesson1.json`
-- **Teacher Code**: Pass `code` or `teacher_code` attribute or URL parameter (default: `6767`):
-  - **URL Parameter**: `https://your-site.com/quiz.html?code=1234`
+- **Teacher Code**: Pass `code` or `teacher_code` attribute or set `VITE_TEACHER_CODE` in `.env` (default: `6767`):
+  - **HTML Attribute**: `<tj-quiz-element code="1234">`
 
-For complete Google Apps Script code (`doPost`) and step-by-step setup instructions, see the [Google Sheets Submission Setup Guide](SUBMISSION_GUIDE.md).
-
+### 🔒 Privacy First & Zero Database Storage
+TJ Components are designed with a **Zero-Data Retention & Privacy-First Architecture**:
+- **No Central Database**: Our hosting server and CDN **never see, intercept, or store** confidential student data (such as student numbers, names, scores, or written responses).
+- **Direct-to-Teacher Pipeline**: Submissions travel directly from the student's browser (client-side) into the teacher's personal or institutional Google Sheet via their custom Google Apps Script Web App endpoint.
+- **FERPA & Privacy Compliant**: Teachers and school districts retain 100% data ownership and control within their existing Google Workspace infrastructure.
+- **Why Web Components?**: Native HTML Custom Elements run in any browser or LMS (Google Sites, WordPress, Canvas, Moodle) without third-party frameworks, user sign-ins, or tracking scripts.
+- **Why Google Apps Script?**: Serverless, zero-cost, and zero-maintenance endpoint logging directly to Google Sheets without managing servers or API keys.
 
 ---
+
 
 ## ✨ Gemini Gems (AI Content Generators)
 

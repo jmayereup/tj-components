@@ -46,7 +46,7 @@ export default defineConfig({
             }
 
             // 1. Copy root HTML files
-            const rootFiles = ['index.html', 'guide.html', 'test-config.html', 'test-config2.html'];
+            const rootFiles = ['index.html', 'builder.html', 'guide.html', 'test-config.html', 'test-config2.html'];
             rootFiles.forEach(file => {
               const srcPath = resolve(__dirname, file);
               if (fs.existsSync(srcPath)) {

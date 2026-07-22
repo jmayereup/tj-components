@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TJ Components | Interactive ELT Web Components & Documentation</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script type="module" src="/src/tj-quiz-element/index.js"></script>
+    <script type="module" src="/src/tj-info-gap/index.js"></script>
+    <script type="module" src="/src/tj-speed-review/index.js"></script>
+    <script type="module" src="/src/tj-chapter-book/index.js"></script>
+    <script type="module" src="/src/tj-grammar-hearts/index.js"></script>
+    <script type="module" src="/src/tj-listening/index.js"></script>
+    <script type="module" src="/src/tj-progressive-test/index.js"></script>
+    <script type="module" src="/src/tj-pronunciation/index.js"></script>
+    <script type="module" src="/src/tj-reader/index.js"></script>
+    <script type="module" src="/src/tj-builder/index.js"></script>
     <style>
         :root {
             --primary: #22d3ee;
@@ -498,7 +508,9 @@
             <p class="subtitle">A library of premium, interactive web components designed for English Language Teaching (ELT) and language learning blogs.</p>
             <div class="nav-links">
                 <a href="#catalog" class="btn btn-primary">Component Catalog</a>
+                <a href="#builder" class="btn btn-outline">⚡ Live Builder Tool</a>
                 <a href="#documentation" class="btn btn-outline">Documentation & Guides</a>
+                <a href="#privacy-architecture" class="btn btn-outline">🔒 Privacy & Architecture</a>
                 <a href="https://github.com/jmayereup/tj-components" class="btn btn-outline" target="_blank">View on GitHub</a>
             </div>
         </header>
@@ -698,6 +710,15 @@
             </div>
         </section>
 
+        <!-- LIVE BUILDER SECTION -->
+        <section id="builder" style="margin-top: 5rem; margin-bottom: 4rem; max-width: 1200px; margin-left: auto; margin-right: auto;">
+            <div class="section-header">
+                <h2>⚡ Live Component Builder & Gemini Parser</h2>
+                <p>Zero setup required. Paste Gemini AI output, visually edit questions, configure teacher codes, and copy ready-to-embed blog code.</p>
+            </div>
+            <tj-builder></tj-builder>
+        </section>
+
         <!-- DOCUMENTATION SECTION -->
         <section id="documentation" style="margin-top: 5rem;">
             <div class="section-header">
@@ -743,6 +764,10 @@
                     <div class="feature-item">
                         <h4>📊 Apps Script &amp; URL Params</h4>
                         <p>Supply custom Google Apps Script URLs, remote data URLs, and teacher codes via attributes (<code>submission-url</code>, <code>src</code>, <code>code</code>) or URL search parameters across all components.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🔒 Privacy &amp; Zero Storage</h4>
+                        <p>No central database or middleman server. Student submissions travel directly from the browser to the teacher's personal Google Sheet via Google Apps Script.</p>
                     </div>
                 </div>
             </div>
@@ -860,15 +885,60 @@ function doPost(e) {
                 </ul>
 
                 <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">3. Connecting to Components:</h3>
-                <p>Pass your Web App URL, remote JSON URL, or custom Teacher Code via HTML attributes or browser URL query parameters across all 8 components:</p>
+                <p>Pass your Web App URL, remote JSON URL, or custom Teacher Code via HTML attributes or environment variables (`.env`):</p>
                 <ul>
-                    <li><strong>Page URL Search Query Parameters</strong>:
-                        <br><code>https://your-site.com/quiz.html?submission-url=YOUR_GAS_URL&amp;url=https://example.com/quiz.json&amp;code=1234</code>
-                    </li>
                     <li><strong>HTML Attributes</strong>:
                         <br><code>&lt;tj-quiz-element submission-url="YOUR_GAS_URL" src="https://example.com/quiz.json" start-code="1234" teacher-code="7676"&gt;&lt;/tj-quiz-element&gt;</code>
                     </li>
+                    <li><strong>Environment Variables (`.env`)</strong>:
+                        <br>Set <code>VITE_SUBMISSION_URL=YOUR_GAS_URL</code> and <code>VITE_TEACHER_CODE=6767</code> in <code>.env</code> (see <code>.env.example</code>).
+                    </li>
                 </ul>
+            </div>
+
+            <!-- Privacy & Architecture Section -->
+            <div class="doc-card" id="privacy-architecture">
+                <h2>🔒 Privacy-First Architecture: Web Components &amp; Google Apps Script</h2>
+                <p>TJ Components are built with a strict <strong>Zero-Data Retention &amp; Privacy-First Philosophy</strong>. Unlike traditional educational software that requires centralized databases, user accounts, and third-party cloud servers, TJ Components run entirely client-side and connect directly to your own Google Account.</p>
+
+                <div style="background: rgba(34, 211, 238, 0.05); border: 1px solid rgba(34, 211, 238, 0.2); border-radius: 0.75rem; padding: 1.5rem; margin: 1.5rem 0;">
+                    <h3 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 1.1rem;">Why No Central Database?</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 0.75rem;">
+                        <strong>Our site never sees, intercepts, or stores student information.</strong> All student interactions (scores, nicknames, student numbers, written responses) are processed locally inside the student's web browser and transmitted directly to your personal or school Google Sheet via your Google Apps Script endpoint.
+                    </p>
+                    <ul style="margin-left: 1.25rem; font-size: 0.9rem; color: var(--text-main);">
+                        <li><strong>FERPA &amp; Student Privacy Compliance</strong>: Zero student PII (Personally Identifiable Information) ever touches our hosting servers or CDNs.</li>
+                        <li><strong>100% Data Ownership</strong>: Your student records remain exclusively inside your Google Workspace account.</li>
+                        <li><strong>Zero Vendor Risk</strong>: No risk of third-party database breaches, server downtime, or data lock-in.</li>
+                    </ul>
+                </div>
+
+                <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">Architecture Data Flow Comparison:</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1.25rem 0;">
+                    <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 0.75rem; padding: 1.25rem;">
+                        <h4 style="color: #f87171; font-size: 1rem; margin-bottom: 0.5rem;">❌ Traditional Centralized EdTech Model</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Student Browser ➔ <strong>Central Database &amp; Server</strong> (Stores names, IDs, answers) ➔ Teacher Dashboard</p>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem; color: #fca5a5;">Requires user sign-in, central database storage, third-party privacy liability, and subscription servers.</p>
+                    </div>
+
+                    <div style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: 0.75rem; padding: 1.25rem;">
+                        <h4 style="color: #4ade80; font-size: 1rem; margin-bottom: 0.5rem;">✅ TJ Components Direct Model</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Student Browser ➔ <strong>Direct HTTPS POST</strong> ➔ <strong>Teacher's Google Sheet</strong></p>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem; color: #86efac;">CDN serves static JavaScript components only. Data flows directly into the teacher's private Google account.</p>
+                    </div>
+                </div>
+
+                <div class="feature-grid" style="margin-top: 1.5rem;">
+                    <div class="feature-item">
+                        <h4>🧩 Why Web Components?</h4>
+                        <p>Standardized HTML Custom Elements (Shadow DOM, ES Modules) run natively in any modern browser. Embed easily into Google Sites, WordPress, Canvas, Moodle, or static HTML without framework dependencies or build steps.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>⚡ Why Google Apps Script?</h4>
+                        <p>Provides a free, serverless backend that logs score submissions straight into Google Sheets—a familiar spreadsheet interface every educator knows, requiring zero database maintenance or API subscription fees.</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Component Specifications -->

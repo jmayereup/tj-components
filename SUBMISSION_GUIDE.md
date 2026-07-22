@@ -2,7 +2,13 @@
 
 This guide explains how teachers can set up their own Google Apps Script endpoint to automatically collect score submissions from any of the TJ Components (e.g., `tj-quiz-element`, `tj-grammar-hearts`, `tj-reader`, `tj-pronunciation`, etc.) into their own Google Sheet.
 
+> [!NOTE]
+> **🔒 Privacy & Data Ownership (Why Google Apps Script?)**
+> TJ Components use a **Zero-Data Retention Architecture**. Our website and CDN **never see, collect, or store** student information (such as student IDs, nicknames, or quiz scores). 
+> By setting up your own Google Apps Script Web App, score submissions are sent **directly** from the student's browser to your personal or institutional Google account. You maintain 100% data ownership and privacy compliance (e.g. FERPA) without any third-party middleman database or server tracking.
+
 ---
+
 
 ## 1. Create a Google Sheet
 1. Open [Google Sheets](https://sheets.google.com) and create a new, blank spreadsheet.
@@ -107,15 +113,9 @@ function doPost(e) {
 
 ## 4. Connecting Your Web App URL to Components
 
-You can connect your custom Apps Script URL to any TJ Component using any of the following methods:
+You can connect your custom Apps Script URL to any TJ Component using either of the following methods:
 
-### Method A: Page URL Search Parameter (No Code Modifications Needed!)
-If you share or embed an activity page, simply append `submission-url` (or `submission_url`) to the browser URL:
-```text
-https://your-site.com/quiz.html?submission-url=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
-```
-
-### Method B: HTML Attribute
+### Method A: HTML Attribute
 Add the `submission-url` (or `submission_url`) attribute directly to any TJ Component element in HTML:
 ```html
 <tj-quiz-element test-mode start-code="1234" teacher-code="7676" submission-url="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
@@ -123,38 +123,26 @@ Add the `submission-url` (or `submission_url`) attribute directly to any TJ Comp
 </tj-quiz-element>
 ```
 
-### Method C: Data / Content URL via Parameter or Attribute
-Load activity JSON data directly from a URL using `url` or `src`:
-```html
-<!-- Via HTML attribute -->
-<tj-grammar-hearts 
-  src="https://example.com/data/lesson1.json" 
-  submission-url="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
-</tj-grammar-hearts>
-
-<!-- Or via URL parameters in browser address bar -->
-https://your-site.com/activity.html?url=https://example.com/lesson1.json&submission-url=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
-```
-
-### Method D: Environment Variable (When Building/Bundling)
-Create a `.env` file in the root of the project before building:
+### Method B: Environment Variable (Self-Hosting / Building)
+Copy `.env.example` to `.env` in the root of the project before building:
 ```env
 VITE_SUBMISSION_URL=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
+VITE_TEACHER_CODE=6767
+VITE_RESET_CODE=7676
 ```
 
 ---
 
 ## 5. Parameter Lookup Precedence Order
 All 8 components evaluate configuration options in the following strict order:
-1. **Element HTML Attribute** (e.g. `submission-url="..."`, `code="..."`, `src="..."`)
-2. **Page URL Query Parameter** (e.g. `?submission-url=...`, `?code=...`, `?url=...`)
-3. **Global Configuration / Environment Variable** (`VITE_SUBMISSION_URL`, `VITE_TEACHER_CODE`)
-4. **Default System Fallback**
+1. **Element HTML Attribute** (e.g. `submission-url="..."`, `code="..."`, `teacher-code="..."`, `src="..."`)
+2. **Global Configuration / Environment Variable** (`tj-config.js` / `VITE_SUBMISSION_URL`, `VITE_TEACHER_CODE`, `VITE_RESET_CODE`)
+3. **Default System Fallback**
 
 ---
 
 ## 6. Student Submission & Proof of Work Process
 - **Teacher Code Verification**: To officially submit score data to Google Sheets, students enter the Teacher Code (`6767` by default).
-- **Custom Teacher Code**: Override via `code="1234"` attribute or `?code=1234` URL query parameter.
+- **Custom Teacher Code**: Override via `code="1234"` / `teacher-code="1234"` attribute or `VITE_TEACHER_CODE` environment variable.
 - **Screenshot Fallback**: If the submission endpoint is unavailable or code is invalid, students are prompted to screenshot their report card for manual submission to the teacher.
 
