@@ -13,9 +13,10 @@ You can use these components directly without downloading them by linking to the
 <script src="https://scripts.teacherjake.com/tj-info-gap.js" defer></script>
 <script src="https://scripts.teacherjake.com/tj-listening.js" defer></script>
 <script src="https://scripts.teacherjake.com/tj-speed-review.js" defer></script>
-<script src="https://scripts.teacherjake.com/tj-quiz-element.js" defer></script>
+<script src="https://scripts.teacherjake.com/tj-test.js" defer></script>
 <script src="https://scripts.teacherjake.com/tj-chapter-book.js" defer></script>
 <script src="https://scripts.teacherjake.com/tj-pronunciation.js" defer></script>
+<script src="https://scripts.teacherjake.com/tj-quiz-element.js" defer></script> <!-- Legacy -->
 
 <!-- Required Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -68,9 +69,10 @@ You can use these custom Google Gemini Gems to automatically generate formatted 
 | **Info Gap** | `<tj-info-gap>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/c4ce1f63dfd9) |
 | **Listening** | `<tj-listening>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/a282ff7b4b26) |
 | **Speed Review** | `<tj-speed-review>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/5a7412981b90) |
-| **Quiz Element** | `<tj-quiz-element>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/4bbfe190f849) |
+| **Test** | `<tj-test>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/1GR1C-bhcrWfUS79b0SA1Llna4NiWaCef?usp=sharing) |
 | **Chapter Book** | `<tj-chapter-book>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/209dda1b768d) |
 | **Pronunciation** | `<tj-pronunciation>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/d45e00c6dcb5) |
+| **Quiz Element (Legacy)** | `<tj-quiz-element>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/4bbfe190f849) |
 
 ---
 
@@ -220,42 +222,46 @@ Pass a JSON array containing a deck object with a title and questions list. You 
 
 ---
 
-### 6. Quiz Element (`<tj-quiz-element>`)
-A flexible quiz component supporting reading passages, vocabulary matching, and cloze (fill-in-the-blank) sections. Optimized for Google Apps Script integration.
+### 6. Test (`<tj-test>`)
+A multi-stage level placement test powered by JSON configuration. Students unlock subsequent levels by meeting target score cutoffs (`passThreshold`).
 
 #### Attributes
-- `submission-url`: (Optional) Google Apps Script deployment URL to send scored answers to.
-- `test-mode`: (Optional) Boolean attribute. If present, disables immediate answers checking, hides visual correctness feedback (green/red ticks and correct/incorrect classes), hides the detailed score breakdown (percentage and section breakdown), and hides the "Try Again" button to prevent retakes. The dynamic quiz content is also hidden after submission so students cannot review or change answers.
-- `start-code`: (Optional) Start Quiz Code required to unlock the quiz initially when in test mode (e.g. `start-code="1234"`). Backward compatible with `code`.
-- `teacher-code`: (Optional) Teacher Code required to unlock the quiz if a tab switch or page refresh occurs, or to reset/reopen submitted tests (e.g. `teacher-code="7676"`, default `'7676'`). Backward compatible with `reset-code`.
+- `submission-url`: (Optional) Google Apps Script deployment URL to log scored placement reports.
+- `test-mode`: (Optional) Boolean attribute. When present, locks the test behind `start-code` and monitors tab-away focus events.
+- `start-code`: (Optional) Start code required to unlock test initially in test mode (default: `'1234'`).
+- `teacher-code`: (Optional) Teacher code required to unlock the test if locked due to tab switches or to reset (default: `'7676'`).
+- `pass-threshold`: (Optional) Default percentage required to progress to the next section (default: `'75%'`).
 
 #### Usage
 ```html
-<tj-quiz-element test-mode start-code="1234" teacher-code="7676" submission-url="YOUR_GAS_URL">
-<script type="text/markdown">
-  My Quiz Title
-  ---text
-  This is a reading passage...
-  ---instructions
-  Choose the best answer for each question.
-  ---questions-3
-  Q: What happened?
-  A: Nothing
-  A: Everything [correct]
-  ---vocab-5
-  Word: Definition
-  Concept: Explanation
-  ---cloze-2
-  The [cat] sat on the [mat].
+<tj-test test-mode start-code="1234" teacher-code="7676" pass-threshold="75%" submission-url="YOUR_GAS_URL">
+<script type="application/json">
+{
+  "title": "CEFR English Placement Assessment",
+  "passThreshold": "75%",
+  "sections": [
+    {
+      "title": "Level A1 - Beginner",
+      "passThreshold": "70%",
+      "passages": [
+        "Hello! My name is Alex. I live in London with my family."
+      ],
+      "questions": [
+        {
+          "question": "What is Alex's name?",
+          "options": ["Alex", "Sam", "John"],
+          "answer": "Alex"
+        }
+      ],
+      "vocabulary": [
+        { "word": "Family", "def": "A group of one or more parents and their children." }
+      ]
+    }
+  ]
+}
 </script>
-</tj-quiz-element>
+</tj-test>
 ```
-
-#### Key Features
-- **Limiters**: Append `-N` to any section header (e.g., `---questions-3`) to display exactly N random items from that section.
-- **Instructions**: Use `---instructions` to add a header and body text between activities.
-- **Vocab Syntax**: Use `Word: Definition` (one per line) for vocabulary matching sections.
-- **Short Answer Questions**: Omit the `A:` rows under a question (e.g., just `Q: Question text`) to render a text input field instead of multiple-choice radio buttons. These written answers are displayed on the report card and sent to the teacher but are not included in the graded score.
 
 ---
 
@@ -339,6 +345,45 @@ Plays a sentence that the student must rebuild by sorting scrambled words.
 - `audioText`: The complete sentence spoken.
 - `words`: List of words in the correct order.
 - `distractors`: (Optional) Similar-sounding words to add as incorrect choices.
+
+---
+
+### 9. Quiz Element (`<tj-quiz-element>`) [Legacy / Inactive]
+A legacy quiz component supporting reading passages, vocabulary matching, and cloze sections. Maintained for backwards compatibility of existing quizzes. For new placement tests and quizzes, use `<tj-test>`.
+
+#### Attributes
+- `submission-url`: (Optional) Google Apps Script deployment URL to send scored answers to.
+- `test-mode`: (Optional) Boolean attribute. If present, disables immediate answers checking, hides visual correctness feedback (green/red ticks and correct/incorrect classes), hides the detailed score breakdown (percentage and section breakdown), and hides the "Try Again" button to prevent retakes. The dynamic quiz content is also hidden after submission so students cannot review or change answers.
+- `start-code`: (Optional) Start Quiz Code required to unlock the quiz initially when in test mode (e.g. `start-code="1234"`). Backward compatible with `code`.
+- `teacher-code`: (Optional) Teacher Code required to unlock the quiz if a tab switch or page refresh occurs, or to reset/reopen submitted tests (e.g. `teacher-code="7676"`, default `'7676'`). Backward compatible with `reset-code`.
+
+#### Usage
+```html
+<tj-quiz-element test-mode start-code="1234" teacher-code="7676" submission-url="YOUR_GAS_URL">
+<script type="text/markdown">
+  My Quiz Title
+  ---text
+  This is a reading passage...
+  ---instructions
+  Choose the best answer for each question.
+  ---questions-3
+  Q: What happened?
+  A: Nothing
+  A: Everything [correct]
+  ---vocab-5
+  Word: Definition
+  Concept: Explanation
+  ---cloze-2
+  The [cat] sat on the [mat].
+</script>
+</tj-quiz-element>
+```
+
+#### Key Features
+- **Limiters**: Append `-N` to any section header (e.g., `---questions-3`) to display exactly N random items from that section.
+- **Instructions**: Use `---instructions` to add a header and body text between activities.
+- **Vocab Syntax**: Use `Word: Definition` (one per line) for vocabulary matching sections.
+- **Short Answer Questions**: Omit the `A:` rows under a question (e.g., just `Q: Question text`) to render a text input field instead of multiple-choice radio buttons. These written answers are displayed on the report card and sent to the teacher but are not included in the graded score.
 
 ---
 

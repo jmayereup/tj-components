@@ -9,7 +9,7 @@
             <h3 class="tj-h3">Language Placement Test</h3>
             <p>Please enter the Start Code provided by your teacher/instructor to begin the test.</p>
             <div class="tj-form-group">
-                <input type="text" id="startCodeInput" class="tj-input" placeholder="Enter Start Code (e.g. 1234)" autocomplete="off">
+                <input type="text" id="startCodeInput" name="tj_test_code_no_autofill" class="tj-input" placeholder="Enter Start Code (e.g. 1234)" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
             </div>
             <div id="startCodeError" class="tj-error-msg hidden">Invalid start code. Please check and try again.</div>
             <button id="unlockStartBtn" class="tj-btn tj-btn-primary" style="width: 100%; margin-top: 1rem;">Begin Test</button>
@@ -23,7 +23,7 @@
             <h3 class="tj-h3" style="color: var(--tj-error-color);">Test Locked</h3>
             <p>You left the test window or refreshed the page. A teacher must enter the Teacher Code to resume your test.</p>
             <div class="tj-form-group">
-                <input type="password" id="teacherCodeInput" class="tj-input" placeholder="Enter Teacher Code (e.g. 7676)" autocomplete="off">
+                <input type="text" id="teacherCodeInput" name="tj_test_code_no_autofill" class="tj-input" placeholder="Enter Teacher Code (e.g. 7676)" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
             </div>
             <div id="teacherCodeError" class="tj-error-msg hidden">Invalid teacher code.</div>
             <button id="unlockTeacherBtn" class="tj-btn tj-btn-error" style="width: 100%; margin-top: 1rem;">Unlock Test</button>

@@ -4,7 +4,7 @@ import stylesText from './styles.css?inline';
 import sharedStyles from '../tj-shared.css?inline';
 import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../audio-utils.js';
 
-class TjProgressiveTest extends HTMLElement {
+class TjTest extends HTMLElement {
     static get observedAttributes() {
         return ['submission-url', 'test-mode', 'start-code', 'teacher-code', 'tts', 'enable-tts', 'pass-threshold'];
     }
@@ -94,7 +94,13 @@ class TjProgressiveTest extends HTMLElement {
             this.submissionUrl = newValue;
         } else if (name === 'test-mode') {
             if (this.isConnected) {
-                this.updateSecurityState();
+                if (newValue !== null) {
+                    this.testUnlocked = false;
+                    this.lockStartOverlay();
+                    this.setupSecurityListeners();
+                } else {
+                    this.unlockAllSecurityOverlays();
+                }
             }
         } else if (name === 'tts' || name === 'enable-tts') {
             if (this.isConnected) {
@@ -109,7 +115,8 @@ class TjProgressiveTest extends HTMLElement {
 
         requestAnimationFrame(async () => {
             const resolved = resolveComponentParams(this);
-            this.submissionUrl = resolved.submissionUrl;
+            // Require submission-url tag property explicitly for tj-test (no default fallback URL)
+            this.submissionUrl = this.getAttribute('submission-url') || this.getAttribute('submission_url') || '';
 
             // Load content from config, url, script tag, or inner text
             if (this.hasAttribute('config')) {
@@ -145,12 +152,13 @@ class TjProgressiveTest extends HTMLElement {
             if (savedState) {
                 this.restoreState(savedState);
             } else {
+                this.renderTestUI();
                 if (this.testMode) {
+                    this.testUnlocked = false;
                     this.lockStartOverlay();
                 } else {
                     this.testUnlocked = true;
                     this.unlockAllSecurityOverlays();
-                    this.renderTestUI();
                 }
             }
         });
@@ -240,9 +248,101 @@ class TjProgressiveTest extends HTMLElement {
     }
 
     parseContent() {
-        const content = this.originalContent || '';
-        const rawSections = content.split('---').map(s => s.trim()).filter(Boolean);
+        const content = (this.originalContent || '').trim();
+        if (!content) return;
 
+        let parsedJson = null;
+        try {
+            parsedJson = JSON.parse(content);
+        } catch (e) {
+            parsedJson = null;
+        }
+
+        this.sections = [];
+
+        if (parsedJson && typeof parsedJson === 'object') {
+            this.parseJsonContent(parsedJson);
+        } else {
+            this.parseMarkdownContent(content);
+        }
+
+        // Initialize section results array
+        this.sectionResults = this.sections.map(() => ({
+            completed: false,
+            passed: false,
+            score: 0,
+            total: 0,
+            percentage: 0
+        }));
+    }
+
+    parseJsonContent(data) {
+        if (data.title) {
+            this.activityTitle = data.title;
+            const titleElem = this.shadowRoot.getElementById('testTitle');
+            if (titleElem) titleElem.textContent = this.activityTitle;
+        }
+
+        const globalPassThreshold = data.passThreshold || data.pass_threshold || data.pass || this.defaultPassThreshold;
+        const rawSections = Array.isArray(data.sections) ? data.sections : (Array.isArray(data) ? data : []);
+
+        rawSections.forEach((sec, idx) => {
+            const secTitle = sec.title || `Section ${idx + 1}`;
+            const secThresholdRaw = sec.passThreshold || sec.pass_threshold || sec.pass || globalPassThreshold;
+            const passThreshold = this._parseThreshold(secThresholdRaw);
+            const passLabel = `${Math.round(passThreshold * 100)}%`;
+
+            const rawPassages = Array.isArray(sec.passages) ? sec.passages : (sec.passage ? [sec.passage] : []);
+            const passages = rawPassages.map(p => {
+                if (typeof p === 'string') return { text: p.trim(), explicitTTS: false };
+                return { text: (p.text || '').trim(), explicitTTS: Boolean(p.tts || p.explicitTTS) };
+            });
+
+            const questions = (sec.questions || []).map(q => {
+                const options = q.options || q.o || [];
+                const answer = q.answer !== undefined ? q.answer : (q.a || '');
+                const questionText = q.question || q.q || '';
+                const explanation = q.explanation || q.e || '';
+                return {
+                    q: questionText,
+                    o: Array.isArray(options) ? options : [],
+                    a: answer,
+                    e: explanation
+                };
+            });
+
+            const vocabulary = (sec.vocabulary || sec.vocab || []).map(v => {
+                return {
+                    word: v.word || '',
+                    def: v.def || v.definition || ''
+                };
+            });
+
+            const cloze = (sec.cloze || []).map(c => {
+                const text = typeof c === 'string' ? c : (c.text || '');
+                const asteriskMatches = text.match(/\*([^*]+)\*/g);
+                let words = [];
+                if (asteriskMatches) {
+                    words = asteriskMatches.map(m => m.replace(/\*/g, ''));
+                }
+                return { text, words, title: c.title || '' };
+            });
+
+            this.sections.push({
+                index: idx,
+                title: secTitle,
+                passThreshold: passThreshold,
+                passPercentageLabel: passLabel,
+                passages,
+                questions,
+                vocabulary,
+                cloze
+            });
+        });
+    }
+
+    parseMarkdownContent(content) {
+        const rawSections = content.split('---').map(s => s.trim()).filter(Boolean);
         if (rawSections.length === 0) return;
 
         // Parse first section line for overall test title if present
@@ -316,15 +416,6 @@ class TjProgressiveTest extends HTMLElement {
                 }
             }
         }
-
-        // Initialize section results array
-        this.sectionResults = this.sections.map(() => ({
-            completed: false,
-            passed: false,
-            score: 0,
-            total: 0,
-            percentage: 0
-        }));
     }
 
     parseQuestionsBlock(text) {
@@ -489,6 +580,13 @@ class TjProgressiveTest extends HTMLElement {
         const stepperContainer = this.shadowRoot.getElementById('levelStepper');
         if (!stepperContainer) return;
         stepperContainer.innerHTML = '';
+
+        if (this.sections.length <= 1) {
+            stepperContainer.style.display = 'none';
+            return;
+        } else {
+            stepperContainer.style.display = 'flex';
+        }
 
         this.sections.forEach((sec, idx) => {
             const item = document.createElement('div');
@@ -673,7 +771,7 @@ class TjProgressiveTest extends HTMLElement {
         submitBtn.className = 'tj-btn tj-btn-primary';
         submitBtn.style.alignSelf = 'flex-end';
         submitBtn.style.marginTop = '1rem';
-        submitBtn.textContent = `Submit Section ${section.index + 1}`;
+        submitBtn.textContent = this.sections.length > 1 ? `Submit Section ${section.index + 1}` : 'Submit Test';
         submitBtn.onclick = () => this.evaluateActiveSection();
 
         sectionCard.appendChild(submitBtn);
@@ -855,10 +953,17 @@ class TjProgressiveTest extends HTMLElement {
                     ${summaryRows}
                 </tbody>
             </table>
+            ${this.submissionUrl ? `
             <button id="submitResultsBtn" class="tj-btn tj-btn-primary" style="margin-top: 1rem;">
                 📤 Submit Official Score Report
             </button>
             <div id="submitStatusMsg" class="tj-error-msg hidden" style="color: var(--tj-success-color);"></div>
+            ` : `
+            <div class="tj-banner" style="background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.3); color: #38bdf8; border-radius: 8px; padding: 0.85rem 1.25rem; margin-top: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 0.6rem;">
+                <span style="font-size: 1.3rem;">📸</span>
+                <span>Placement assessment complete! Take a screenshot of this summary table to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
+            </div>
+            `}
         `;
 
         const submitBtn = reportContainer.querySelector('#submitResultsBtn');
@@ -909,7 +1014,7 @@ class TjProgressiveTest extends HTMLElement {
     }
 
     getStorageKey() {
-        return `tj_progressive_test_${location.pathname}_${this.activityTitle.replace(/\s+/g, '_')}`;
+        return `tj_test_${location.pathname}_${this.activityTitle.replace(/\s+/g, '_')}`;
     }
 
     saveStateToLocalStorage() {
@@ -927,7 +1032,7 @@ class TjProgressiveTest extends HTMLElement {
 
     loadStateFromLocalStorage() {
         try {
-            const raw = localStorage.getItem(this.getStorageKey());
+            const raw = localStorage.getItem(this.getStorageKey()) || localStorage.getItem(`tj_progressive_test_${location.pathname}_${this.activityTitle.replace(/\s+/g, '_')}`);
             return raw ? JSON.parse(raw) : null;
         } catch (e) {
             return null;
@@ -949,17 +1054,23 @@ class TjProgressiveTest extends HTMLElement {
 
     resetTest() {
         localStorage.removeItem(this.getStorageKey());
+        localStorage.removeItem(`tj_progressive_test_${location.pathname}_${this.activityTitle.replace(/\s+/g, '_')}`);
         this.activeSectionIndex = 0;
         this.testCompleted = false;
         this.tabAwayCount = 0;
+        this.testUnlocked = false;
         this.sectionResults = this.sections.map(() => ({ completed: false, passed: false, score: 0, total: 0, percentage: 0 }));
         this.updateTabAwayBanner();
         this.renderTestUI();
+        this.updateSecurityState();
     }
 }
 
+if (!customElements.get('tj-test')) {
+    customElements.define('tj-test', TjTest);
+}
 if (!customElements.get('tj-progressive-test')) {
-    customElements.define('tj-progressive-test', TjProgressiveTest);
+    customElements.define('tj-progressive-test', class extends TjTest {});
 }
 
-export default TjProgressiveTest;
+export default TjTest;

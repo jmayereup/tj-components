@@ -23,7 +23,7 @@
                 <p class="student-instructions instruction" id="lockSectionInstruction">This quiz is in Test Mode. Please enter the Start Quiz Code to unlock the questions. / แบบทดสอบนี้อยู่ในโหมดการสอบ กรุณากรอกรหัสเริ่มทำข้อสอบเพื่อปลดล็อก</p>
                 <div class="input-group">
                     <label for="lockTeacherCode" class="input-label" id="lockTeacherCodeLabel">Start Quiz Code</label>
-                    <input type="password" id="lockTeacherCode" class="form-input" placeholder="Enter Start Quiz Code" autocomplete="off">
+                    <input type="text" id="lockTeacherCode" name="tj_quiz_code_no_autofill" class="form-input" placeholder="Enter Start Quiz Code" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
                 </div>
                 <p id="lockErrorAlert" style="color: var(--red-color, #ef4444); margin-top: 0.5rem; font-size: 0.9em; min-height: 1.5rem; font-weight: 500;" class="hidden"></p>
                 <div style="margin-top: 1rem;">
@@ -41,21 +41,21 @@
                     </p>
                     <div class="input-group">
                         <label for="nickname" class="input-label">Nickname</label>
-                        <input type="text" id="nickname" name="nickname" class="form-input" placeholder="Jake">
+                        <input type="text" id="nickname" name="tj_nickname_no_autofill" class="form-input" placeholder="Jake" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
                     </div>
                     <div class="grid-container" style="margin-top: 1rem;">
                         <div>
                             <label for="homeroom" class="input-label">Homeroom</label>
-                            <input type="text" id="homeroom" name="homeroom" class="form-input" placeholder="1/1">
+                            <input type="text" id="homeroom" name="tj_homeroom_no_autofill" class="form-input" placeholder="1/1" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
                         </div>
                         <div>
                             <label for="studentId" class="input-label">Student ID</label>
-                            <input type="text" id="studentId" name="studentId" class="form-input" placeholder="01">
+                            <input type="text" id="studentId" name="tj_studentid_no_autofill" class="form-input" placeholder="01" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
                         </div>
                     </div>
                     <div id="teacherCodeGroup" class="input-group" style="margin-top: 1rem;">
-                        <label for="teacherCode" class="input-label">Teacher Code (Optional)</label>
-                        <input type="text" id="teacherCode" name="teacherCode" class="form-input" placeholder="Enter code for submission">
+                        <label for="teacherCode" class="input-label">Start / Teacher Code (Optional for Practice Mode)</label>
+                        <input type="text" id="teacherCode" name="tj_teachercode_no_autofill" class="form-input" placeholder="Enter code for submission" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
                     </div>
                 </div>
 
@@ -74,9 +74,9 @@
                     <p id="validationMessage"></p>
                     
                     <div id="retrySubmissionSection" class="retry-section hidden">
-                        <p class="retry-title">Want to send this to your teacher?</p>
+                        <p class="retry-title">Want to send this score to your teacher?</p>
                         <div class="retry-controls">
-                            <input type="text" id="retryTeacherCode" class="form-input" placeholder="Teacher Code" title="Teacher Code">
+                            <input type="text" id="retryTeacherCode" name="tj_retrycode_no_autofill" class="form-input" placeholder="Teacher Code" title="Teacher Code" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
                             <button type="button" id="retrySendButton" class="button button-green">Send Now</button>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                     <div id="teacherActionsSection" class="teacher-actions-section hidden">
                         <p class="teacher-actions-title">Reopen or Reset Quiz (Teacher Only)</p>
                         <div class="teacher-actions-controls">
-                            <input type="text" id="teacherResetCode" class="form-input" placeholder="Reset Code" title="Reset Code">
+                            <input type="text" id="teacherResetCode" name="tj_resetcode_no_autofill" class="form-input" placeholder="Reset Code" title="Reset Code" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
                             <button type="button" id="reopenEditButton" class="button button-slate">Reopen & Edit</button>
                             <button type="button" id="resetTryAgainButton" class="button button-red">Reset & Try Again</button>
                         </div>

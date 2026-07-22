@@ -1,55 +1,9 @@
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
+import { COMPONENT_CATALOG, SAMPLE_QUIZ_MD, SAMPLE_INFOGAP_JSON, SAMPLE_SPEED_JSON } from "../tj-catalog.js";
 
 const STORAGE_KEY = 'tj_builder_settings';
 const DEFAULT_SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
-
-const SAMPLE_QUIZ_MD = `---
-text
-title = The Magic of Photosynthesis
-audio-src = https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
-Photosynthesis is the process by which green plants and some other organisms use sunlight to synthesize foods from carbon dioxide and water. Plants generally involve the green pigment chlorophyll and generate oxygen as a byproduct.
-
----
-questions-1
-1. What do green plants use to synthesize food during photosynthesis?
-* A. Sunlight, carbon dioxide, and water
-B. Oxygen and nitrogen
-C. Soil and fertilizer only
-D. Darkness and rain
-
-2. What green pigment is involved in photosynthesis?
-A. Hemoglobin
-* B. Chlorophyll
-C. Carotene
-D. Melanin
-
----
-vocab-1
-chlorophyll = Green pigment found in plants
-photosynthesis = Process of converting light energy into chemical energy
-byproduct = An incidental or secondary product made in a manufacture or synthesis
-`;
-
-const SAMPLE_INFOGAP_JSON = JSON.stringify({
-    title: "Weekend Plans Information Gap",
-    image: "https://placehold.co/400x200?text=Weekend+Plans",
-    gaps: [
-        { text: "Where are you going this Saturday?", answer: "to the park", type: "text" },
-        { text: "Who will you go with?", answer: "my brother", type: "text" },
-        { text: "What time will you leave?", answer: "at 10 am", type: "text" }
-    ]
-}, null, 2);
-
-const SAMPLE_SPEED_JSON = JSON.stringify({
-    title: "Essential Vocabulary Speed Match",
-    deck: [
-        { term: "Enthusiastic", definition: "Having or showing intense and eager enjoyment" },
-        { term: "Resilient", definition: "Able to withstand or recover quickly from difficult conditions" },
-        { term: "Meticulous", definition: "Showing great attention to detail; very careful and precise" },
-        { term: "Pragmatic", definition: "Dealing with things sensibly and realistically" }
-    ]
-}, null, 2);
 
 class TjBuilder extends HTMLElement {
     constructor() {
@@ -129,6 +83,10 @@ class TjBuilder extends HTMLElement {
         this.inputGemini = this.shadowRoot.getElementById('gemini-input');
         this.selectComponentType = this.shadowRoot.getElementById('component-type-select');
         this.btnParse = this.shadowRoot.getElementById('btn-parse');
+        this.btnPasteClipboard = this.shadowRoot.getElementById('btn-paste-clipboard');
+        
+        this.selectSample = this.shadowRoot.getElementById('select-sample');
+        this.selectGeminiGem = this.shadowRoot.getElementById('select-gemini-gem');
         
         this.badgeDetected = this.shadowRoot.getElementById('detected-type-badge');
         this.rawCodeEditor = this.shadowRoot.getElementById('raw-code-editor');
@@ -148,13 +106,24 @@ class TjBuilder extends HTMLElement {
         this.modalComponentName = this.shadowRoot.getElementById('modal-component-name');
         this.livePreviewContainer = this.shadowRoot.getElementById('live-preview-container');
 
-        // Populate setting input values
+        // Populate setting input values & Gemini Gem links
         this.inputStartCode.value = this.currentSettings.startCode;
         this.inputTeacherCode.value = this.currentSettings.teacherCode;
         this.inputSubmissionUrl.value = this.currentSettings.submissionUrl;
         if (this.chkTestMode) {
             this.chkTestMode.checked = !!this.currentSettings.isTestMode;
         }
+
+        this._populateGeminiGemsDropdown();
+    }
+
+    _populateGeminiGemsDropdown() {
+        if (!this.selectGeminiGem) return;
+        const optionsHtml = [
+            '<option value="" disabled selected>✨ Gemini Gems ↗</option>',
+            ...COMPONENT_CATALOG.map(item => `<option value="${item.geminiUrl}">${item.icon} ${item.name} Gem</option>`)
+        ].join('');
+        this.selectGeminiGem.innerHTML = optionsHtml;
     }
 
     _bindEvents() {
@@ -175,16 +144,30 @@ class TjBuilder extends HTMLElement {
             input.addEventListener('input', handleSettingChange);
         });
 
-        // Sample buttons
-        this.shadowRoot.getElementById('btn-sample-quiz')?.addEventListener('click', () => {
-            this._loadSample(SAMPLE_QUIZ_MD, 'tj-quiz-element');
+        // Sample dropdown change
+        this.selectSample?.addEventListener('change', () => {
+            const val = this.selectSample.value;
+            if (val === 'quiz') {
+                this._loadSample(SAMPLE_QUIZ_MD, 'tj-quiz-element');
+            } else if (val === 'infogap') {
+                this._loadSample(SAMPLE_INFOGAP_JSON, 'tj-info-gap');
+            } else if (val === 'speed') {
+                this._loadSample(SAMPLE_SPEED_JSON, 'tj-speed-review');
+            }
+            this.selectSample.value = '';
         });
-        this.shadowRoot.getElementById('btn-sample-infogap')?.addEventListener('click', () => {
-            this._loadSample(SAMPLE_INFOGAP_JSON, 'tj-info-gap');
+
+        // Gemini Gem dropdown change
+        this.selectGeminiGem?.addEventListener('change', () => {
+            const gemUrl = this.selectGeminiGem.value;
+            if (gemUrl) {
+                window.open(gemUrl, '_blank', 'noopener,noreferrer');
+            }
+            this.selectGeminiGem.value = '';
         });
-        this.shadowRoot.getElementById('btn-sample-speed')?.addEventListener('click', () => {
-            this._loadSample(SAMPLE_SPEED_JSON, 'tj-speed-review');
-        });
+
+        // Paste from clipboard button
+        this.btnPasteClipboard?.addEventListener('click', () => this._handlePasteFromClipboard());
 
         // Parse button & component selector
         this.btnParse.addEventListener('click', () => this._handleParseInput());
@@ -234,6 +217,53 @@ class TjBuilder extends HTMLElement {
         });
     }
 
+    async _handlePasteFromClipboard() {
+        try {
+            if (!navigator.clipboard || typeof navigator.clipboard.readText !== 'function') {
+                throw new Error('Clipboard API not available');
+            }
+            const text = await navigator.clipboard.readText();
+            if (!text || !text.trim()) {
+                return;
+            }
+            this.inputGemini.value = text.trim();
+            this._handleParseInput();
+            this._showPasteFeedback();
+        } catch (err) {
+            console.warn('TJ Builder: Could not read clipboard directly', err);
+            if (this.inputGemini) {
+                this.inputGemini.focus();
+                this.inputGemini.placeholder = "Please press Ctrl+V or Cmd+V to paste your Gemini AI output here...";
+            }
+        }
+    }
+
+    _showPasteFeedback() {
+        if (!this.btnPasteClipboard) return;
+        this.btnPasteClipboard.classList.add('pasted');
+        const originalText = this.btnPasteClipboard.innerHTML;
+        this.btnPasteClipboard.innerHTML = '✅ Pasted & Parsed!';
+        setTimeout(() => {
+            this.btnPasteClipboard.classList.remove('pasted');
+            this.btnPasteClipboard.innerHTML = originalText;
+        }, 2000);
+    }
+
+    _clearComponentSessionStorage() {
+        try {
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('tj-') || key.startsWith('tj_')) && key !== STORAGE_KEY) {
+                    keysToRemove.push(key);
+                }
+            }
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+        } catch (e) {
+            console.warn('TJ Builder: Could not clear component session storage', e);
+        }
+    }
+
     _loadSample(sampleContent, componentType) {
         this.inputGemini.value = sampleContent;
         this.selectComponentType.value = this._getCleanTagName(componentType);
@@ -256,6 +286,23 @@ class TjBuilder extends HTMLElement {
         const tagMatch = raw.match(/<(?:\s*)(tj-[a-z0-9-]+)[\s>]/i);
         if (tagMatch) {
             detectedType = tagMatch[1].toLowerCase();
+            
+            // Auto-detect and populate teacher attributes if present on tag
+            const startCodeMatch = raw.match(/start-code=["']([^"']+)["']/i);
+            if (startCodeMatch && this.inputStartCode) {
+                this.inputStartCode.value = startCodeMatch[1];
+                this.currentSettings.startCode = startCodeMatch[1];
+            }
+            const teacherCodeMatch = raw.match(/teacher-code=["']([^"']+)["']/i);
+            if (teacherCodeMatch && this.inputTeacherCode) {
+                this.inputTeacherCode.value = teacherCodeMatch[1];
+                this.currentSettings.teacherCode = teacherCodeMatch[1];
+            }
+            const subUrlMatch = raw.match(/submission-url=["']([^"']+)["']/i);
+            if (subUrlMatch && this.inputSubmissionUrl) {
+                this.inputSubmissionUrl.value = subUrlMatch[1];
+                this.currentSettings.submissionUrl = subUrlMatch[1];
+            }
             if (raw.toLowerCase().includes('test-mode')) {
                 if (this.chkTestMode) this.chkTestMode.checked = true;
                 this.currentSettings.isTestMode = true;
@@ -604,7 +651,7 @@ class TjBuilder extends HTMLElement {
         }
 
         const componentType = this._getCleanTagName(this.parsedState.componentType);
-        const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-progressive-test');
+        const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-test' || componentType === 'tj-progressive-test');
 
         if (this.modeToggleContainer) {
             this.modeToggleContainer.style.display = supportsTestMode ? 'flex' : 'none';
@@ -645,7 +692,7 @@ class TjBuilder extends HTMLElement {
         const teacherCode = this.currentSettings.teacherCode || '7676';
         const submissionUrl = this.currentSettings.submissionUrl;
 
-        const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-progressive-test');
+        const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-test' || componentType === 'tj-progressive-test');
         const isTestMode = supportsTestMode && this.chkTestMode && this.chkTestMode.checked;
 
         let attrs = '';
@@ -670,6 +717,7 @@ class TjBuilder extends HTMLElement {
     }
 
     _openModalPreview() {
+        this._clearComponentSessionStorage();
         const componentType = this._getCleanTagName(this.parsedState.componentType);
         this.modalComponentName.textContent = componentType;
         this.previewModal.classList.add('open');
@@ -688,6 +736,7 @@ class TjBuilder extends HTMLElement {
 
     async _renderLivePreview() {
         if (!this.livePreviewContainer) return;
+        this._clearComponentSessionStorage();
         this.livePreviewContainer.innerHTML = '';
         
         const componentType = this._getCleanTagName(this.parsedState.componentType);
@@ -708,7 +757,7 @@ class TjBuilder extends HTMLElement {
             const previewEl = document.createElement(componentType);
             
             // 3. Set standard attributes
-            const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-progressive-test');
+            const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-test' || componentType === 'tj-progressive-test');
             if (supportsTestMode && this.chkTestMode && this.chkTestMode.checked) {
                 previewEl.setAttribute('test-mode', '');
             } else {
@@ -731,7 +780,7 @@ class TjBuilder extends HTMLElement {
             }
 
             // 5. Set inner light DOM content script tag
-            if (componentType === 'tj-quiz-element' || componentType === 'tj-progressive-test') {
+            if (componentType === 'tj-quiz-element' || componentType === 'tj-test' || componentType === 'tj-progressive-test') {
                 const scriptEl = document.createElement('script');
                 scriptEl.type = isJson ? 'application/json' : 'text/markdown';
                 scriptEl.textContent = rawContent;

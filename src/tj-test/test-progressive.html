@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive Language Placement Test Demo | TJ Components</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+            --card-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+
+        .header-nav {
+            max-width: 900px;
+            margin: 0 auto 2rem auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .back-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .demo-controls-card {
+            max-width: 900px;
+            margin: 0 auto 2rem auto;
+            background: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .demo-controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .switch-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .switch-label input {
+            display: none;
+        }
+
+        .switch-slider {
+            width: 38px;
+            height: 22px;
+            background-color: #475569;
+            border-radius: 20px;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        .switch-slider::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: white;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.2s;
+        }
+
+        .switch-label input:checked + .switch-slider {
+            background-color: #0ea5e9;
+        }
+
+        .switch-label input:checked + .switch-slider::before {
+            transform: translateX(16px);
+        }
+
+        .control-btn {
+            background: #334155;
+            color: #f8fafc;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .control-btn:hover {
+            background: #475569;
+        }
+
+        .info-box {
+            background: rgba(14, 165, 233, 0.1);
+            border-left: 4px solid #0ea5e9;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #e0f2fe;
+        }
+
+        .info-box code {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-nav">
+        <a href="/" class="back-link">← Back to Component Catalog</a>
+        <span style="font-size: 0.9rem; color: #94a3b8;">Demo Page</span>
+    </div>
+
+    <div class="demo-controls-card">
+        <h2>Progressive Language Placement Test Demo</h2>
+        
+        <div class="demo-controls-row">
+            <div class="toggle-group">
+                <label class="switch-label" for="testModeToggle">
+                    <input type="checkbox" id="testModeToggle">
+                    <span class="switch-slider"></span>
+                    <span class="control-text">Enable Security Test Mode</span>
+                </label>
+
+                <label class="switch-label" for="ttsToggle">
+                    <input type="checkbox" id="ttsToggle">
+                    <span class="switch-slider"></span>
+                    <span class="control-text">Enable Text-to-Speech (TTS)</span>
+                </label>
+            </div>
+
+            <button id="resetTestBtn" class="control-btn">
+                🔄 Clear Cache & Reset Test
+            </button>
+        </div>
+
+        <div class="info-box">
+            🔑 <strong>Start Code:</strong> <code>1234</code> | 🔒 <strong>Teacher Code:</strong> <code>7676</code><br>
+            ℹ️ <strong>Progressive Mechanics:</strong> Students answer section by section. Meeting or exceeding the pass threshold (e.g. 70%–80%) unlocks the next section. If a student fails to meet the cutoff, the test stops and their placement level is determined.
+        </div>
+    </div>
+
+    <div class="container">
+        <tj-test start-code="1234" teacher-code="7676" pass-threshold="75%">
+            <script type="application/json">
+            {
+                "title": "CEFR English Placement Assessment",
+                "passThreshold": "75%",
+                "sections": [
+                    {
+                        "title": "Level A1 - Beginner",
+                        "passThreshold": "70%",
+                        "passages": [
+                            "Hello! My name is Alex. I live in London with my family. Every morning, I wake up at 7:00 AM and have breakfast. I like tea and toast for breakfast. After breakfast, I walk to school with my friend Sam. School starts at 8:30 AM and finishes at 3:00 PM."
+                        ],
+                        "questions": [
+                            {
+                                "question": "What time does Alex wake up in the morning?",
+                                "options": ["6:30 AM", "7:00 AM", "8:30 AM"],
+                                "answer": "7:00 AM"
+                            },
+                            {
+                                "question": "Who does Alex walk to school with?",
+                                "options": ["His brother", "His friend Sam", "His teacher"],
+                                "answer": "His friend Sam"
+                            }
+                        ],
+                        "vocabulary": [
+                            { "word": "Friend", "def": "A person whom one knows and has a bond of mutual affection with." }
+                        ]
+                    },
+                    {
+                        "title": "Level A2 - Elementary",
+                        "passThreshold": "75%",
+                        "passages": [
+                            "Last summer, Sarah went on a trip to Japan. She visited Tokyo and Kyoto. In Tokyo, she took the high-speed bullet train (Shinkansen), which travelled at over 300 km/h. She enjoyed eating authentic ramen and visiting historical temples."
+                        ],
+                        "questions": [
+                            {
+                                "question": "How fast did the bullet train travel?",
+                                "options": ["Over 100 km/h", "Over 200 km/h", "Over 300 km/h"],
+                                "answer": "Over 300 km/h"
+                            }
+                        ],
+                        "vocabulary": [
+                            { "word": "Authentic", "def": "Genuine, real, or original." }
+                        ]
+                    },
+                    {
+                        "title": "Level B1 - Intermediate",
+                        "passThreshold": "75%",
+                        "passages": [
+                            "Renewable energy sources such as solar and wind power are becoming increasingly vital in combating climate change. Unlike fossil fuels, solar energy produces no greenhouse emissions during operation."
+                        ],
+                        "questions": [
+                            {
+                                "question": "What advantage of solar energy is highlighted?",
+                                "options": ["It works 24/7 everywhere", "It produces no greenhouse emissions during operation", "It costs less than all fossil fuels"],
+                                "answer": "It produces no greenhouse emissions during operation"
+                            }
+                        ],
+                        "vocabulary": [
+                            { "word": "Renewable", "def": "Capable of being replenished naturally." }
+                        ]
+                    }
+                ]
+            }
+            </script>
+        </tj-test>
+    </div>
+
+    <script type="module" src="./index.js"></script>
+    <script>
+        customElements.whenDefined('tj-test').then(() => {
+            const testElem = document.querySelector('tj-test');
+            const testModeToggle = document.getElementById('testModeToggle');
+            const ttsToggle = document.getElementById('ttsToggle');
+            const resetBtn = document.getElementById('resetTestBtn');
+
+            if (testElem) {
+                testModeToggle.checked = testElem.hasAttribute('test-mode');
+                ttsToggle.checked = testElem.hasAttribute('tts') || testElem.hasAttribute('enable-tts');
+
+                testModeToggle.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        testElem.setAttribute('test-mode', '');
+                    } else {
+                        testElem.removeAttribute('test-mode');
+                    }
+                });
+
+                ttsToggle.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        testElem.setAttribute('tts', '');
+                    } else {
+                        testElem.removeAttribute('tts');
+                        testElem.removeAttribute('enable-tts');
+                    }
+                });
+
+                resetBtn.addEventListener('click', () => {
+                    testElem.resetTest();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

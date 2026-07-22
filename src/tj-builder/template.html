@@ -18,15 +18,15 @@
         <div class="settings-grid">
             <div class="field-group">
                 <label for="setting-start-code">Start Code (Student Access)</label>
-                <input type="text" id="setting-start-code" placeholder="e.g. 1234" value="1234" />
+                <input type="text" id="setting-start-code" name="tj_setting_start_code_no_autofill" placeholder="e.g. 1234" value="1234" autocomplete="one-time-code" data-lpignore="true" data-form-type="other" />
             </div>
             <div class="field-group">
                 <label for="setting-teacher-code">Teacher / Reset Code</label>
-                <input type="text" id="setting-teacher-code" placeholder="e.g. 7676" value="7676" />
+                <input type="text" id="setting-teacher-code" name="tj_setting_teacher_code_no_autofill" placeholder="e.g. 7676" value="7676" autocomplete="one-time-code" data-lpignore="true" data-form-type="other" />
             </div>
             <div class="field-group flex-grow">
-                <label for="setting-submission-url">Submission URL (Apps Script Endpoint)</label>
-                <input type="url" id="setting-submission-url" placeholder="https://script.google.com/macros/s/.../exec" />
+                <label for="setting-submission-url">Submission URL (Apps Script Endpoint - Optional)</label>
+                <input type="url" id="setting-submission-url" name="tj_setting_url_no_autofill" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="one-time-code" data-lpignore="true" data-form-type="other" />
             </div>
         </div>
     </section>
@@ -39,9 +39,16 @@
             <div class="card-header">
                 <h3>✨ 1. Paste Gemini AI Output</h3>
                 <div class="sample-buttons">
-                    <button type="button" class="btn-sample" id="btn-sample-quiz">Load Sample Quiz</button>
-                    <button type="button" class="btn-sample" id="btn-sample-infogap">Load Sample Info-Gap</button>
-                    <button type="button" class="btn-sample" id="btn-sample-speed">Load Sample Speed Review</button>
+                    <button type="button" class="btn-paste-clipboard" id="btn-paste-clipboard">📋 Paste from Clipboard</button>
+                    <select id="select-sample" class="select-dropdown select-sample" aria-label="Load Sample Content">
+                        <option value="" disabled selected>🧪 Load Sample Content...</option>
+                        <option value="quiz">Sample Quiz (tj-quiz-element)</option>
+                        <option value="infogap">Sample Info-Gap (tj-info-gap)</option>
+                        <option value="speed">Sample Speed Review (tj-speed-review)</option>
+                    </select>
+                    <select id="select-gemini-gem" class="select-dropdown select-gemini-gem" aria-label="Open Gemini Gem AI Generator">
+                        <option value="" disabled selected>✨ Gemini Gems ↗</option>
+                    </select>
                 </div>
             </div>
             <textarea id="gemini-input" placeholder="Paste the output from Gemini here (e.g. full element tag, raw JSON, or Markdown with --- section dividers)..."></textarea>
@@ -50,13 +57,13 @@
                 <div class="component-selector-group">
                     <label for="component-type-select">Target Component:</label>
                     <select id="component-type-select">
-                        <option value="tj-quiz-element">tj-quiz-element (Markdown Quiz / Reading)</option>
+                        <option value="tj-test">tj-test (Test)</option>
+                        <option value="tj-quiz-element">tj-quiz-element (Legacy / Inactive Quiz)</option>
                         <option value="tj-info-gap">tj-info-gap (Interactive Information Gap)</option>
                         <option value="tj-speed-review">tj-speed-review (Flashcards / Speed Match)</option>
                         <option value="tj-chapter-book">tj-chapter-book (Chapter Book Reader)</option>
                         <option value="tj-grammar-hearts">tj-grammar-hearts (Grammar Activity)</option>
                         <option value="tj-listening">tj-listening (Listening Activity)</option>
-                        <option value="tj-progressive-test">tj-progressive-test (Progressive Test)</option>
                         <option value="tj-pronunciation">tj-pronunciation (Pronunciation Practice)</option>
                         <option value="tj-reader">tj-reader (Standard Reader)</option>
                     </select>
@@ -99,7 +106,10 @@
                     <span class="tip-text">Paste the embed code into your blog or website HTML editor. Use Live Preview to test interactivity before publishing.</span>
                 </div>
 
-                <div class="embed-code-hidden" style="display:none;" id="embed-code-display"></div>
+                <div class="embed-code-preview-box">
+                    <div class="code-box-header">⚡ Generated Embed Code</div>
+                    <pre><code id="embed-code-display"></code></pre>
+                </div>
             </div>
         </div>
 
