@@ -473,13 +473,27 @@ class TjBuilder extends HTMLElement {
         if (this.parsedState.componentType === 'tj-quiz-element' && this.parsedState.markdownAst) {
             this._renderQuizVisualForm(this.parsedState.markdownAst);
         } else if (this.parsedState.isJson && this.parsedState.jsonObject) {
-            const isTestJson = this.parsedState.componentType === 'tj-test' || 
-                               Array.isArray(this.parsedState.jsonObject.sections) ||
-                               this.parsedState.jsonObject.passThreshold !== undefined;
-            if (isTestJson) {
-                this._renderTestJsonVisualForm(this.parsedState.jsonObject);
+            const type = this.parsedState.componentType;
+            const obj = this.parsedState.jsonObject;
+
+            if (type === 'tj-test' || Array.isArray(obj.sections) || obj.passThreshold !== undefined) {
+                this._renderTestJsonVisualForm(obj);
+            } else if (type === 'tj-info-gap' || obj.gaps !== undefined || obj.blocks !== undefined) {
+                this._renderInfoGapJsonVisualForm(obj);
+            } else if (type === 'tj-speed-review' || obj.deck !== undefined || obj.cards !== undefined || (Array.isArray(obj) && obj[0] && obj[0].questions)) {
+                this._renderSpeedReviewJsonVisualForm(obj);
+            } else if (type === 'tj-chapter-book' || obj.chapters !== undefined) {
+                this._renderChapterBookJsonVisualForm(obj);
+            } else if (type === 'tj-grammar-hearts' || type === 'grammar-hearts' || obj.hearts !== undefined || obj.grammar !== undefined || (Array.isArray(obj) && obj[0] && obj[0].hint)) {
+                this._renderGrammarHeartsJsonVisualForm(obj);
+            } else if (type === 'tj-listening' || obj.listening !== undefined || obj.intro !== undefined) {
+                this._renderListeningJsonVisualForm(obj);
+            } else if (type === 'tj-pronunciation' || obj.activities !== undefined || obj.targetWords !== undefined) {
+                this._renderPronunciationJsonVisualForm(obj);
+            } else if (type === 'tj-reader' || type === 'lbl-reader' || obj.storyTitle !== undefined || (Array.isArray(obj) && obj[0] && obj[0].original !== undefined)) {
+                this._renderReaderJsonVisualForm(obj);
             } else {
-                this._renderJsonVisualForm(this.parsedState.jsonObject);
+                this._renderGenericJsonVisualForm(obj);
             }
         } else {
             this.visualFormContainer.innerHTML = `
@@ -1072,6 +1086,1096 @@ class TjBuilder extends HTMLElement {
                 renderFormContent();
                 syncState();
                 return;
+            }
+        });
+
+        this.visualFormContainer.appendChild(container);
+    }
+
+    _renderInfoGapJsonVisualForm(jsonObject) {
+        const container = document.createElement('div');
+        container.className = 'vf-test-editor';
+
+        const render = () => {
+            container.innerHTML = '';
+            const rootSec = document.createElement('div');
+            rootSec.className = 'vf-section vf-root-config';
+            rootSec.innerHTML = `
+                <div class="vf-section-title">
+                    <span>👥 Info Gap Configuration (tj-info-gap)</span>
+                </div>
+                <div class="vf-grid-2">
+                    <div class="field-group">
+                        <label>Topic / Title</label>
+                        <input type="text" class="vf-ig-title" value="${this._escapeHtml(jsonObject.title || jsonObject.topic || '')}" placeholder="e.g. Weekend Plans" />
+                    </div>
+                    <div class="field-group">
+                        <label>Player Count</label>
+                        <input type="number" class="vf-ig-players" value="${jsonObject.player_count || 2}" min="1" max="4" />
+                    </div>
+                </div>
+                <div class="field-group" style="margin-top: 0.5rem;">
+                    <label>Scenario Description</label>
+                    <textarea class="vf-ig-scenario" rows="2" placeholder="e.g. Read your info and ask questions...">${this._escapeHtml(jsonObject.scenario_description || '')}</textarea>
+                </div>
+            `;
+            container.appendChild(rootSec);
+
+            if (Array.isArray(jsonObject.gaps)) {
+                const gapsSec = document.createElement('div');
+                gapsSec.className = 'vf-section';
+                let gapsHtml = jsonObject.gaps.map((g, gIdx) => `
+                    <div class="vf-vocab-row" data-gidx="${gIdx}">
+                        <input type="text" class="vf-gap-text" data-gidx="${gIdx}" value="${this._escapeHtml(g.text || '')}" placeholder="Prompt text..." />
+                        <input type="text" class="vf-gap-ans" data-gidx="${gIdx}" value="${this._escapeHtml(g.answer || '')}" placeholder="Answer..." />
+                        <button type="button" class="vf-btn-icon-del vf-btn-del-gap" data-gidx="${gIdx}">✕</button>
+                    </div>
+                `).join('');
+                gapsSec.innerHTML = `
+                    <div class="vf-sub-header">
+                        <span>💬 Information Gaps</span>
+                        <button type="button" class="vf-btn-secondary vf-btn-add-gap">+ Add Gap</button>
+                    </div>
+                    <div>${gapsHtml || '<p class="vf-empty-sub">No gaps added.</p>'}</div>
+                `;
+                container.appendChild(gapsSec);
+            }
+
+            if (Array.isArray(jsonObject.blocks)) {
+                const blocksSec = document.createElement('div');
+                blocksSec.className = 'vf-sections-list';
+                jsonObject.blocks.forEach((blk, bIdx) => {
+                    const blkCard = document.createElement('div');
+                    blkCard.className = 'vf-section-card';
+                    const questions = Array.isArray(blk.questions) ? blk.questions : [];
+                    let qHtml = questions.map((q, qIdx) => `
+                        <div class="vf-question-card" data-bidx="${bIdx}" data-qidx="${qIdx}">
+                            <div class="vf-question-header">
+                                <span class="vf-question-num">Question ${qIdx + 1} (Asker: Player ${q.asker_id || 1})</span>
+                                <button type="button" class="vf-btn-delete vf-btn-del-ig-q" data-bidx="${bIdx}" data-qidx="${qIdx}">Delete Question</button>
+                            </div>
+                            <div class="field-group" style="margin-bottom: 0.5rem;">
+                                <input type="text" class="vf-ig-q-text" data-bidx="${bIdx}" data-qidx="${qIdx}" value="${this._escapeHtml(q.question || '')}" placeholder="Question text..." />
+                            </div>
+                            <div class="field-group" style="margin-bottom: 0.5rem;">
+                                <label style="font-size: 0.78rem; color: #94a3b8;">Options (comma separated)</label>
+                                <input type="text" class="vf-ig-q-opts" data-bidx="${bIdx}" data-qidx="${qIdx}" value="${this._escapeHtml((q.options || []).join(', '))}" placeholder="Option A, Option B, Option C" />
+                            </div>
+                            <div class="field-group">
+                                <label style="font-size: 0.78rem; color: #94a3b8;">Correct Answer</label>
+                                <input type="text" class="vf-ig-q-ans" data-bidx="${bIdx}" data-qidx="${qIdx}" value="${this._escapeHtml(q.correct_answer || q.answer || '')}" placeholder="Correct option text..." />
+                            </div>
+                        </div>
+                    `).join('');
+
+                    blkCard.innerHTML = `
+                        <div class="vf-section-header">
+                            <span class="vf-section-badge">Player ${blk.text_holder_id || bIdx + 1}'s Information</span>
+                            <button type="button" class="vf-btn-delete vf-btn-del-blk" data-bidx="${bIdx}">Delete Block</button>
+                        </div>
+                        <div class="vf-section-body">
+                            <div class="field-group">
+                                <label>Information Text</label>
+                                <textarea class="vf-blk-text" data-bidx="${bIdx}" rows="2" placeholder="Text for this player...">${this._escapeHtml(blk.text || '')}</textarea>
+                            </div>
+                            <div class="vf-sub-section" style="margin-top: 0.75rem;">
+                                <div class="vf-sub-header">
+                                    <span>❓ Partner Questions</span>
+                                    <button type="button" class="vf-btn-secondary vf-btn-add-ig-q" data-bidx="${bIdx}">+ Add Question</button>
+                                </div>
+                                <div>${qHtml || '<p class="vf-empty-sub">No questions added.</p>'}</div>
+                            </div>
+                        </div>
+                    `;
+                    blocksSec.appendChild(blkCard);
+                });
+                container.appendChild(blocksSec);
+
+                const addBlkBar = document.createElement('div');
+                addBlkBar.className = 'vf-add-sec-bar';
+                addBlkBar.innerHTML = `<button type="button" class="vf-add-btn" id="vf-btn-add-blk">+ Add Player Info Block</button>`;
+                container.appendChild(addBlkBar);
+            }
+        };
+
+        render();
+
+        const syncState = () => {
+            this.parsedState.rawContent = JSON.stringify(jsonObject, null, 2);
+            this._updateOutputs();
+        };
+
+        container.addEventListener('input', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-ig-title')) {
+                if (jsonObject.title !== undefined) jsonObject.title = t.value;
+                else jsonObject.topic = t.value;
+            } else if (t.classList.contains('vf-ig-players')) {
+                jsonObject.player_count = parseInt(t.value, 10) || 2;
+            } else if (t.classList.contains('vf-ig-scenario')) {
+                jsonObject.scenario_description = t.value;
+            } else if (t.classList.contains('vf-gap-text')) {
+                const gIdx = parseInt(t.dataset.gidx, 10);
+                if (jsonObject.gaps && jsonObject.gaps[gIdx]) jsonObject.gaps[gIdx].text = t.value;
+            } else if (t.classList.contains('vf-gap-ans')) {
+                const gIdx = parseInt(t.dataset.gidx, 10);
+                if (jsonObject.gaps && jsonObject.gaps[gIdx]) jsonObject.gaps[gIdx].answer = t.value;
+            } else if (t.classList.contains('vf-blk-text')) {
+                const bIdx = parseInt(t.dataset.bidx, 10);
+                if (jsonObject.blocks && jsonObject.blocks[bIdx]) jsonObject.blocks[bIdx].text = t.value;
+            } else if (t.classList.contains('vf-ig-q-text')) {
+                const bIdx = parseInt(t.dataset.bidx, 10);
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (jsonObject.blocks[bIdx] && jsonObject.blocks[bIdx].questions[qIdx]) {
+                    jsonObject.blocks[bIdx].questions[qIdx].question = t.value;
+                }
+            } else if (t.classList.contains('vf-ig-q-opts')) {
+                const bIdx = parseInt(t.dataset.bidx, 10);
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (jsonObject.blocks[bIdx] && jsonObject.blocks[bIdx].questions[qIdx]) {
+                    jsonObject.blocks[bIdx].questions[qIdx].options = t.value.split(',').map(s => s.trim()).filter(Boolean);
+                }
+            } else if (t.classList.contains('vf-ig-q-ans')) {
+                const bIdx = parseInt(t.dataset.bidx, 10);
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (jsonObject.blocks[bIdx] && jsonObject.blocks[bIdx].questions[qIdx]) {
+                    jsonObject.blocks[bIdx].questions[qIdx].correct_answer = t.value;
+                }
+            }
+            syncState();
+        });
+
+        container.addEventListener('click', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-btn-add-gap')) {
+                if (!Array.isArray(jsonObject.gaps)) jsonObject.gaps = [];
+                jsonObject.gaps.push({ text: "New gap text", answer: "answer", type: "text" });
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-del-gap')) {
+                const gIdx = parseInt(t.dataset.gidx, 10);
+                jsonObject.gaps.splice(gIdx, 1);
+                render(); syncState();
+            } else if (t.id === 'vf-btn-add-blk') {
+                if (!Array.isArray(jsonObject.blocks)) jsonObject.blocks = [];
+                const nextId = jsonObject.blocks.length + 1;
+                jsonObject.blocks.push({ text_holder_id: nextId, text: "Info text for player " + nextId, questions: [] });
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-del-blk')) {
+                const bIdx = parseInt(t.dataset.bidx, 10);
+                jsonObject.blocks.splice(bIdx, 1);
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-add-ig-q')) {
+                const bIdx = parseInt(t.dataset.bidx, 10);
+                if (jsonObject.blocks[bIdx]) {
+                    if (!Array.isArray(jsonObject.blocks[bIdx].questions)) jsonObject.blocks[bIdx].questions = [];
+                    jsonObject.blocks[bIdx].questions.push({ asker_id: 1, question: "New Question?", options: ["Option A", "Option B"], correct_answer: "Option A" });
+                    render(); syncState();
+                }
+            } else if (t.classList.contains('vf-btn-del-ig-q')) {
+                const bIdx = parseInt(t.dataset.bidx, 10);
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (jsonObject.blocks[bIdx] && jsonObject.blocks[bIdx].questions) {
+                    jsonObject.blocks[bIdx].questions.splice(qIdx, 1);
+                    render(); syncState();
+                }
+            }
+        });
+
+        this.visualFormContainer.appendChild(container);
+    }
+
+    _renderSpeedReviewJsonVisualForm(jsonObject) {
+        const container = document.createElement('div');
+        container.className = 'vf-test-editor';
+        const targetObj = Array.isArray(jsonObject) ? (jsonObject[0] || {}) : jsonObject;
+
+        const render = () => {
+            container.innerHTML = '';
+            const rootSec = document.createElement('div');
+            rootSec.className = 'vf-section vf-root-config';
+            rootSec.innerHTML = `
+                <div class="vf-section-title">
+                    <span>🏎️ Speed Review Configuration (tj-speed-review)</span>
+                </div>
+                <div class="field-group">
+                    <label>Activity Title</label>
+                    <input type="text" class="vf-sr-title" value="${this._escapeHtml(targetObj.title || '')}" placeholder="Activity Title..." />
+                </div>
+            `;
+            container.appendChild(rootSec);
+
+            // Deck cards if present
+            const deckList = targetObj.deck || targetObj.cards;
+            if (Array.isArray(deckList)) {
+                const deckSec = document.createElement('div');
+                deckSec.className = 'vf-section';
+                let deckHtml = deckList.map((card, cIdx) => `
+                    <div class="vf-vocab-row" data-cidx="${cIdx}">
+                        <input type="text" class="vf-sr-term" data-cidx="${cIdx}" value="${this._escapeHtml(card.term || card.q || '')}" placeholder="Term / Prompt..." />
+                        <input type="text" class="vf-sr-def" data-cidx="${cIdx}" value="${this._escapeHtml(card.definition || card.a || '')}" placeholder="Definition / Answer..." />
+                        <button type="button" class="vf-btn-icon-del vf-btn-del-card" data-cidx="${cIdx}">✕</button>
+                    </div>
+                `).join('');
+                deckSec.innerHTML = `
+                    <div class="vf-sub-header">
+                        <span>🃏 Flashcard Deck</span>
+                        <button type="button" class="vf-btn-secondary vf-btn-add-card">+ Add Card</button>
+                    </div>
+                    <div>${deckHtml || '<p class="vf-empty-sub">No cards in deck.</p>'}</div>
+                `;
+                container.appendChild(deckSec);
+            }
+
+            // Questions list if present
+            if (Array.isArray(targetObj.questions)) {
+                const qSec = document.createElement('div');
+                qSec.className = 'vf-section';
+                let qHtml = targetObj.questions.map((q, qIdx) => `
+                    <div class="vf-question-card" data-qidx="${qIdx}">
+                        <div class="vf-question-header">
+                            <span class="vf-question-num">Question ${qIdx + 1} (${this._escapeHtml(q.category || 'General')})</span>
+                            <button type="button" class="vf-btn-delete vf-btn-del-sr-q" data-qidx="${qIdx}">Delete Question</button>
+                        </div>
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <input type="text" class="vf-sr-q-cat" data-qidx="${qIdx}" value="${this._escapeHtml(q.category || '')}" placeholder="Category (e.g. Verb → Noun)" />
+                        </div>
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <input type="text" class="vf-sr-q-text" data-qidx="${qIdx}" value="${this._escapeHtml(q.question || '')}" placeholder="Question prompt..." />
+                        </div>
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Options (comma separated)</label>
+                            <input type="text" class="vf-sr-q-opts" data-qidx="${qIdx}" value="${this._escapeHtml((q.options || []).join(', '))}" placeholder="Option A, Option B, Option C, Option D" />
+                        </div>
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Correct Answer</label>
+                            <input type="text" class="vf-sr-q-ans" data-qidx="${qIdx}" value="${this._escapeHtml(q.answer || '')}" placeholder="Correct answer text..." />
+                        </div>
+                        <div class="field-group">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Explanation</label>
+                            <input type="text" class="vf-sr-q-exp" data-qidx="${qIdx}" value="${this._escapeHtml(q.explanation || '')}" placeholder="Explanation..." />
+                        </div>
+                    </div>
+                `).join('');
+
+                qSec.innerHTML = `
+                    <div class="vf-sub-header">
+                        <span>❓ Questions</span>
+                        <button type="button" class="vf-btn-secondary vf-btn-add-sr-q">+ Add Question</button>
+                    </div>
+                    <div>${qHtml || '<p class="vf-empty-sub">No questions added.</p>'}</div>
+                `;
+                container.appendChild(qSec);
+            }
+        };
+
+        render();
+
+        const syncState = () => {
+            this.parsedState.rawContent = JSON.stringify(jsonObject, null, 2);
+            this._updateOutputs();
+        };
+
+        container.addEventListener('input', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-sr-title')) {
+                targetObj.title = t.value;
+            } else if (t.classList.contains('vf-sr-term')) {
+                const cIdx = parseInt(t.dataset.cidx, 10);
+                const deck = targetObj.deck || targetObj.cards;
+                if (deck && deck[cIdx]) {
+                    if (deck[cIdx].term !== undefined) deck[cIdx].term = t.value;
+                    else deck[cIdx].q = t.value;
+                }
+            } else if (t.classList.contains('vf-sr-def')) {
+                const cIdx = parseInt(t.dataset.cidx, 10);
+                const deck = targetObj.deck || targetObj.cards;
+                if (deck && deck[cIdx]) {
+                    if (deck[cIdx].definition !== undefined) deck[cIdx].definition = t.value;
+                    else deck[cIdx].a = t.value;
+                }
+            } else if (t.classList.contains('vf-sr-q-cat')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.questions && targetObj.questions[qIdx]) targetObj.questions[qIdx].category = t.value;
+            } else if (t.classList.contains('vf-sr-q-text')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.questions && targetObj.questions[qIdx]) targetObj.questions[qIdx].question = t.value;
+            } else if (t.classList.contains('vf-sr-q-opts')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.questions && targetObj.questions[qIdx]) {
+                    targetObj.questions[qIdx].options = t.value.split(',').map(s => s.trim()).filter(Boolean);
+                }
+            } else if (t.classList.contains('vf-sr-q-ans')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.questions && targetObj.questions[qIdx]) targetObj.questions[qIdx].answer = t.value;
+            } else if (t.classList.contains('vf-sr-q-exp')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.questions && targetObj.questions[qIdx]) targetObj.questions[qIdx].explanation = t.value;
+            }
+            syncState();
+        });
+
+        container.addEventListener('click', (e) => {
+            const t = e.target;
+            const deck = targetObj.deck || targetObj.cards;
+            if (t.classList.contains('vf-btn-add-card')) {
+                if (!targetObj.deck && !targetObj.cards) targetObj.deck = [];
+                const list = targetObj.deck || targetObj.cards;
+                list.push({ term: "New Term", definition: "Definition text" });
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-del-card')) {
+                const cIdx = parseInt(t.dataset.cidx, 10);
+                if (Array.isArray(deck)) deck.splice(cIdx, 1);
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-add-sr-q')) {
+                if (!Array.isArray(targetObj.questions)) targetObj.questions = [];
+                targetObj.questions.push({ category: "General", question: "New Question?", options: ["Option A", "Option B"], answer: "Option A" });
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-del-sr-q')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (Array.isArray(targetObj.questions)) targetObj.questions.splice(qIdx, 1);
+                render(); syncState();
+            }
+        });
+
+        this.visualFormContainer.appendChild(container);
+    }
+
+    _renderChapterBookJsonVisualForm(jsonObject) {
+        const container = document.createElement('div');
+        container.className = 'vf-test-editor';
+        if (!Array.isArray(jsonObject.chapters)) jsonObject.chapters = [];
+
+        const render = () => {
+            container.innerHTML = '';
+            const rootSec = document.createElement('div');
+            rootSec.className = 'vf-section vf-root-config';
+            rootSec.innerHTML = `
+                <div class="vf-section-title">
+                    <span>📚 Chapter Book Configuration (tj-chapter-book)</span>
+                </div>
+                <div class="vf-grid-2">
+                    <div class="field-group">
+                        <label>Book Title</label>
+                        <input type="text" class="vf-cb-title" value="${this._escapeHtml(jsonObject.title || '')}" placeholder="Book Title..." />
+                    </div>
+                    <div class="field-group">
+                        <label>Subtitle / Author</label>
+                        <input type="text" class="vf-cb-sub" value="${this._escapeHtml(jsonObject.subtitle || jsonObject.author || '')}" placeholder="Subtitle or Author..." />
+                    </div>
+                </div>
+            `;
+            container.appendChild(rootSec);
+
+            const chapSec = document.createElement('div');
+            chapSec.className = 'vf-sections-list';
+            jsonObject.chapters.forEach((chap, chIdx) => {
+                const chapCard = document.createElement('div');
+                chapCard.className = 'vf-section-card';
+                const quiz = Array.isArray(chap.quiz) ? chap.quiz : [];
+                let quizHtml = quiz.map((q, qIdx) => {
+                    const opts = Array.isArray(q.options) ? q.options : [];
+                    let optsHtml = opts.map((opt, oIdx) => {
+                        const isCorrect = (opt.value === 'correct' || opt.correct);
+                        return `
+                            <div class="vf-option-row">
+                                <input type="radio" name="cb-q-ans-${chIdx}-${qIdx}" class="vf-cb-ans-radio" ${isCorrect ? 'checked' : ''} data-chidx="${chIdx}" data-qidx="${qIdx}" data-oidx="${oIdx}" />
+                                <input type="text" class="vf-cb-opt-text" data-chidx="${chIdx}" data-qidx="${qIdx}" data-oidx="${oIdx}" value="${this._escapeHtml(opt.text || opt.label || '')}" placeholder="Option text..." />
+                                <button type="button" class="vf-btn-icon-del vf-btn-del-cb-opt" data-chidx="${chIdx}" data-qidx="${qIdx}" data-oidx="${oIdx}">✕</button>
+                            </div>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="vf-question-card" data-chidx="${chIdx}" data-qidx="${qIdx}">
+                            <div class="vf-question-header">
+                                <span class="vf-question-num">Question ${qIdx + 1}</span>
+                                <button type="button" class="vf-btn-delete vf-btn-del-cb-q" data-chidx="${chIdx}" data-qidx="${qIdx}">Delete Question</button>
+                            </div>
+                            <div class="field-group" style="margin-bottom: 0.5rem;">
+                                <input type="text" class="vf-cb-q-text" data-chidx="${chIdx}" data-qidx="${qIdx}" value="${this._escapeHtml(q.question || '')}" placeholder="Comprehension question..." />
+                            </div>
+                            <div class="vf-options-grid">${optsHtml}</div>
+                            <button type="button" class="vf-btn-secondary vf-btn-add-cb-opt" data-chidx="${chIdx}" data-qidx="${qIdx}">+ Add Option</button>
+                        </div>
+                    `;
+                }).join('');
+
+                chapCard.innerHTML = `
+                    <div class="vf-section-header">
+                        <span class="vf-section-badge">Chapter ${chIdx + 1}</span>
+                        <input type="text" class="vf-cb-chap-title" data-chidx="${chIdx}" value="${this._escapeHtml(chap.title || '')}" placeholder="Chapter Title..." />
+                        <button type="button" class="vf-btn-delete vf-btn-del-chap" data-chidx="${chIdx}">Delete Chapter</button>
+                    </div>
+                    <div class="vf-section-body">
+                        <div class="field-group">
+                            <label>Chapter Content</label>
+                            <textarea class="vf-cb-chap-content" data-chidx="${chIdx}" rows="4" placeholder="Story text for this chapter...">${this._escapeHtml(chap.content || '')}</textarea>
+                        </div>
+                        <div class="field-group">
+                            <label>Translation (Optional)</label>
+                            <textarea class="vf-cb-chap-trans" data-chidx="${chIdx}" rows="2" placeholder="Translation text...">${this._escapeHtml(chap.translation || '')}</textarea>
+                        </div>
+                        <div class="vf-sub-section" style="margin-top: 0.75rem;">
+                            <div class="vf-sub-header">
+                                <span>❓ Chapter Comprehension Quiz</span>
+                                <button type="button" class="vf-btn-secondary vf-btn-add-cb-q" data-chidx="${chIdx}">+ Add Quiz Question</button>
+                            </div>
+                            <div>${quizHtml || '<p class="vf-empty-sub">No quiz questions for this chapter.</p>'}</div>
+                        </div>
+                    </div>
+                `;
+                chapSec.appendChild(chapCard);
+            });
+            container.appendChild(chapSec);
+
+            const addChapBar = document.createElement('div');
+            addChapBar.className = 'vf-add-sec-bar';
+            addChapBar.innerHTML = `<button type="button" class="vf-add-btn" id="vf-btn-add-chap">+ Add Chapter</button>`;
+            container.appendChild(addChapBar);
+        };
+
+        render();
+
+        const syncState = () => {
+            this.parsedState.rawContent = JSON.stringify(jsonObject, null, 2);
+            this._updateOutputs();
+        };
+
+        container.addEventListener('input', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-cb-title')) jsonObject.title = t.value;
+            else if (t.classList.contains('vf-cb-sub')) jsonObject.subtitle = t.value;
+            else if (t.classList.contains('vf-cb-chap-title')) {
+                const chIdx = parseInt(t.dataset.chidx, 10);
+                if (jsonObject.chapters[chIdx]) jsonObject.chapters[chIdx].title = t.value;
+            } else if (t.classList.contains('vf-cb-chap-content')) {
+                const chIdx = parseInt(t.dataset.chidx, 10);
+                if (jsonObject.chapters[chIdx]) jsonObject.chapters[chIdx].content = t.value;
+            } else if (t.classList.contains('vf-cb-chap-trans')) {
+                const chIdx = parseInt(t.dataset.chidx, 10);
+                if (jsonObject.chapters[chIdx]) jsonObject.chapters[chIdx].translation = t.value;
+            } else if (t.classList.contains('vf-cb-q-text')) {
+                const chIdx = parseInt(t.dataset.chidx, 10);
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (jsonObject.chapters[chIdx] && jsonObject.chapters[chIdx].quiz[qIdx]) {
+                    jsonObject.chapters[chIdx].quiz[qIdx].question = t.value;
+                }
+            } else if (t.classList.contains('vf-cb-opt-text')) {
+                const chIdx = parseInt(t.dataset.chidx, 10);
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                const oIdx = parseInt(t.dataset.oidx, 10);
+                if (jsonObject.chapters[chIdx] && jsonObject.chapters[chIdx].quiz[qIdx] && jsonObject.chapters[chIdx].quiz[qIdx].options[oIdx]) {
+                    jsonObject.chapters[chIdx].quiz[qIdx].options[oIdx].text = t.value;
+                }
+            }
+            syncState();
+        });
+
+        container.addEventListener('change', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-cb-ans-radio')) {
+                const chIdx = parseInt(t.dataset.chidx, 10);
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                const oIdx = parseInt(t.dataset.oidx, 10);
+                if (jsonObject.chapters[chIdx] && jsonObject.chapters[chIdx].quiz[qIdx]) {
+                    jsonObject.chapters[chIdx].quiz[qIdx].options.forEach((opt, idx) => {
+                        opt.value = (idx === oIdx) ? 'correct' : 'wrong';
+                    });
+                    syncState();
+                }
+            }
+        });
+
+        container.addEventListener('click', (e) => {
+            const t = e.target;
+            if (t.id === 'vf-btn-add-chap') {
+                jsonObject.chapters.push({
+                    id: "chapter-" + (jsonObject.chapters.length + 1),
+                    title: "Chapter " + (jsonObject.chapters.length + 1) + ": New Chapter",
+                    content: "Chapter content goes here...",
+                    translation: "",
+                    quiz: []
+                });
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-del-chap')) {
+                const chIdx = parseInt(t.dataset.chidx, 10);
+                jsonObject.chapters.splice(chIdx, 1);
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-add-cb-q')) {
+                const chIdx = parseInt(t.dataset.chidx, 10);
+                if (jsonObject.chapters[chIdx]) {
+                    if (!Array.isArray(jsonObject.chapters[chIdx].quiz)) jsonObject.chapters[chIdx].quiz = [];
+                    jsonObject.chapters[chIdx].quiz.push({
+                        question: "Comprehension Question?",
+                        options: [ { value: "correct", text: "Correct Option" }, { value: "wrong", text: "Incorrect Option" } ]
+                    });
+                    render(); syncState();
+                }
+            } else if (t.classList.contains('vf-btn-del-cb-q')) {
+                const chIdx = parseInt(t.dataset.chidx, 10);
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (jsonObject.chapters[chIdx] && jsonObject.chapters[chIdx].quiz) {
+                    jsonObject.chapters[chIdx].quiz.splice(qIdx, 1);
+                    render(); syncState();
+                }
+            } else if (t.classList.contains('vf-btn-add-cb-opt')) {
+                const chIdx = parseInt(t.dataset.chidx, 10);
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (jsonObject.chapters[chIdx] && jsonObject.chapters[chIdx].quiz[qIdx]) {
+                    jsonObject.chapters[chIdx].quiz[qIdx].options.push({ value: "wrong", text: "New Option" });
+                    render(); syncState();
+                }
+            } else if (t.classList.contains('vf-btn-del-cb-opt')) {
+                const chIdx = parseInt(t.dataset.chidx, 10);
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                const oIdx = parseInt(t.dataset.oidx, 10);
+                if (jsonObject.chapters[chIdx] && jsonObject.chapters[chIdx].quiz[qIdx]) {
+                    jsonObject.chapters[chIdx].quiz[qIdx].options.splice(oIdx, 1);
+                    render(); syncState();
+                }
+            }
+        });
+
+        this.visualFormContainer.appendChild(container);
+    }
+
+    _renderGrammarHeartsJsonVisualForm(jsonObject) {
+        const container = document.createElement('div');
+        container.className = 'vf-test-editor';
+        const targetObj = Array.isArray(jsonObject) ? (jsonObject[0] || {}) : jsonObject;
+        if (!Array.isArray(targetObj.questions)) targetObj.questions = [];
+
+        const render = () => {
+            container.innerHTML = '';
+            const rootSec = document.createElement('div');
+            rootSec.className = 'vf-section vf-root-config';
+            rootSec.innerHTML = `
+                <div class="vf-section-title">
+                    <span>❤️ Grammar Hearts Configuration (tj-grammar-hearts)</span>
+                </div>
+                <div class="field-group">
+                    <label>Activity Title</label>
+                    <input type="text" class="vf-gh-title" value="${this._escapeHtml(targetObj.title || '')}" placeholder="Activity Title..." />
+                </div>
+            `;
+            container.appendChild(rootSec);
+
+            const qSec = document.createElement('div');
+            qSec.className = 'vf-section';
+            let qHtml = targetObj.questions.map((q, qIdx) => {
+                const type = q.type || 'multiple-choice';
+                let typeFields = '';
+                if (type === 'multiple-choice') {
+                    typeFields = `
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Question Text</label>
+                            <input type="text" class="vf-gh-q-text" data-qidx="${qIdx}" value="${this._escapeHtml(q.question || '')}" placeholder="e.g. She ___ every morning." />
+                        </div>
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Options (comma separated)</label>
+                            <input type="text" class="vf-gh-q-opts" data-qidx="${qIdx}" value="${this._escapeHtml((q.options || []).join(', '))}" placeholder="runs, is running, run" />
+                        </div>
+                    `;
+                } else if (type === 'fill-in-the-blank') {
+                    const ansStr = Array.isArray(q.answer) ? q.answer.join(', ') : (q.answer || '');
+                    typeFields = `
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Question Text</label>
+                            <input type="text" class="vf-gh-q-text" data-qidx="${qIdx}" value="${this._escapeHtml(q.question || '')}" placeholder="e.g. I ___ to school right now." />
+                        </div>
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Acceptable Answers (comma separated)</label>
+                            <input type="text" class="vf-gh-q-ans" data-qidx="${qIdx}" value="${this._escapeHtml(ansStr)}" placeholder="am walking, 'm walking" />
+                        </div>
+                    `;
+                } else if (type === 'scramble') {
+                    typeFields = `
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Full Sentence to Unscramble</label>
+                            <input type="text" class="vf-gh-q-sent" data-qidx="${qIdx}" value="${this._escapeHtml(q.sentence || '')}" placeholder="They are playing football in the park." />
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="vf-question-card" data-qidx="${qIdx}">
+                        <div class="vf-question-header">
+                            <span class="vf-question-num">Question ${qIdx + 1} [${type}]</span>
+                            <button type="button" class="vf-btn-delete vf-btn-del-gh-q" data-qidx="${qIdx}">Delete</button>
+                        </div>
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Instruction</label>
+                            <input type="text" class="vf-gh-q-inst" data-qidx="${qIdx}" value="${this._escapeHtml(q.instruction || '')}" placeholder="Instruction..." />
+                        </div>
+                        ${typeFields}
+                        <div class="field-group">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Explanation</label>
+                            <input type="text" class="vf-gh-q-exp" data-qidx="${qIdx}" value="${this._escapeHtml(q.explanation || '')}" placeholder="Explanation..." />
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            qSec.innerHTML = `
+                <div class="vf-sub-header">
+                    <span>❓ Question Challenges</span>
+                    <div style="display: flex; gap: 0.4rem;">
+                        <button type="button" class="vf-btn-secondary vf-btn-add-gh-q" data-qtype="multiple-choice">+ MC</button>
+                        <button type="button" class="vf-btn-secondary vf-btn-add-gh-q" data-qtype="fill-in-the-blank">+ Fill Blank</button>
+                        <button type="button" class="vf-btn-secondary vf-btn-add-gh-q" data-qtype="scramble">+ Scramble</button>
+                    </div>
+                </div>
+                <div>${qHtml || '<p class="vf-empty-sub">No questions added.</p>'}</div>
+            `;
+            container.appendChild(qSec);
+        };
+
+        render();
+
+        const syncState = () => {
+            this.parsedState.rawContent = JSON.stringify(jsonObject, null, 2);
+            this._updateOutputs();
+        };
+
+        container.addEventListener('input', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-gh-title')) targetObj.title = t.value;
+            else if (t.classList.contains('vf-gh-q-inst')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.questions[qIdx]) targetObj.questions[qIdx].instruction = t.value;
+            } else if (t.classList.contains('vf-gh-q-text')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.questions[qIdx]) targetObj.questions[qIdx].question = t.value;
+            } else if (t.classList.contains('vf-gh-q-opts')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.questions[qIdx]) targetObj.questions[qIdx].options = t.value.split(',').map(s => s.trim()).filter(Boolean);
+            } else if (t.classList.contains('vf-gh-q-ans')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.questions[qIdx]) targetObj.questions[qIdx].answer = t.value.split(',').map(s => s.trim()).filter(Boolean);
+            } else if (t.classList.contains('vf-gh-q-sent')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.questions[qIdx]) targetObj.questions[qIdx].sentence = t.value;
+            } else if (t.classList.contains('vf-gh-q-exp')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.questions[qIdx]) targetObj.questions[qIdx].explanation = t.value;
+            }
+            syncState();
+        });
+
+        container.addEventListener('click', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-btn-add-gh-q')) {
+                const qtype = t.dataset.qtype || 'multiple-choice';
+                if (qtype === 'multiple-choice') {
+                    targetObj.questions.push({ type: 'multiple-choice', instruction: 'Choose the correct form:', question: 'She ___ every day.', options: ['runs', 'is running'], correctIndex: 0, explanation: '' });
+                } else if (qtype === 'fill-in-the-blank') {
+                    targetObj.questions.push({ type: 'fill-in-the-blank', instruction: 'Fill in the blank:', question: 'I ___ to school right now.', answer: ['am walking'], explanation: '' });
+                } else if (qtype === 'scramble') {
+                    targetObj.questions.push({ type: 'scramble', instruction: 'Unscramble the sentence:', sentence: 'They are playing football.', explanation: '' });
+                }
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-del-gh-q')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                targetObj.questions.splice(qIdx, 1);
+                render(); syncState();
+            }
+        });
+
+        this.visualFormContainer.appendChild(container);
+    }
+
+    _renderListeningJsonVisualForm(jsonObject) {
+        const container = document.createElement('div');
+        container.className = 'vf-test-editor';
+        const targetObj = Array.isArray(jsonObject) ? (jsonObject[0] || {}) : jsonObject;
+
+        const render = () => {
+            container.innerHTML = '';
+            const rootSec = document.createElement('div');
+            rootSec.className = 'vf-section vf-root-config';
+            rootSec.innerHTML = `
+                <div class="vf-section-title">
+                    <span>🎧 Listening Lesson Configuration (tj-listening)</span>
+                </div>
+                <div class="field-group">
+                    <label>Lesson Title</label>
+                    <input type="text" class="vf-ls-title" value="${this._escapeHtml(targetObj.title || '')}" placeholder="Lesson Title..." />
+                </div>
+                <div class="field-group" style="margin-top: 0.5rem;">
+                    <label>Intro Text</label>
+                    <textarea class="vf-ls-intro-text" rows="2" placeholder="Introductory instructions...">${this._escapeHtml(targetObj.intro ? targetObj.intro.text : '')}</textarea>
+                </div>
+            `;
+            container.appendChild(rootSec);
+
+            // Vocab list
+            if (Array.isArray(targetObj.vocab)) {
+                const vSec = document.createElement('div');
+                vSec.className = 'vf-section';
+                let vHtml = targetObj.vocab.map((v, vIdx) => `
+                    <div class="vf-vocab-row" data-vidx="${vIdx}">
+                        <input type="text" class="vf-ls-v-word" data-vidx="${vIdx}" value="${this._escapeHtml(v.word || '')}" placeholder="Word..." />
+                        <input type="text" class="vf-ls-v-def" data-vidx="${vIdx}" value="${this._escapeHtml(v.definition || '')}" placeholder="Definition..." />
+                        <button type="button" class="vf-btn-icon-del vf-btn-del-ls-v" data-vidx="${vIdx}">✕</button>
+                    </div>
+                `).join('');
+                vSec.innerHTML = `
+                    <div class="vf-sub-header">
+                        <span>📚 Vocabulary Preview</span>
+                        <button type="button" class="vf-btn-secondary vf-btn-add-ls-v">+ Add Vocab</button>
+                    </div>
+                    <div>${vHtml || '<p class="vf-empty-sub">No vocabulary words.</p>'}</div>
+                `;
+                container.appendChild(vSec);
+            }
+
+            // Listening transcript & questions
+            const lObj = targetObj.listening || {};
+            const lSec = document.createElement('div');
+            lSec.className = 'vf-section';
+            const questions = Array.isArray(lObj.questions) ? lObj.questions : [];
+            let qHtml = questions.map((q, qIdx) => `
+                <div class="vf-question-card" data-qidx="${qIdx}">
+                    <div class="vf-question-header">
+                        <span class="vf-question-num">Question ${qIdx + 1}</span>
+                        <button type="button" class="vf-btn-delete vf-btn-del-ls-q" data-qidx="${qIdx}">Delete Question</button>
+                    </div>
+                    <div class="field-group" style="margin-bottom: 0.5rem;">
+                        <input type="text" class="vf-ls-q-text" data-qidx="${qIdx}" value="${this._escapeHtml(q.question || '')}" placeholder="Comprehension Question..." />
+                    </div>
+                    <div class="field-group" style="margin-bottom: 0.5rem;">
+                        <label style="font-size: 0.78rem; color: #94a3b8;">Options (comma separated)</label>
+                        <input type="text" class="vf-ls-q-opts" data-qidx="${qIdx}" value="${this._escapeHtml((q.options || []).join(', '))}" placeholder="Option A, Option B, Option C" />
+                    </div>
+                    <div class="field-group">
+                        <label style="font-size: 0.78rem; color: #94a3b8;">Correct Answer</label>
+                        <input type="text" class="vf-ls-q-ans" data-qidx="${qIdx}" value="${this._escapeHtml(q.correct || q.answer || '')}" placeholder="Correct Option text..." />
+                    </div>
+                </div>
+            `).join('');
+
+            lSec.innerHTML = `
+                <div class="vf-sub-header">
+                    <span>💬 Transcript & Comprehension</span>
+                </div>
+                <div class="field-group" style="margin-bottom: 0.75rem;">
+                    <label>Dialogue / Audio Transcript</label>
+                    <textarea class="vf-ls-transcript" rows="4" placeholder="Enter dialogue transcript...">${this._escapeHtml(lObj.transcript || '')}</textarea>
+                </div>
+                <div class="vf-sub-section">
+                    <div class="vf-sub-header">
+                        <span>❓ Questions</span>
+                        <button type="button" class="vf-btn-secondary vf-btn-add-ls-q">+ Add Question</button>
+                    </div>
+                    <div>${qHtml || '<p class="vf-empty-sub">No questions added.</p>'}</div>
+                </div>
+            `;
+            container.appendChild(lSec);
+        };
+
+        render();
+
+        const syncState = () => {
+            this.parsedState.rawContent = JSON.stringify(jsonObject, null, 2);
+            this._updateOutputs();
+        };
+
+        container.addEventListener('input', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-ls-title')) targetObj.title = t.value;
+            else if (t.classList.contains('vf-ls-intro-text')) {
+                if (!targetObj.intro) targetObj.intro = {};
+                targetObj.intro.text = t.value;
+            } else if (t.classList.contains('vf-ls-v-word')) {
+                const vIdx = parseInt(t.dataset.vidx, 10);
+                if (targetObj.vocab && targetObj.vocab[vIdx]) targetObj.vocab[vIdx].word = t.value;
+            } else if (t.classList.contains('vf-ls-v-def')) {
+                const vIdx = parseInt(t.dataset.vidx, 10);
+                if (targetObj.vocab && targetObj.vocab[vIdx]) targetObj.vocab[vIdx].definition = t.value;
+            } else if (t.classList.contains('vf-ls-transcript')) {
+                if (!targetObj.listening) targetObj.listening = {};
+                targetObj.listening.transcript = t.value;
+            } else if (t.classList.contains('vf-ls-q-text')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.listening && targetObj.listening.questions[qIdx]) targetObj.listening.questions[qIdx].question = t.value;
+            } else if (t.classList.contains('vf-ls-q-opts')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.listening && targetObj.listening.questions[qIdx]) {
+                    targetObj.listening.questions[qIdx].options = t.value.split(',').map(s => s.trim()).filter(Boolean);
+                }
+            } else if (t.classList.contains('vf-ls-q-ans')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.listening && targetObj.listening.questions[qIdx]) targetObj.listening.questions[qIdx].correct = t.value;
+            }
+            syncState();
+        });
+
+        container.addEventListener('click', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-btn-add-ls-v')) {
+                if (!Array.isArray(targetObj.vocab)) targetObj.vocab = [];
+                targetObj.vocab.push({ word: "New Word", definition: "Definition..." });
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-del-ls-v')) {
+                const vIdx = parseInt(t.dataset.vidx, 10);
+                if (Array.isArray(targetObj.vocab)) targetObj.vocab.splice(vIdx, 1);
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-add-ls-q')) {
+                if (!targetObj.listening) targetObj.listening = { questions: [] };
+                if (!Array.isArray(targetObj.listening.questions)) targetObj.listening.questions = [];
+                targetObj.listening.questions.push({ question: "Comprehension Question?", options: ["Option A", "Option B"], correct: "Option A" });
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-del-ls-q')) {
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                if (targetObj.listening && targetObj.listening.questions) targetObj.listening.questions.splice(qIdx, 1);
+                render(); syncState();
+            }
+        });
+
+        this.visualFormContainer.appendChild(container);
+    }
+
+    _renderPronunciationJsonVisualForm(jsonObject) {
+        const container = document.createElement('div');
+        container.className = 'vf-test-editor';
+        if (!Array.isArray(jsonObject.activities)) jsonObject.activities = [];
+
+        const render = () => {
+            container.innerHTML = '';
+            const rootSec = document.createElement('div');
+            rootSec.className = 'vf-section vf-root-config';
+            rootSec.innerHTML = `
+                <div class="vf-section-title">
+                    <span>🗣️ Pronunciation Configuration (tj-pronunciation)</span>
+                </div>
+                <div class="field-group">
+                    <label>Activity Title</label>
+                    <input type="text" class="vf-pr-title" value="${this._escapeHtml(jsonObject.title || '')}" placeholder="Title..." />
+                </div>
+            `;
+            container.appendChild(rootSec);
+
+            const actSec = document.createElement('div');
+            actSec.className = 'vf-section';
+            let actHtml = jsonObject.activities.map((act, aIdx) => {
+                const type = act.type || 'listen_record';
+                return `
+                    <div class="vf-question-card" data-aidx="${aIdx}">
+                        <div class="vf-question-header">
+                            <span class="vf-question-num">Activity ${aIdx + 1} [${type}]</span>
+                            <button type="button" class="vf-btn-delete vf-btn-del-pr-act" data-aidx="${aIdx}">Delete</button>
+                        </div>
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Target Text / Audio Sentence</label>
+                            <input type="text" class="vf-pr-text" data-aidx="${aIdx}" value="${this._escapeHtml(act.targetText || act.audioText || '')}" placeholder="Target text..." />
+                        </div>
+                        <div class="field-group" style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.78rem; color: #94a3b8;">Options / Focus</label>
+                            <input type="text" class="vf-pr-extra" data-aidx="${aIdx}" value="${this._escapeHtml(Array.isArray(act.options) ? act.options.join(', ') : (act.focus || ''))}" placeholder="Options or phonetic focus..." />
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            actSec.innerHTML = `
+                <div class="vf-sub-header">
+                    <span>🗣️ Pronunciation Activities</span>
+                    <button type="button" class="vf-btn-secondary vf-btn-add-pr-act">+ Add Activity</button>
+                </div>
+                <div>${actHtml || '<p class="vf-empty-sub">No activities added.</p>'}</div>
+            `;
+            container.appendChild(actSec);
+        };
+
+        render();
+
+        const syncState = () => {
+            this.parsedState.rawContent = JSON.stringify(jsonObject, null, 2);
+            this._updateOutputs();
+        };
+
+        container.addEventListener('input', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-pr-title')) jsonObject.title = t.value;
+            else if (t.classList.contains('vf-pr-text')) {
+                const aIdx = parseInt(t.dataset.aidx, 10);
+                if (jsonObject.activities[aIdx]) {
+                    if (jsonObject.activities[aIdx].targetText !== undefined) jsonObject.activities[aIdx].targetText = t.value;
+                    else jsonObject.activities[aIdx].audioText = t.value;
+                }
+            }
+            syncState();
+        });
+
+        container.addEventListener('click', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-btn-add-pr-act')) {
+                jsonObject.activities.push({ type: 'listen_record', targetText: 'Practice sentence here.' });
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-del-pr-act')) {
+                const aIdx = parseInt(t.dataset.aidx, 10);
+                jsonObject.activities.splice(aIdx, 1);
+                render(); syncState();
+            }
+        });
+
+        this.visualFormContainer.appendChild(container);
+    }
+
+    _renderReaderJsonVisualForm(jsonObject) {
+        const container = document.createElement('div');
+        container.className = 'vf-test-editor';
+        const list = Array.isArray(jsonObject) ? jsonObject : (jsonObject.sentences || jsonObject.pages || []);
+
+        const render = () => {
+            container.innerHTML = '';
+            const rootSec = document.createElement('div');
+            rootSec.className = 'vf-section vf-root-config';
+            rootSec.innerHTML = `
+                <div class="vf-section-title">
+                    <span>📖 Reader Configuration (tj-reader / lbl-reader)</span>
+                </div>
+                <div class="field-group">
+                    <label>Story Title</label>
+                    <input type="text" class="vf-rd-title" value="${this._escapeHtml(jsonObject.storyTitle || jsonObject.title || '')}" placeholder="Story Title..." />
+                </div>
+            `;
+            container.appendChild(rootSec);
+
+            const rSec = document.createElement('div');
+            rSec.className = 'vf-section';
+            let rHtml = list.map((item, iIdx) => `
+                <div class="vf-question-card" data-iidx="${iIdx}">
+                    <div class="vf-question-header">
+                        <span class="vf-question-num">Sentence ${iIdx + 1}</span>
+                        <button type="button" class="vf-btn-delete vf-btn-del-rd-item" data-iidx="${iIdx}">Delete</button>
+                    </div>
+                    <div class="field-group" style="margin-bottom: 0.5rem;">
+                        <label style="font-size: 0.78rem; color: #94a3b8;">Original Sentence</label>
+                        <input type="text" class="vf-rd-orig" data-iidx="${iIdx}" value="${this._escapeHtml(item.original || item.text || '')}" placeholder="Original sentence..." />
+                    </div>
+                    <div class="field-group" style="margin-bottom: 0.5rem;">
+                        <label style="font-size: 0.78rem; color: #94a3b8;">Full Translation</label>
+                        <input type="text" class="vf-rd-trans" data-iidx="${iIdx}" value="${this._escapeHtml(item.fullTranslation || item.translation || '')}" placeholder="Full translation..." />
+                    </div>
+                    <div class="field-group">
+                        <label style="font-size: 0.78rem; color: #94a3b8;">Translation Options (comma separated)</label>
+                        <input type="text" class="vf-rd-opts" data-iidx="${iIdx}" value="${this._escapeHtml((item.translationOptions || []).join(', '))}" placeholder="Option A, Option B" />
+                    </div>
+                </div>
+            `).join('');
+
+            rSec.innerHTML = `
+                <div class="vf-sub-header">
+                    <span>📄 Story Sentences</span>
+                    <button type="button" class="vf-btn-secondary vf-btn-add-rd-item">+ Add Sentence</button>
+                </div>
+                <div>${rHtml || '<p class="vf-empty-sub">No sentences added.</p>'}</div>
+            `;
+            container.appendChild(rSec);
+        };
+
+        render();
+
+        const syncState = () => {
+            this.parsedState.rawContent = JSON.stringify(jsonObject, null, 2);
+            this._updateOutputs();
+        };
+
+        container.addEventListener('input', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-rd-title')) {
+                if (jsonObject.storyTitle !== undefined) jsonObject.storyTitle = t.value;
+                else jsonObject.title = t.value;
+            } else if (t.classList.contains('vf-rd-orig')) {
+                const iIdx = parseInt(t.dataset.iidx, 10);
+                if (list[iIdx]) {
+                    if (list[iIdx].original !== undefined) list[iIdx].original = t.value;
+                    else list[iIdx].text = t.value;
+                }
+            } else if (t.classList.contains('vf-rd-trans')) {
+                const iIdx = parseInt(t.dataset.iidx, 10);
+                if (list[iIdx]) {
+                    if (list[iIdx].fullTranslation !== undefined) list[iIdx].fullTranslation = t.value;
+                    else list[iIdx].translation = t.value;
+                }
+            } else if (t.classList.contains('vf-rd-opts')) {
+                const iIdx = parseInt(t.dataset.iidx, 10);
+                if (list[iIdx]) {
+                    list[iIdx].translationOptions = t.value.split(',').map(s => s.trim()).filter(Boolean);
+                }
+            }
+            syncState();
+        });
+
+        container.addEventListener('click', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-btn-add-rd-item')) {
+                list.push({ original: "New sentence text.", highlightIndex: 0, fullTranslation: "", translationOptions: [] });
+                render(); syncState();
+            } else if (t.classList.contains('vf-btn-del-rd-item')) {
+                const iIdx = parseInt(t.dataset.iidx, 10);
+                list.splice(iIdx, 1);
+                render(); syncState();
+            }
+        });
+
+        this.visualFormContainer.appendChild(container);
+    }
+
+    _renderGenericJsonVisualForm(jsonObject) {
+        const container = document.createElement('div');
+        container.className = 'vf-test-editor';
+
+        const rootSec = document.createElement('div');
+        rootSec.className = 'vf-section vf-root-config';
+        rootSec.innerHTML = `
+            <div class="vf-section-title">
+                <span>⚙️ Dynamic Component Configuration</span>
+            </div>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 1rem;">
+                Visual property editor for custom or structured JSON payloads. Edit properties below or switch to the Raw Code Editor tab.
+            </p>
+            <div id="generic-json-fields"></div>
+        `;
+        container.appendChild(rootSec);
+
+        const fieldsContainer = rootSec.querySelector('#generic-json-fields');
+
+        const renderFields = (obj, parentPath = '') => {
+            if (!obj || typeof obj !== 'object') return '';
+            let html = '';
+            Object.keys(obj).forEach(key => {
+                const val = obj[key];
+                const fullKey = parentPath ? `${parentPath}.${key}` : key;
+                if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') {
+                    html += `
+                        <div class="field-group" style="margin-bottom: 0.6rem;">
+                            <label style="color: #cbd5e1; font-weight: 600;">${this._escapeHtml(key)}</label>
+                            <input type="text" class="vf-generic-input" data-keypath="${fullKey}" value="${this._escapeHtml(val)}" />
+                        </div>
+                    `;
+                }
+            });
+            return html;
+        };
+
+        fieldsContainer.innerHTML = renderFields(jsonObject) || '<p class="vf-empty-sub">No simple primitive fields detected at root level.</p>';
+
+        container.addEventListener('input', (e) => {
+            const t = e.target;
+            if (t.classList.contains('vf-generic-input')) {
+                const keypath = t.dataset.keypath;
+                if (keypath) {
+                    const keys = keypath.split('.');
+                    let current = jsonObject;
+                    for (let i = 0; i < keys.length - 1; i++) {
+                        current = current[keys[i]];
+                    }
+                    current[keys[keys.length - 1]] = t.value;
+                    this.parsedState.rawContent = JSON.stringify(jsonObject, null, 2);
+                    this._updateOutputs();
+                }
             }
         });
 

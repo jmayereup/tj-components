@@ -927,20 +927,23 @@
     margin-bottom: 0.5rem;
 }
 
-.vf-vocab-row, .vf-cloze-row {
+.vf-vocab-row, .vf-cloze-row, .vf-option-row {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 0.5rem;
+    gap: 0.75rem;
+    margin-bottom: 0.65rem;
+    width: 100%;
 }
 
-.vf-vocab-word {
+.vf-vocab-word, .vf-sr-term, .vf-gap-text, .vf-ls-v-word {
     flex: 1;
-    max-width: 200px;
+    min-width: 180px;
+    max-width: 320px;
 }
 
-.vf-vocab-def, .vf-cloze-input {
-    flex: 2;
+.vf-vocab-def, .vf-sr-def, .vf-gap-ans, .vf-cloze-input, .vf-opt-input, .vf-option-input, .vf-ls-v-def {
+    flex: 2.5;
+    width: 100%;
 }
 
 .vf-btn-icon-del {
