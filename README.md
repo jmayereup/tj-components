@@ -226,10 +226,10 @@ Pass a JSON array containing a deck object with a title and questions list. You 
 A multi-stage level placement test powered by JSON configuration. Students unlock subsequent levels by meeting target score cutoffs (`passThreshold`).
 
 #### Attributes
-- `submission-url`: (Optional) Google Apps Script deployment URL to log scored placement reports.
-- `test-mode`: (Optional) Boolean attribute. When present, locks the test behind `start-code` and monitors tab-away focus events.
-- `start-code`: (Optional) Start code required to unlock test initially in test mode (default: `'1234'`).
-- `teacher-code`: (Optional) Teacher code required to unlock the test if locked due to tab switches or to reset (default: `'7676'`).
+- `submission-url`: (Optional) Google Apps Script deployment URL to log scored placement reports. If omitted, digital submission is disabled and students are directed to take a screenshot.
+- `test-mode`: (Optional) Boolean attribute. When present, locks the test behind `start-code` and monitors tab-away focus events. Set to `test-mode="false"` (or omit for practice mode with no start overlay).
+- `start-code`: (Optional) Start code required to unlock the test initially when `test-mode` is active (default: `'1234'`). Not required in practice mode.
+- `teacher-code` / `submit-code`: (Optional) Submission code required to send the final score report to Google Sheets. Works in both test and practice mode. Students without a valid code are directed to screenshot their report card instead (default: `'7676'`). Alias: `submit-code`, `reset-code`.
 - `pass-threshold`: (Optional) Default percentage required to progress to the next section (default: `'75%'`).
 
 #### Usage
@@ -352,10 +352,10 @@ Plays a sentence that the student must rebuild by sorting scrambled words.
 A legacy quiz component supporting reading passages, vocabulary matching, and cloze sections. Maintained for backwards compatibility of existing quizzes. For new placement tests and quizzes, use `<tj-test>`.
 
 #### Attributes
-- `submission-url`: (Optional) Google Apps Script deployment URL to send scored answers to.
+- `submission-url`: (Optional) Google Apps Script deployment URL to send scored answers to. If omitted, digital submission is disabled.
 - `test-mode`: (Optional) Boolean attribute. If present, disables immediate answers checking, hides visual correctness feedback (green/red ticks and correct/incorrect classes), hides the detailed score breakdown (percentage and section breakdown), and hides the "Try Again" button to prevent retakes. The dynamic quiz content is also hidden after submission so students cannot review or change answers.
 - `start-code`: (Optional) Start Quiz Code required to unlock the quiz initially when in test mode (e.g. `start-code="1234"`). Backward compatible with `code`.
-- `teacher-code`: (Optional) Teacher Code required to unlock the quiz if a tab switch or page refresh occurs, or to reset/reopen submitted tests (e.g. `teacher-code="7676"`, default `'7676'`). Backward compatible with `reset-code`.
+- `teacher-code` / `submit-code`: (Optional) Submission code required to send the final score report to Google Sheets. Students without a valid code are directed to take a screenshot instead (default: `'7676'`). Alias: `submit-code`, `reset-code`.
 
 #### Usage
 ```html

@@ -1034,26 +1034,18 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 			return;
 		}
 		if (!this.submissionUrl) {
-			n && (n.textContent = "⚠️ No submission URL configured.", n.className = "error"), r && (r.textContent = "No Submission URL", r.disabled = !0, r.classList.remove("hidden")), i && (i.disabled = !1);
+			n && (n.textContent = "⚠️ No submission URL configured.", n.className = "error"), r && (r.textContent = "No Submission URL", r.disabled = !0, r.classList.add("hidden")), i && (i.disabled = !1);
 			return;
 		}
 		this.autoSubmissionInProgress = !0, r && (e ? r.classList.add("hidden") : (r.disabled = !0, r.textContent = "Sending...")), n && (n.innerHTML = e ? "<span>Submitting score to teacher...</span>" : "", n.className = ""), i && (i.disabled = !0);
 		try {
-			let t = await fetch(this.submissionUrl, {
+			await fetch(this.submissionUrl, {
 				method: "POST",
-				mode: "cors",
+				mode: "no-cors",
 				body: JSON.stringify(f)
-			});
-			if (!t.ok) throw Error(`HTTP error! status: ${t.status}`);
-			let o, s = t.headers.get("content-type");
-			if (s && s.includes("application/json")) o = await t.json();
-			else {
-				let e = await t.text();
-				console.warn("Non-JSON response received:", e), o = { message: "Submission received (non-JSON response)" };
-			}
-			this.scoreSentToServer = !0, a && (this.testMode ? (a.classList.remove("hidden"), this.updateRetrySectionLabels()) : a.classList.add("hidden")), n && (n.innerHTML = `
+			}), this.scoreSentToServer = !0, a && (this.testMode ? (a.classList.remove("hidden"), this.updateRetrySectionLabels()) : a.classList.add("hidden")), n && (n.innerHTML = `
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span>${e ? "Score automatically submitted to your teacher" : o.message || "Submission successful!"}</span>
+                    <span>${e ? "Score automatically submitted to your teacher" : "Submission successful!"}</span>
                 `, n.className = "success"), r && (r.textContent = "Score Sent", r.disabled = !0, r.classList.add("hidden")), i && (i.disabled = !1), this.scoreSubmitted = !0, this.saveCurrentStateToLocalStorage();
 		} catch (t) {
 			console.error("Error:", t), n && (n.innerHTML = "\n                    <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><line x1=\"12\" y1=\"8\" x2=\"12\" y2=\"12\"></line><line x1=\"12\" y1=\"16\" x2=\"12.01\" y2=\"16\"></line></svg>\n                    <span>Could not submit score. Please try again.</span>\n                ", n.className = "error"), r && (r.textContent = e ? "Send Score Again" : "Try Sending Again", r.disabled = !1, r.classList.remove("hidden")), i && (i.disabled = !1), this.saveCurrentStateToLocalStorage();

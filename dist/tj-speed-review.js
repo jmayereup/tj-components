@@ -146,7 +146,6 @@ var t = class extends HTMLElement {
 			await fetch(this.submissionUrl, {
 				method: "POST",
 				mode: "no-cors",
-				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(r)
 			}), alert("Score successfully submitted!"), t && (t.textContent = "Submitted ✓", t.style.background = "#64748b");
 		} catch (e) {

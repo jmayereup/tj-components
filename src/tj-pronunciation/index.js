@@ -897,7 +897,7 @@ class TjPronunciation extends HTMLElement {
       try {
           await fetch(this.submissionUrl, {
               method: 'POST',
-              mode: 'cors',
+              mode: 'no-cors',
               body: JSON.stringify(payload)
           });
           

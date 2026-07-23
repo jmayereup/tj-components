@@ -424,7 +424,6 @@ var i = ":host{color:#1e293b;--ls-bg:#fff;--ls-container-bg:#fff;--ls-border:#e2
 			await fetch(this.submissionUrl, {
 				method: "POST",
 				mode: "no-cors",
-				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(o)
 			}), alert("Score successfully submitted!"), n.textContent = "Submitted ✓", n.style.background = "#64748b";
 		} catch (e) {

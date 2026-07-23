@@ -180,7 +180,6 @@ var t = class extends HTMLElement {
 			await fetch(this.submissionUrl, {
 				method: "POST",
 				mode: "no-cors",
-				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(i)
 			}), n && (n.textContent = "Submitted ✓", n.style.background = "green");
 		} catch (e) {

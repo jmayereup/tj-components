@@ -588,7 +588,6 @@ var n = "@import \"https://fonts.googleapis.com/css2?family=Lato:wght@300;400;70
 			await fetch(this.submissionUrl, {
 				method: "POST",
 				mode: "no-cors",
-				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(o)
 			}), this._showToast("Score successfully submitted! ✓", "success"), n.textContent = "Submitted ✓", n.style.background = "var(--tj-subtitle-color)";
 		} catch (e) {

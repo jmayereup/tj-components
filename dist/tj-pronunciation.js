@@ -404,7 +404,7 @@ var s = "@import \"https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;
 		try {
 			await fetch(this.submissionUrl, {
 				method: "POST",
-				mode: "cors",
+				mode: "no-cors",
 				body: JSON.stringify(s)
 			}), alert("Score successfully submitted!"), n.textContent = "Submitted ✓", n.style.background = "var(--tj-text-muted)";
 		} catch (e) {

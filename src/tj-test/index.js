@@ -1056,13 +1056,24 @@ class TjTest extends HTMLElement {
             return;
         }
 
+        const totalScore = this.sectionResults.reduce((sum, r) => sum + (r ? r.score : 0), 0);
+        const totalQuestions = this.sectionResults.reduce((sum, r) => sum + (r ? r.total : 0), 0);
+        const sectionSummary = this.sections.map((sec, idx) => {
+            const r = this.sectionResults[idx];
+            if (!r || !r.completed) return `${sec.title}: Not reached`;
+            return `${sec.title}: ${r.score}/${r.total} (${r.percentage}%) - ${r.passed ? 'PASSED' : 'HALTED'}`;
+        }).join(' | ');
+
         const payload = {
-            title: this.activityTitle,
+            quizName: this.activityTitle,
+            nickname: '',
+            homeroom: '',
+            studentId: '',
+            score: totalScore,
+            total: totalQuestions,
+            writtenAnswers: `Tab-aways: ${this.tabAwayCount} | ${sectionSummary}`,
             timestamp: new Date().toISOString(),
-            teacherCode: enteredCode,
-            tabAwayCount: this.tabAwayCount,
-            sectionResults: this.sectionResults,
-            sections: this.sections.map(s => ({ title: s.title, passThreshold: s.passThreshold }))
+            teacherCode: enteredCode
         };
 
         if (msgElem) {
@@ -1077,7 +1088,7 @@ class TjTest extends HTMLElement {
             if (this.submissionUrl) {
                 await fetch(this.submissionUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'no-cors',
                     body: JSON.stringify(payload)
                 });
             }

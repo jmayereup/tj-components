@@ -4,7 +4,7 @@ This guide explains how teachers can set up their own Google Apps Script endpoin
 
 > [!NOTE]
 > **🔒 Privacy & Data Ownership (Why Google Apps Script?)**
-> TJ Components use a **Zero-Data Retention Architecture**. Our website and CDN **never see, collect, or store** student information (such as student IDs, nicknames, or quiz scores). 
+> TJ Components use a **Zero-Data Retention Architecture**. Our website and CDN **never see, collect, or store** student information (such as student IDs, nicknames, or quiz scores).
 > By setting up your own Google Apps Script Web App, score submissions are sent **directly** from the student's browser to your personal or institutional Google account. You maintain 100% data ownership and privacy compliance (e.g. FERPA) without any third-party middleman database or server tracking.
 
 ---
@@ -27,8 +27,10 @@ This guide explains how teachers can set up their own Google Apps Script endpoin
 /** @OnlyCurrentDoc */
 
 /**
- * This function handles HTTP POST requests sent from TJ Components.
- * @param {Object} e - The event parameter for a POST request.
+ * Handles HTTP POST requests sent from TJ Components.
+ * TJ Components send using mode: 'no-cors' (no Content-Type header)
+ * to avoid CORS preflight errors with Google Apps Script.
+ * Data arrives as plain text via e.postData.contents.
  */
 function doPost(e) {
   try {
@@ -58,7 +60,7 @@ function doPost(e) {
 
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
-        'Timestamp', 'Nickname', 'Homeroom', 'Student ID', 
+        'Timestamp', 'Nickname', 'Homeroom', 'Student ID',
         'Quiz Name', 'Score', 'Total Questions', 'Written Answers'
       ]);
     }
@@ -135,14 +137,36 @@ VITE_RESET_CODE=7676
 
 ## 5. Parameter Lookup Precedence Order
 All 8 components evaluate configuration options in the following strict order:
-1. **Element HTML Attribute** (e.g. `submission-url="..."`, `code="..."`, `teacher-code="..."`, `src="..."`)
+1. **Element HTML Attribute** (e.g. `submission-url="..."`, `teacher-code="..."`, `submit-code="..."`, `src="..."`)
 2. **Global Configuration / Environment Variable** (`tj-config.js` / `VITE_SUBMISSION_URL`, `VITE_TEACHER_CODE`, `VITE_RESET_CODE`)
-3. **Default System Fallback**
+3. **Empty / No Submission** — if no URL is configured, digital submission is disabled and students are directed to screenshot their report card
+
+> **Important:** If no `submission-url` is configured, components display a "No submission URL configured" warning when students try to submit. There is **no default fallback endpoint** — you must supply your own GAS URL.
 
 ---
 
 ## 6. Student Submission & Proof of Work Process
-- **Teacher Code Verification**: To officially submit score data to Google Sheets, students enter the Teacher Code (`6767` by default).
-- **Custom Teacher Code**: Override via `code="1234"` / `teacher-code="1234"` attribute or `VITE_TEACHER_CODE` environment variable.
-- **Screenshot Fallback**: If the submission endpoint is unavailable or code is invalid, students are prompted to screenshot their report card for manual submission to the teacher.
 
+### Submission Code Requirement
+To submit score data to Google Sheets, students **must enter a valid Submission Code**. This protects your spreadsheet from unauthorized submissions by students at other schools or institutions who do not have your code.
+
+**Submission Code Attributes** (all interchangeable):
+- `submit-code="7676"` — recommended clean alias
+- `teacher-code="7676"` — primary attribute (also used to unlock after tab-away in test mode)
+- `reset-code="7676"` — legacy alias, backward compatible
+
+**If the code is empty or wrong:** The component blocks the network request client-side — no data is sent to your spreadsheet. The student sees:
+- Empty field: *"⚠️ Submission code required. Please enter the code provided by your teacher, or take a screenshot of this table."*
+- Wrong code: *"❌ Invalid Submission Code. Please check the code provided by your teacher, or take a screenshot of this table."*
+
+**Screenshot Fallback:** Students without a submission code can complete all activities and take a screenshot of their final report card to show their teacher manually.
+
+### Test Mode vs Practice Mode
+| | Test Mode (`test-mode`) | Practice Mode (`test-mode="false"`) |
+|---|---|---|
+| **Starting the activity** | Requires entering `start-code` | No code — opens immediately |
+| **Submitting score report** | Requires valid `submit-code` / `teacher-code` | Requires valid `submit-code` / `teacher-code` |
+| **Without a valid code** | Screenshot fallback shown | Screenshot fallback shown |
+
+### CORS & Google Apps Script Compatibility
+TJ Components send all submission requests using `fetch` with `mode: 'no-cors'` and **no custom headers**. This is required because Google Apps Script does not handle CORS preflight (`OPTIONS`) requests — setting a `Content-Type: application/json` header would trigger a browser preflight and cause the request to be blocked. The JSON payload is sent as plain text and parsed on the GAS side via `e.postData.contents`.

@@ -6,7 +6,8 @@ export const config = {
     resetCode: import.meta.env?.VITE_RESET_CODE || '7676'
 };
 
-const DEFAULT_SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
+const DEFAULT_SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbwl0ne_oIfbsGLM9zth1bkBrNKgoCpHYirtj0opmxspD0NJ0TKsZIdG9w8eaft1Dlk/exec';
+
 
 /**
  * Resolves standard configuration options (submission URL, data URL, teacher code, reset code)

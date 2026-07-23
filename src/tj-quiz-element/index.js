@@ -2425,7 +2425,7 @@ class TjQuizElement extends HTMLElement {
             if (sendButton) {
                 sendButton.textContent = 'No Submission URL';
                 sendButton.disabled = true;
-                sendButton.classList.remove('hidden');
+                sendButton.classList.add('hidden');
             }
             if (tryAgainButton) {
                 tryAgainButton.disabled = false;
@@ -2453,25 +2453,11 @@ class TjQuizElement extends HTMLElement {
         }
 
         try {
-            const response = await fetch(this.submissionUrl, {
+            await fetch(this.submissionUrl, {
                 method: 'POST',
-                mode: 'cors',
+                mode: 'no-cors',
                 body: JSON.stringify(studentData)
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            let data;
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                data = await response.json();
-            } else {
-                const text = await response.text();
-                console.warn('Non-JSON response received:', text);
-                data = { message: 'Submission received (non-JSON response)' };
-            }
 
             this.scoreSentToServer = true;
             if (retrySection) {
@@ -2486,7 +2472,7 @@ class TjQuizElement extends HTMLElement {
             if (validationMessage) {
                 const statusText = autoTriggered
                     ? 'Score automatically submitted to your teacher'
-                    : (data.message || 'Submission successful!');
+                    : 'Submission successful!';
                 validationMessage.innerHTML = `
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     <span>${statusText}</span>

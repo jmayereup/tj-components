@@ -30,9 +30,9 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
 
 ## **JSON Schemas**
 
-### **1. Standard Single-Section Test Schema**
+### **1. Standard Single-Section Test Schema (Practice Mode)**
 ```html
-<tj-test start-code="1234" teacher-code="7676">
+<tj-test test-mode="false" submit-code="7676" submission-url="YOUR_GAS_URL">
 <script type="application/json">
 {
   "title": "Unit 1 Reading & Conversation Test",
@@ -75,9 +75,9 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
 </tj-test>
 ```
 
-### **2. Progressive Multi-Section Test Schema**
+### **2. Progressive Multi-Section Test Schema (Secure Test Mode)**
 ```html
-<tj-test test-mode start-code="1234" teacher-code="7676" pass-threshold="75%">
+<tj-test test-mode start-code="1234" teacher-code="7676" pass-threshold="75%" submission-url="YOUR_GAS_URL">
 <script type="application/json">
 {
   "title": "CEFR English Placement Assessment",
@@ -130,13 +130,18 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
 
 ## **Content Guidelines**
 
-1. **Standard vs Progressive**:
-   - For **Standard Tests**, omit `test-mode` and section `passThreshold` attributes if immediate student practice feedback is desired.
-   - For **Progressive Tests**, include `test-mode` and `passThreshold` (e.g. `"70%"` to `"80%"`) so students unlock sections step-by-step.
-2. **Situation & Dialogue Questions**:
+1. **Test Mode vs Practice Mode**:
+   - **`test-mode`** (boolean attribute, no value): Locks the test behind a `start-code` overlay. Students must enter the start code before they can begin. Enables tab-away detection. Use for formal assessments.
+   - **`test-mode="false"`** (explicit false): Practice mode. Students can open and begin the test immediately with no start code. Use for homework, self-study, or informal practice.
+   - In **both modes**, students must enter a valid `submit-code` / `teacher-code` at the end to digitally submit their score report to the teacher's Google Sheet. Students without a code can take a screenshot instead.
+2. **Attribute Aliases**:
+   - `submit-code="7676"` and `teacher-code="7676"` are interchangeable. `submit-code` is cleaner for practice-mode components where the code is only used at submission time, not for unlocking.
+   - `start-code` is only relevant in test mode. It is ignored in practice mode.
+3. **`submission-url`**: Required for digital score submissions to reach the teacher's Google Sheet. If omitted, students are directed to take a screenshot.
+4. **Situation & Dialogue Questions**:
    - Use the optional `"situation"` key to set up context for ELT / standardized conversation questions (e.g. `"Situation: Two friends meet at a cafe."`).
    - Format dialogue lines inside `"question"` with newline characters `\n` (e.g. `"A: \"Hello!\"\nB: \"______\""`).
    - Use `______` (or `______________`) for missing blanks.
-3. **Cloze Asterisk Syntax**: Target blank words in cloze sections must be enclosed in asterisks (e.g. `"The cat *sat* on the *mat*."`).
-4. **Answer Validation**: Ensure the `answer` string matches one of the items in the `options` array exactly.
+5. **Cloze Asterisk Syntax**: Target blank words in cloze sections must be enclosed in asterisks (e.g. `"The cat *sat* on the *mat*."`).
+6. **Answer Validation**: Ensure the `answer` string matches one of the items in the `options` array exactly.
 

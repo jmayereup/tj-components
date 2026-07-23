@@ -2643,8 +2643,12 @@ class TjBuilder extends HTMLElement {
         const isTestMode = supportsTestMode && this.chkTestMode && this.chkTestMode.checked;
 
         let attrs = '';
-        if (isTestMode) {
-            attrs += 'test-mode ';
+        if (supportsTestMode) {
+            if (isTestMode) {
+                attrs += 'test-mode ';
+            } else {
+                attrs += 'test-mode="false" ';
+            }
         }
         attrs += `start-code="${startCode}" teacher-code="${teacherCode}"`;
         if (submissionUrl) {
@@ -2707,14 +2711,12 @@ class TjBuilder extends HTMLElement {
             const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-test' || componentType === 'tj-progressive-test');
             if (supportsTestMode && this.chkTestMode && this.chkTestMode.checked) {
                 previewEl.setAttribute('test-mode', '');
-            } else {
-                previewEl.removeAttribute('test-mode');
+            } else if (supportsTestMode) {
+                previewEl.setAttribute('test-mode', 'false');
             }
             previewEl.setAttribute('start-code', this.currentSettings.startCode || '1234');
             previewEl.setAttribute('teacher-code', this.currentSettings.teacherCode || '7676');
-            if (this.currentSettings.submissionUrl) {
-                previewEl.setAttribute('submission-url', this.currentSettings.submissionUrl);
-            }
+            previewEl.setAttribute('submission-url', this.currentSettings.submissionUrl || '');
 
             // 4. Set config property AND attribute before appending to DOM
             const jsonText = isJson ? (typeof rawContent === 'string' ? rawContent : JSON.stringify(rawContent)) : rawContent;
