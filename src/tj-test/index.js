@@ -6,11 +6,14 @@ import { getBestVoice, shouldShowAudioControls, getAndroidIntentLink } from '../
 
 class TjTest extends HTMLElement {
     static get observedAttributes() {
-        return ['submission-url', 'test-mode', 'start-code', 'teacher-code', 'tts', 'enable-tts', 'pass-threshold'];
+        return ['submission-url', 'test-mode', 'start-code', 'teacher-code', 'submit-code', 'tts', 'enable-tts', 'pass-threshold'];
     }
 
     get testMode() {
-        return this.hasAttribute('test-mode');
+        if (this.hasAttribute('practice-mode') || this.getAttribute('test-mode') === 'false') {
+            return false;
+        }
+        return true;
     }
 
     set testMode(value) {
@@ -53,6 +56,8 @@ class TjTest extends HTMLElement {
     get teacherCode() {
         return this.getAttribute('teacher-code') || 
                this.getAttribute('teacher_code') || 
+               this.getAttribute('submit-code') || 
+               this.getAttribute('submit_code') || 
                this.getAttribute('reset-code') || 
                resolveComponentParams(this).teacherCode || 
                '7676';
@@ -1002,12 +1007,12 @@ class TjTest extends HTMLElement {
                 </tbody>
             </table>
             <div class="tj-submission-box">
-                <h4 style="margin: 0; color: var(--tj-text-main);">Teacher Submission</h4>
+                <h4 style="margin: 0; color: var(--tj-text-main);">Submit Score Report</h4>
                 <p style="margin: 0; font-size: 0.9rem; color: var(--tj-text-muted);">
-                    Enter the Teacher Code to submit your official results to your teacher, or take a screenshot of this page.
+                    Enter your Submission Code to log results to your teacher's spreadsheet, or take a screenshot of this page.
                 </p>
                 <div class="tj-submission-row">
-                    <input type="text" id="reportTeacherCodeInput" class="tj-submission-input" placeholder="Enter Teacher Code (e.g. 7676)" autocomplete="one-time-code" data-lpignore="true">
+                    <input type="text" id="reportTeacherCodeInput" class="tj-submission-input" placeholder="Enter Submission Code" autocomplete="one-time-code" data-lpignore="true">
                     <button id="submitResultsBtn" class="tj-btn tj-btn-primary">
                         📤 Submit Score Report
                     </button>
@@ -1033,11 +1038,20 @@ class TjTest extends HTMLElement {
         const msgElem = this.shadowRoot.getElementById('submitStatusMsg');
         const submitBtn = this.shadowRoot.getElementById('submitResultsBtn');
 
+        if (!enteredCode) {
+            if (msgElem) {
+                msgElem.classList.remove('hidden');
+                msgElem.style.color = 'var(--tj-error-color)';
+                msgElem.textContent = '⚠️ Submission code required. Please enter the code provided by your teacher, or take a screenshot of this table.';
+            }
+            return;
+        }
+
         if (enteredCode !== this.teacherCode && enteredCode !== this.startCode) {
             if (msgElem) {
                 msgElem.classList.remove('hidden');
                 msgElem.style.color = 'var(--tj-error-color)';
-                msgElem.textContent = '❌ Invalid Teacher Code. Please check the code provided by your teacher, or take a screenshot of this table.';
+                msgElem.textContent = '❌ Invalid Submission Code. Please check the code provided by your teacher, or take a screenshot of this table.';
             }
             return;
         }

@@ -375,7 +375,11 @@ class TjBuilder extends HTMLElement {
 
         // Component selector change (at top of Box 1)
         this.selectComponentType?.addEventListener('change', () => {
-            this.parsedState.componentType = this._getCleanTagName(this.selectComponentType.value);
+            const cleanTag = this._getCleanTagName(this.selectComponentType.value);
+            this.parsedState.componentType = cleanTag;
+            if (cleanTag === 'tj-test' || cleanTag === 'tj-progressive-test') {
+                if (this.chkTestMode) this.chkTestMode.checked = true;
+            }
             if (this.badgeDetected) this.badgeDetected.textContent = this.parsedState.componentType;
             this._updateGeminiOverlay();
             this._syncBox2ThresholdDisplay();
@@ -439,8 +443,7 @@ class TjBuilder extends HTMLElement {
             this._updateOutputs({ skipRawEditorUpdate: true });
         });
 
-        // Copy button & include script / test mode toggles
-        this.chkIncludeScript.addEventListener('change', () => this._updateOutputs());
+        // Copy button & test mode toggle
         this.chkTestMode?.addEventListener('change', () => {
             this.currentSettings.isTestMode = this.chkTestMode.checked;
             this._saveSettings();
@@ -2627,7 +2630,7 @@ class TjBuilder extends HTMLElement {
         const cdnBaseUrl = this.currentSettings.cdnBaseUrl || 'https://scripts.teacherjake.com/';
         const cleanCdnBase = cdnBaseUrl.endsWith('/') ? cdnBaseUrl : `${cdnBaseUrl}/`;
         const scriptUrl = `${cleanCdnBase}${componentType}.js`;
-        const includeScript = this.chkIncludeScript.checked;
+        const includeScript = true;
 
         // MUST include type="module" so browsers load ES module scripts without throwing "Cannot use import statement outside a module"
         let scriptTag = includeScript ? `<script type="module" src="${scriptUrl}"></script>\n` : '';

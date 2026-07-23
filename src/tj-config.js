@@ -46,6 +46,8 @@ export function resolveComponentParams(element) {
     const teacherCode = 
         element.getAttribute('teacher-code') ||
         element.getAttribute('teacher_code') ||
+        element.getAttribute('submit-code') ||
+        element.getAttribute('submit_code') ||
         element.getAttribute('reset-code') ||
         element.getAttribute('reset_code') ||
         config.resetCode ||
