@@ -1552,6 +1552,7 @@ A: Sleeping
     </script>
     <script type="module">
         import { COMPONENT_CATALOG } from '/src/tj-catalog.js';
+
         document.querySelectorAll('a[data-gem-id]').forEach(el => {
             const gemId = el.getAttribute('data-gem-id');
             const item = COMPONENT_CATALOG.find(c => c.id === gemId || c.tagName === gemId);

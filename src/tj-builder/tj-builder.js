@@ -1,6 +1,8 @@
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
 import { COMPONENT_CATALOG, getComponentByTag, SAMPLE_QUIZ_MD, SAMPLE_INFOGAP_JSON, SAMPLE_SPEED_JSON } from "../tj-catalog.js";
+import { openGeminiUrlWithTip } from "../tj-gemini-tip.js";
+import { showBuilderInstructionsTip } from "../tj-builder-tip.js";
 
 const STORAGE_KEY = 'tj_builder_settings';
 const DEFAULT_SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
@@ -51,6 +53,17 @@ class TjBuilder extends HTMLElement {
         // Start with empty input so Gemini Overlay is immediately visible on startup
         this._updateGeminiOverlay();
         this._syncBox2ThresholdDisplay();
+
+        // Trigger builder onboarding tip notice when element scrolls into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    showBuilderInstructionsTip();
+                    observer.disconnect();
+                }
+            });
+        }, { threshold: 0.1 });
+        observer.observe(this);
     }
 
     _getCleanTagName(typeStr) {
@@ -375,9 +388,21 @@ class TjBuilder extends HTMLElement {
             const selectedType = this.selectComponentType?.value;
             const item = getComponentByTag(selectedType);
             if (item && item.geminiUrl) {
-                window.open(item.geminiUrl, '_blank', 'noopener,noreferrer');
+                openGeminiUrlWithTip(item.geminiUrl);
             }
         });
+
+        // Gemini Overlay action cards click
+        const handleGeminiCardClick = (e) => {
+            const btn = e.currentTarget;
+            const url = btn.getAttribute('href');
+            if (url && url !== '#') {
+                e.preventDefault();
+                openGeminiUrlWithTip(url);
+            }
+        };
+        this.btnGeminiConvert?.addEventListener('click', handleGeminiCardClick);
+        this.btnGeminiCreate?.addEventListener('click', handleGeminiCardClick);
 
         // Component selector change (at top of Box 1)
         this.selectComponentType?.addEventListener('change', () => {
