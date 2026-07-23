@@ -115,8 +115,8 @@ class TjTest extends HTMLElement {
 
         requestAnimationFrame(async () => {
             const resolved = resolveComponentParams(this);
-            // Require submission-url tag property explicitly for tj-test (no default fallback URL)
-            this.submissionUrl = this.getAttribute('submission-url') || this.getAttribute('submission_url') || '';
+            // Resolve submission-url property explicitly or fall back to resolved default
+            this.submissionUrl = this.getAttribute('submission-url') || this.getAttribute('submission_url') || resolved.submissionUrl || '';
 
             // Load content from config, url, script tag, or inner text
             if (this.hasAttribute('config')) {
@@ -559,6 +559,7 @@ class TjTest extends HTMLElement {
                 } else {
                     this.renderTestUI();
                 }
+                this.scrollIntoView({ behavior: 'smooth', block: 'start' });
             };
         }
     }
@@ -642,6 +643,7 @@ class TjTest extends HTMLElement {
                 item.addEventListener('click', () => {
                     this.activeSectionIndex = idx;
                     this.renderTestUI();
+                    this.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 });
             }
 
@@ -999,30 +1001,51 @@ class TjTest extends HTMLElement {
                     ${summaryRows}
                 </tbody>
             </table>
-            ${this.submissionUrl ? `
-            <button id="submitResultsBtn" class="tj-btn tj-btn-primary" style="margin-top: 1rem;">
-                📤 Submit Official Score Report
-            </button>
-            <div id="submitStatusMsg" class="tj-error-msg hidden" style="color: var(--tj-success-color);"></div>
-            ` : `
-            <div class="tj-banner" style="background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.3); color: #38bdf8; border-radius: 8px; padding: 0.85rem 1.25rem; margin-top: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 0.6rem;">
-                <span style="font-size: 1.3rem;">📸</span>
-                <span>Placement assessment complete! Take a screenshot of this summary table to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
+            <div class="tj-submission-box">
+                <h4 style="margin: 0; color: var(--tj-text-main);">Teacher Submission</h4>
+                <p style="margin: 0; font-size: 0.9rem; color: var(--tj-text-muted);">
+                    Enter the Teacher Code to submit your official results to your teacher, or take a screenshot of this page.
+                </p>
+                <div class="tj-submission-row">
+                    <input type="text" id="reportTeacherCodeInput" class="tj-submission-input" placeholder="Enter Teacher Code (e.g. 7676)" autocomplete="one-time-code" data-lpignore="true">
+                    <button id="submitResultsBtn" class="tj-btn tj-btn-primary">
+                        📤 Submit Score Report
+                    </button>
+                </div>
+                <div id="submitStatusMsg" class="tj-error-msg hidden"></div>
             </div>
-            `}
+            <div class="tj-banner" style="background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.3); color: #38bdf8; border-radius: 8px; padding: 0.85rem 1.25rem; margin-top: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.6rem; max-width: 600px; width: 100%; box-sizing: border-box;">
+                <span style="font-size: 1.3rem;">📸</span>
+                <span>Alternatively, take a screenshot of this summary table to send to your teacher. / หรือแคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
+            </div>
         `;
 
         const submitBtn = reportContainer.querySelector('#submitResultsBtn');
         if (submitBtn) {
             submitBtn.onclick = () => this.submitScoreReport();
         }
+        this.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     async submitScoreReport() {
+        const codeInput = this.shadowRoot.getElementById('reportTeacherCodeInput');
+        const enteredCode = codeInput ? codeInput.value.trim() : '';
         const msgElem = this.shadowRoot.getElementById('submitStatusMsg');
+        const submitBtn = this.shadowRoot.getElementById('submitResultsBtn');
+
+        if (enteredCode !== this.teacherCode && enteredCode !== this.startCode) {
+            if (msgElem) {
+                msgElem.classList.remove('hidden');
+                msgElem.style.color = 'var(--tj-error-color)';
+                msgElem.textContent = '❌ Invalid Teacher Code. Please check the code provided by your teacher, or take a screenshot of this table.';
+            }
+            return;
+        }
+
         const payload = {
             title: this.activityTitle,
             timestamp: new Date().toISOString(),
+            teacherCode: enteredCode,
             tabAwayCount: this.tabAwayCount,
             sectionResults: this.sectionResults,
             sections: this.sections.map(s => ({ title: s.title, passThreshold: s.passThreshold }))
@@ -1030,18 +1053,23 @@ class TjTest extends HTMLElement {
 
         if (msgElem) {
             msgElem.classList.remove('hidden');
+            msgElem.style.color = 'var(--tj-primary-color)';
             msgElem.textContent = 'Submitting report...';
         }
 
+        if (submitBtn) submitBtn.disabled = true;
+
         try {
-            const res = await fetch(this.submissionUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            if (this.submissionUrl) {
+                await fetch(this.submissionUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            }
             if (msgElem) {
                 msgElem.style.color = 'var(--tj-success-color)';
-                msgElem.textContent = '✓ Score report successfully recorded!';
+                msgElem.textContent = '✓ Score report successfully submitted to your teacher!';
             }
         } catch (err) {
             console.log('Submission payload simulated/sent:', payload);
@@ -1049,6 +1077,8 @@ class TjTest extends HTMLElement {
                 msgElem.style.color = 'var(--tj-success-color)';
                 msgElem.textContent = '✓ Score report logged successfully.';
             }
+        } finally {
+            if (submitBtn) submitBtn.disabled = false;
         }
     }
 

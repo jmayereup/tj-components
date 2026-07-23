@@ -496,3 +496,44 @@
   border-radius: 4px;
   font-size: 0.75rem;
 }
+
+/* Submission Box */
+.tj-submission-box {
+  width: 100%;
+  max-width: 600px;
+  background: var(--tj-bg-alt);
+  border: 1px solid var(--tj-border-main);
+  border-radius: var(--tj-border-radius-md);
+  padding: 1.25rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: left;
+  margin-top: 1rem;
+}
+
+.tj-submission-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tj-submission-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--tj-border-main);
+  border-radius: var(--tj-border-radius-sm);
+  background: var(--tj-bg-card);
+  color: var(--tj-text-main);
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.tj-submission-input:focus {
+  outline: none;
+  border-color: var(--tj-primary-color);
+}
+
