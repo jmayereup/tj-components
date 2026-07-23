@@ -1,5 +1,9 @@
 /** @OnlyCurrentDoc
-*/
+ * TJ Components Google Apps Script Endpoint Code
+ * 
+ * Quick Template Setup:
+ * https://docs.google.com/spreadsheets/d/1Yc6djJlu-ELttkEPdHA_j85UGJRlG9jWTqmPx_mEJgI/copy
+ */
 
 /**
 * This function handles HTTP POST requests.

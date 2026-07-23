@@ -810,22 +810,45 @@ A: To the beach
 
             <!-- Google Sheets & Apps Script Setup Guide -->
             <div class="doc-card" id="apps-script">
-                <h2>Google Sheets Automatic Submissions &amp; Apps Script Setup</h2>
+                <h2>Google Sheets Automatic Submissions Setup</h2>
                 <p>Teachers can set up their own Google Sheet to automatically receive score submissions from any component (e.g., <code>&lt;tj-quiz-element&gt;</code>, <code>&lt;tj-grammar-hearts&gt;</code>, <code>&lt;tj-reader&gt;</code>, <code>&lt;tj-pronunciation&gt;</code>, etc.).</p>
 
-                <div style="background: rgba(234, 179, 8, 0.18); border-left: 4px solid #eab308; border-radius: 0.5rem; padding: 1rem 1.25rem; margin: 1.25rem 0; color: #fef3c7;">
-                    <strong style="color: #fde047;">⚠️ Required Prerequisite — Spreadsheet Tab Name</strong>
-                    <p style="margin: 0.5rem 0 0 0; font-size: 0.95rem;">The script below looks for a sheet tab named exactly <code style="background: rgba(0,0,0,0.3); padding: 0.1em 0.35em; border-radius: 0.25rem;">Submissions</code> (capital <strong>S</strong>, no spaces, plural). If the tab is missing or misnamed, submissions will <strong>silently fail</strong> — the student will still see the green "✓ logged successfully" message, but no row will be written to your sheet.</p>
-                    <p style="margin: 0.75rem 0 0 0; font-size: 0.95rem;"><strong>Before pasting the script:</strong></p>
-                    <ol style="margin: 0.5rem 0 0 0; padding-left: 1.5rem; font-size: 0.95rem;">
-                        <li>Open <a href="https://sheets.google.com" target="_blank" rel="noopener" style="color: #fde047; text-decoration: underline;">Google Sheets</a> and create a new blank spreadsheet.</li>
-                        <li>At the bottom, double-click the default tab (usually <code style="background: rgba(0,0,0,0.3); padding: 0.1em 0.35em; border-radius: 0.25rem;">Sheet1</code>) and rename it to exactly: <code style="background: rgba(0,0,0,0.3); padding: 0.1em 0.35em; border-radius: 0.25rem;">Submissions</code></li>
-                    </ol>
+                <!-- 1-Click Template Callout Box -->
+                <div style="background: linear-gradient(135deg, rgba(34, 211, 238, 0.12) 0%, rgba(15, 23, 42, 0.6) 100%); border: 1px solid var(--primary); border-radius: 0.75rem; padding: 1.5rem; margin: 1.5rem 0; text-align: center;">
+                    <h3 style="color: #fff; font-size: 1.3rem; margin-bottom: 0.5rem;">⚡ Quick Setup</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">Use our pre-configured Google Sheet template with built-in Apps Script code and pre-formatted headers.</p>
+                    <a href="https://docs.google.com/spreadsheets/d/1Yc6djJlu-ELttkEPdHA_j85UGJRlG9jWTqmPx_mEJgI/copy" target="_blank" rel="noopener" class="btn btn-primary" style="display: inline-flex; gap: 0.5rem; align-items: center; text-decoration: none; font-weight: 700; padding: 0.85rem 1.75rem; font-size: 1rem; border-radius: 0.5rem;">
+                        📊 Make a Copy of Spreadsheet Template ↗
+                    </a>
+                    <p style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
+                        Alternatively, view the template before copying: <a href="https://docs.google.com/spreadsheets/d/1Yc6djJlu-ELttkEPdHA_j85UGJRlG9jWTqmPx_mEJgI/edit?usp=sharing" target="_blank" rel="noopener" style="color: var(--primary); text-decoration: underline;">Open Shared Google Sheet</a>
+                    </p>
                 </div>
 
-                <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">1. Google Apps Script Code (doPost):</h3>
-                <p>In your Google Sheet, go to <strong>Extensions &gt; Apps Script</strong>, paste the following code, and click <strong>Save</strong>:</p>
-                <pre><code>/** @OnlyCurrentDoc */
+                <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">Simple 3-Step Setup Walkthrough:</h3>
+                <ol style="margin: 0.75rem 0 1.5rem 1.5rem; font-size: 0.95rem; line-height: 1.8;">
+                    <li><strong>Make a Copy:</strong> Click the button above to copy the shared template into your Google Drive. The <code style="background: rgba(0,0,0,0.3); padding: 0.1em 0.35em; border-radius: 0.25rem;">Submissions</code> tab and Apps Script are pre-installed.</li>
+                    <li><strong>Deploy Web App:</strong> In your copied sheet, click <strong>Extensions &gt; Apps Script</strong>. Click the blue <strong>Deploy &gt; New deployment</strong> button. Choose type <strong>Web app</strong>, set <em>Execute as</em>: <strong>Me</strong>, and <em>Who has access</em>: <strong>Anyone</strong>. Click <strong>Deploy</strong> and grant permissions.</li>
+                    <li><strong>Copy Web App URL:</strong> Copy your resulting Web App URL (starts with <code>https://script.google.com/macros/s/.../exec</code>) and paste it into <strong>TJ Builder</strong> or your component's <code>submission-url</code> attribute.</li>
+                </ol>
+
+                <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">Connecting to Components:</h3>
+                <p>Pass your Web App URL, remote JSON URL, or custom Teacher Code via HTML attributes or environment variables (`.env`):</p>
+                <ul>
+                    <li><strong>HTML Attributes</strong>:
+                        <br><code>&lt;tj-quiz-element submission-url="YOUR_GAS_URL" src="https://example.com/quiz.json" start-code="1234" teacher-code="7676"&gt;&lt;/tj-quiz-element&gt;</code>
+                    </li>
+                    <li><strong>Environment Variables (`.env`)</strong>:
+                        <br>Set <code>VITE_SUBMISSION_URL=YOUR_GAS_URL</code> and <code>VITE_TEACHER_CODE=6767</code> in <code>.env</code> (see <code>.env.example</code>).
+                    </li>
+                </ul>
+
+                <!-- Advanced / Developer Manual Code Accordion -->
+                <details style="margin-top: 1.75rem; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 0.5rem; padding: 1rem 1.25rem;">
+                    <summary style="cursor: pointer; font-weight: 600; color: var(--text-muted); outline: none;">🛠️ Manual Apps Script Code &amp; Custom Setup (Advanced &amp; Developers)</summary>
+                    <div style="margin-top: 1rem;">
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">If building a Google Sheet manually from scratch without using the template, ensure the default sheet tab is named exactly <code>Submissions</code> (capital <strong>S</strong>, plural, no spaces).</p>
+                        <pre style="margin-top: 0.75rem;"><code>/** @OnlyCurrentDoc */
 
 function doPost(e) {
   try {
@@ -889,24 +912,8 @@ function doPost(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 }</code></pre>
-
-                <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">2. Deploying as a Web App:</h3>
-                <ul>
-                    <li>Click <strong>Deploy &gt; New deployment</strong>. Select type: <strong>Web app</strong>.</li>
-                    <li>Set <strong>Execute as</strong>: <em>Me</em>, and <strong>Who has access</strong>: <em>Anyone</em>.</li>
-                    <li>Click <strong>Deploy</strong> and copy your <strong>Web App URL</strong>.</li>
-                </ul>
-
-                <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">3. Connecting to Components:</h3>
-                <p>Pass your Web App URL, remote JSON URL, or custom Teacher Code via HTML attributes or environment variables (`.env`):</p>
-                <ul>
-                    <li><strong>HTML Attributes</strong>:
-                        <br><code>&lt;tj-quiz-element submission-url="YOUR_GAS_URL" src="https://example.com/quiz.json" start-code="1234" teacher-code="7676"&gt;&lt;/tj-quiz-element&gt;</code>
-                    </li>
-                    <li><strong>Environment Variables (`.env`)</strong>:
-                        <br>Set <code>VITE_SUBMISSION_URL=YOUR_GAS_URL</code> and <code>VITE_TEACHER_CODE=6767</code> in <code>.env</code> (see <code>.env.example</code>).
-                    </li>
-                </ul>
+                    </div>
+                </details>
             </div>
 
             <!-- Privacy & Architecture Section -->

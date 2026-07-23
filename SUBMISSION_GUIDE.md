@@ -1,6 +1,11 @@
-# Google Sheets Submission Setup Guide
+# Google Sheets Submission Setup & Endpoint Technical Guide
 
-This guide explains how teachers can set up their own Google Apps Script endpoint to automatically collect score submissions from any of the TJ Components (e.g., `tj-quiz-element`, `tj-grammar-hearts`, `tj-reader`, `tj-pronunciation`, etc.) into their own Google Sheet.
+This guide provides technical specifications for developers, AI subagents, and advanced users implementing or testing Google Apps Script endpoints for score submissions across TJ Components (e.g., `tj-quiz-element`, `tj-grammar-hearts`, `tj-reader`, `tj-pronunciation`, etc.).
+
+> [!NOTE]
+> **🤖 Technical Specification & Developer/Agent Reference**
+> This document serves as the technical specification for developers and AI agents building, debugging, or integrating components with Google Apps Script endpoints. 
+> For the end-user teacher visual setup guide, see [Landing Page Google Sheets Setup Section](index.html#apps-script).
 
 > [!NOTE]
 > **🔒 Privacy & Data Ownership (Why Google Apps Script?)**
@@ -9,20 +14,22 @@ This guide explains how teachers can set up their own Google Apps Script endpoin
 
 ---
 
+## 1. Quick Setup: Google Sheet Template
 
-## 1. Create a Google Sheet
-1. Open [Google Sheets](https://sheets.google.com) and create a new, blank spreadsheet.
-2. **⚠️ REQUIRED:** At the bottom, rename the default sheet tab (usually `Sheet1`) to exactly: **`Submissions`** (capital **S**, no spaces, plural).
-   The script looks for this exact tab name and will fail with the error `"Target sheet not found."` if it is missing, misnamed, or has different capitalization. The sheet will appear silently empty on the student's side (the misleading "✓ logged successfully" message will still show) even though no row was written.
-3. *(Optional)* You can pre-fill row 1 with headers, but the script will automatically populate headers if the sheet is empty:
-   `Timestamp, Nickname, Homeroom, Student ID, Quiz Name, Score, Total Questions, Written Answers`.
+For rapid setup and testing, copy our pre-configured Google Sheet template:
+- **[Make a Copy of Template Spreadsheet ↗](https://docs.google.com/spreadsheets/d/1Yc6djJlu-ELttkEPdHA_j85UGJRlG9jWTqmPx_mEJgI/copy)**
+- **[View Shared Template Spreadsheet ↗](https://docs.google.com/spreadsheets/d/1Yc6djJlu-ELttkEPdHA_j85UGJRlG9jWTqmPx_mEJgI/edit?usp=sharing)**
+
+The template automatically includes the `Submissions` tab and the pre-installed Google Apps Script code below.
 
 ---
 
-## 2. Add the Apps Script
-1. In your Google Sheet, click **Extensions** > **Apps Script** from the top menu.
-2. Clear out any default code in the editor (e.g. `function myFunction() { ... }`).
-3. Copy and paste the following script into the Apps Script editor:
+## 2. Manual Sheet & Apps Script Endpoint Setup
+
+When setting up a custom spreadsheet from scratch:
+1. Create a spreadsheet in Google Sheets and rename the target tab to exactly: **`Submissions`** (capital **S**, no spaces, plural).
+   *The script looks for this exact tab name and will throw `"Target sheet not found."` if missing.*
+2. Open **Extensions > Apps Script** and add the following `doPost` handler:
 
 ```javascript
 /** @OnlyCurrentDoc */
