@@ -104,7 +104,7 @@
 
 .settings-grid {
     display: grid;
-    grid-template-columns: 200px 200px 1fr;
+    grid-template-columns: 160px 160px 240px 1fr;
     gap: 1.25rem;
     align-items: end;
 }
@@ -127,21 +127,44 @@
     color: #cbd5e1;
 }
 
-.field-group input, select, textarea {
+.field-group input, 
+.field-group select, 
+.field-group textarea {
     background-color: #0b1120;
     border: 1px solid rgba(255, 255, 255, 0.15);
     color: #f1f5f9;
     padding: 0.6rem 0.85rem;
     border-radius: 8px;
     font-size: 0.9rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
     width: 100%;
+    box-sizing: border-box;
+    height: 42px;
 }
 
-.field-group input:focus, select:focus, textarea:focus {
+.field-group select {
+    cursor: pointer;
+}
+
+.field-group textarea {
+    height: auto;
+}
+
+.field-group input:focus, 
+.field-group select:focus, 
+.field-group textarea:focus {
     outline: none;
     border-color: #22d3ee;
     box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+}
+
+.field-group input:disabled,
+.field-group select:disabled {
+    background-color: rgba(15, 23, 42, 0.6);
+    color: #64748b;
+    border-color: rgba(255, 255, 255, 0.08);
+    cursor: not-allowed;
+    opacity: 0.75;
 }
 
 /* Builder Top Grid: Side-by-Side Paste & Export cards */
@@ -480,6 +503,16 @@
     color: #94a3b8;
     margin-top: auto;
     line-height: 1.4;
+}
+
+.export-tip a {
+    color: #38bdf8;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.export-tip a:hover {
+    color: #7dd3fc;
 }
 
 .export-tip .tip-icon {

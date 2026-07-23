@@ -49,7 +49,7 @@ export default defineConfig({
             }
 
             // 1. Copy root HTML files
-            const rootFiles = ['index.html', 'builder.html', 'guide.html', 'test-config.html', 'test-config2.html'];
+            const rootFiles = ['index.html', 'builder.html', 'test-config.html', 'test-config2.html'];
             rootFiles.forEach(file => {
               const srcPath = resolve(__dirname, file);
               if (fs.existsSync(srcPath)) {
@@ -72,6 +72,27 @@ export default defineConfig({
                 fs.writeFileSync(resolve(distDir, file), content);
               }
             });
+
+            // 2. Copy school HTML files to dist/school/
+            const schoolDir = resolve(__dirname, 'school');
+            const distSchoolDir = resolve(distDir, 'school');
+            if (fs.existsSync(schoolDir)) {
+              if (!fs.existsSync(distSchoolDir)) {
+                fs.mkdirSync(distSchoolDir, { recursive: true });
+              }
+              fs.readdirSync(schoolDir).forEach(file => {
+                if (file.endsWith('.html')) {
+                  const srcPath = resolve(schoolDir, file);
+                  let content = fs.readFileSync(srcPath, 'utf-8');
+                  content = content.replace(/<script\b([^>]*)src="(?:\.\.\/|\/)src\/([^/]+)\/index\.js"([^>]*)>/g, (match, p1, componentName, p2) => {
+                    return `<script${p1}src="../${componentName}.js"${p2}>`;
+                  });
+                  content = content.replace(/from ['"](?:\.\.\/|\/)src\/(.*?)\.js['"]/g, "from '../$1.js'");
+                  content = content.replace(/src="(?:\.\.\/|\/)src\/(.*?)\.js"/g, 'src="../$1.js"');
+                  fs.writeFileSync(resolve(distSchoolDir, file), content);
+                }
+              });
+            }
 
             // 2. Find and copy test-*.html files from src to dist/demo/
             const findHtmlFiles = (dir) => {

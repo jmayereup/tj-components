@@ -6,6 +6,10 @@ const STORAGE_KEY = 'tj_builder_settings';
 const DEFAULT_SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
 
 class TjBuilder extends HTMLElement {
+    static get observedAttributes() {
+        return ['school'];
+    }
+
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
@@ -27,6 +31,12 @@ class TjBuilder extends HTMLElement {
         };
     }
 
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'school' && oldValue !== newValue) {
+            this._fetchTeacherPresets();
+        }
+    }
+
     connectedCallback() {
         this.shadowRoot.innerHTML = `
             <style>${stylesText}</style>
@@ -36,6 +46,7 @@ class TjBuilder extends HTMLElement {
         this._loadSettings();
         this._initElements();
         this._bindEvents();
+        this._fetchTeacherPresets();
         
         // Auto-load sample quiz on start for instant zero-setup preview!
         this._loadSample(SAMPLE_QUIZ_MD, 'tj-quiz-element');
@@ -79,6 +90,8 @@ class TjBuilder extends HTMLElement {
         this.inputStartCode = this.shadowRoot.getElementById('setting-start-code');
         this.inputTeacherCode = this.shadowRoot.getElementById('setting-teacher-code');
         this.inputSubmissionUrl = this.shadowRoot.getElementById('setting-submission-url');
+        this.selectTeacherImport = this.shadowRoot.getElementById('select-teacher-import');
+        this.fieldGroupTeacherImport = this.shadowRoot.getElementById('field-group-teacher-import');
         
         this.badgeStartCode = this.shadowRoot.getElementById('badge-start-code');
         this.badgeTeacherCode = this.shadowRoot.getElementById('badge-teacher-code');
@@ -143,6 +156,57 @@ class TjBuilder extends HTMLElement {
         this.selectGeminiGem.innerHTML = optionsHtml;
     }
 
+    async _fetchTeacherPresets() {
+        if (!this.selectTeacherImport) return;
+
+        const school = this.hasAttribute('school') ? this.getAttribute('school')?.trim() : null;
+
+        if (!school) {
+            if (this.fieldGroupTeacherImport) this.fieldGroupTeacherImport.style.display = 'none';
+            return;
+        }
+
+        if (this.fieldGroupTeacherImport) {
+            this.fieldGroupTeacherImport.style.display = '';
+        }
+        
+        const url = `https://blog.teacherjake.com/api/collections/tj_components_teacher_info/records?filter=(school='${encodeURIComponent(school)}')`;
+        
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+            const data = await res.json();
+            const items = data.items || [];
+            
+            if (items.length === 0) {
+                this.selectTeacherImport.innerHTML = `<option value="" disabled selected>No presets for ${school}</option>`;
+                return;
+            }
+
+            const optionsHtml = [
+                `<option value="" disabled selected>Import Teacher...</option>`,
+                ...items.map(teacher => `<option value="${teacher.url}">${teacher.name}</option>`),
+                `<option value="__custom__">✏️ Custom Submission URL...</option>`
+            ].join('');
+
+            this.selectTeacherImport.innerHTML = optionsHtml;
+
+            // Check if saved submission URL matches an imported teacher preset
+            const currentUrl = this.currentSettings.submissionUrl;
+            const matchingTeacher = items.find(t => t.url === currentUrl);
+            if (matchingTeacher) {
+                this.selectTeacherImport.value = matchingTeacher.url;
+                if (this.inputSubmissionUrl) {
+                    this.inputSubmissionUrl.disabled = true;
+                    this.inputSubmissionUrl.title = `Locked to preset URL for ${matchingTeacher.name}`;
+                }
+            }
+        } catch (e) {
+            console.warn('TJ Builder: Could not fetch teacher info presets', e);
+            this.selectTeacherImport.innerHTML = `<option value="" disabled selected>Import Teacher...</option>`;
+        }
+    }
+
     _bindEvents() {
         // Setting inputs change
         const handleSettingChange = () => {
@@ -159,8 +223,29 @@ class TjBuilder extends HTMLElement {
         };
 
         [this.inputStartCode, this.inputTeacherCode, this.inputSubmissionUrl].forEach(input => {
-            input.addEventListener('input', handleSettingChange);
+            input?.addEventListener('input', handleSettingChange);
         });
+
+        if (this.selectTeacherImport) {
+            this.selectTeacherImport.addEventListener('change', (e) => {
+                const selectedVal = e.target.value;
+                if (selectedVal === '__custom__') {
+                    this.inputSubmissionUrl.disabled = false;
+                    this.inputSubmissionUrl.title = '';
+                    this.inputSubmissionUrl.focus();
+                    this._showToast('Unlocked Custom Submission URL input');
+                } else if (selectedVal) {
+                    this.inputSubmissionUrl.value = selectedVal;
+                    this.inputSubmissionUrl.disabled = true;
+                    const teacherName = e.target.options[e.target.selectedIndex]?.text;
+                    this.inputSubmissionUrl.title = `Locked to preset URL for ${teacherName}`;
+                    handleSettingChange();
+                    if (teacherName) {
+                        this._showToast(`Loaded & locked settings for ${teacherName}`);
+                    }
+                }
+            });
+        }
 
         // Input stats & Drag-Drop File Import
         const updateInputStats = () => {

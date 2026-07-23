@@ -35,7 +35,7 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
 <tj-test start-code="1234" teacher-code="7676">
 <script type="application/json">
 {
-  "title": "Unit 1 Reading Comprehension Test",
+  "title": "Unit 1 Reading & Conversation Test",
   "sections": [
     {
       "title": "Main Assessment",
@@ -44,10 +44,22 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
       ],
       "questions": [
         {
-          "question": "Question text?",
-          "options": ["Option A", "Option B", "Option C"],
+          "question": "What is the main topic of the passage?",
+          "options": ["Option A", "Option B", "Option C", "Option D"],
           "answer": "Option B",
           "explanation": "Explanation for the correct answer."
+        },
+        {
+          "situation": "Jane compliments her classmate on her presentation skills.",
+          "question": "Jane: \"Wow, Sarah! Your presentation today was so clear and engaging. ______________ \"\nSarah: \"Thank you! I was worried it might be too bright, but green is my favorite color.\"",
+          "options": [
+            "You did a great job!",
+            "That's a terrible idea.",
+            "It was out of focus.",
+            "Why are you so impatient?"
+          ],
+          "answer": "You did a great job!",
+          "explanation": "Jane is complimenting Sarah on her presentation performance."
         }
       ],
       "vocabulary": [
@@ -79,9 +91,15 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
       ],
       "questions": [
         {
-          "question": "Level A1 Question?",
-          "options": ["Option A", "Option B", "Option C"],
-          "answer": "Option B"
+          "situation": "Two friends are admiring a scenic landscape shot on a photography blog.",
+          "question": "A: \"Is this a picture of your trip to Mount Fuji?\"\nB: \"Yes! We were very lucky. It's a wonderful ______________ the mountain with the cherry blossoms in the foreground.\"",
+          "options": [
+            "view of",
+            "photo frame of",
+            "portrait of",
+            "selfie stick for"
+          ],
+          "answer": "view of"
         }
       ],
       "vocabulary": [
@@ -97,7 +115,7 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
       "questions": [
         {
           "question": "Level A2 Question?",
-          "options": ["Option A", "Option B", "Option C"],
+          "options": ["Option A", "Option B", "Option C", "Option D"],
           "answer": "Option A"
         }
       ]
@@ -115,5 +133,10 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
 1. **Standard vs Progressive**:
    - For **Standard Tests**, omit `test-mode` and section `passThreshold` attributes if immediate student practice feedback is desired.
    - For **Progressive Tests**, include `test-mode` and `passThreshold` (e.g. `"70%"` to `"80%"`) so students unlock sections step-by-step.
-2. **Cloze Asterisk Syntax**: Target blank words must be enclosed in asterisks (e.g. `"The cat *sat* on the *mat*."`).
-3. **Answer Validation**: Ensure the `answer` string matches one of the items in the `options` array exactly.
+2. **Situation & Dialogue Questions**:
+   - Use the optional `"situation"` key to set up context for ELT / standardized conversation questions (e.g. `"Situation: Two friends meet at a cafe."`).
+   - Format dialogue lines inside `"question"` with newline characters `\n` (e.g. `"A: \"Hello!\"\nB: \"______\""`).
+   - Use `______` (or `______________`) for missing blanks.
+3. **Cloze Asterisk Syntax**: Target blank words in cloze sections must be enclosed in asterisks (e.g. `"The cat *sat* on the *mat*."`).
+4. **Answer Validation**: Ensure the `answer` string matches one of the items in the `options` array exactly.
+

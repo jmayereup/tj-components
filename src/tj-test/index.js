@@ -302,8 +302,10 @@ class TjTest extends HTMLElement {
                 const options = q.options || q.o || [];
                 const answer = q.answer !== undefined ? q.answer : (q.a || '');
                 const questionText = q.question || q.q || '';
+                const situationText = q.situation || q.context || q.s || '';
                 const explanation = q.explanation || q.e || '';
                 return {
+                    s: situationText,
                     q: questionText,
                     o: Array.isArray(options) ? options : [],
                     a: answer,
@@ -419,27 +421,48 @@ class TjTest extends HTMLElement {
     }
 
     parseQuestionsBlock(text) {
-        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+        const lines = text.split('\n');
         const questions = [];
         let currentQ = null;
 
         for (const line of lines) {
-            if (line.startsWith('Q:') || line.startsWith('Q.')) {
-                if (currentQ) questions.push(currentQ);
-                currentQ = {
-                    q: line.substring(2).trim(),
-                    o: [],
-                    a: '',
-                    e: ''
-                };
-            } else if (line.startsWith('A:') && currentQ) {
-                const ansText = line.substring(2).trim();
+            const trimmed = line.trim();
+            if (!trimmed) continue;
+
+            if (trimmed.startsWith('S:') || trimmed.startsWith('Situation:')) {
+                if (currentQ && (currentQ.q || currentQ.o.length > 0)) {
+                    questions.push(currentQ);
+                    currentQ = null;
+                }
+                if (!currentQ) {
+                    currentQ = { s: '', q: '', o: [], a: '', e: '' };
+                }
+                const sitVal = trimmed.replace(/^(S:|Situation:)/i, '').trim();
+                currentQ.s = currentQ.s ? `${currentQ.s}\n${sitVal}` : sitVal;
+            } else if (trimmed.startsWith('Q:') || trimmed.startsWith('Q.')) {
+                if (currentQ && currentQ.q && currentQ.o.length > 0) {
+                    questions.push(currentQ);
+                    currentQ = null;
+                }
+                if (!currentQ) {
+                    currentQ = { s: '', q: '', o: [], a: '', e: '' };
+                }
+                const qVal = trimmed.substring(2).trim();
+                currentQ.q = currentQ.q ? `${currentQ.q}\n${qVal}` : qVal;
+            } else if (trimmed.startsWith('A:') && currentQ) {
+                const ansText = trimmed.substring(2).trim();
                 const isCorrect = ansText.includes('[correct]');
                 const cleanAns = ansText.replace('[correct]', '').trim();
                 currentQ.o.push(cleanAns);
                 if (isCorrect) currentQ.a = cleanAns;
-            } else if (line.startsWith('E:') && currentQ) {
-                currentQ.e = line.substring(2).trim();
+            } else if (trimmed.startsWith('E:') && currentQ) {
+                currentQ.e = trimmed.substring(2).trim();
+            } else if (currentQ && currentQ.o.length === 0 && !currentQ.a) {
+                if (currentQ.q) {
+                    currentQ.q += '\n' + trimmed;
+                } else if (currentQ.s) {
+                    currentQ.s += '\n' + trimmed;
+                }
             }
         }
         if (currentQ) questions.push(currentQ);
@@ -746,19 +769,28 @@ class TjTest extends HTMLElement {
 
         // Multiple Choice Questions
         if (section.questions.length > 0) {
+            const optionLetters = ['a', 'b', 'c', 'd', 'e', 'f'];
             section.questions.forEach((q, qIdx) => {
                 const qItem = document.createElement('div');
                 qItem.className = 'tj-question-item';
 
-                const optionsHtml = q.o.map((opt, oIdx) => `
-                    <label class="tj-option-label">
-                        <input type="radio" name="q-${section.index}-${qIdx}" value="${opt}">
-                        <span>${opt}</span>
-                    </label>
-                `).join('');
+                const optionsHtml = q.o.map((opt, oIdx) => {
+                    const hasPrefix = /^[a-fA-F0-9][\.\)]\s*/.test(opt.trim());
+                    const displayLabel = hasPrefix ? opt : `${optionLetters[oIdx] || oIdx + 1}. ${opt}`;
+                    return `
+                        <label class="tj-option-label">
+                            <input type="radio" name="q-${section.index}-${qIdx}" value="${opt}">
+                            <span>${displayLabel}</span>
+                        </label>
+                    `;
+                }).join('');
+
+                const situationHtml = q.s ? `<div class="tj-question-situation"><strong>Situation:</strong> ${q.s}</div>` : '';
+                const questionTextHtml = q.q ? `<p class="tj-question-title">${qIdx + 1}. ${q.q}</p>` : `<p class="tj-question-title">${qIdx + 1}.</p>`;
 
                 qItem.innerHTML = `
-                    <p class="tj-question-title">${qIdx + 1}. ${q.q}</p>
+                    ${situationHtml}
+                    ${questionTextHtml}
                     <div class="tj-options-list">${optionsHtml}</div>
                 `;
                 sectionCard.appendChild(qItem);

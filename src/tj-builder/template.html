@@ -10,7 +10,7 @@
     </header>
 
     <!-- Teacher Configuration Settings (Collapsible Drawer) -->
-    <details class="settings-panel collapsible-panel" id="settings-drawer">
+    <details class="settings-panel collapsible-panel" id="settings-drawer" open>
         <summary class="panel-header-summary">
             <div class="summary-title-group">
                 <span class="summary-chevron">▼</span>
@@ -29,6 +29,12 @@
             <div class="field-group">
                 <label for="setting-teacher-code">Teacher Code</label>
                 <input type="text" id="setting-teacher-code" name="tj_setting_teacher_code_no_autofill" placeholder="e.g. 7676" value="7676" autocomplete="one-time-code" data-lpignore="true" data-form-type="other" />
+            </div>
+            <div class="field-group flex-grow" id="field-group-teacher-import" style="display: none;">
+                <label for="select-teacher-import">Import Teacher</label>
+                <select id="select-teacher-import">
+                    <option value="" disabled selected>Loading teacher presets...</option>
+                </select>
             </div>
             <div class="field-group flex-grow">
                 <label for="setting-submission-url">Submission URL (Optional)</label>
@@ -126,7 +132,7 @@
 
                 <div class="export-tip">
                     <span class="tip-icon">💡</span>
-                    <span class="tip-text">Paste code into your site editor. Use Live Preview to test.</span>
+                    <span class="tip-text">Paste code into your blog (e.g. <a href="https://sites.google.com" target="_blank" rel="noopener noreferrer">Google Sites</a>). Use Live Preview to test.</span>
                 </div>
 
                 <div class="embed-code-preview-box">
