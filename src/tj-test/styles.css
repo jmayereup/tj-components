@@ -1,6 +1,6 @@
-/* tj-progressive-test styles.css */
+/* tj-test styles.css */
 
-.tj-progressive-wrapper {
+.tj-test-wrapper {
   max-width: 900px;
   margin: 0 auto;
   padding: 1rem;
@@ -10,7 +10,7 @@
   gap: 1.5rem;
 }
 
-/* Header & Level Stepper */
+/* Header & Section Stepper */
 .tj-header {
   background: var(--tj-bg-card);
   backdrop-filter: var(--tj-backdrop-blur);
@@ -36,8 +36,8 @@
   margin: 0;
 }
 
-/* Level Stepper Pills */
-.tj-level-stepper {
+/* Section Stepper Pills */
+.tj-section-stepper {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -49,15 +49,15 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.tj-level-stepper::-webkit-scrollbar {
+.tj-section-stepper::-webkit-scrollbar {
   height: 4px;
 }
 
-.tj-level-stepper::-webkit-scrollbar-track {
+.tj-section-stepper::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.tj-level-stepper::-webkit-scrollbar-thumb {
+.tj-section-stepper::-webkit-scrollbar-thumb {
   background: var(--tj-border-main);
   border-radius: 4px;
 }
@@ -172,7 +172,7 @@
   gap: 0.75rem;
 }
 
-.tj-level-badge {
+.tj-section-badge {
   background: var(--tj-primary-light);
   color: var(--tj-primary-color);
   border: 1px solid var(--tj-primary-border);
@@ -385,7 +385,7 @@
   text-align: center;
 }
 
-.tj-placement-badge {
+.tj-final-score-badge {
   background: linear-gradient(135deg, #2563eb, #7c3aed);
   color: white;
   padding: 0.75rem 1.75rem;

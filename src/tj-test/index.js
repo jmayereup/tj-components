@@ -79,7 +79,7 @@ class TjTest extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        this.activityTitle = 'Progressive Language Placement Test';
+        this.activityTitle = 'Test';
         this.sections = []; // Array of section objects parsed from content
         this.activeSectionIndex = 0;
         this.sectionResults = []; // Array of result objects per section
@@ -131,7 +131,7 @@ class TjTest extends HTMLElement {
                     const res = await fetch(resolved.dataUrl);
                     this.originalContent = await res.text();
                 } catch (e) {
-                    console.error('Error loading progressive test from dataUrl:', e);
+                    console.error('Error loading test from dataUrl:', e);
                 }
             } else if (this.querySelector('script[type="text/markdown"]')) {
                 this.originalContent = this.querySelector('script[type="text/markdown"]').textContent;
@@ -396,7 +396,7 @@ class TjTest extends HTMLElement {
                 if (!currentSection) {
                     currentSection = {
                         index: 0,
-                        title: 'Section 1 (Level A1)',
+                        title: 'Section 1',
                         passThreshold: this.defaultPassThreshold,
                         passPercentageLabel: `${Math.round(this.defaultPassThreshold * 100)}%`,
                         passages: [],
@@ -603,12 +603,12 @@ class TjTest extends HTMLElement {
 
     renderTestUI() {
         if (this.sections.length === 0) return;
-        this.renderLevelStepper();
+        this.renderSectionStepper();
         this.renderActiveSection();
     }
 
-    renderLevelStepper() {
-        const stepperContainer = this.shadowRoot.getElementById('levelStepper');
+    renderSectionStepper() {
+        const stepperContainer = this.shadowRoot.getElementById('sectionStepper');
         if (!stepperContainer) return;
         stepperContainer.innerHTML = '';
 
@@ -686,7 +686,7 @@ class TjTest extends HTMLElement {
         const reqText = section.passThreshold === 0 ? 'No minimum score (0%)' : section.passPercentageLabel;
         banner.innerHTML = `
             <div class="tj-section-title-badge">
-                <span class="tj-level-badge">Section ${section.index + 1}</span>
+                <span class="tj-section-badge">Section ${section.index + 1}</span>
                 <h3 class="tj-h3" style="margin: 0;">${section.title}</h3>
             </div>
             <div class="tj-pass-threshold-info">Pass Requirement: ${reqText}</div>
@@ -945,7 +945,7 @@ class TjTest extends HTMLElement {
             icon.textContent = '📊';
             title.textContent = 'Placement Complete';
             title.style.color = 'var(--tj-primary-color)';
-            msg.textContent = `You scored ${scorePct}. The required pass score was ${passLabel}. Your placement assessment is complete.`;
+            msg.textContent = `You scored ${scorePct}. The required pass score was ${passLabel}. Your assessment is complete.`;
             continueBtn.className = 'tj-btn tj-btn-primary';
             continueBtn.textContent = 'View Final Placement Report →';
         }
@@ -961,7 +961,7 @@ class TjTest extends HTMLElement {
         if (mainContainer) mainContainer.classList.add('hidden');
         reportContainer.classList.remove('hidden');
 
-        let highestPassedTitle = 'Starter Level';
+        let highestPassedTitle = 'Starter Section';
         for (let i = this.sections.length - 1; i >= 0; i--) {
             if (this.sectionResults[i] && this.sectionResults[i].passed) {
                 highestPassedTitle = this.sections[i].title;
@@ -987,15 +987,15 @@ class TjTest extends HTMLElement {
         }).join('');
 
         reportContainer.innerHTML = `
-            <h3 class="tj-h3" style="font-size: 1.6rem; margin: 0;">Placement Assessment Summary</h3>
-            <div class="tj-placement-badge">PLACED LEVEL: ${highestPassedTitle.toUpperCase()}</div>
+            <h3 class="tj-h3" style="font-size: 1.6rem; margin: 0;">Test Summary</h3>
+            <div class="tj-final-score-badge">YOUR SCORE: ${highestPassedTitle.toUpperCase()}</div>
             <p style="color: var(--tj-text-muted); max-width: 600px;">
-                Based on your progressive test performance, your language level has been evaluated and verified.
+                Based on your test performance, your score has been evaluated and verified.
             </p>
             <table class="tj-summary-table">
                 <thead>
                     <tr>
-                        <th>Section Level</th>
+                        <th>Section</th>
                         <th>Score</th>
                         <th>Accuracy</th>
                         <th>Pass Req</th>

@@ -1,4 +1,4 @@
-<div class="tj-progressive-wrapper">
+<div class="tj-test-wrapper">
     <!-- Warning Banner for Tab Switches -->
     <div id="tabAwayBanner" class="tj-banner tj-banner-warning hidden"></div>
 
@@ -6,7 +6,7 @@
     <div id="startLockOverlay" class="tj-overlay">
         <div class="tj-modal-card">
             <div class="tj-modal-icon">🔒</div>
-            <h3 class="tj-h3">Language Placement Test</h3>
+            <h3 class="tj-h3">Test</h3>
             <p>Please enter the Start Code provided by your teacher/instructor to begin the test.</p>
             <div class="tj-form-group">
                 <input type="text" id="startCodeInput" name="tj_test_code_no_autofill" class="tj-input" placeholder="Enter Start Code (e.g. 1234)" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
@@ -51,7 +51,7 @@
     <!-- Main Header -->
     <header class="tj-header">
         <div class="tj-header-title-row">
-            <h2 id="testTitle" class="tj-test-title">Progressive Language Placement Test</h2>
+            <h2 id="testTitle" class="tj-test-title">Test</h2>
             <button id="voice-btn" class="tj-icon-btn hidden" title="Select Voice">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -61,8 +61,8 @@
             </button>
         </div>
 
-        <!-- Level Stepper Navigation -->
-        <div id="levelStepper" class="tj-level-stepper"></div>
+        <!-- Section Stepper Navigation -->
+        <div id="sectionStepper" class="tj-section-stepper"></div>
     </header>
 
     <!-- Active Section Main Content Container -->
@@ -72,9 +72,9 @@
     <div id="sectionResultModal" class="tj-overlay">
         <div class="tj-modal-card tj-result-modal-card">
             <div id="resultModalIcon" class="tj-result-icon">🎉</div>
-            <h3 id="resultModalTitle" class="tj-h3">Level Passed!</h3>
+            <h3 id="resultModalTitle" class="tj-h3">Section Passed!</h3>
             <div id="resultModalScoreBadge" class="tj-score-badge">85%</div>
-            <p id="resultModalMessage" class="tj-result-msg">Great job! You met the passing threshold of 75% for this level.</p>
+            <p id="resultModalMessage" class="tj-result-msg">Great job! You met the passing threshold of 75% for this section.</p>
             <div id="resultModalDetails" class="tj-result-details"></div>
             <div class="tj-modal-actions">
                 <button id="resultModalContinueBtn" class="tj-btn tj-btn-success" style="width: 100%;">Proceed to Next Section →</button>
