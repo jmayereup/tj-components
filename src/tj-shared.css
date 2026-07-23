@@ -55,7 +55,7 @@
   --tj-border-radius-sm: 0.5em;
   --tj-border-radius-md: 0.8em;
   --tj-border-radius-lg: 1.2em;
-  --tj-border-radius-full: 50%;
+  --tj-border-radius-full: 9999px;
 
   /* =========================================
      Shadows & Effects

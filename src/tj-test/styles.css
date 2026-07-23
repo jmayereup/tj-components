@@ -42,15 +42,31 @@
   align-items: center;
   gap: 0.5rem;
   overflow-x: auto;
-  padding-bottom: 0.25rem;
+  padding: 0.25rem 0.25rem 0.5rem 0.25rem;
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--tj-border-main) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tj-level-stepper::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tj-level-stepper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tj-level-stepper::-webkit-scrollbar-thumb {
+  background: var(--tj-border-main);
+  border-radius: 4px;
 }
 
 .tj-stepper-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 0.9rem;
+  padding: 0.45rem 0.9rem;
   border-radius: var(--tj-border-radius-full);
   font-size: 0.88rem;
   font-weight: 600;
@@ -60,6 +76,13 @@
   white-space: nowrap;
   transition: var(--tj-transition-fast);
   user-select: none;
+  flex-shrink: 0;
+}
+
+.tj-stepper-item:hover:not(.locked):not(.active) {
+  border-color: var(--tj-primary-border);
+  color: var(--tj-primary-color);
+  background: var(--tj-primary-light);
 }
 
 .tj-stepper-item.passed {
@@ -70,10 +93,10 @@
 
 .tj-stepper-item.active {
   background: var(--tj-primary-color);
-  color: white;
+  color: #ffffff;
   border-color: var(--tj-primary-hover);
-  box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
-  transform: scale(1.03);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  font-weight: 700;
 }
 
 .tj-stepper-item.failed {
@@ -88,9 +111,32 @@
 }
 
 .tj-stepper-icon {
-  font-size: 0.95rem;
+  font-size: 0.75rem;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.tj-stepper-item.active .tj-stepper-icon {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.tj-stepper-item.passed .tj-stepper-icon {
+  background: rgba(34, 197, 94, 0.2);
+  color: var(--tj-success-color);
+}
+
+.tj-stepper-item.failed .tj-stepper-icon {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--tj-error-color);
 }
 
 /* Section Cards & Main Content */

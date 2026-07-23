@@ -619,6 +619,7 @@ class TjTest extends HTMLElement {
 
             const res = this.sectionResults[idx];
             let icon = `<span class="tj-stepper-icon">${idx + 1}</span>`;
+            const isUnlocked = !this.testMode || idx === 0 || (this.sectionResults[idx - 1] && this.sectionResults[idx - 1].passed) || res.completed;
 
             if (res.completed) {
                 if (res.passed) {
@@ -630,10 +631,18 @@ class TjTest extends HTMLElement {
                 }
             } else if (idx === this.activeSectionIndex) {
                 item.classList.add('active');
-                icon = `<span class="tj-stepper-icon">🔵</span>`;
-            } else {
+                icon = `<span class="tj-stepper-icon">${idx + 1}</span>`;
+            } else if (!isUnlocked) {
                 item.classList.add('locked');
                 icon = `<span class="tj-stepper-icon">🔒</span>`;
+            }
+
+            if (isUnlocked && idx !== this.activeSectionIndex) {
+                item.style.cursor = 'pointer';
+                item.addEventListener('click', () => {
+                    this.activeSectionIndex = idx;
+                    this.renderTestUI();
+                });
             }
 
             item.innerHTML = `${icon} <span>${sec.title}</span>`;

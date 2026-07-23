@@ -221,6 +221,15 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.card-header h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0;
+    white-space: nowrap;
+}
+
 .box1-header {
     display: flex;
     justify-content: space-between;
@@ -240,6 +249,61 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-open-gemini-overlay, #btn-open-gemini-overlay {
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    padding: 0.45rem 0.8rem;
+    border-radius: 6px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+}
+
+.btn-open-gemini-overlay:hover, #btn-open-gemini-overlay:hover {
+    background: rgba(168, 85, 247, 0.28);
+    border-color: rgba(168, 85, 247, 0.55);
+    color: #f3e8ff;
+    transform: translateY(-1px);
+}
+
+.btn-paste-clipboard {
+    background: rgba(34, 211, 238, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(34, 211, 238, 0.35);
+    padding: 0.45rem 0.8rem;
+    border-radius: 6px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+}
+
+.btn-paste-clipboard:hover {
+    background: rgba(34, 211, 238, 0.28);
+    border-color: rgba(34, 211, 238, 0.55);
+    color: #7dd3fc;
+    transform: translateY(-1px);
+}
+
+.btn-paste-clipboard.pasted {
+    background: rgba(16, 185, 129, 0.25);
+    color: #34d399;
+    border-color: rgba(16, 185, 129, 0.5);
 }
 
 .component-select-top {
@@ -248,12 +312,13 @@
     color: #38bdf8;
     font-family: 'Outfit', sans-serif;
     font-weight: 700;
-    font-size: 0.95rem;
-    padding: 0.45rem 0.85rem;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.75rem;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    max-width: 100%;
 }
 
 .component-select-top:focus {
@@ -274,15 +339,15 @@
     top: 0;
     left: 0;
     right: 0;
-    bottom: 30px;
+    bottom: 31px;
     z-index: 9;
-    background: rgba(15, 23, 42, 0.88);
+    background: rgba(15, 23, 42, 0.92);
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.25rem;
-    border-radius: 8px 8px 0 0;
+    padding: 1rem;
+    overflow-y: auto;
     transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
@@ -297,14 +362,14 @@
     border: 1px solid rgba(168, 85, 247, 0.35);
     box-shadow: 0 8px 32px rgba(168, 85, 247, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     border-radius: 14px;
-    padding: 1.5rem 1.75rem;
+    padding: 1.1rem 1.4rem;
     text-align: center;
     max-width: 440px;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .gemini-overlay-badge {
@@ -314,9 +379,9 @@
     background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(99, 102, 241, 0.2));
     border: 1px solid rgba(168, 85, 247, 0.4);
     color: #c084fc;
-    padding: 0.25rem 0.75rem;
+    padding: 0.2rem 0.65rem;
     border-radius: 20px;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 700;
     font-family: 'Outfit', sans-serif;
     text-transform: uppercase;
@@ -325,7 +390,7 @@
 
 .gemini-overlay-content h4 {
     font-family: 'Outfit', sans-serif;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #f8fafc;
     margin: 0;
@@ -333,7 +398,7 @@
 }
 
 .gemini-overlay-content p {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #94a3b8;
     margin: 0;
     line-height: 1.4;
@@ -343,18 +408,18 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
     background: linear-gradient(135deg, #a855f7, #6366f1);
     color: #ffffff;
     text-decoration: none;
     font-family: 'Outfit', sans-serif;
     font-weight: 700;
-    font-size: 1rem;
-    padding: 0.65rem 1.35rem;
+    font-size: 0.95rem;
+    padding: 0.55rem 1.1rem;
     border-radius: 10px;
     box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4);
     transition: all 0.2s ease;
-    margin-top: 0.25rem;
+    margin-top: 0.15rem;
     width: 100%;
 }
 
@@ -365,9 +430,9 @@
 }
 
 .overlay-footer-note {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: #64748b;
-    margin-top: 0.1rem;
+    margin-top: 0.05rem;
 }
 
 .live-sync-badge {
@@ -1252,6 +1317,28 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-height: 280px;
+    overflow: hidden;
+}
+
+#gemini-input {
+    width: 100%;
+    height: 250px;
+    min-height: 200px;
+    background-color: #0b1120;
+    border: none;
+    color: #f1f5f9;
+    padding: 1rem;
+    font-family: 'Fira Code', Consolas, Monaco, monospace;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#gemini-input:focus {
+    background-color: #090e1a;
 }
 
 .drag-drop-overlay {

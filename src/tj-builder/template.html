@@ -54,15 +54,15 @@
                     <div class="header-left-group">
                         <h3>1. Select Component:</h3>
                         <select id="component-type-select" class="component-select-top">
-                            <option value="tj-quiz-element">📝 Quiz (tj-quiz-element)</option>
-                            <option value="tj-test">📈 Assessment Test (tj-test)</option>
-                            <option value="tj-info-gap">👥 Information Gap (tj-info-gap)</option>
-                            <option value="tj-speed-review">🏎️ Speed Review (tj-speed-review)</option>
-                            <option value="tj-chapter-book">📚 Chapter Book (tj-chapter-book)</option>
-                            <option value="tj-grammar-hearts">❤️ Grammar Activity (tj-grammar-hearts)</option>
-                            <option value="tj-listening">🎧 Listening Activity (tj-listening)</option>
-                            <option value="tj-pronunciation">🗣️ Pronunciation (tj-pronunciation)</option>
-                            <option value="tj-reader">📖 Standard Reader (tj-reader)</option>
+                            <option value="tj-test" selected>📈&nbsp;&nbsp;Assessment Test</option>
+                            <option value="tj-info-gap">👥&nbsp;&nbsp;Information Gap</option>
+                            <option value="tj-speed-review">🏎️&nbsp;&nbsp;Speed Review</option>
+                            <option value="tj-chapter-book">📚&nbsp;&nbsp;Chapter Book</option>
+                            <option value="tj-grammar-hearts">❤️&nbsp;&nbsp;Grammar Activity</option>
+                            <option value="tj-listening">🎧&nbsp;&nbsp;Listening Activity</option>
+                            <option value="tj-pronunciation">🗣️&nbsp;&nbsp;Pronunciation</option>
+                            <option value="tj-reader">📖&nbsp;&nbsp;Standard Reader</option>
+                            <option value="tj-quiz-element">📝&nbsp;&nbsp;Quiz [Legacy]</option>
                         </select>
                     </div>
                     <div class="header-right-actions">
@@ -81,7 +81,6 @@
                     <!-- Prominent Gemini AI Overlay -->
                     <div class="gemini-prompt-overlay" id="gemini-prompt-overlay">
                         <div class="gemini-overlay-content">
-                            <div class="gemini-overlay-badge">✨ Gemini AI Generator</div>
                             <h4 id="gemini-overlay-title">Generate Quiz Content with Gemini</h4>
                             <p id="gemini-overlay-desc">Click below to open the custom Gemini Gem tailored for generating this component's data structure.</p>
                             <a href="#" target="_blank" rel="noopener noreferrer" class="btn-gemini-cta" id="btn-gemini-cta">
@@ -117,7 +116,7 @@
                             <button type="button" class="btn-small-sec" id="btn-expand-all" title="Expand all question cards">Expand All</button>
                             <button type="button" class="btn-small-sec" id="btn-collapse-all" title="Collapse all question cards">Collapse All</button>
                         </div>
-                        <span class="detected-badge" id="detected-type-badge">tj-quiz-element</span>
+                        <span class="detected-badge" id="detected-type-badge">tj-test</span>
                     </div>
                 </div>
 
@@ -199,7 +198,7 @@
         <div class="preview-modal-card">
             <div class="preview-modal-header">
                 <div class="preview-header-left">
-                    <h3>Live Preview: &lt;<span id="modal-component-name">tj-quiz-element</span>&gt;</h3>
+                    <h3>Live Preview: &lt;<span id="modal-component-name">tj-test</span>&gt;</h3>
                     <div class="viewport-switcher">
                         <button type="button" class="btn-viewport active" data-viewport="desktop" title="Desktop View">Desktop</button>
                         <button type="button" class="btn-viewport" data-viewport="tablet" title="Tablet View">Tablet</button>

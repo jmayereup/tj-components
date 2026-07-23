@@ -23,7 +23,7 @@ class TjBuilder extends HTMLElement {
         };
 
         this.parsedState = {
-            componentType: 'tj-quiz-element',
+            componentType: 'tj-test',
             rawContent: '',
             isJson: false,
             jsonObject: null,
@@ -54,12 +54,12 @@ class TjBuilder extends HTMLElement {
     }
 
     _getCleanTagName(typeStr) {
-        if (!typeStr) return 'tj-quiz-element';
+        if (!typeStr) return 'tj-test';
         const match = String(typeStr).match(/(tj-[a-z0-9-]+)/i);
         if (match) {
             return match[1].toLowerCase();
         }
-        return 'tj-quiz-element';
+        return 'tj-test';
     }
 
     _loadSettings() {
@@ -156,7 +156,7 @@ class TjBuilder extends HTMLElement {
     }
 
     _updateGeminiOverlay() {
-        const selectedType = this.selectComponentType?.value || 'tj-quiz-element';
+        const selectedType = this.selectComponentType?.value || 'tj-test';
         const item = getComponentByTag(selectedType);
         if (!item) return;
 
