@@ -108,11 +108,13 @@ class TjBuilder extends HTMLElement {
         this.geminiPromptOverlay = this.shadowRoot.getElementById('gemini-prompt-overlay');
         this.geminiOverlayTitle = this.shadowRoot.getElementById('gemini-overlay-title');
         this.geminiOverlayDesc = this.shadowRoot.getElementById('gemini-overlay-desc');
-        this.btnGeminiCta = this.shadowRoot.getElementById('btn-gemini-cta');
-        this.geminiCtaText = this.shadowRoot.getElementById('gemini-cta-text');
+        this.btnGeminiConvert = this.shadowRoot.getElementById('btn-gemini-convert');
+        this.btnGeminiCreate = this.shadowRoot.getElementById('btn-gemini-create');
+        this.titleGeminiConvert = this.shadowRoot.getElementById('title-gemini-convert');
+        this.titleGeminiCreate = this.shadowRoot.getElementById('title-gemini-create');
         this.btnOpenGeminiOverlay = this.shadowRoot.getElementById('btn-open-gemini-overlay');
         this.parseStatusBadge = this.shadowRoot.getElementById('parse-status-badge');
-
+ 
         this.box2ThresholdContainer = this.shadowRoot.getElementById('box2-threshold-container');
         this.box2ThresholdMode = this.shadowRoot.getElementById('box2-test-threshold-mode');
         this.box2ThresholdValue = this.shadowRoot.getElementById('box2-test-threshold-value');
@@ -161,16 +163,20 @@ class TjBuilder extends HTMLElement {
         if (!item) return;
 
         if (this.geminiOverlayTitle) {
-            this.geminiOverlayTitle.textContent = `Generate ${item.name} Content with Gemini`;
+            this.geminiOverlayTitle.textContent = `Create or Convert ${item.name} with Gemini`;
         }
         if (this.geminiOverlayDesc) {
-            this.geminiOverlayDesc.textContent = item.description || `Use our tailored Gemini Gem to create ${item.name} content automatically.`;
+            this.geminiOverlayDesc.textContent = `Use our custom Gemini Gem to convert existing test materials or generate brand-new ${item.name} content automatically.`;
         }
-        if (this.btnGeminiCta && item.geminiUrl) {
-            this.btnGeminiCta.href = item.geminiUrl;
-            if (this.geminiCtaText) {
-                this.geminiCtaText.textContent = `Open Gemini Gem for ${item.name} ↗`;
-            }
+        if (item.geminiUrl) {
+            if (this.btnGeminiConvert) this.btnGeminiConvert.href = item.geminiUrl;
+            if (this.btnGeminiCreate) this.btnGeminiCreate.href = item.geminiUrl;
+        }
+        if (this.titleGeminiConvert) {
+            this.titleGeminiConvert.textContent = `Convert Existing ${item.name} ↗`;
+        }
+        if (this.titleGeminiCreate) {
+            this.titleGeminiCreate.textContent = `Create New ${item.name} ↗`;
         }
         this._checkOverlayVisibility();
     }

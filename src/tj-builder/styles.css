@@ -362,14 +362,14 @@
     border: 1px solid rgba(168, 85, 247, 0.35);
     box-shadow: 0 8px 32px rgba(168, 85, 247, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     border-radius: 14px;
-    padding: 1.1rem 1.4rem;
+    padding: 1.15rem 1.4rem;
     text-align: center;
-    max-width: 440px;
+    max-width: 480px;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.55rem;
 }
 
 .gemini-overlay-badge {
@@ -390,7 +390,7 @@
 
 .gemini-overlay-content h4 {
     font-family: 'Outfit', sans-serif;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #f8fafc;
     margin: 0;
@@ -404,29 +404,67 @@
     line-height: 1.4;
 }
 
-.btn-gemini-cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.gemini-overlay-features {
+    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
-    background: linear-gradient(135deg, #a855f7, #6366f1);
-    color: #ffffff;
-    text-decoration: none;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
-    padding: 0.55rem 1.1rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4);
-    transition: all 0.2s ease;
-    margin-top: 0.15rem;
     width: 100%;
+    margin: 0.25rem 0;
+    text-align: left;
 }
 
-.btn-gemini-cta:hover {
+.gemini-feature-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    border-radius: 10px;
+    padding: 0.65rem 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gemini-feature-card:hover {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(99, 102, 241, 0.15));
+    border-color: rgba(168, 85, 247, 0.6);
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(168, 85, 247, 0.6);
-    background: linear-gradient(135deg, #c084fc, #818cf8);
+    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
+}
+
+.gemini-feature-card .feature-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+}
+
+.gemini-feature-card .feature-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.gemini-feature-card .feature-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #e9d5ff;
+    font-family: 'Outfit', sans-serif;
+}
+
+.gemini-feature-card:hover .feature-title {
+    color: #ffffff;
+}
+
+.gemini-feature-card .feature-desc {
+    font-size: 0.76rem;
+    color: #94a3b8;
+    line-height: 1.35;
+}
+
+.gemini-feature-card:hover .feature-desc {
+    color: #cbd5e1;
 }
 
 .overlay-footer-note {
@@ -1317,14 +1355,14 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 280px;
+    min-height: 390px;
     overflow: hidden;
 }
 
 #gemini-input {
     width: 100%;
-    height: 250px;
-    min-height: 200px;
+    height: 390px;
+    min-height: 360px;
     background-color: #0b1120;
     border: none;
     color: #f1f5f9;
