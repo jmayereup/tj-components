@@ -1,113 +1,136 @@
 <div class="tj-builder-container">
     <header class="builder-header">
         <div class="header-brand">
-            <h2>⚡ TJ Component Builder</h2>
-            <p>Paste Gemini AI outputs, visually edit questions, configure teacher codes, and copy ready-to-embed blog code.</p>
+            <h2>⚡ TJ Builder</h2>
+            <p>Build, edit, and export interactive component code.</p>
         </div>
         <div class="storage-badge" id="storage-status">
-            <span class="status-dot"></span> Saved to LocalStorage
+            <span class="status-dot"></span> Saved
         </div>
     </header>
 
-    <!-- Teacher Configuration Settings -->
-    <section class="settings-panel">
-        <div class="panel-header">
-            <h3>⚙️ Teacher Settings & Credentials</h3>
-            <span class="panel-subtitle">Automatically saved to your browser so you don't need to re-enter them.</span>
-        </div>
+    <!-- Teacher Configuration Settings (Collapsible Drawer) -->
+    <details class="settings-panel collapsible-panel" id="settings-drawer">
+        <summary class="panel-header-summary">
+            <div class="summary-title-group">
+                <span class="summary-chevron">▼</span>
+                <h3>⚙️ Teacher Settings</h3>
+                <span class="panel-subtitle">Auto-saved</span>
+            </div>
+            <div class="settings-summary-badge" id="settings-summary-badge">
+                Start: <strong id="badge-start-code">1234</strong> &nbsp;|&nbsp; Reset: <strong id="badge-teacher-code">7676</strong>
+            </div>
+        </summary>
         <div class="settings-grid">
             <div class="field-group">
-                <label for="setting-start-code">Start Code (Student Access)</label>
+                <label for="setting-start-code">Start Code</label>
                 <input type="text" id="setting-start-code" name="tj_setting_start_code_no_autofill" placeholder="e.g. 1234" value="1234" autocomplete="one-time-code" data-lpignore="true" data-form-type="other" />
             </div>
             <div class="field-group">
-                <label for="setting-teacher-code">Teacher / Reset Code</label>
+                <label for="setting-teacher-code">Teacher Code</label>
                 <input type="text" id="setting-teacher-code" name="tj_setting_teacher_code_no_autofill" placeholder="e.g. 7676" value="7676" autocomplete="one-time-code" data-lpignore="true" data-form-type="other" />
             </div>
             <div class="field-group flex-grow">
-                <label for="setting-submission-url">Submission URL (Apps Script Endpoint - Optional)</label>
+                <label for="setting-submission-url">Submission URL (Optional)</label>
                 <input type="url" id="setting-submission-url" name="tj_setting_url_no_autofill" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="one-time-code" data-lpignore="true" data-form-type="other" />
             </div>
         </div>
-    </section>
+    </details>
 
     <!-- Top Section: Paste Input + Export Actions side-by-side -->
     <div class="builder-top-grid">
         
         <!-- Left: Gemini Paste Box -->
-        <div class="card gemini-input-card">
+        <div class="card gemini-input-card" id="gemini-input-card">
             <div class="card-header">
-                <h3>✨ 1. Paste Gemini AI Output</h3>
-                <div class="sample-buttons">
-                    <button type="button" class="btn-paste-clipboard" id="btn-paste-clipboard">📋 Paste from Clipboard</button>
-                    <select id="select-sample" class="select-dropdown select-sample" aria-label="Load Sample Content">
-                        <option value="" disabled selected>🧪 Load Sample Content...</option>
-                        <option value="quiz">Sample Quiz (tj-quiz-element)</option>
-                        <option value="infogap">Sample Info-Gap (tj-info-gap)</option>
-                        <option value="speed">Sample Speed Review (tj-speed-review)</option>
-                    </select>
-                    <select id="select-gemini-gem" class="select-dropdown select-gemini-gem" aria-label="Open Gemini Gem AI Generator">
-                        <option value="" disabled selected>✨ Gemini Gems ↗</option>
-                    </select>
+                <h3>1. Input Content</h3>
+                <button type="button" class="btn-paste-clipboard" id="btn-paste-clipboard">📋 Paste</button>
+            </div>
+
+            <div class="input-area-wrapper" id="input-area-wrapper">
+                <div class="drag-drop-overlay" id="drag-drop-overlay">
+                    <span class="drop-icon">📁</span>
+                    <span class="drop-text">Drop file here to import</span>
+                </div>
+                <textarea id="gemini-input" placeholder="Paste Markdown or JSON output..."></textarea>
+                <div class="input-stats-bar">
+                    <span class="stat-item" id="input-char-count">0 chars</span>
+                    <span class="stat-item" id="input-type-hint">Markdown / JSON</span>
+                    <button type="button" class="btn-text-action" id="btn-clear-input">🗑️ Clear</button>
                 </div>
             </div>
-            <textarea id="gemini-input" placeholder="Paste the output from Gemini here (e.g. full element tag, raw JSON, or Markdown with --- section dividers)..."></textarea>
             
             <div class="parser-controls">
-                <div class="component-selector-group">
-                    <label for="component-type-select">Target Component:</label>
-                    <select id="component-type-select">
-                        <option value="tj-test">tj-test (Test)</option>
-                        <option value="tj-quiz-element">tj-quiz-element (Legacy / Inactive Quiz)</option>
-                        <option value="tj-info-gap">tj-info-gap (Interactive Information Gap)</option>
-                        <option value="tj-speed-review">tj-speed-review (Flashcards / Speed Match)</option>
-                        <option value="tj-chapter-book">tj-chapter-book (Chapter Book Reader)</option>
-                        <option value="tj-grammar-hearts">tj-grammar-hearts (Grammar Activity)</option>
-                        <option value="tj-listening">tj-listening (Listening Activity)</option>
-                        <option value="tj-pronunciation">tj-pronunciation (Pronunciation Practice)</option>
-                        <option value="tj-reader">tj-reader (Standard Reader)</option>
-                    </select>
+                <div class="sample-shortcuts-row">
+                    <span class="shortcuts-label">Samples:</span>
+                    <div class="shortcuts-dropdowns">
+                        <select id="select-sample" class="select-dropdown select-sample" aria-label="Load Sample Content">
+                            <option value="" disabled selected>Sample...</option>
+                            <option value="quiz">Sample Quiz (tj-quiz-element)</option>
+                            <option value="infogap">Sample Info-Gap (tj-info-gap)</option>
+                            <option value="speed">Sample Speed Review (tj-speed-review)</option>
+                        </select>
+                        <select id="select-gemini-gem" class="select-dropdown select-gemini-gem" aria-label="Open Gemini Gem AI Generator">
+                            <option value="" disabled selected>Gemini Gems ↗</option>
+                        </select>
+                    </div>
                 </div>
-                <button type="button" class="btn-primary" id="btn-parse">Parse & Format</button>
+                <div class="main-parse-row">
+                    <div class="component-selector-group">
+                        <label for="component-type-select">Component:</label>
+                        <select id="component-type-select">
+                            <option value="tj-quiz-element">tj-quiz-element (Quiz)</option>
+                            <option value="tj-test">tj-test (Assessment Test)</option>
+                            <option value="tj-info-gap">tj-info-gap (Information Gap)</option>
+                            <option value="tj-speed-review">tj-speed-review (Speed Review)</option>
+                            <option value="tj-chapter-book">tj-chapter-book (Chapter Book)</option>
+                            <option value="tj-grammar-hearts">tj-grammar-hearts (Grammar Activity)</option>
+                            <option value="tj-listening">tj-listening (Listening Activity)</option>
+                            <option value="tj-pronunciation">tj-pronunciation (Pronunciation Practice)</option>
+                            <option value="tj-reader">tj-reader (Standard Reader)</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn-primary" id="btn-parse">Parse & Format</button>
+                </div>
             </div>
         </div>
 
         <!-- Right: Export & Actions Card -->
         <div class="card action-card">
             <div class="card-header">
-                <h3>📋 2. Export & Actions</h3>
+                <h3>2. Export Code</h3>
             </div>
             <div class="action-card-body">
                 <div class="action-options">
                     <label class="toggle-label">
                         <input type="checkbox" id="chk-include-script" checked />
-                        Include CDN Script Tag in Embed Code
+                        Include CDN script
                     </label>
                     <label class="toggle-label" id="mode-toggle-container">
                         <input type="checkbox" id="chk-test-mode" />
-                        Enable Test Mode (<code style="color: #38bdf8; font-family: monospace;">test-mode</code>)
+                        Enable test mode (<code style="color: #38bdf8; font-family: monospace;">test-mode</code>)
                     </label>
                 </div>
 
                 <div class="action-buttons-group">
                     <button type="button" class="btn-copy-large" id="btn-copy-code">
                         <span class="btn-icon">📋</span>
-                        <span class="btn-text">Copy Exact Embed Code</span>
+                        <span class="btn-text">Copy Embed Code</span>
                     </button>
 
                     <button type="button" class="btn-preview-modal" id="btn-open-preview">
                         <span class="btn-icon">👁️</span>
-                        <span class="btn-text">Live Component Preview</span>
+                        <span class="btn-text">Live Preview</span>
                     </button>
                 </div>
 
                 <div class="export-tip">
                     <span class="tip-icon">💡</span>
-                    <span class="tip-text">Paste the embed code into your blog or website HTML editor. Use Live Preview to test interactivity before publishing.</span>
+                    <span class="tip-text">Paste code into your site editor. Use Live Preview to test.</span>
                 </div>
 
                 <div class="embed-code-preview-box">
-                    <div class="code-box-header">⚡ Generated Embed Code</div>
+                    <div class="code-box-header">Generated Embed Code</div>
                     <pre><code id="embed-code-display"></code></pre>
                 </div>
             </div>
@@ -119,10 +142,16 @@
     <div class="card editor-card">
         <div class="card-header border-bottom">
             <div class="tab-buttons">
-                <button type="button" class="tab-btn active" data-tab="visual">🛠️ Visual Question Editor</button>
-                <button type="button" class="tab-btn" data-tab="raw">💻 Raw Code Editor</button>
+                <button type="button" class="tab-btn active" data-tab="visual">Visual Editor</button>
+                <button type="button" class="tab-btn" data-tab="raw">Code Editor</button>
             </div>
-            <span class="detected-badge" id="detected-type-badge">tj-quiz-element</span>
+            <div class="editor-header-actions">
+                <div class="editor-quick-controls" id="visual-editor-controls">
+                    <button type="button" class="btn-small-sec" id="btn-expand-all" title="Expand all question cards">Expand All</button>
+                    <button type="button" class="btn-small-sec" id="btn-collapse-all" title="Collapse all question cards">Collapse All</button>
+                </div>
+                <span class="detected-badge" id="detected-type-badge">tj-quiz-element</span>
+            </div>
         </div>
 
         <!-- Tab 1: Visual Form View -->
@@ -142,18 +171,28 @@
     <div class="preview-modal-overlay" id="preview-modal">
         <div class="preview-modal-card">
             <div class="preview-modal-header">
-                <h3>👁️ Live Preview: &lt;<span id="modal-component-name">tj-quiz-element</span>&gt;</h3>
+                <div class="preview-header-left">
+                    <h3>Live Preview: &lt;<span id="modal-component-name">tj-quiz-element</span>&gt;</h3>
+                    <div class="viewport-switcher">
+                        <button type="button" class="btn-viewport active" data-viewport="desktop" title="Desktop View">Desktop</button>
+                        <button type="button" class="btn-viewport" data-viewport="tablet" title="Tablet View">Tablet</button>
+                        <button type="button" class="btn-viewport" data-viewport="mobile" title="Mobile View">Mobile</button>
+                    </div>
+                </div>
                 <button type="button" class="modal-close-btn" id="btn-close-modal">✕</button>
             </div>
             <div class="preview-modal-body">
-                <div class="preview-stage" id="live-preview-container">
+                <div class="preview-stage view-desktop" id="live-preview-container">
                     <p class="empty-preview-msg">Loading component preview...</p>
                 </div>
             </div>
             <div class="preview-modal-footer">
-                <button type="button" class="btn-secondary" id="btn-close-modal-footer">Close Preview</button>
-                <button type="button" class="btn-copy" id="btn-copy-modal">📋 Copy Embed Code</button>
+                <button type="button" class="btn-secondary" id="btn-close-modal-footer">Close</button>
+                <button type="button" class="btn-copy" id="btn-copy-modal">Copy Embed Code</button>
             </div>
         </div>
     </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
 </div>
