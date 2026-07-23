@@ -103,15 +103,24 @@
 }
 
 .settings-grid {
-    display: grid;
-    grid-template-columns: 160px 160px 240px 1fr;
+    display: flex;
+    flex-wrap: wrap;
     gap: 1.25rem;
-    align-items: end;
+    align-items: flex-end;
+}
+
+.settings-grid .field-group {
+    flex: 0 0 170px;
+}
+
+.settings-grid .field-group.flex-grow {
+    flex: 1 1 360px;
+    min-width: 280px;
 }
 
 @media (max-width: 768px) {
-    .settings-grid {
-        grid-template-columns: 1fr;
+    .settings-grid .field-group {
+        flex: 1 1 100%;
     }
 }
 
@@ -125,6 +134,23 @@
     font-size: 0.82rem;
     font-weight: 600;
     color: #cbd5e1;
+}
+
+.label-help-link {
+    color: #22d3ee;
+    text-decoration: underline;
+    font-size: 0.78rem;
+    font-weight: 500;
+    margin-left: 0.4rem;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    transition: opacity 0.2s;
+}
+
+.label-help-link:hover {
+    opacity: 0.85;
 }
 
 .field-group input, 

@@ -18,17 +18,22 @@
                 <span class="panel-subtitle">Auto-saved</span>
             </div>
             <div class="settings-summary-badge" id="settings-summary-badge">
-                Start/Submit: <strong id="badge-start-code">1234</strong> &nbsp;|&nbsp; Reset/Unlock: <strong id="badge-teacher-code">7676</strong>
+                Start/Submit: <strong id="badge-start-code">1234</strong> &nbsp;|&nbsp; Reset/Unlock: <strong
+                    id="badge-teacher-code">7676</strong>
             </div>
         </summary>
         <div class="settings-grid">
             <div class="field-group">
                 <label for="setting-start-code">Start / Submit Code</label>
-                <input type="text" id="setting-start-code" name="tj_setting_start_code_no_autofill" placeholder="e.g. 1234" value="1234" autocomplete="one-time-code" data-lpignore="true" data-form-type="other" />
+                <input type="text" id="setting-start-code" name="tj_setting_start_code_no_autofill"
+                    placeholder="e.g. 1234" value="1234" autocomplete="one-time-code" data-lpignore="true"
+                    data-form-type="other" />
             </div>
             <div class="field-group">
-                <label for="setting-teacher-code">Reset / Unlock Teacher Code</label>
-                <input type="text" id="setting-teacher-code" name="tj_setting_teacher_code_no_autofill" placeholder="e.g. 7676" value="7676" autocomplete="one-time-code" data-lpignore="true" data-form-type="other" />
+                <label for="setting-teacher-code">Reset / Unlock Code</label>
+                <input type="text" id="setting-teacher-code" name="tj_setting_teacher_code_no_autofill"
+                    placeholder="e.g. 7676" value="7676" autocomplete="one-time-code" data-lpignore="true"
+                    data-form-type="other" />
             </div>
             <div class="field-group flex-grow" id="field-group-teacher-import" style="display: none;">
                 <label for="select-teacher-import">Import Teacher</label>
@@ -37,15 +42,21 @@
                 </select>
             </div>
             <div class="field-group flex-grow">
-                <label for="setting-submission-url">Submission URL (Optional)</label>
-                <input type="url" id="setting-submission-url" name="tj_setting_url_no_autofill" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="one-time-code" data-lpignore="true" data-form-type="other" />
+                <label for="setting-submission-url">
+                    Submission URL (Optional)
+                    <a href="/#apps-script" target="_blank" rel="noopener noreferrer" class="label-help-link"
+                        title="Google Sheets Setup Instructions">📖 Setup Guide ↗</a>
+                </label>
+                <input type="url" id="setting-submission-url" name="tj_setting_url_no_autofill"
+                    placeholder="https://script.google.com/macros/s/.../exec" autocomplete="one-time-code"
+                    data-lpignore="true" data-form-type="other" />
             </div>
         </div>
     </details>
 
     <!-- Main 2-Column Responsive Layout -->
     <div class="builder-main-layout">
-        
+
         <!-- Left Column: Step 1 (Box 1: Input Content + Visual/Code Editor) -->
         <div class="builder-step1-column">
             <!-- Box 1: Input Content -->
@@ -66,7 +77,8 @@
                         </select>
                     </div>
                     <div class="header-right-actions">
-                        <button type="button" class="btn-text-action" id="btn-open-gemini-overlay" title="Open Gemini Gem link">✨ Gemini Gem ↗</button>
+                        <button type="button" class="btn-text-action" id="btn-open-gemini-overlay"
+                            title="Open Gemini Gem link">✨ Gemini Gem ↗</button>
                         <button type="button" class="btn-paste-clipboard" id="btn-paste-clipboard">📋 Paste</button>
                     </div>
                 </div>
@@ -83,21 +95,27 @@
                         <div class="gemini-overlay-content">
                             <div class="gemini-overlay-badge">✨ Gemini AI Assistant</div>
                             <h4 id="gemini-overlay-title">Create or Convert Content with Gemini</h4>
-                            <p id="gemini-overlay-desc">Use Gemini to generate brand-new interactive content or convert existing test materials into this format.</p>
+                            <p id="gemini-overlay-desc">Use Gemini to generate brand-new interactive content or convert
+                                existing test materials into this format.</p>
 
                             <div class="gemini-overlay-features">
-                                <a href="#" target="_blank" rel="noopener noreferrer" class="gemini-feature-card btn-gemini-action" id="btn-gemini-convert">
+                                <a href="#" target="_blank" rel="noopener noreferrer"
+                                    class="gemini-feature-card btn-gemini-action" id="btn-gemini-convert">
                                     <span class="feature-icon">🔄</span>
                                     <div class="feature-text-group">
-                                        <span class="feature-title" id="title-gemini-convert">Convert Existing Test ↗</span>
-                                        <span class="feature-desc">Paste an existing test, worksheet, or lesson notes into Gemini to convert it into the correct format.</span>
+                                        <span class="feature-title" id="title-gemini-convert">Convert Existing Test
+                                            ↗</span>
+                                        <span class="feature-desc">Paste an existing test, worksheet, or lesson notes
+                                            into Gemini to convert it into the correct format.</span>
                                     </div>
                                 </a>
-                                <a href="#" target="_blank" rel="noopener noreferrer" class="gemini-feature-card btn-gemini-action" id="btn-gemini-create">
+                                <a href="#" target="_blank" rel="noopener noreferrer"
+                                    class="gemini-feature-card btn-gemini-action" id="btn-gemini-create">
                                     <span class="feature-icon">✨</span>
                                     <div class="feature-text-group">
                                         <span class="feature-title" id="title-gemini-create">Create New Test ↗</span>
-                                        <span class="feature-desc">Prompt Gemini to generate brand-new questions, passages, or exercises from scratch.</span>
+                                        <span class="feature-desc">Prompt Gemini to generate brand-new questions,
+                                            passages, or exercises from scratch.</span>
                                     </div>
                                 </a>
                             </div>
@@ -118,7 +136,8 @@
 
             <!-- Question / Content Editor Card (Non-Collapsible Parent Container) -->
             <div class="card editor-card" id="editor-container">
-                <div class="panel-header-bar border-bottom" style="padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+                <div class="panel-header-bar border-bottom"
+                    style="padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
                     <div class="summary-title-group" style="gap: 0.75rem; flex: 1;">
                         <div class="tab-buttons" style="margin: 0;">
                             <button type="button" class="tab-btn active" data-tab="visual">Visual Editor</button>
@@ -127,8 +146,10 @@
                     </div>
                     <div class="editor-header-actions">
                         <div class="editor-quick-controls" id="visual-editor-controls">
-                            <button type="button" class="btn-small-sec" id="btn-expand-all" title="Expand all question cards">Expand All</button>
-                            <button type="button" class="btn-small-sec" id="btn-collapse-all" title="Collapse all question cards">Collapse All</button>
+                            <button type="button" class="btn-small-sec" id="btn-expand-all"
+                                title="Expand all question cards">Expand All</button>
+                            <button type="button" class="btn-small-sec" id="btn-collapse-all"
+                                title="Collapse all question cards">Collapse All</button>
                         </div>
                         <span class="detected-badge" id="detected-type-badge">tj-test</span>
                     </div>
@@ -165,13 +186,15 @@
 
                         <!-- Duplicated Pass Threshold for tj-test -->
                         <div id="box2-threshold-container" class="box2-threshold-panel" style="display: none;">
-                            <label for="box2-test-threshold-mode" class="box2-threshold-label">Pass Threshold Requirement</label>
+                            <label for="box2-test-threshold-mode" class="box2-threshold-label">Pass Threshold
+                                Requirement</label>
                             <div class="box2-threshold-row">
                                 <select id="box2-test-threshold-mode" class="box2-select">
                                     <option value="disabled">Disabled (No minimum score)</option>
                                     <option value="enabled">Global Threshold (%)</option>
                                 </select>
-                                <input type="text" id="box2-test-threshold-value" class="box2-input" placeholder="e.g. 70%" value="70%" style="display: none;" />
+                                <input type="text" id="box2-test-threshold-value" class="box2-input"
+                                    placeholder="e.g. 70%" value="70%" style="display: none;" />
                             </div>
                         </div>
                     </div>
@@ -190,7 +213,9 @@
 
                     <div class="export-tip">
                         <span class="tip-icon">💡</span>
-                        <span class="tip-text">Paste code into your blog (e.g. <a href="https://sites.google.com" target="_blank" rel="noopener noreferrer">Google Sites</a>). Use Live Preview to test.</span>
+                        <span class="tip-text">Paste code into your blog (e.g. <a href="https://sites.google.com"
+                                target="_blank" rel="noopener noreferrer">Google Sites</a>). Use Live Preview to
+                            test.</span>
                     </div>
 
                     <div class="embed-code-preview-box">
@@ -210,9 +235,12 @@
                 <div class="preview-header-left">
                     <h3>Live Preview: &lt;<span id="modal-component-name">tj-test</span>&gt;</h3>
                     <div class="viewport-switcher">
-                        <button type="button" class="btn-viewport active" data-viewport="desktop" title="Desktop View">Desktop</button>
-                        <button type="button" class="btn-viewport" data-viewport="tablet" title="Tablet View">Tablet</button>
-                        <button type="button" class="btn-viewport" data-viewport="mobile" title="Mobile View">Mobile</button>
+                        <button type="button" class="btn-viewport active" data-viewport="desktop"
+                            title="Desktop View">Desktop</button>
+                        <button type="button" class="btn-viewport" data-viewport="tablet"
+                            title="Tablet View">Tablet</button>
+                        <button type="button" class="btn-viewport" data-viewport="mobile"
+                            title="Mobile View">Mobile</button>
                     </div>
                 </div>
                 <button type="button" class="modal-close-btn" id="btn-close-modal">✕</button>
