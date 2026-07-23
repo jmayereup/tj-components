@@ -12,7 +12,8 @@ This guide explains how teachers can set up their own Google Apps Script endpoin
 
 ## 1. Create a Google Sheet
 1. Open [Google Sheets](https://sheets.google.com) and create a new, blank spreadsheet.
-2. At the bottom, rename the default sheet tab (usually `Sheet1`) to exactly: **`Submissions`** (Note the capital **S**).
+2. **⚠️ REQUIRED:** At the bottom, rename the default sheet tab (usually `Sheet1`) to exactly: **`Submissions`** (capital **S**, no spaces, plural).
+   The script looks for this exact tab name and will fail with the error `"Target sheet not found."` if it is missing, misnamed, or has different capitalization. The sheet will appear silently empty on the student's side (the misleading "✓ logged successfully" message will still show) even though no row was written.
 3. *(Optional)* You can pre-fill row 1 with headers, but the script will automatically populate headers if the sheet is empty:
    `Timestamp, Nickname, Homeroom, Student ID, Quiz Name, Score, Total Questions, Written Answers`.
 

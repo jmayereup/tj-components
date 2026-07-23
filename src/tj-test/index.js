@@ -94,9 +94,9 @@ class TjTest extends HTMLElement {
         this._visibilityHandler = null;
     }
 
-    attributeChangedCallback(name, newValue) {
+    attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'submission-url') {
-            this.submissionUrl = newValue;
+            this.submissionUrl = newValue || '';
         } else if (name === 'test-mode') {
             if (this.isConnected) {
                 if (newValue !== null) {
@@ -1085,13 +1085,21 @@ class TjTest extends HTMLElement {
         if (submitBtn) submitBtn.disabled = true;
 
         try {
-            if (this.submissionUrl) {
-                await fetch(this.submissionUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(payload)
-                });
+            const submissionUrl = this.submissionUrl || resolveComponentParams(this).submissionUrl;
+            if (!submissionUrl) {
+                if (msgElem) {
+                    msgElem.classList.remove('hidden');
+                    msgElem.style.color = 'var(--tj-error-color)';
+                    msgElem.textContent = '⚠️ No submission URL configured. Please take a screenshot of this table.';
+                }
+                if (submitBtn) submitBtn.disabled = false;
+                return;
             }
+            await fetch(submissionUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(payload)
+            });
             if (msgElem) {
                 msgElem.style.color = 'var(--tj-success-color)';
                 msgElem.textContent = '✓ Score report successfully submitted to your teacher!';

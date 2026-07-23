@@ -813,6 +813,16 @@ A: To the beach
                 <h2>Google Sheets Automatic Submissions &amp; Apps Script Setup</h2>
                 <p>Teachers can set up their own Google Sheet to automatically receive score submissions from any component (e.g., <code>&lt;tj-quiz-element&gt;</code>, <code>&lt;tj-grammar-hearts&gt;</code>, <code>&lt;tj-reader&gt;</code>, <code>&lt;tj-pronunciation&gt;</code>, etc.).</p>
 
+                <div style="background: rgba(234, 179, 8, 0.18); border-left: 4px solid #eab308; border-radius: 0.5rem; padding: 1rem 1.25rem; margin: 1.25rem 0; color: #fef3c7;">
+                    <strong style="color: #fde047;">⚠️ Required Prerequisite — Spreadsheet Tab Name</strong>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 0.95rem;">The script below looks for a sheet tab named exactly <code style="background: rgba(0,0,0,0.3); padding: 0.1em 0.35em; border-radius: 0.25rem;">Submissions</code> (capital <strong>S</strong>, no spaces, plural). If the tab is missing or misnamed, submissions will <strong>silently fail</strong> — the student will still see the green "✓ logged successfully" message, but no row will be written to your sheet.</p>
+                    <p style="margin: 0.75rem 0 0 0; font-size: 0.95rem;"><strong>Before pasting the script:</strong></p>
+                    <ol style="margin: 0.5rem 0 0 0; padding-left: 1.5rem; font-size: 0.95rem;">
+                        <li>Open <a href="https://sheets.google.com" target="_blank" rel="noopener" style="color: #fde047; text-decoration: underline;">Google Sheets</a> and create a new blank spreadsheet.</li>
+                        <li>At the bottom, double-click the default tab (usually <code style="background: rgba(0,0,0,0.3); padding: 0.1em 0.35em; border-radius: 0.25rem;">Sheet1</code>) and rename it to exactly: <code style="background: rgba(0,0,0,0.3); padding: 0.1em 0.35em; border-radius: 0.25rem;">Submissions</code></li>
+                    </ol>
+                </div>
+
                 <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">1. Google Apps Script Code (doPost):</h3>
                 <p>In your Google Sheet, go to <strong>Extensions &gt; Apps Script</strong>, paste the following code, and click <strong>Save</strong>:</p>
                 <pre><code>/** @OnlyCurrentDoc */
