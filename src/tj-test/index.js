@@ -67,7 +67,7 @@ class TjTest extends HTMLElement {
     }
 
     get defaultPassThreshold() {
-        const raw = this.getAttribute('pass-threshold') || resolveComponentParams(this).defaultPassThreshold || '70%';
+        const raw = this.getAttribute('pass-threshold') || resolveComponentParams(this).defaultPassThreshold || '0%';
         return this._parseThreshold(raw);
     }
 
@@ -172,12 +172,14 @@ class TjTest extends HTMLElement {
     }
 
     _parseThreshold(val) {
-        if (!val) return 0.70;
-        const str = String(val).trim();
+        if (val === null || val === undefined || val === '') return 0;
+        const str = String(val).trim().toLowerCase();
+        if (str === '0' || str === '0%' || str === 'disabled' || str === 'none' || str === 'off') return 0;
         if (str.endsWith('%')) {
             return parseFloat(str.replace('%', '')) / 100;
         }
         const num = parseFloat(str);
+        if (isNaN(num)) return 0;
         return num > 1 ? num / 100 : num;
     }
 
@@ -665,12 +667,13 @@ class TjTest extends HTMLElement {
         // Section Banner
         const banner = document.createElement('div');
         banner.className = 'tj-section-header-banner';
+        const reqText = section.passThreshold === 0 ? 'No minimum score (0%)' : section.passPercentageLabel;
         banner.innerHTML = `
             <div class="tj-section-title-badge">
                 <span class="tj-level-badge">Section ${section.index + 1}</span>
                 <h3 class="tj-h3" style="margin: 0;">${section.title}</h3>
             </div>
-            <div class="tj-pass-threshold-info">Pass Requirement: ${section.passPercentageLabel}</div>
+            <div class="tj-pass-threshold-info">Pass Requirement: ${reqText}</div>
         `;
         sectionCard.appendChild(banner);
 
@@ -917,7 +920,9 @@ class TjTest extends HTMLElement {
             icon.textContent = '🎉';
             title.textContent = 'Section Passed!';
             title.style.color = 'var(--tj-success-color)';
-            msg.textContent = `Excellent job! You scored ${scorePct}, meeting the required threshold of ${passLabel}.`;
+            msg.textContent = (passLabel === '0%' || passLabel === '0')
+                ? `Great job! You completed this section with a score of ${scorePct}.`
+                : `Excellent job! You scored ${scorePct}, meeting the required threshold of ${passLabel}.`;
             continueBtn.className = 'tj-btn tj-btn-success';
             continueBtn.textContent = this.testCompleted ? 'View Placement Report →' : 'Proceed to Next Section →';
         } else {

@@ -43,134 +43,155 @@
         </div>
     </details>
 
-    <!-- Top Section: Paste Input + Export Actions side-by-side -->
-    <div class="builder-top-grid">
+    <!-- Main 2-Column Responsive Layout -->
+    <div class="builder-main-layout">
         
-        <!-- Left: Gemini Paste Box -->
-        <div class="card gemini-input-card" id="gemini-input-card">
-            <div class="card-header">
-                <h3>1. Input Content</h3>
-                <button type="button" class="btn-paste-clipboard" id="btn-paste-clipboard">📋 Paste</button>
-            </div>
-
-            <div class="input-area-wrapper" id="input-area-wrapper">
-                <div class="drag-drop-overlay" id="drag-drop-overlay">
-                    <span class="drop-icon">📁</span>
-                    <span class="drop-text">Drop file here to import</span>
-                </div>
-                <textarea id="gemini-input" placeholder="Paste Markdown or JSON output..."></textarea>
-                <div class="input-stats-bar">
-                    <span class="stat-item" id="input-char-count">0 chars</span>
-                    <span class="stat-item" id="input-type-hint">Markdown / JSON</span>
-                    <button type="button" class="btn-text-action" id="btn-clear-input">🗑️ Clear</button>
-                </div>
-            </div>
-            
-            <div class="parser-controls">
-                <div class="sample-shortcuts-row">
-                    <span class="shortcuts-label">Samples:</span>
-                    <div class="shortcuts-dropdowns">
-                        <select id="select-sample" class="select-dropdown select-sample" aria-label="Load Sample Content">
-                            <option value="" disabled selected>Sample...</option>
-                            <option value="quiz">Sample Quiz (tj-quiz-element)</option>
-                            <option value="infogap">Sample Info-Gap (tj-info-gap)</option>
-                            <option value="speed">Sample Speed Review (tj-speed-review)</option>
-                        </select>
-                        <select id="select-gemini-gem" class="select-dropdown select-gemini-gem" aria-label="Open Gemini Gem AI Generator">
-                            <option value="" disabled selected>Gemini Gems ↗</option>
+        <!-- Left Column: Step 1 (Box 1: Input Content + Visual/Code Editor) -->
+        <div class="builder-step1-column">
+            <!-- Box 1: Input Content -->
+            <div class="card gemini-input-card" id="gemini-input-card">
+                <div class="card-header box1-header">
+                    <div class="header-left-group">
+                        <h3>1. Select Component:</h3>
+                        <select id="component-type-select" class="component-select-top">
+                            <option value="tj-quiz-element">📝 Quiz (tj-quiz-element)</option>
+                            <option value="tj-test">📈 Assessment Test (tj-test)</option>
+                            <option value="tj-info-gap">👥 Information Gap (tj-info-gap)</option>
+                            <option value="tj-speed-review">🏎️ Speed Review (tj-speed-review)</option>
+                            <option value="tj-chapter-book">📚 Chapter Book (tj-chapter-book)</option>
+                            <option value="tj-grammar-hearts">❤️ Grammar Activity (tj-grammar-hearts)</option>
+                            <option value="tj-listening">🎧 Listening Activity (tj-listening)</option>
+                            <option value="tj-pronunciation">🗣️ Pronunciation (tj-pronunciation)</option>
+                            <option value="tj-reader">📖 Standard Reader (tj-reader)</option>
                         </select>
                     </div>
-                </div>
-                <div class="main-parse-row">
-                    <div class="component-selector-group">
-                        <label for="component-type-select">Component:</label>
-                        <select id="component-type-select">
-                            <option value="tj-quiz-element">tj-quiz-element (Quiz)</option>
-                            <option value="tj-test">tj-test (Assessment Test)</option>
-                            <option value="tj-info-gap">tj-info-gap (Information Gap)</option>
-                            <option value="tj-speed-review">tj-speed-review (Speed Review)</option>
-                            <option value="tj-chapter-book">tj-chapter-book (Chapter Book)</option>
-                            <option value="tj-grammar-hearts">tj-grammar-hearts (Grammar Activity)</option>
-                            <option value="tj-listening">tj-listening (Listening Activity)</option>
-                            <option value="tj-pronunciation">tj-pronunciation (Pronunciation Practice)</option>
-                            <option value="tj-reader">tj-reader (Standard Reader)</option>
-                        </select>
+                    <div class="header-right-actions">
+                        <button type="button" class="btn-text-action" id="btn-open-gemini-overlay" title="Open Gemini Gem link">✨ Gemini Gem ↗</button>
+                        <button type="button" class="btn-paste-clipboard" id="btn-paste-clipboard">📋 Paste</button>
                     </div>
-                    <button type="button" class="btn-primary" id="btn-parse">Parse & Format</button>
+                </div>
+
+                <div class="input-area-wrapper" id="input-area-wrapper">
+                    <!-- Drag & Drop File Overlay -->
+                    <div class="drag-drop-overlay" id="drag-drop-overlay">
+                        <span class="drop-icon">📁</span>
+                        <span class="drop-text">Drop file here to import</span>
+                    </div>
+
+                    <!-- Prominent Gemini AI Overlay -->
+                    <div class="gemini-prompt-overlay" id="gemini-prompt-overlay">
+                        <div class="gemini-overlay-content">
+                            <div class="gemini-overlay-badge">✨ Gemini AI Generator</div>
+                            <h4 id="gemini-overlay-title">Generate Quiz Content with Gemini</h4>
+                            <p id="gemini-overlay-desc">Click below to open the custom Gemini Gem tailored for generating this component's data structure.</p>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="btn-gemini-cta" id="btn-gemini-cta">
+                                <span class="cta-icon">🚀</span>
+                                <span class="cta-text" id="gemini-cta-text">Open Gemini Gem for Quiz ↗</span>
+                            </a>
+                            <div class="overlay-footer-note">
+                                <span>Or paste your Markdown / JSON below</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <textarea id="gemini-input" placeholder="Paste Markdown or JSON output here..."></textarea>
+                    <div class="input-stats-bar">
+                        <span class="stat-item" id="input-char-count">0 chars</span>
+                        <span class="stat-item live-sync-badge" id="parse-status-badge">⚡ Auto-Sync Active</span>
+                        <button type="button" class="btn-text-action" id="btn-clear-input">🗑️ Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question / Content Editor Card (Non-Collapsible Parent Container) -->
+            <div class="card editor-card" id="editor-container">
+                <div class="panel-header-bar border-bottom" style="padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+                    <div class="summary-title-group" style="gap: 0.75rem; flex: 1;">
+                        <div class="tab-buttons" style="margin: 0;">
+                            <button type="button" class="tab-btn active" data-tab="visual">Visual Editor</button>
+                            <button type="button" class="tab-btn" data-tab="raw">Code Editor</button>
+                        </div>
+                    </div>
+                    <div class="editor-header-actions">
+                        <div class="editor-quick-controls" id="visual-editor-controls">
+                            <button type="button" class="btn-small-sec" id="btn-expand-all" title="Expand all question cards">Expand All</button>
+                            <button type="button" class="btn-small-sec" id="btn-collapse-all" title="Collapse all question cards">Collapse All</button>
+                        </div>
+                        <span class="detected-badge" id="detected-type-badge">tj-quiz-element</span>
+                    </div>
+                </div>
+
+                <div class="editor-drawer-content" style="padding: 1.25rem;">
+                    <!-- Tab 1: Visual Form View -->
+                    <div class="tab-content active" id="tab-visual-content">
+                        <div id="visual-form-container">
+                            <!-- Dynamic Form Fields standard & component specific -->
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Raw Code View -->
+                    <div class="tab-content" id="tab-raw-content">
+                        <textarea id="raw-code-editor" spellcheck="false"></textarea>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Right: Export & Actions Card -->
-        <div class="card action-card">
-            <div class="card-header">
-                <h3>2. Export Code</h3>
-            </div>
-            <div class="action-card-body">
-                <div class="action-options">
-                    <label class="toggle-label">
-                        <input type="checkbox" id="chk-include-script" checked />
-                        Include CDN script
-                    </label>
-                    <label class="toggle-label" id="mode-toggle-container">
-                        <input type="checkbox" id="chk-test-mode" />
-                        Enable test mode (<code style="color: #38bdf8; font-family: monospace;">test-mode</code>)
-                    </label>
+        <!-- Right Column: Step 2 (Box 2: Export Code) -->
+        <div class="builder-step2-column">
+            <div class="card action-card">
+                <div class="card-header">
+                    <h3>2. Export Code</h3>
                 </div>
+                <div class="action-card-body">
+                    <div class="action-options">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="chk-include-script" checked />
+                            Include CDN script
+                        </label>
+                        <label class="toggle-label" id="mode-toggle-container">
+                            <input type="checkbox" id="chk-test-mode" />
+                            Enable test mode (<code style="color: #38bdf8; font-family: monospace;">test-mode</code>)
+                        </label>
 
-                <div class="action-buttons-group">
-                    <button type="button" class="btn-copy-large" id="btn-copy-code">
-                        <span class="btn-icon">📋</span>
-                        <span class="btn-text">Copy Embed Code</span>
-                    </button>
+                        <!-- Duplicated Pass Threshold for tj-test -->
+                        <div id="box2-threshold-container" class="box2-threshold-panel" style="display: none;">
+                            <label for="box2-test-threshold-mode" class="box2-threshold-label">Pass Threshold Requirement</label>
+                            <div class="box2-threshold-row">
+                                <select id="box2-test-threshold-mode" class="box2-select">
+                                    <option value="disabled">Disabled (No minimum score)</option>
+                                    <option value="enabled">Global Threshold (%)</option>
+                                </select>
+                                <input type="text" id="box2-test-threshold-value" class="box2-input" placeholder="e.g. 70%" value="70%" style="display: none;" />
+                            </div>
+                        </div>
+                    </div>
 
-                    <button type="button" class="btn-preview-modal" id="btn-open-preview">
-                        <span class="btn-icon">👁️</span>
-                        <span class="btn-text">Live Preview</span>
-                    </button>
+                    <div class="action-buttons-group">
+                        <button type="button" class="btn-copy-large" id="btn-copy-code">
+                            <span class="btn-icon">📋</span>
+                            <span class="btn-text">Copy Embed Code</span>
+                        </button>
+
+                        <button type="button" class="btn-preview-modal" id="btn-open-preview">
+                            <span class="btn-icon">👁️</span>
+                            <span class="btn-text">Live Preview</span>
+                        </button>
+                    </div>
+
+                    <div class="export-tip">
+                        <span class="tip-icon">💡</span>
+                        <span class="tip-text">Paste code into your blog (e.g. <a href="https://sites.google.com" target="_blank" rel="noopener noreferrer">Google Sites</a>). Use Live Preview to test.</span>
+                    </div>
+
+                    <div class="embed-code-preview-box">
+                        <div class="code-box-header">Generated Embed Code</div>
+                        <pre><code id="embed-code-display"></code></pre>
+                    </div>
                 </div>
-
-                <div class="export-tip">
-                    <span class="tip-icon">💡</span>
-                    <span class="tip-text">Paste code into your blog (e.g. <a href="https://sites.google.com" target="_blank" rel="noopener noreferrer">Google Sites</a>). Use Live Preview to test.</span>
-                </div>
-
-                <div class="embed-code-preview-box">
-                    <div class="code-box-header">Generated Embed Code</div>
-                    <pre><code id="embed-code-display"></code></pre>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Question / Content Editor Tabs (Full Width) -->
-    <div class="card editor-card">
-        <div class="card-header border-bottom">
-            <div class="tab-buttons">
-                <button type="button" class="tab-btn active" data-tab="visual">Visual Editor</button>
-                <button type="button" class="tab-btn" data-tab="raw">Code Editor</button>
-            </div>
-            <div class="editor-header-actions">
-                <div class="editor-quick-controls" id="visual-editor-controls">
-                    <button type="button" class="btn-small-sec" id="btn-expand-all" title="Expand all question cards">Expand All</button>
-                    <button type="button" class="btn-small-sec" id="btn-collapse-all" title="Collapse all question cards">Collapse All</button>
-                </div>
-                <span class="detected-badge" id="detected-type-badge">tj-quiz-element</span>
             </div>
         </div>
 
-        <!-- Tab 1: Visual Form View -->
-        <div class="tab-content active" id="tab-visual-content">
-            <div id="visual-form-container">
-                <!-- Dynamic Form Fields standard & component specific -->
-            </div>
-        </div>
-
-        <!-- Tab 2: Raw Code View -->
-        <div class="tab-content" id="tab-raw-content">
-            <textarea id="raw-code-editor" spellcheck="false"></textarea>
-        </div>
     </div>
 
     <!-- Live Preview Modal -->

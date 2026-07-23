@@ -1,6 +1,6 @@
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
-import { COMPONENT_CATALOG, SAMPLE_QUIZ_MD, SAMPLE_INFOGAP_JSON, SAMPLE_SPEED_JSON } from "../tj-catalog.js";
+import { COMPONENT_CATALOG, getComponentByTag, SAMPLE_QUIZ_MD, SAMPLE_INFOGAP_JSON, SAMPLE_SPEED_JSON } from "../tj-catalog.js";
 
 const STORAGE_KEY = 'tj_builder_settings';
 const DEFAULT_SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
@@ -48,8 +48,9 @@ class TjBuilder extends HTMLElement {
         this._bindEvents();
         this._fetchTeacherPresets();
         
-        // Auto-load sample quiz on start for instant zero-setup preview!
-        this._loadSample(SAMPLE_QUIZ_MD, 'tj-quiz-element');
+        // Start with empty input so Gemini Overlay is immediately visible on startup
+        this._updateGeminiOverlay();
+        this._syncBox2ThresholdDisplay();
     }
 
     _getCleanTagName(typeStr) {
@@ -102,11 +103,19 @@ class TjBuilder extends HTMLElement {
         this.btnClearInput = this.shadowRoot.getElementById('btn-clear-input');
         
         this.selectComponentType = this.shadowRoot.getElementById('component-type-select');
-        this.btnParse = this.shadowRoot.getElementById('btn-parse');
         this.btnPasteClipboard = this.shadowRoot.getElementById('btn-paste-clipboard');
         
-        this.selectSample = this.shadowRoot.getElementById('select-sample');
-        this.selectGeminiGem = this.shadowRoot.getElementById('select-gemini-gem');
+        this.geminiPromptOverlay = this.shadowRoot.getElementById('gemini-prompt-overlay');
+        this.geminiOverlayTitle = this.shadowRoot.getElementById('gemini-overlay-title');
+        this.geminiOverlayDesc = this.shadowRoot.getElementById('gemini-overlay-desc');
+        this.btnGeminiCta = this.shadowRoot.getElementById('btn-gemini-cta');
+        this.geminiCtaText = this.shadowRoot.getElementById('gemini-cta-text');
+        this.btnOpenGeminiOverlay = this.shadowRoot.getElementById('btn-open-gemini-overlay');
+        this.parseStatusBadge = this.shadowRoot.getElementById('parse-status-badge');
+
+        this.box2ThresholdContainer = this.shadowRoot.getElementById('box2-threshold-container');
+        this.box2ThresholdMode = this.shadowRoot.getElementById('box2-test-threshold-mode');
+        this.box2ThresholdValue = this.shadowRoot.getElementById('box2-test-threshold-value');
         
         this.badgeDetected = this.shadowRoot.getElementById('detected-type-badge');
         this.rawCodeEditor = this.shadowRoot.getElementById('raw-code-editor');
@@ -128,8 +137,9 @@ class TjBuilder extends HTMLElement {
         this.btnCloseModalFooter = this.shadowRoot.getElementById('btn-close-modal-footer');
         this.modalComponentName = this.shadowRoot.getElementById('modal-component-name');
         this.livePreviewContainer = this.shadowRoot.getElementById('live-preview-container');
+        this.editorContainer = this.shadowRoot.getElementById('editor-container');
 
-        // Populate setting input values & Gemini Gem links
+        // Populate setting input values
         this.inputStartCode.value = this.currentSettings.startCode;
         this.inputTeacherCode.value = this.currentSettings.teacherCode;
         this.inputSubmissionUrl.value = this.currentSettings.submissionUrl;
@@ -138,8 +148,6 @@ class TjBuilder extends HTMLElement {
         if (this.chkTestMode) {
             this.chkTestMode.checked = !!this.currentSettings.isTestMode;
         }
-
-        this._populateGeminiGemsDropdown();
     }
 
     _updateCredentialsSummaryBadges() {
@@ -147,13 +155,64 @@ class TjBuilder extends HTMLElement {
         if (this.badgeTeacherCode) this.badgeTeacherCode.textContent = this.currentSettings.teacherCode || '7676';
     }
 
-    _populateGeminiGemsDropdown() {
-        if (!this.selectGeminiGem) return;
-        const optionsHtml = [
-            '<option value="" disabled selected>✨ Gemini Gems ↗</option>',
-            ...COMPONENT_CATALOG.map(item => `<option value="${item.geminiUrl}">${item.icon} ${item.name} Gem</option>`)
-        ].join('');
-        this.selectGeminiGem.innerHTML = optionsHtml;
+    _updateGeminiOverlay() {
+        const selectedType = this.selectComponentType?.value || 'tj-quiz-element';
+        const item = getComponentByTag(selectedType);
+        if (!item) return;
+
+        if (this.geminiOverlayTitle) {
+            this.geminiOverlayTitle.textContent = `Generate ${item.name} Content with Gemini`;
+        }
+        if (this.geminiOverlayDesc) {
+            this.geminiOverlayDesc.textContent = item.description || `Use our tailored Gemini Gem to create ${item.name} content automatically.`;
+        }
+        if (this.btnGeminiCta && item.geminiUrl) {
+            this.btnGeminiCta.href = item.geminiUrl;
+            if (this.geminiCtaText) {
+                this.geminiCtaText.textContent = `Open Gemini Gem for ${item.name} ↗`;
+            }
+        }
+        this._checkOverlayVisibility();
+    }
+
+    _checkOverlayVisibility() {
+        const hasText = !!(this.inputGemini?.value?.trim());
+        if (this.geminiPromptOverlay) {
+            if (hasText) {
+                this.geminiPromptOverlay.classList.add('hidden');
+            } else {
+                this.geminiPromptOverlay.classList.remove('hidden');
+            }
+        }
+    }
+
+    _syncBox2ThresholdDisplay() {
+        const cleanType = this._getCleanTagName(this.selectComponentType?.value);
+        const isTest = cleanType === 'tj-test';
+        
+        if (this.box2ThresholdContainer) {
+            this.box2ThresholdContainer.style.display = isTest ? 'flex' : 'none';
+        }
+
+        if (isTest) {
+            const mode = (this.parsedState.jsonObject && this.parsedState.jsonObject._thresholdMode) || 'disabled';
+            const val = (this.parsedState.jsonObject && this.parsedState.jsonObject.passThreshold && this.parsedState.jsonObject.passThreshold !== '0%') ? this.parsedState.jsonObject.passThreshold : '70%';
+            
+            if (this.box2ThresholdMode) {
+                this.box2ThresholdMode.value = mode;
+            }
+            if (this.box2ThresholdValue) {
+                this.box2ThresholdValue.value = val;
+                this.box2ThresholdValue.style.display = (mode === 'enabled') ? 'block' : 'none';
+            }
+        }
+    }
+
+    _debouncedParseInput() {
+        if (this._parseTimer) clearTimeout(this._parseTimer);
+        this._parseTimer = setTimeout(() => {
+            this._handleParseInput();
+        }, 200);
     }
 
     async _fetchTeacherPresets() {
@@ -247,19 +306,25 @@ class TjBuilder extends HTMLElement {
             });
         }
 
-        // Input stats & Drag-Drop File Import
+        // Input stats, Overlay check & Debounced Auto-Parsing
         const updateInputStats = () => {
             const len = this.inputGemini?.value?.length || 0;
             if (this.inputCharCount) this.inputCharCount.textContent = `${len.toLocaleString()} chars`;
         };
 
-        this.inputGemini?.addEventListener('input', updateInputStats);
+        this.inputGemini?.addEventListener('input', () => {
+            updateInputStats();
+            this._checkOverlayVisibility();
+            this._debouncedParseInput();
+        });
         updateInputStats();
 
         this.btnClearInput?.addEventListener('click', () => {
             if (this.inputGemini) {
                 this.inputGemini.value = '';
                 updateInputStats();
+                this._checkOverlayVisibility();
+                this._handleParseInput();
                 this._showToast('Input cleared');
             }
         });
@@ -282,6 +347,7 @@ class TjBuilder extends HTMLElement {
                     reader.onload = (ev) => {
                         this.inputGemini.value = ev.target.result;
                         updateInputStats();
+                        this._checkOverlayVisibility();
                         this._handleParseInput();
                         this._showToast(`Imported ${file.name}`);
                     };
@@ -298,39 +364,61 @@ class TjBuilder extends HTMLElement {
             this.shadowRoot.querySelectorAll('.vf-question-card').forEach(card => card.classList.add('collapsed'));
         });
 
-        // Sample dropdown change
-        this.selectSample?.addEventListener('change', () => {
-            const val = this.selectSample.value;
-            if (val === 'quiz') {
-                this._loadSample(SAMPLE_QUIZ_MD, 'tj-quiz-element');
-            } else if (val === 'infogap') {
-                this._loadSample(SAMPLE_INFOGAP_JSON, 'tj-info-gap');
-            } else if (val === 'speed') {
-                this._loadSample(SAMPLE_SPEED_JSON, 'tj-speed-review');
+        // Gemini Gem button click (header action button)
+        this.btnOpenGeminiOverlay?.addEventListener('click', () => {
+            const selectedType = this.selectComponentType?.value;
+            const item = getComponentByTag(selectedType);
+            if (item && item.geminiUrl) {
+                window.open(item.geminiUrl, '_blank', 'noopener,noreferrer');
             }
-            this.selectSample.value = '';
-            updateInputStats();
         });
 
-        // Gemini Gem dropdown change
-        this.selectGeminiGem?.addEventListener('change', () => {
-            const gemUrl = this.selectGeminiGem.value;
-            if (gemUrl) {
-                window.open(gemUrl, '_blank', 'noopener,noreferrer');
+        // Component selector change (at top of Box 1)
+        this.selectComponentType?.addEventListener('change', () => {
+            this.parsedState.componentType = this._getCleanTagName(this.selectComponentType.value);
+            if (this.badgeDetected) this.badgeDetected.textContent = this.parsedState.componentType;
+            this._updateGeminiOverlay();
+            this._syncBox2ThresholdDisplay();
+            this._handleParseInput();
+        });
+
+        // Box 2 Pass Threshold controls change
+        this.box2ThresholdMode?.addEventListener('change', (e) => {
+            const newMode = e.target.value;
+            if (this.parsedState.jsonObject) {
+                this.parsedState.jsonObject._thresholdMode = newMode;
+                if (newMode === 'disabled') {
+                    this.parsedState.jsonObject.passThreshold = "0%";
+                    if (Array.isArray(this.parsedState.jsonObject.sections)) {
+                        this.parsedState.jsonObject.sections.forEach(s => s.passThreshold = "0%");
+                    }
+                } else {
+                    const val = this.parsedState.jsonObject.passThreshold && this.parsedState.jsonObject.passThreshold !== '0%' ? this.parsedState.jsonObject.passThreshold : "70%";
+                    this.parsedState.jsonObject.passThreshold = val;
+                    if (Array.isArray(this.parsedState.jsonObject.sections)) {
+                        this.parsedState.jsonObject.sections.forEach(s => s.passThreshold = val);
+                    }
+                }
             }
-            this.selectGeminiGem.value = '';
+            this._syncBox2ThresholdDisplay();
+            this._renderVisualForm();
+            this._updateOutputs();
+        });
+
+        this.box2ThresholdValue?.addEventListener('input', (e) => {
+            const val = e.target.value.trim() || '70%';
+            if (this.parsedState.jsonObject) {
+                this.parsedState.jsonObject.passThreshold = val;
+                if (Array.isArray(this.parsedState.jsonObject.sections)) {
+                    this.parsedState.jsonObject.sections.forEach(s => s.passThreshold = val);
+                }
+            }
+            this._renderVisualForm();
+            this._updateOutputs();
         });
 
         // Paste from clipboard button
         this.btnPasteClipboard?.addEventListener('click', () => this._handlePasteFromClipboard());
-
-        // Parse button & component selector
-        this.btnParse.addEventListener('click', () => this._handleParseInput());
-        this.selectComponentType.addEventListener('change', () => {
-            this.parsedState.componentType = this._getCleanTagName(this.selectComponentType.value);
-            this.badgeDetected.textContent = this.parsedState.componentType;
-            this._updateOutputs();
-        });
 
         // Tab buttons
         const tabBtns = this.shadowRoot.querySelectorAll('.tab-btn');
@@ -346,7 +434,7 @@ class TjBuilder extends HTMLElement {
         });
 
         // Raw code editor input
-        this.rawCodeEditor.addEventListener('input', () => {
+        this.rawCodeEditor?.addEventListener('input', () => {
             this.parsedState.rawContent = this.rawCodeEditor.value;
             this._updateOutputs({ skipRawEditorUpdate: true });
         });
@@ -520,9 +608,11 @@ class TjBuilder extends HTMLElement {
             markdownAst: (!isJson && detectedType === 'tj-quiz-element') ? this._parseMarkdownAst(content) : null
         };
 
-        this.selectComponentType.value = detectedType;
-        this.badgeDetected.textContent = detectedType;
+        if (this.selectComponentType) this.selectComponentType.value = detectedType;
+        if (this.badgeDetected) this.badgeDetected.textContent = detectedType;
 
+        this._updateGeminiOverlay();
+        this._syncBox2ThresholdDisplay();
         this._renderVisualForm();
         this._updateOutputs();
     }
@@ -865,7 +955,6 @@ class TjBuilder extends HTMLElement {
         container.addEventListener('input', (e) => {
             if (e.target.id === 'vf-json-title') jsonObject.title = e.target.value;
             if (e.target.id === 'vf-json-image') jsonObject.image = e.target.value;
-            
             this.parsedState.rawContent = JSON.stringify(jsonObject, null, 2);
             this._updateOutputs();
         });
@@ -878,11 +967,18 @@ class TjBuilder extends HTMLElement {
             jsonObject.sections = [];
         }
 
+        // Default threshold mode to 'disabled' unless explicitly enabled by user
+        if (!jsonObject._thresholdMode) {
+            jsonObject._thresholdMode = 'disabled';
+        }
+
         const container = document.createElement('div');
         container.className = 'vf-test-editor';
 
         const renderFormContent = () => {
             container.innerHTML = '';
+            const currentMode = jsonObject._thresholdMode || 'disabled';
+            const isThresholdEnabled = currentMode === 'enabled';
 
             // 1. Root / Activity Level Configuration
             const rootSec = document.createElement('div');
@@ -898,9 +994,22 @@ class TjBuilder extends HTMLElement {
                         <input type="text" id="vf-test-title" value="${this._escapeHtml(jsonObject.title || '')}" placeholder="e.g. CEFR Placement Test" />
                     </div>
                     <div class="field-group">
-                        <label for="vf-test-threshold">Pass Threshold</label>
-                        <input type="text" id="vf-test-threshold" value="${this._escapeHtml(jsonObject.passThreshold || jsonObject.pass_threshold || jsonObject.pass || '')}" placeholder="e.g. 70%" />
+                        <label for="vf-test-threshold-mode">Pass Threshold Requirement</label>
+                        <select id="vf-test-threshold-mode" class="vf-select-input">
+                            <option value="disabled" ${!isThresholdEnabled ? 'selected' : ''}>Disabled (No minimum score required)</option>
+                            <option value="enabled" ${isThresholdEnabled ? 'selected' : ''}>Global Threshold (Set percentage)</option>
+                        </select>
                     </div>
+                </div>
+                <div id="vf-threshold-value-group" class="field-group" style="margin-top: 0.75rem; display: ${isThresholdEnabled ? 'block' : 'none'};">
+                    <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                        <div style="flex: 1;">
+                            <label for="vf-test-threshold">Global Pass Threshold</label>
+                            <input type="text" id="vf-test-threshold" value="${this._escapeHtml(jsonObject.passThreshold && jsonObject.passThreshold !== '0%' ? jsonObject.passThreshold : '70%')}" placeholder="e.g. 70%" />
+                        </div>
+                        <button type="button" class="vf-btn-secondary" id="vf-btn-apply-global-threshold" style="white-space: nowrap; height: 38px;">Apply Global to All Sections</button>
+                    </div>
+                    <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;">Sets score cutoff percentage required to unlock subsequent test sections.</p>
                 </div>
             `;
             container.appendChild(rootSec);
@@ -915,7 +1024,9 @@ class TjBuilder extends HTMLElement {
                 secCard.dataset.sidx = sIdx;
 
                 const secTitle = sec.title || `Section ${sIdx + 1}`;
-                const secThreshold = sec.passThreshold || sec.pass_threshold || sec.pass || '';
+                const secThreshold = isThresholdEnabled 
+                    ? (sec.passThreshold && sec.passThreshold !== '0%' ? sec.passThreshold : (jsonObject.passThreshold || '70%'))
+                    : '0%';
                 const passages = Array.isArray(sec.passages) ? sec.passages : (sec.passage ? [sec.passage] : []);
                 const questions = Array.isArray(sec.questions) ? sec.questions : [];
                 const vocabulary = Array.isArray(sec.vocabulary) ? sec.vocabulary : (Array.isArray(sec.vocab) ? sec.vocab : []);
@@ -956,20 +1067,25 @@ class TjBuilder extends HTMLElement {
                     return `
                         <div class="vf-question-card" data-sidx="${sIdx}" data-qidx="${qIdx}">
                             <div class="vf-question-header">
-                                <span class="vf-question-num">Question ${qIdx + 1}</span>
-                                <button type="button" class="vf-btn-delete vf-btn-del-q" data-sidx="${sIdx}" data-qidx="${qIdx}">Delete Question</button>
+                                <span class="vf-question-num">Question ${qIdx + 1}${qText ? `: ${this._escapeHtml(qText.length > 40 ? qText.substring(0, 40) + '...' : qText)}` : ''}</span>
+                                <div class="vf-question-actions">
+                                    <button type="button" class="vf-btn-action btn-q-toggle" data-sidx="${sIdx}" data-qidx="${qIdx}" title="Toggle Collapse">📁</button>
+                                    <button type="button" class="vf-btn-delete vf-btn-del-q" data-sidx="${sIdx}" data-qidx="${qIdx}">Delete Question</button>
+                                </div>
                             </div>
-                            <div class="field-group" style="margin-bottom: 0.5rem;">
-                                <input type="text" class="vf-q-text-input" value="${this._escapeHtml(qText)}" data-sidx="${sIdx}" data-qidx="${qIdx}" placeholder="Enter question..." />
-                            </div>
-                            <div class="vf-options-grid">
-                                ${optionsHtml}
-                            </div>
-                            <button type="button" class="vf-btn-secondary vf-btn-add-opt" data-sidx="${sIdx}" data-qidx="${qIdx}">+ Add Option</button>
-                            
-                            <div class="field-group" style="margin-top: 0.5rem;">
-                                <label style="font-size: 0.78rem; color: #94a3b8;">Explanation</label>
-                                <input type="text" class="vf-q-exp-input" value="${this._escapeHtml(explanation)}" data-sidx="${sIdx}" data-qidx="${qIdx}" placeholder="e.g. Option B is correct because..." />
+                            <div class="vf-question-body">
+                                <div class="field-group" style="margin-bottom: 0.5rem;">
+                                    <input type="text" class="vf-q-text-input" value="${this._escapeHtml(qText)}" data-sidx="${sIdx}" data-qidx="${qIdx}" placeholder="Enter question..." />
+                                </div>
+                                <div class="vf-options-grid">
+                                    ${optionsHtml}
+                                </div>
+                                <button type="button" class="vf-btn-secondary vf-btn-add-opt" data-sidx="${sIdx}" data-qidx="${qIdx}">+ Add Option</button>
+                                
+                                <div class="field-group" style="margin-top: 0.5rem;">
+                                    <label style="font-size: 0.78rem; color: #94a3b8;">Explanation</label>
+                                    <input type="text" class="vf-q-exp-input" value="${this._escapeHtml(explanation)}" data-sidx="${sIdx}" data-qidx="${qIdx}" placeholder="e.g. Option B is correct because..." />
+                                </div>
                             </div>
                         </div>
                     `;
@@ -1000,13 +1116,12 @@ class TjBuilder extends HTMLElement {
                 secCard.innerHTML = `
                     <div class="vf-section-header">
                         <div class="vf-section-title-group">
-                            <span class="vf-section-badge">Section ${sIdx + 1}</span>
                             <input type="text" class="vf-sec-title-input" value="${this._escapeHtml(secTitle)}" data-sidx="${sIdx}" placeholder="Section Title (e.g. Level A1 - Beginner)" />
                         </div>
                         <div class="vf-section-actions">
                             <div class="field-group inline-field">
                                 <label>Pass Cutoff:</label>
-                                <input type="text" class="vf-sec-threshold-input" value="${this._escapeHtml(secThreshold)}" data-sidx="${sIdx}" placeholder="70%" />
+                                <input type="text" class="vf-sec-threshold-input" value="${this._escapeHtml(secThreshold)}" data-sidx="${sIdx}" placeholder="${isThresholdEnabled ? '70%' : '0%'}" ${!isThresholdEnabled ? 'disabled title="Pass threshold is disabled globally"' : ''} />
                             </div>
                             <button type="button" class="vf-btn-delete vf-btn-del-sec" data-sidx="${sIdx}">Delete Section</button>
                         </div>
@@ -1062,10 +1177,72 @@ class TjBuilder extends HTMLElement {
 
         renderFormContent();
 
+        const _syncTestThresholds = () => {
+            const currentMode = jsonObject._thresholdMode || 'disabled';
+            if (currentMode === 'disabled') {
+                jsonObject.passThreshold = "0%";
+                if (Array.isArray(jsonObject.sections)) {
+                    jsonObject.sections.forEach(sec => {
+                        sec.passThreshold = "0%";
+                    });
+                }
+            } else {
+                const globalVal = (jsonObject.passThreshold && jsonObject.passThreshold !== '0%') ? jsonObject.passThreshold : '70%';
+                jsonObject.passThreshold = globalVal;
+                if (Array.isArray(jsonObject.sections)) {
+                    jsonObject.sections.forEach(sec => {
+                        if (!sec.passThreshold || sec.passThreshold === '0%') {
+                            sec.passThreshold = globalVal;
+                        }
+                    });
+                }
+            }
+        };
+
         const syncState = () => {
-            this.parsedState.rawContent = JSON.stringify(jsonObject, null, 2);
+            _syncTestThresholds();
+            const cleanObj = { ...jsonObject };
+            delete cleanObj._thresholdMode;
+            this.parsedState.rawContent = JSON.stringify(cleanObj, null, 2);
+            this._syncBox2ThresholdDisplay();
             this._updateOutputs();
         };
+
+        // Initialize state synchronization immediately on form load
+        syncState();
+
+        container.addEventListener('change', (e) => {
+            const t = e.target;
+            if (t.id === 'vf-test-threshold-mode') {
+                jsonObject._thresholdMode = t.value;
+                if (t.value === 'disabled') {
+                    jsonObject.passThreshold = "0%";
+                    if (Array.isArray(jsonObject.sections)) {
+                        jsonObject.sections.forEach(s => s.passThreshold = "0%");
+                    }
+                } else {
+                    const val = jsonObject.passThreshold && jsonObject.passThreshold !== '0%' ? jsonObject.passThreshold : "70%";
+                    jsonObject.passThreshold = val;
+                    if (Array.isArray(jsonObject.sections)) {
+                        jsonObject.sections.forEach(s => s.passThreshold = val);
+                    }
+                }
+                renderFormContent();
+                syncState();
+            } else if (t.classList.contains('vf-ans-radio')) {
+                const sIdx = parseInt(t.dataset.sidx, 10);
+                const qIdx = parseInt(t.dataset.qidx, 10);
+                const optIdx = parseInt(t.dataset.optidx, 10);
+                if (jsonObject.sections[sIdx] && jsonObject.sections[sIdx].questions[qIdx]) {
+                    const qObj = jsonObject.sections[sIdx].questions[qIdx];
+                    const opts = qObj.options || qObj.o || [];
+                    const selectedVal = opts[optIdx] || '';
+                    if (qObj.a !== undefined) qObj.a = selectedVal;
+                    else qObj.answer = selectedVal;
+                    syncState();
+                }
+            }
+        });
 
         container.addEventListener('input', (e) => {
             const t = e.target;
@@ -1108,10 +1285,8 @@ class TjBuilder extends HTMLElement {
             } else if (t.classList.contains('vf-opt-input')) {
                 const qIdx = parseInt(t.dataset.qidx, 10);
                 const optIdx = parseInt(t.dataset.optidx, 10);
-                if (sec.questions && sec.questions[qIdx]) {
-                    const qObj = sec.questions[qIdx];
-                    const opts = qObj.options || qObj.o;
-                    if (Array.isArray(opts)) opts[optIdx] = t.value;
+                if (sec.questions && sec.questions[qIdx] && Array.isArray(sec.questions[qIdx].options)) {
+                    sec.questions[qIdx].options[optIdx] = t.value;
                 }
             } else if (t.classList.contains('vf-q-exp-input')) {
                 const qIdx = parseInt(t.dataset.qidx, 10);
@@ -1164,6 +1339,14 @@ class TjBuilder extends HTMLElement {
 
         container.addEventListener('click', (e) => {
             const t = e.target;
+
+            if (t.classList.contains('btn-q-toggle') || t.closest('.vf-question-header')) {
+                const card = t.closest('.vf-question-card');
+                if (card && !t.classList.contains('vf-btn-delete') && !t.classList.contains('vf-btn-del-q')) {
+                    card.classList.toggle('collapsed');
+                    return;
+                }
+            }
 
             if (t.id === 'vf-btn-add-section') {
                 jsonObject.sections.push({
@@ -2379,6 +2562,31 @@ class TjBuilder extends HTMLElement {
         });
 
         this.visualFormContainer.appendChild(container);
+    }
+
+    _syncTestStateAndOutputs() {
+        if (!this.parsedState.jsonObject) return;
+        const obj = this.parsedState.jsonObject;
+        const mode = obj._thresholdMode || 'disabled';
+        if (mode === 'disabled') {
+            obj.passThreshold = "0%";
+            if (Array.isArray(obj.sections)) {
+                obj.sections.forEach(s => s.passThreshold = "0%");
+            }
+        } else {
+            const glob = (obj.passThreshold && obj.passThreshold !== '0%') ? obj.passThreshold : "70%";
+            obj.passThreshold = glob;
+            if (Array.isArray(obj.sections)) {
+                obj.sections.forEach(s => {
+                    if (!s.passThreshold || s.passThreshold === '0%') s.passThreshold = glob;
+                });
+            }
+        }
+        const cleanObj = { ...obj };
+        delete cleanObj._thresholdMode;
+        this.parsedState.rawContent = JSON.stringify(cleanObj, null, 2);
+        this._renderVisualForm();
+        this._updateOutputs();
     }
 
     _updateOutputs(options = {}) {

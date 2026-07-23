@@ -155,5 +155,13 @@ export const COMPONENT_CATALOG = [
 export function getComponentByTag(tagName) {
     if (!tagName) return null;
     const clean = tagName.toLowerCase().trim();
-    return COMPONENT_CATALOG.find(c => c.tagName === clean || c.id === clean) || null;
+    const stripped = clean.replace(/^tj-/, '');
+    return COMPONENT_CATALOG.find(c => 
+        c.tagName === clean || 
+        c.id === clean || 
+        c.tagName === stripped || 
+        c.id === stripped ||
+        c.tagName === `tj-${stripped}` ||
+        c.id === `tj-${stripped}`
+    ) || null;
 }
