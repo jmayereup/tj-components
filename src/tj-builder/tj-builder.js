@@ -186,10 +186,10 @@ class TjBuilder extends HTMLElement {
             if (this.btnGeminiCreate) this.btnGeminiCreate.href = item.geminiUrl;
         }
         if (this.titleGeminiConvert) {
-            this.titleGeminiConvert.textContent = `Convert Existing ${item.name} ↗`;
+            this.titleGeminiConvert.textContent = `Convert Documents ↗`;
         }
         if (this.titleGeminiCreate) {
-            this.titleGeminiCreate.textContent = `Create New ${item.name} ↗`;
+            this.titleGeminiCreate.textContent = `Create from Scratch ↗`;
         }
         this._checkOverlayVisibility();
     }
