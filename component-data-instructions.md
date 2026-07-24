@@ -28,7 +28,7 @@ Headers include (but are not limited to):
 
 Because it utilizes line breaks and specific formatting, wrapping content inside `<script type="text/markdown">...</script>` inside `<tj-quiz-element>` is the **strongly recommended best practice** when authoring in HTML or embedding in site builders (such as Google Sites, WordPress, or Canvas LMS). This prevents HTML parsers and sanitizers from altering characters (like `&`, `<`, `>`), stripping line breaks, or mangling `---` section headers.
 
-> **Google Sites & Embed Note:** When embedding in Google Sites or dynamic iframes, also ensure you **omit the `defer` attribute** on script CDN links (e.g. `<script src="https://scripts.teacherjake.com/tj-quiz-element.js"></script>`) so the script registers synchronously within the iframe sandbox.
+> **Google Sites & Embed Note:** When embedding in **[Google Sites](https://sites.google.com)** ([🎬 Watch Video Tutorial ↗](https://youtu.be/bazjwznb7CY)) or dynamic iframes, also ensure you **omit the `defer` attribute** on script CDN links (e.g. `<script src="https://scripts.teacherjake.com/tj-quiz-element.js"></script>`) so the script registers synchronously within the iframe sandbox.
 
 ## 2. Advantages of the Property Method (`element.config`)
 

@@ -394,9 +394,9 @@ A legacy quiz component supporting reading passages, vocabulary matching, and cl
 2. **Embed Component**: Paste the component tag and your JSON or Markdown data directly into the post.
 3. **Fonts**: Ensure the Google Fonts link (`Outfit` and `Inter`) is included.
 
-### 🌐 Google Sites & Iframe Embed Guide
+### 🌐 Google Sites & Iframe Embed Guide ([Watch Video Tutorial ↗](https://youtu.be/bazjwznb7CY))
 
-When embedding components (especially `<tj-quiz-element>`) inside **Google Sites** via `Embed -> Embed code`, keep the following rules in mind:
+When embedding components (especially `<tj-quiz-element>`) inside **[Google Sites](https://sites.google.com)** ([🎬 Video Tutorial ↗](https://youtu.be/bazjwznb7CY)) via `Embed -> Embed code`, keep the following rules in mind:
 
 1. **Remove `defer` & Use `type="module"`**: Do not use `defer` on script tags in embedded iframes. Adding `type="module"` ensures the browser parses ES module JavaScript without throwing `SyntaxError: Cannot use import statement outside a module`.
 2. **Wrap Quiz Content in `<script type="text/markdown">`**: Always wrap raw text content inside `<script type="text/markdown">...</script>` inside `<tj-quiz-element>`. This prevents Google Sites' HTML parser from escaping characters (like `&`, `<`, `>`) or stripping newlines needed for `---` section headers.

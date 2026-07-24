@@ -272,7 +272,7 @@ export function showBuilderInstructionsTip() {
                 </div>
                 <div class="tj-builder-tip-step-item">
                     <span class="tj-builder-tip-step-num">4</span>
-                    <span><strong>Export Code:</strong> Click <em>Copy Ready-to-Embed Blog Code</em> and paste into Google Sites or WordPress.</span>
+                    <span><strong>Export Code:</strong> Click <em>Copy Ready-to-Embed Blog Code</em> and paste into <a href="https://sites.google.com" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Google Sites</a> (<a href="https://youtu.be/bazjwznb7CY" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: underline;">🎬 Video Tutorial ↗</a>) or WordPress.</span>
                 </div>
             </div>
             <label class="tj-builder-tip-checkbox-label">

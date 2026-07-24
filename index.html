@@ -778,13 +778,20 @@
             <!-- Google Sites & WordPress Embedding Guide -->
             <div class="doc-card" id="google-sites">
                 <h2>Google Sites & WordPress Embedding Guide</h2>
-                <p>When embedding components (especially <code>&lt;tj-quiz-element&gt;</code>) inside <strong>Google Sites</strong> (via <em>Embed → Embed code</em>) or <strong>WordPress</strong> (via <em>Custom HTML block</em>), follow these best practices:</p>
+                <p>When embedding components (especially <code>&lt;tj-quiz-element&gt;</code>) inside <strong><a href="https://sites.google.com" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Google Sites</a></strong> (<a href="https://youtu.be/bazjwznb7CY" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 600; text-decoration: underline;">🎬 Watch Video Tutorial ↗</a>) (via <em>Embed → Embed code</em>) or <strong>WordPress</strong> (via <em>Custom HTML block</em>), follow these best practices:</p>
                 <ul>
                     <li><strong>Use <code>type="module"</code> & Remove <code>defer</code></strong>: Ensure script tags use <code>type="module"</code> and omit <code>defer</code> inside iframe blocks so ES module scripts load synchronously within the iframe sandbox.</li>
                     <li><strong>Wrap Markdown in <code>&lt;script type="text/markdown"&gt;</code></strong>: For <code>&lt;tj-quiz-element&gt;</code>, place quiz text inside a <code>&lt;script type="text/markdown"&gt;</code> tag to protect section dividers (<code>---</code>) and special characters (like <code>&amp;</code>) from HTML sanitizers.</li>
                     <li><strong>Include Fonts</strong>: Include the Google Fonts <code>&lt;link&gt;</code> tag inside the embed code block so the isolated iframe renders typography correctly.</li>
                     <li><strong>Adjust Frame Height</strong>: In the Google Sites editor, drag the bottom handle of the embedded frame down to expand its height so the component doesn't get clipped.</li>
                 </ul>
+
+                <!-- Video Tutorial Embed -->
+                <div style="margin: 1.5rem 0; border-radius: 0.75rem; overflow: hidden; border: 1px solid var(--border); background: rgba(0,0,0,0.3);">
+                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                        <iframe src="https://www.youtube.com/embed/bazjwznb7CY" title="Google Sites Integration Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"></iframe>
+                    </div>
+                </div>
 
                 <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">Complete Google Sites Embed Example:</h3>
                 <pre><code>&lt;link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"&gt;
