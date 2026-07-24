@@ -666,7 +666,7 @@
 
 .export-tip {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.6rem;
     background: rgba(34, 211, 238, 0.05);
     border: 1px solid rgba(34, 211, 238, 0.15);
