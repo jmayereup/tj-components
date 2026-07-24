@@ -384,14 +384,16 @@ var i = ":host{color:#1e293b;--ls-bg:#fff;--ls-container-bg:#fff;--ls-border:#e2
                 <div class="rc-detail-row"><span>Completed On</span><span>${c}</span></div>
             </div>
 
+            ${this.submissionUrl ? `
             <div class="rc-submission-box">
                 <p class="rc-submission-header">Submission (Optional)</p>
-                <input type="text" id="report-teacher-code" class="rc-teacher-code-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ""}">
-                <p class="rc-help-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+                <input type="text" id="report-teacher-code" class="rc-teacher-code-input" placeholder="Enter Submit Code" value="${this.studentInfo.teacherCode || ""}">
+                <p class="rc-help-text">Enter the submit code to submit, or take a screenshot of this page.</p>
             </div>
+            ` : "\n            <div class=\"rc-submission-box\" style=\"background: rgba(37, 99, 235, 0.05); border: 1px dashed var(--tj-card-border); text-align: center; padding: 12px; border-radius: 8px;\">\n                <p style=\"margin: 0; font-weight: 600; font-size: 0.9em; color: var(--tj-text-main);\">📸 Take a screenshot of this report to send your score to your teacher. / แคปหน้าจอนี้ส่งให้ครูผู้สอน</p>\n            </div>\n            "}
 
             <div class="rc-actions" style="margin-top: 16px;">
-                <button class="rc-submit-btn" id="submit-score-btn">Submit Score Online</button>
+                ${this.submissionUrl ? "<button class=\"rc-submit-btn\" id=\"submit-score-btn\">Submit Score Online</button>" : ""}
                 <button class="rc-secondary-btn" id="rc-close-btn" style="margin-top: 8px;">↩ Return to Activity</button>
             </div>
         `, d = this.shadowRoot.getElementById("initial-form"), f = this.shadowRoot.getElementById("report-area");
@@ -404,7 +406,7 @@ var i = ":host{color:#1e293b;--ls-bg:#fff;--ls-container-bg:#fff;--ls-border:#e2
 	async _submitScore() {
 		let e = this.shadowRoot.getElementById("report-teacher-code"), t = e ? e.value.trim() : this.studentInfo.teacherCode;
 		if (this.studentInfo.teacherCode = t, t !== this.code) {
-			alert("Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.");
+			alert("Invalid or missing Submit Code. Please take a screenshot of this report and show it to your teacher instead.");
 			return;
 		}
 		if (this.isSubmitting) return;

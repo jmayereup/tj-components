@@ -40,12 +40,11 @@ By appending `?quiz=1` to the URL, components like `tj-listening` will hide tran
 Teachers can configure automatic submissions to their own Google Sheets and supply activity data via URL parameters or element attributes across **all 8 components**:
 
 - **Spreadsheet Template**: Copy our pre-configured [Google Sheet Template ↗](https://docs.google.com/spreadsheets/d/1Yc6djJlu-ELttkEPdHA_j85UGJRlG9jWTqmPx_mEJgI/copy) ([View Template](https://docs.google.com/spreadsheets/d/1Yc6djJlu-ELttkEPdHA_j85UGJRlG9jWTqmPx_mEJgI/edit?usp=sharing)). For visual teacher setup instructions, see the [Visual Setup Guide](#apps-script). For technical endpoint specs, see [SUBMISSION_GUIDE.md](SUBMISSION_GUIDE.md).
-- **Custom Submission Endpoint**: Pass `submission-url` (or `submission_url`) as an attribute or set `VITE_SUBMISSION_URL` in `.env`:
+- **Custom Submission Endpoint**: Pass `submission-url` (or `submission_url`) as an element attribute. If omitted, online submission is disabled, submit buttons are hidden, and students are instructed to take a screenshot of their report card.
   - **HTML Attribute**: `<tj-quiz-element submission-url="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">`
-  - **Environment Variable**: Copy `.env.example` to `.env` and set `VITE_SUBMISSION_URL=...`
 - **Data / Content URL**: Pass `url` or `src` to load activity JSON/Markdown directly from a remote link:
   - **HTML Attribute**: `<tj-grammar-hearts src="https://example.com/lesson1.json">`
-- **Teacher Code**: Pass `code` or `teacher_code` attribute or set `VITE_TEACHER_CODE` in `.env` (default: `6767`):
+- **Submit Code**: Pass `code` or `submit-code` attribute or set `VITE_TEACHER_CODE` in `.env` (default: `6767`):
   - **HTML Attribute**: `<tj-quiz-element code="1234">`
 
 ### 🔒 Privacy First & Zero Database Storage

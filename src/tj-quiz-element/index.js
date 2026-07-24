@@ -1971,7 +1971,7 @@ class TjQuizElement extends HTMLElement {
     updateTeacherCodeInputVisibility() {
         const group = this.shadowRoot.getElementById('teacherCodeGroup');
         if (group) {
-            if (this.testMode) {
+            if (this.testMode || !this.submissionUrl) {
                 group.classList.add('hidden');
             } else {
                 group.classList.remove('hidden');
@@ -2388,12 +2388,12 @@ class TjQuizElement extends HTMLElement {
             writtenAnswers: this.getWrittenAnswersString()
         };
 
-        // IF Teacher Code is NOT valid AND it's not a retry, we skip submission and just show local success
+        // IF Submit Code is NOT valid AND it's not a retry, we skip submission and just show local success
         // If it IS a retry and code is wrong, we show error
         if (teacherCode !== this.code) {
             if (isRetry) {
                 if (validationMessage) {
-                    validationMessage.textContent = '❌ Invalid Teacher Code. Please try again.';
+                    validationMessage.textContent = '❌ Invalid Submit Code. Please try again.';
                     validationMessage.className = 'error';
                 }
             } else {
@@ -2406,7 +2406,7 @@ class TjQuizElement extends HTMLElement {
                     `;
                     validationMessage.className = 'warning';
                 }
-                if (retrySection) retrySection.classList.remove('hidden');
+                if (retrySection && this.submissionUrl) retrySection.classList.remove('hidden');
             }
             if (tryAgainButton) {
                 tryAgainButton.disabled = false;
@@ -2419,17 +2419,26 @@ class TjQuizElement extends HTMLElement {
 
         if (!this.submissionUrl) {
             if (validationMessage) {
-                validationMessage.textContent = '⚠️ No submission URL configured.';
-                validationMessage.className = 'error';
+                validationMessage.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 600;">
+                        <span style="font-size: 1.3rem;">📸</span>
+                        <span>Report card generated! Take a screenshot of this page to send your score to your teacher. / แคปหน้าจอนี้ส่งให้ครูผู้สอน</span>
+                    </div>
+                `;
+                validationMessage.className = 'warning';
             }
             if (sendButton) {
-                sendButton.textContent = 'No Submission URL';
-                sendButton.disabled = true;
                 sendButton.classList.add('hidden');
+            }
+            if (retrySection) {
+                retrySection.classList.add('hidden');
             }
             if (tryAgainButton) {
                 tryAgainButton.disabled = false;
             }
+            this.scoreSubmitted = true;
+            this.saveCurrentStateToLocalStorage();
+            this.autoSubmissionInProgress = false;
             return;
         }
 

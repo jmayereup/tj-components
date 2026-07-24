@@ -1,12 +1,8 @@
 // Configuration file for TJ Components
 export const config = {
-    // Shared endpoint for report cards / quiz submissions
-    submissionUrl: import.meta.env?.VITE_SUBMISSION_URL || '',
     teacherCode: import.meta.env?.VITE_TEACHER_CODE || '6767',
     resetCode: import.meta.env?.VITE_RESET_CODE || '7676'
 };
-
-const DEFAULT_SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbwl0ne_oIfbsGLM9zth1bkBrNKgoCpHYirtj0opmxspD0NJ0TKsZIdG9w8eaft1Dlk/exec';
 
 
 /**
@@ -22,12 +18,11 @@ const DEFAULT_SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbwl0ne_o
  * @returns {{ submissionUrl: string, dataUrl: string|null, teacherCode: string, startCode: string, resetCode: string }}
  */
 export function resolveComponentParams(element) {
-    // 1. Submission URL
+    // 1. Submission URL (Requires submission-url attribute)
     const submissionUrl = 
         element.getAttribute('submission-url') ||
         element.getAttribute('submission_url') ||
-        config.submissionUrl ||
-        DEFAULT_SUBMISSION_URL;
+        '';
 
     // 2. Data / Content URL
     const dataUrl = 

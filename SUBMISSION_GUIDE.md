@@ -136,7 +136,6 @@ Add the `submission-url` (or `submission_url`) attribute directly to any TJ Comp
 ### Method B: Environment Variable (Self-Hosting / Building)
 Copy `.env.example` to `.env` in the root of the project before building:
 ```env
-VITE_SUBMISSION_URL=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
 VITE_TEACHER_CODE=6767
 VITE_RESET_CODE=7676
 ```
@@ -145,11 +144,11 @@ VITE_RESET_CODE=7676
 
 ## 5. Parameter Lookup Precedence Order
 All 8 components evaluate configuration options in the following strict order:
-1. **Element HTML Attribute** (e.g. `submission-url="..."`, `teacher-code="..."`, `submit-code="..."`, `src="..."`)
-2. **Global Configuration / Environment Variable** (`tj-config.js` / `VITE_SUBMISSION_URL`, `VITE_TEACHER_CODE`, `VITE_RESET_CODE`)
-3. **Empty / No Submission** — if no URL is configured, digital submission is disabled and students are directed to screenshot their report card
+1. **Element HTML Attribute** (e.g. `submission-url="..."`, `submit-code="..."`, `src="..."`)
+2. **Global Configuration / Environment Variable** (`tj-config.js` / `VITE_TEACHER_CODE`, `VITE_RESET_CODE`)
+3. **Empty / No Submission** — if no `submission-url` is configured on the element, digital submission is disabled, submit buttons are hidden, and students are directed to screenshot their report card
 
-> **Important:** If no `submission-url` is configured, components display a "No submission URL configured" warning when students try to submit. There is **no default fallback endpoint** — you must supply your own GAS URL.
+> **Important:** If no `submission-url` is configured, components automatically hide the Submit Code input and Submit button, presenting a clear screenshot banner instead.
 
 ---
 

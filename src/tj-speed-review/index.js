@@ -309,7 +309,7 @@ class TjSpeedReview extends HTMLElement {
     const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : '';
 
     if (currentTeacherCode !== this.code) {
-      alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
+      alert('Invalid or missing Submit Code. Please take a screenshot of this report and show it to your teacher instead.');
       return;
     }
 
@@ -1005,12 +1005,18 @@ class TjSpeedReview extends HTMLElement {
               <div class="rc-detail-row"><span>Latest Score</span><span>${this.score} pts</span></div>
               <div class="rc-detail-row"><span>Completed On</span><span>${timestamp}</span></div>
             </div>
+            ${this.submissionUrl ? `
             <div class="rc-submission-box">
               <p>Submission (Optional)</p>
-              <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code">
-              <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+              <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Submit Code">
+              <p class="rc-helper-text">Enter the submit code to submit, or take a screenshot of this page.</p>
             </div>
             <button class="rc-submit-btn" id="submit-score-btn" onclick="this.getRootNode().host._submitScore()">Submit Score</button>
+            ` : `
+            <div class="rc-submission-box" style="background: rgba(37, 99, 235, 0.05); border: 1px dashed var(--tj-card-border); text-align: center; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+              <p style="margin: 0; font-weight: 600; font-size: 0.9em;">📸 Take a screenshot of this report to show your teacher. / แคปหน้าจอนี้ส่งให้ครูผู้สอน</p>
+            </div>
+            `}
           </div>
         </div>
       `;

@@ -5,7 +5,6 @@ import { openGeminiUrlWithTip } from "../tj-gemini-tip.js";
 import { showBuilderInstructionsTip } from "../tj-builder-tip.js";
 
 const STORAGE_KEY = 'tj_builder_settings';
-const DEFAULT_SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbzqV42jFksBwJ_3jFhYq4o_d6o7Y63K_1oA4oZ1UeWp-M4y3F25r0xQ-Kk1n8F1uG1Q/exec';
 
 class TjBuilder extends HTMLElement {
     static get observedAttributes() {
@@ -19,9 +18,9 @@ class TjBuilder extends HTMLElement {
         this.currentSettings = {
             startCode: '1234',
             teacherCode: '7676',
-            submissionUrl: DEFAULT_SUBMISSION_URL,
+            submissionUrl: '',
             cdnBaseUrl: 'https://scripts.teacherjake.com/',
-            isTestMode: false
+            isTestMode: true
         };
 
         this.parsedState = {
@@ -53,6 +52,7 @@ class TjBuilder extends HTMLElement {
         // Start with empty input so Gemini Overlay is immediately visible on startup
         this._updateGeminiOverlay();
         this._syncBox2ThresholdDisplay();
+        this._updateOutputs();
 
         // Trigger builder onboarding tip notice when element scrolls into view
         const observer = new IntersectionObserver((entries) => {
@@ -109,6 +109,7 @@ class TjBuilder extends HTMLElement {
         
         this.badgeStartCode = this.shadowRoot.getElementById('badge-start-code');
         this.badgeTeacherCode = this.shadowRoot.getElementById('badge-teacher-code');
+        this.badgeTeacherCodeWrapper = this.shadowRoot.getElementById('badge-teacher-code-wrapper');
         
         this.inputGemini = this.shadowRoot.getElementById('gemini-input');
         this.inputWrapper = this.shadowRoot.getElementById('input-area-wrapper');
@@ -127,7 +128,8 @@ class TjBuilder extends HTMLElement {
         this.titleGeminiCreate = this.shadowRoot.getElementById('title-gemini-create');
         this.btnOpenGeminiOverlay = this.shadowRoot.getElementById('btn-open-gemini-overlay');
         this.parseStatusBadge = this.shadowRoot.getElementById('parse-status-badge');
- 
+
+        this.box2UnlockCodeContainer = this.shadowRoot.getElementById('box2-unlock-code-container');
         this.box2ThresholdContainer = this.shadowRoot.getElementById('box2-threshold-container');
         this.box2ThresholdMode = this.shadowRoot.getElementById('box2-test-threshold-mode');
         this.box2ThresholdValue = this.shadowRoot.getElementById('box2-test-threshold-value');
@@ -168,6 +170,13 @@ class TjBuilder extends HTMLElement {
     _updateCredentialsSummaryBadges() {
         if (this.badgeStartCode) this.badgeStartCode.textContent = this.currentSettings.startCode || '1234';
         if (this.badgeTeacherCode) this.badgeTeacherCode.textContent = this.currentSettings.teacherCode || '7676';
+
+        const componentType = this._getCleanTagName(this.parsedState?.componentType);
+        const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-test' || componentType === 'tj-progressive-test');
+        const isTestMode = supportsTestMode && this.chkTestMode && this.chkTestMode.checked;
+        if (this.badgeTeacherCodeWrapper) {
+            this.badgeTeacherCodeWrapper.style.display = isTestMode ? 'inline' : 'none';
+        }
     }
 
     _updateGeminiOverlay() {
@@ -2630,10 +2639,17 @@ class TjBuilder extends HTMLElement {
 
         const componentType = this._getCleanTagName(this.parsedState.componentType);
         const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-test' || componentType === 'tj-progressive-test');
+        const isTestMode = supportsTestMode && this.chkTestMode && this.chkTestMode.checked;
 
         if (this.modeToggleContainer) {
             this.modeToggleContainer.style.display = supportsTestMode ? 'flex' : 'none';
         }
+
+        if (this.box2UnlockCodeContainer) {
+            this.box2UnlockCodeContainer.style.display = isTestMode ? 'flex' : 'none';
+        }
+
+        this._updateCredentialsSummaryBadges();
 
         if (this.btnCopyCode) {
             const btnText = this.btnCopyCode.querySelector('.btn-text');

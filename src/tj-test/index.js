@@ -1006,22 +1006,24 @@ class TjTest extends HTMLElement {
                     ${summaryRows}
                 </tbody>
             </table>
+            ${this.submissionUrl ? `
             <div class="tj-submission-box">
                 <h4 style="margin: 0; color: var(--tj-text-main);">Submit Score Report</h4>
                 <p style="margin: 0; font-size: 0.9rem; color: var(--tj-text-muted);">
-                    Enter your Submission Code to log results to your teacher's spreadsheet, or take a screenshot of this page.
+                    Enter your Submit Code to log results to your teacher's spreadsheet, or take a screenshot of this page.
                 </p>
                 <div class="tj-submission-row">
-                    <input type="text" id="reportTeacherCodeInput" class="tj-submission-input" placeholder="Enter Submission Code" autocomplete="one-time-code" data-lpignore="true">
+                    <input type="text" id="reportTeacherCodeInput" class="tj-submission-input" placeholder="Enter Submit Code" autocomplete="one-time-code" data-lpignore="true">
                     <button id="submitResultsBtn" class="tj-btn tj-btn-primary">
                         📤 Submit Score Report
                     </button>
                 </div>
                 <div id="submitStatusMsg" class="tj-error-msg hidden"></div>
             </div>
+            ` : ''}
             <div class="tj-banner" style="background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.3); color: #38bdf8; border-radius: 8px; padding: 0.85rem 1.25rem; margin-top: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.6rem; max-width: 600px; width: 100%; box-sizing: border-box;">
                 <span style="font-size: 1.3rem;">📸</span>
-                <span>Alternatively, take a screenshot of this summary table to send to your teacher. / หรือแคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
+                <span>${this.submissionUrl ? 'Alternatively, take' : 'Take'} a screenshot of this summary table to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
             </div>
         `;
 
@@ -1042,7 +1044,7 @@ class TjTest extends HTMLElement {
             if (msgElem) {
                 msgElem.classList.remove('hidden');
                 msgElem.style.color = 'var(--tj-error-color)';
-                msgElem.textContent = '⚠️ Submission code required. Please enter the code provided by your teacher, or take a screenshot of this table.';
+                msgElem.textContent = '⚠️ Submit Code required. Please enter the code provided by your teacher, or take a screenshot of this table.';
             }
             return;
         }
@@ -1051,7 +1053,7 @@ class TjTest extends HTMLElement {
             if (msgElem) {
                 msgElem.classList.remove('hidden');
                 msgElem.style.color = 'var(--tj-error-color)';
-                msgElem.textContent = '❌ Invalid Submission Code. Please check the code provided by your teacher, or take a screenshot of this table.';
+                msgElem.textContent = '❌ Invalid Submit Code. Please check the code provided by your teacher, or take a screenshot of this table.';
             }
             return;
         }

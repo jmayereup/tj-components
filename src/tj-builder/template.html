@@ -18,8 +18,8 @@
                 <span class="panel-subtitle">Auto-saved</span>
             </div>
             <div class="settings-summary-badge" id="settings-summary-badge">
-                Start/Submit: <strong id="badge-start-code">1234</strong> &nbsp;|&nbsp; Reset/Unlock: <strong
-                    id="badge-teacher-code">7676</strong>
+                Start/Submit: <strong id="badge-start-code">1234</strong><span id="badge-teacher-code-wrapper"> &nbsp;|&nbsp; Reset/Unlock: <strong
+                    id="badge-teacher-code">7676</strong></span>
             </div>
         </summary>
         <div class="settings-grid">
@@ -27,12 +27,6 @@
                 <label for="setting-start-code">Start / Submit Code</label>
                 <input type="text" id="setting-start-code" name="tj_setting_start_code_no_autofill"
                     placeholder="e.g. 1234" value="1234" autocomplete="one-time-code" data-lpignore="true"
-                    data-form-type="other" />
-            </div>
-            <div class="field-group">
-                <label for="setting-teacher-code">Reset / Unlock Code</label>
-                <input type="text" id="setting-teacher-code" name="tj_setting_teacher_code_no_autofill"
-                    placeholder="e.g. 7676" value="7676" autocomplete="one-time-code" data-lpignore="true"
                     data-form-type="other" />
             </div>
             <div class="field-group flex-grow" id="field-group-teacher-import" style="display: none;">
@@ -182,6 +176,14 @@
                             <input type="checkbox" id="chk-test-mode" checked />
                             Enable test mode (<code style="color: #38bdf8; font-family: monospace;">test-mode</code>)
                         </label>
+
+                        <!-- Reset / Unlock Code Panel (Only visible when test mode is checked for tj-test or tj-quiz-element) -->
+                        <div id="box2-unlock-code-container" class="box2-unlock-code-panel" style="display: flex;">
+                            <label for="setting-teacher-code" class="box2-unlock-code-label">Reset / Unlock Code</label>
+                            <input type="text" id="setting-teacher-code" name="tj_setting_teacher_code_no_autofill"
+                                placeholder="e.g. 7676" value="7676" autocomplete="one-time-code" data-lpignore="true"
+                                data-form-type="other" class="box2-input" />
+                        </div>
 
                         <!-- Duplicated Pass Threshold for tj-test -->
                         <div id="box2-threshold-container" class="box2-threshold-panel" style="display: none;">

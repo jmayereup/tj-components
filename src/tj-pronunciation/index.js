@@ -651,6 +651,8 @@ class TjPronunciation extends HTMLElement {
           const initialForm = this.shadowRoot.getElementById('initial-form');
           const reportArea = this.shadowRoot.getElementById('report-area');
           const submitActions = this.shadowRoot.getElementById('submit-actions');
+          const teacherCodeInput = this.shadowRoot.getElementById('teacher-code-input');
+          if (teacherCodeInput) teacherCodeInput.style.display = this.submissionUrl ? 'block' : 'none';
           if (initialForm) initialForm.style.display = 'block';
           if (reportArea) reportArea.style.display = 'none';
           if (submitActions) submitActions.style.display = 'none';
@@ -815,6 +817,23 @@ class TjPronunciation extends HTMLElement {
             recordingsContainer.appendChild(recordingsSection);
           }
       }
+      const submissionBoxWrapper = this.shadowRoot.getElementById('submission-box-wrapper');
+      if (submissionBoxWrapper) {
+          if (this.submissionUrl) {
+              submissionBoxWrapper.innerHTML = `
+                  <p style="margin: 0 0 8px 0; font-size: 0.85em; color: var(--tj-text-muted); font-weight: 600; text-transform: uppercase;">Submission (Optional)</p>
+                  <input type="text" id="report-teacher-code" placeholder="Enter Submit Code" value="${teacherCode}" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--tj-border-main); border-radius: 6px; font-size: 0.9em; margin-bottom: 4px; background: var(--tj-bg-main); color: var(--tj-text-main);">
+                  <p style="margin: 4px 0 8px 0; font-size: 0.8em; color: var(--tj-text-muted);">Enter the submit code to submit, or take a screenshot of this page.</p>
+                  <button class="generate-btn" id="submit-score-btn" style="background: var(--tj-success-color); width: 100%; margin-top: 0.5em;">Submit Score</button>
+              `;
+              const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
+              if (submitBtn) submitBtn.onclick = () => this._submitScore();
+          } else {
+              submissionBoxWrapper.innerHTML = `
+                  <p style="margin: 0; font-weight: 600; font-size: 0.9em; text-align: center; color: var(--tj-text-main);">📸 Take a screenshot of this report card to show your teacher. / แคปหน้าจอนี้ส่งให้ครูผู้สอน</p>
+              `;
+          }
+      }
       if (submitActions) submitActions.style.display = 'block';
   }
 
@@ -867,7 +886,7 @@ class TjPronunciation extends HTMLElement {
       const isTeacherCodeCorrect = currentTeacherCode === this.code;
 
       if (!isTeacherCodeCorrect) {
-          alert('Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.');
+          alert('Invalid or missing Submit Code. Please take a screenshot of this report and show it to your teacher instead.');
           return;
       }
 

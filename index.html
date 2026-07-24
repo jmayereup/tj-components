@@ -840,13 +840,10 @@ A: To the beach
                 </ol>
 
                 <h3 style="margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary);">Connecting to Components:</h3>
-                <p>Pass your Web App URL, remote JSON URL, or custom Teacher Code via HTML attributes or environment variables (`.env`):</p>
+                <p>Pass your Web App URL, remote JSON URL, or custom Submit Code via HTML attributes:</p>
                 <ul>
                     <li><strong>HTML Attributes</strong>:
-                        <br><code>&lt;tj-quiz-element submission-url="YOUR_GAS_URL" src="https://example.com/quiz.json" start-code="1234" teacher-code="7676"&gt;&lt;/tj-quiz-element&gt;</code>
-                    </li>
-                    <li><strong>Environment Variables (`.env`)</strong>:
-                        <br>Set <code>VITE_SUBMISSION_URL=YOUR_GAS_URL</code> and <code>VITE_TEACHER_CODE=6767</code> in <code>.env</code> (see <code>.env.example</code>).
+                        <br><code>&lt;tj-quiz-element submission-url="YOUR_GAS_URL" src="https://example.com/quiz.json" code="1234" teacher-code="7676"&gt;&lt;/tj-quiz-element&gt;</code>
                     </li>
                 </ul>
 

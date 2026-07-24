@@ -444,7 +444,7 @@ class TjGrammarHearts extends HTMLElement {
     this.studentInfo.teacherCode = currentTeacherCode;
 
     if (currentTeacherCode !== this.code) {
-      this.submissionError = 'Invalid or missing Teacher Code. Please take a screenshot of this report and show it to your teacher instead.';
+      this.submissionError = 'Invalid or missing Submit Code. Please take a screenshot of this report and show it to your teacher instead.';
       this.render();
       return;
     }
@@ -1226,10 +1226,12 @@ class TjGrammarHearts extends HTMLElement {
             <label class="form-label" for="homeroom">Homeroom</label>
             <input type="text" id="homeroom" class="form-field" placeholder="e.g. 6/1" value="${this.studentInfo.homeroom}">
           </div>
+          ${this.submissionUrl ? `
           <div class="form-input-group">
-            <label class="form-label" for="teacher-code">Teacher Code (Optional)</label>
+            <label class="form-label" for="teacher-code">Submit Code (Optional)</label>
             <input type="text" id="teacher-code" class="form-field" placeholder="e.g. 1234" value="${this.studentInfo.teacherCode || ''}">
           </div>
+          ` : ''}
           ${this.formError ? `<div class="error-msg" style="margin-bottom: 1em;">⚠️ ${this.formError}</div>` : ''}
           <button class="btn" onclick="this.getRootNode().host.showReport()">Generate Report</button>
         </div>
@@ -1273,14 +1275,20 @@ class TjGrammarHearts extends HTMLElement {
             <div class="rc-detail-row"><span>Score</span><span>${this.bestScore} / ${totalQ} (${pct}%)</span></div>
             <div class="rc-detail-row"><span>Completed On</span><span>${timestamp}</span></div>
           </div>
+          ${this.submissionUrl ? `
           <div class="rc-submission-box">
             <p>Official Submission</p>
-            <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Teacher Code" value="${this.studentInfo.teacherCode || ''}">
-            <p class="rc-helper-text">Enter the teacher code to submit, or take a screenshot of this page.</p>
+            <input type="text" id="report-teacher-code" class="rc-teacher-input" placeholder="Enter Submit Code" value="${this.studentInfo.teacherCode || ''}">
+            <p class="rc-helper-text">Enter the submit code to submit, or take a screenshot of this page.</p>
             ${this.submissionError ? `<div class="error-msg" style="margin-top: 8px; text-align: left; font-size: 0.9em;">⚠️ ${this.submissionError}</div>` : ''}
           </div>
           <button class="rc-submit-btn" id="submit-score-btn" onclick="this.getRootNode().host._submitScore()">Submit Score</button>
           <br>
+          ` : `
+          <div class="rc-submission-box" style="background: rgba(37, 99, 235, 0.05); border: 1px dashed var(--tj-card-border); text-align: center; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+            <p style="margin: 0; font-weight: 600; font-size: 0.9em;">📸 Take a screenshot of this report card to show your teacher. / แคปหน้าจอนี้ส่งให้ครูผู้สอน</p>
+          </div>
+          `}
           <button class="btn-outline" onclick="this.getRootNode().host.restart()">Play Again</button>
         </div>
       `;
