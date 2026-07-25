@@ -201,14 +201,26 @@
                     </div>
 
                     <div class="action-buttons-group">
-                        <button type="button" class="btn-copy-large" id="btn-copy-code">
-                            <span class="btn-icon">📋</span>
-                            <span class="btn-text">Copy Embed Code</span>
-                        </button>
-
                         <button type="button" class="btn-preview-modal" id="btn-open-preview">
                             <span class="btn-icon">👁️</span>
                             <span class="btn-text">Live Preview</span>
+                        </button>
+
+                        <div class="action-buttons-row">
+                            <button type="button" class="btn-secondary-action btn-save-html" id="btn-save-html" title="Download standalone HTML file">
+                                <span class="btn-icon">💾</span>
+                                <span class="btn-text">Save as HTML</span>
+                            </button>
+                            <button type="button" class="btn-secondary-action btn-open-html" id="btn-open-html" title="Import HTML file">
+                                <span class="btn-icon">📂</span>
+                                <span class="btn-text">Open HTML</span>
+                            </button>
+                            <input type="file" id="file-input-open-html" accept=".html,.htm" style="display: none;" />
+                        </div>
+
+                        <button type="button" class="btn-copy-large" id="btn-copy-code">
+                            <span class="btn-icon">📋</span>
+                            <span class="btn-text">Copy Embed Code</span>
                         </button>
                     </div>
 

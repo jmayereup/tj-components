@@ -147,6 +147,9 @@ class TjBuilder extends HTMLElement {
         this.modeToggleContainer = this.shadowRoot.getElementById('mode-toggle-container');
         this.btnCopyCode = this.shadowRoot.getElementById('btn-copy-code');
         this.btnCopyModal = this.shadowRoot.getElementById('btn-copy-modal');
+        this.btnSaveHtml = this.shadowRoot.getElementById('btn-save-html');
+        this.btnOpenHtml = this.shadowRoot.getElementById('btn-open-html');
+        this.fileInputOpenHtml = this.shadowRoot.getElementById('file-input-open-html');
         
         this.btnOpenPreview = this.shadowRoot.getElementById('btn-open-preview');
         this.previewModal = this.shadowRoot.getElementById('preview-modal');
@@ -345,6 +348,9 @@ class TjBuilder extends HTMLElement {
             this._checkOverlayVisibility();
             this._debouncedParseInput();
         });
+        this.inputGemini?.addEventListener('paste', () => {
+            setTimeout(() => this._highlightPreviewButton(), 100);
+        });
         updateInputStats();
 
         this.btnClearInput?.addEventListener('click', () => {
@@ -371,15 +377,20 @@ class TjBuilder extends HTMLElement {
                 this.inputWrapper.classList.remove('drag-over');
                 const file = e.dataTransfer?.files?.[0];
                 if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        this.inputGemini.value = ev.target.result;
-                        updateInputStats();
-                        this._checkOverlayVisibility();
-                        this._handleParseInput();
-                        this._showToast(`Imported ${file.name}`);
-                    };
-                    reader.readAsText(file);
+                    if (file.name.endsWith('.html') || file.name.endsWith('.htm')) {
+                        this._openHtmlFile(file);
+                    } else {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            this.inputGemini.value = ev.target.result;
+                            updateInputStats();
+                            this._checkOverlayVisibility();
+                            this._handleParseInput();
+                            this._highlightPreviewButton();
+                            this._showToast(`Imported ${file.name}`);
+                        };
+                        reader.readAsText(file);
+                    }
                 }
             });
         }
@@ -424,6 +435,7 @@ class TjBuilder extends HTMLElement {
             this._updateGeminiOverlay();
             this._syncBox2ThresholdDisplay();
             this._handleParseInput();
+            this._updateOutputs();
         });
 
         // Box 2 Pass Threshold controls change
@@ -491,6 +503,15 @@ class TjBuilder extends HTMLElement {
         });
         this.btnCopyCode.addEventListener('click', () => this._copyEmbedCode(this.btnCopyCode));
         this.btnCopyModal.addEventListener('click', () => this._copyEmbedCode(this.btnCopyModal));
+        this.btnSaveHtml?.addEventListener('click', () => this._saveAsHtml());
+        this.btnOpenHtml?.addEventListener('click', () => this.fileInputOpenHtml?.click());
+        this.fileInputOpenHtml?.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+                this._openHtmlFile(file);
+                e.target.value = '';
+            }
+        });
 
         // Modal Preview Controls & Viewport Switchers
         this.btnOpenPreview.addEventListener('click', () => this._openModalPreview());
@@ -527,6 +548,7 @@ class TjBuilder extends HTMLElement {
             this.inputGemini.value = text.trim();
             this._handleParseInput();
             this._showPasteFeedback();
+            this._highlightPreviewButton();
         } catch (err) {
             console.warn('TJ Builder: Could not read clipboard directly', err);
             if (this.inputGemini) {
@@ -570,12 +592,28 @@ class TjBuilder extends HTMLElement {
 
     _handleParseInput() {
         let raw = this.inputGemini.value.trim();
-        if (!raw) return;
+        let detectedType = this._getCleanTagName(this.selectComponentType ? this.selectComponentType.value : this.parsedState.componentType);
+
+        if (!raw) {
+            this.parsedState = {
+                componentType: detectedType,
+                rawContent: '',
+                isJson: false,
+                jsonObject: null,
+                markdownAst: null
+            };
+            if (this.badgeDetected) this.badgeDetected.textContent = detectedType;
+            this._updateGeminiOverlay();
+            this._syncBox2ThresholdDisplay();
+            this._renderVisualForm();
+            this._updateOutputs();
+            return;
+        }
 
         // 1. Strip markdown code fences (```html ... ```, ```json ... ```, ```markdown ... ```)
         raw = raw.replace(/^```[a-z]*\n?/i, '').replace(/\n?```$/i, '').trim();
 
-        let detectedType = this._getCleanTagName(this.selectComponentType.value);
+        detectedType = this._getCleanTagName(this.selectComponentType.value);
         let content = raw;
         let isJson = false;
         let jsonObject = null;
@@ -2715,6 +2753,7 @@ class TjBuilder extends HTMLElement {
     }
 
     _openModalPreview() {
+        this.btnOpenPreview?.classList.remove('pulse-attention');
         this._clearComponentSessionStorage();
         const componentType = this._getCleanTagName(this.parsedState.componentType);
         this.modalComponentName.textContent = componentType;
@@ -2815,6 +2854,87 @@ class TjBuilder extends HTMLElement {
         }).catch(err => {
             console.error('Failed to copy code: ', err);
         });
+    }
+
+    _saveAsHtml() {
+        const embedCode = this._buildExactEmbedCode();
+        const componentType = this._getCleanTagName(this.parsedState.componentType) || 'tj-component';
+        
+        const standaloneHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${this._escapeHtml(componentType)} - Standalone App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 1.5rem;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+${embedCode}
+</body>
+</html>`;
+
+        const blob = new Blob([standaloneHtml], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${componentType}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        this._showToast(`Saved ${componentType}.html!`);
+    }
+
+    _openHtmlFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target?.result;
+            if (typeof content !== 'string') return;
+
+            const customElementMatch = content.match(/<(tj-[a-z0-9-]+)\b[^>]*>([\s\S]*?)<\/\1>/i) ||
+                                       content.match(/<(tj-[a-z0-9-]+)\b[^>]*>/i);
+
+            if (customElementMatch) {
+                const extractedHtml = customElementMatch[0];
+                const tagName = customElementMatch[1].toLowerCase();
+                
+                this.inputGemini.value = extractedHtml;
+                if (this.inputCharCount) {
+                    this.inputCharCount.textContent = `${extractedHtml.length.toLocaleString()} chars`;
+                }
+                this._checkOverlayVisibility();
+                this._handleParseInput();
+                this._highlightPreviewButton();
+                this._showToast(`Imported <${tagName}> from ${file.name}`);
+            } else {
+                this._showToast(`No TJ component found in ${file.name}`);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    _highlightPreviewButton() {
+        if (!this.btnOpenPreview) return;
+        this.btnOpenPreview.classList.remove('pulse-attention');
+        void this.btnOpenPreview.offsetWidth;
+        this.btnOpenPreview.classList.add('pulse-attention');
+        setTimeout(() => {
+            this.btnOpenPreview?.classList.remove('pulse-attention');
+        }, 7000);
     }
 
     _showToast(msg) {
