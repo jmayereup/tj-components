@@ -319,6 +319,56 @@
   font-size: 1.05rem;
 }
 
+.tj-cloze-word-bank {
+  background: var(--tj-bg-card);
+  border: 1px solid var(--tj-border-main);
+  border-radius: var(--tj-border-radius-sm);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.tj-cloze-bank-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--tj-text-muted);
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.tj-cloze-bank-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.tj-cloze-bank-word {
+  background: var(--tj-bg-alt);
+  color: var(--tj-primary-color);
+  border: 1px solid var(--tj-border-main);
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  user-select: none;
+  cursor: pointer;
+  line-height: 1.4;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.tj-cloze-bank-word:hover {
+  background: var(--tj-primary-color);
+  color: #ffffff;
+  border-color: var(--tj-primary-color);
+}
+
+.tj-cloze-bank-word:active {
+  transform: scale(0.96);
+}
+
 .tj-cloze-input {
   display: inline-block;
   width: 120px;

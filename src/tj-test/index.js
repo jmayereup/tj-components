@@ -329,12 +329,16 @@ class TjTest extends HTMLElement {
 
             const cloze = (sec.cloze || []).map(c => {
                 const text = typeof c === 'string' ? c : (c.text || '');
-                const asteriskMatches = text.match(/\*([^*]+)\*/g);
-                let words = [];
-                if (asteriskMatches) {
-                    words = asteriskMatches.map(m => m.replace(/\*/g, ''));
+                let words = (typeof c === 'object' && Array.isArray(c.words) && c.words.length > 0)
+                    ? [...c.words]
+                    : [];
+                if (words.length === 0 && text) {
+                    const asteriskMatches = text.match(/\*([^*]+)\*/g);
+                    if (asteriskMatches) {
+                        words = asteriskMatches.map(m => m.replace(/\*/g, ''));
+                    }
                 }
-                return { text, words, title: c.title || '' };
+                return { text, words, title: (typeof c === 'object' && c.title) ? c.title : '' };
             });
 
             this.sections.push({
@@ -770,18 +774,67 @@ class TjTest extends HTMLElement {
                 const clozeBox = document.createElement('div');
                 clozeBox.className = 'tj-cloze-box';
 
+                let words = (clozeData.words && clozeData.words.length > 0)
+                    ? [...clozeData.words]
+                    : ((clozeData.text || '').match(/\*([^*]+)\*/g) || []).map(m => m.replace(/\*/g, ''));
+
+                let bankHtml = '';
+                if (words.length > 0) {
+                    const shuffledWords = [...words];
+                    this.shuffleArray(shuffledWords);
+                    bankHtml = `
+                        <div class="tj-cloze-word-bank">
+                            <div class="tj-cloze-bank-title">Word Bank</div>
+                            <div class="tj-cloze-bank-words">
+                                ${shuffledWords.map(w => `<span class="tj-cloze-bank-word" data-word="${this.escapeHtml(w)}">${this.escapeHtml(w)}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
                 let replacedText = clozeData.text;
                 let clozeIndex = 0;
                 replacedText = replacedText.replace(/\*([^*]+)\*/g, (match, word) => {
-                    const inputHtml = `<input type="text" class="tj-cloze-input" data-cloze-idx="${clozeIndex}" data-target="${word}">`;
+                    const inputHtml = `<input type="text" class="tj-cloze-input" data-cloze-idx="${clozeIndex}" data-target="${this.escapeHtml(word)}">`;
                     clozeIndex++;
                     return inputHtml;
                 });
 
                 clozeBox.innerHTML = `
-                    <h4 style="margin-top: 0; color: var(--tj-text-main);">Fill in the Blanks</h4>
-                    <div>${replacedText}</div>
+                    <h4 style="margin-top: 0; color: var(--tj-text-main); margin-bottom: 0.75rem;">Fill in the Blanks</h4>
+                    ${bankHtml}
+                    <div class="tj-cloze-text">${replacedText}</div>
                 `;
+
+                // Add interactive click support for word bank items
+                const bankWords = clozeBox.querySelectorAll('.tj-cloze-bank-word');
+                bankWords.forEach((wordSpan) => {
+                    wordSpan.addEventListener('click', () => {
+                        const wordToInsert = wordSpan.getAttribute('data-word');
+                        const inputs = Array.from(clozeBox.querySelectorAll('.tj-cloze-input'));
+                        if (inputs.length === 0) return;
+
+                        let targetInput = inputs.find(inp => inp === this.shadowRoot.activeElement);
+                        if (!targetInput) {
+                            targetInput = inputs.find(inp => !inp.value.trim());
+                        }
+                        if (!targetInput) {
+                            targetInput = inputs[0];
+                        }
+
+                        targetInput.value = wordToInsert;
+                        targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+                        const currentIdx = inputs.indexOf(targetInput);
+                        if (currentIdx !== -1 && currentIdx + 1 < inputs.length) {
+                            inputs[currentIdx + 1].focus();
+                        } else {
+                            targetInput.focus();
+                        }
+                    });
+                });
+
                 sectionCard.appendChild(clozeBox);
             });
         }
@@ -1115,6 +1168,16 @@ class TjTest extends HTMLElement {
         } finally {
             if (submitBtn) submitBtn.disabled = false;
         }
+    }
+
+    escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 
     shuffleArray(arr) {
