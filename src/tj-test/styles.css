@@ -356,7 +356,7 @@
   user-select: none;
   cursor: pointer;
   line-height: 1.4;
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 
 .tj-cloze-bank-word:hover {
@@ -367,6 +367,31 @@
 
 .tj-cloze-bank-word:active {
   transform: scale(0.96);
+}
+
+/* Highlighted / Selected Word in Bank */
+.tj-cloze-bank-word.selected {
+  background: var(--tj-primary-color);
+  color: #ffffff;
+  border-color: var(--tj-primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3), 0 2px 6px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px) scale(1.04);
+}
+
+/* Placed / Used Word in Bank */
+.tj-cloze-bank-word.placed {
+  opacity: 0.4;
+  background: var(--tj-bg-card);
+  color: var(--tj-text-muted);
+  border-color: var(--tj-border-main);
+  text-decoration: line-through;
+}
+
+.tj-cloze-bank-word.placed:hover {
+  opacity: 0.75;
+  background: var(--tj-bg-alt);
+  color: var(--tj-text-main);
+  text-decoration: line-through;
 }
 
 .tj-cloze-input {
@@ -381,6 +406,31 @@
   text-align: center;
   background: var(--tj-bg-card);
   color: var(--tj-text-main);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tj-cloze-input:focus {
+  outline: none;
+  border-color: var(--tj-primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* When bank has a selected word, highlight blanks to indicate drop target */
+.tj-cloze-box.has-selection .tj-cloze-input {
+  border-style: dashed;
+  border-color: var(--tj-primary-color);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.tj-cloze-box.has-selection .tj-cloze-input:hover {
+  background: rgba(37, 99, 235, 0.12);
+  border-style: solid;
+}
+
+.tj-cloze-input.filled {
+  font-weight: 600;
+  color: var(--tj-primary-color);
 }
 
 /* Result Modal Cards */

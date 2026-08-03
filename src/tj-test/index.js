@@ -311,13 +311,13 @@ class TjTest extends HTMLElement {
                 const questionText = q.question || q.q || '';
                 const situationText = q.situation || q.context || q.s || '';
                 const explanation = q.explanation || q.e || '';
-                return {
+                return this.normalizeQuestion({
                     s: situationText,
                     q: questionText,
                     o: Array.isArray(options) ? options : [],
                     a: answer,
                     e: explanation
-                };
+                });
             });
 
             const vocabulary = (sec.vocabulary || sec.vocab || []).map(v => {
@@ -431,6 +431,74 @@ class TjTest extends HTMLElement {
         }
     }
 
+    normalizeQuestion(q) {
+        // Strip question number or letter prefix from question text (e.g. "1. ", "Q1: ", "1) ", "(1) ")
+        let cleanQ = (q.q || '').trim();
+        cleanQ = cleanQ.replace(/^(?:Q\d*[\.:\)]|\d+[\.:\)]|\(\d+\))\s*/i, '').trim();
+
+        // Raw options and answer
+        const rawOptions = (q.o || []).map(opt => String(opt).trim());
+        const rawAnswer = String(q.a || '').trim();
+
+        // Helper to strip option letter/number prefix e.g. "a. ", "b) ", "(c) ", "1. "
+        const stripOptPrefix = (str) => {
+            return str.replace(/^(?:\([a-fA-F0-9\d]+\)|[a-fA-F0-9\d]+[\.\)])\s*/, '').trim();
+        };
+
+        const cleanOptions = rawOptions.map(opt => stripOptPrefix(opt));
+
+        // Resolve answer text
+        let answerText = '';
+        if (rawAnswer) {
+            const strippedRawAns = stripOptPrefix(rawAnswer);
+            // 1. Direct match with a clean option
+            const directMatch = cleanOptions.find(opt => opt.toLowerCase() === strippedRawAns.toLowerCase());
+            if (directMatch !== undefined) {
+                answerText = directMatch;
+            } else {
+                // 2. Check if rawAnswer matched an original option before stripping
+                const origIdx = rawOptions.findIndex(opt => opt.toLowerCase() === rawAnswer.toLowerCase());
+                if (origIdx !== -1) {
+                    answerText = cleanOptions[origIdx];
+                } else {
+                    // 3. Check if rawAnswer is a single letter (e.g. 'a', 'b', 'c', 'd')
+                    const letterMatch = rawAnswer.match(/^[a-fA-F]$/i);
+                    if (letterMatch) {
+                        const charCode = letterMatch[0].toLowerCase().charCodeAt(0);
+                        const idx = charCode - 97; // 'a' -> 0, 'b' -> 1, etc.
+                        if (idx >= 0 && idx < cleanOptions.length) {
+                            answerText = cleanOptions[idx];
+                        }
+                    }
+                    // 4. Check if rawAnswer is a numeric index
+                    if (!answerText && /^\d+$/.test(rawAnswer)) {
+                        const numIdx = parseInt(rawAnswer, 10);
+                        if (numIdx >= 0 && numIdx < cleanOptions.length) {
+                            answerText = cleanOptions[numIdx];
+                        } else if (numIdx - 1 >= 0 && numIdx - 1 < cleanOptions.length) {
+                            answerText = cleanOptions[numIdx - 1];
+                        }
+                    }
+                    if (!answerText) {
+                        answerText = strippedRawAns;
+                    }
+                }
+            }
+        }
+
+        // Shuffle options
+        const shuffledOptions = [...cleanOptions];
+        this.shuffleArray(shuffledOptions);
+
+        return {
+            s: q.s || '',
+            q: cleanQ,
+            o: shuffledOptions,
+            a: answerText,
+            e: q.e || ''
+        };
+    }
+
     parseQuestionsBlock(text) {
         const lines = text.split('\n');
         const questions = [];
@@ -442,7 +510,7 @@ class TjTest extends HTMLElement {
 
             if (trimmed.startsWith('S:') || trimmed.startsWith('Situation:')) {
                 if (currentQ && (currentQ.q || currentQ.o.length > 0)) {
-                    questions.push(currentQ);
+                    questions.push(this.normalizeQuestion(currentQ));
                     currentQ = null;
                 }
                 if (!currentQ) {
@@ -452,7 +520,7 @@ class TjTest extends HTMLElement {
                 currentQ.s = currentQ.s ? `${currentQ.s}\n${sitVal}` : sitVal;
             } else if (trimmed.startsWith('Q:') || trimmed.startsWith('Q.')) {
                 if (currentQ && currentQ.q && currentQ.o.length > 0) {
-                    questions.push(currentQ);
+                    questions.push(this.normalizeQuestion(currentQ));
                     currentQ = null;
                 }
                 if (!currentQ) {
@@ -476,7 +544,7 @@ class TjTest extends HTMLElement {
                 }
             }
         }
-        if (currentQ) questions.push(currentQ);
+        if (currentQ) questions.push(this.normalizeQuestion(currentQ));
         return questions;
     }
 
@@ -786,7 +854,7 @@ class TjTest extends HTMLElement {
                         <div class="tj-cloze-word-bank">
                             <div class="tj-cloze-bank-title">Word Bank</div>
                             <div class="tj-cloze-bank-words">
-                                ${shuffledWords.map(w => `<span class="tj-cloze-bank-word" data-word="${this.escapeHtml(w)}">${this.escapeHtml(w)}</span>`).join('')}
+                                ${shuffledWords.map((w, wIdx) => `<span class="tj-cloze-bank-word" data-bank-idx="${wIdx}" data-word="${this.escapeHtml(w)}">${this.escapeHtml(w)}</span>`).join('')}
                             </div>
                         </div>
                     `;
@@ -806,32 +874,126 @@ class TjTest extends HTMLElement {
                     <div class="tj-cloze-text">${replacedText}</div>
                 `;
 
-                // Add interactive click support for word bank items
-                const bankWords = clozeBox.querySelectorAll('.tj-cloze-bank-word');
-                bankWords.forEach((wordSpan) => {
-                    wordSpan.addEventListener('click', () => {
-                        const wordToInsert = wordSpan.getAttribute('data-word');
-                        const inputs = Array.from(clozeBox.querySelectorAll('.tj-cloze-input'));
-                        if (inputs.length === 0) return;
+                // Add interactive click support for word bank items and blanks
+                const bankWords = Array.from(clozeBox.querySelectorAll('.tj-cloze-bank-word'));
+                const inputs = Array.from(clozeBox.querySelectorAll('.tj-cloze-input'));
 
-                        let targetInput = inputs.find(inp => inp === this.shadowRoot.activeElement);
-                        if (!targetInput) {
-                            targetInput = inputs.find(inp => !inp.value.trim());
-                        }
-                        if (!targetInput) {
-                            targetInput = inputs[0];
-                        }
+                const syncBankWords = () => {
+                    let hasSelected = false;
+                    const usedBankIndices = new Set();
 
-                        targetInput.value = wordToInsert;
-                        targetInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        targetInput.dispatchEvent(new Event('change', { bubbles: true }));
-
-                        const currentIdx = inputs.indexOf(targetInput);
-                        if (currentIdx !== -1 && currentIdx + 1 < inputs.length) {
-                            inputs[currentIdx + 1].focus();
+                    inputs.forEach((input) => {
+                        const val = input.value.trim();
+                        if (val) {
+                            input.classList.add('filled');
+                            const bankIdx = input.getAttribute('data-placed-bank-idx');
+                            if (bankIdx !== null && bankIdx !== undefined) {
+                                usedBankIndices.add(bankIdx);
+                            } else {
+                                const matchingWord = bankWords.find((bw) => {
+                                    const bIdx = bw.getAttribute('data-bank-idx');
+                                    return bw.getAttribute('data-word') === val && !usedBankIndices.has(bIdx);
+                                });
+                                if (matchingWord) {
+                                    const bIdx = matchingWord.getAttribute('data-bank-idx');
+                                    usedBankIndices.add(bIdx);
+                                    input.setAttribute('data-placed-bank-idx', bIdx);
+                                }
+                            }
                         } else {
-                            targetInput.focus();
+                            input.classList.remove('filled');
+                            input.removeAttribute('data-placed-bank-idx');
                         }
+                    });
+
+                    bankWords.forEach((wordSpan) => {
+                        const bIdx = wordSpan.getAttribute('data-bank-idx');
+                        if (usedBankIndices.has(bIdx)) {
+                            wordSpan.classList.add('placed');
+                            wordSpan.classList.remove('selected');
+                        } else {
+                            wordSpan.classList.remove('placed');
+                        }
+                        if (wordSpan.classList.contains('selected')) {
+                            hasSelected = true;
+                        }
+                    });
+
+                    if (hasSelected) {
+                        clozeBox.classList.add('has-selection');
+                    } else {
+                        clozeBox.classList.remove('has-selection');
+                    }
+                };
+
+                bankWords.forEach((wordSpan) => {
+                    wordSpan.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const bIdx = wordSpan.getAttribute('data-bank-idx');
+                        const isPlaced = wordSpan.classList.contains('placed');
+                        const isSelected = wordSpan.classList.contains('selected');
+
+                        if (isPlaced) {
+                            // Clicking placed word in bank returns it to the word bank
+                            const linkedInput = inputs.find(inp => inp.getAttribute('data-placed-bank-idx') === bIdx)
+                                || inputs.find(inp => inp.value.trim() === wordSpan.getAttribute('data-word'));
+                            if (linkedInput) {
+                                linkedInput.value = '';
+                                linkedInput.removeAttribute('data-placed-bank-idx');
+                                linkedInput.dispatchEvent(new Event('input', { bubbles: true }));
+                                linkedInput.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
+                            bankWords.forEach(w => w.classList.remove('selected'));
+                            syncBankWords();
+                        } else if (isSelected) {
+                            // Toggle off highlight
+                            wordSpan.classList.remove('selected');
+                            syncBankWords();
+                        } else {
+                            // First click on a word to highlight
+                            bankWords.forEach(w => w.classList.remove('selected'));
+                            wordSpan.classList.add('selected');
+                            syncBankWords();
+                        }
+                    });
+                });
+
+                inputs.forEach((input) => {
+                    input.addEventListener('click', () => {
+                        const selectedSpan = clozeBox.querySelector('.tj-cloze-bank-word.selected');
+
+                        if (selectedSpan) {
+                            // Fill blank with highlighted word
+                            const wordToInsert = selectedSpan.getAttribute('data-word');
+                            const bIdx = selectedSpan.getAttribute('data-bank-idx');
+
+                            input.value = wordToInsert;
+                            input.setAttribute('data-placed-bank-idx', bIdx);
+
+                            selectedSpan.classList.remove('selected');
+
+                            input.dispatchEvent(new Event('input', { bubbles: true }));
+                            input.dispatchEvent(new Event('change', { bubbles: true }));
+
+                            syncBankWords();
+
+                            const currentIdx = inputs.indexOf(input);
+                            const nextEmpty = inputs.slice(currentIdx + 1).find(inp => !inp.value.trim());
+                            if (nextEmpty) {
+                                nextEmpty.focus();
+                            }
+                        } else if (input.value.trim() !== '') {
+                            // Clicking filled blank clears it & returns word to bank
+                            input.value = '';
+                            input.removeAttribute('data-placed-bank-idx');
+                            input.dispatchEvent(new Event('input', { bubbles: true }));
+                            input.dispatchEvent(new Event('change', { bubbles: true }));
+                            syncBankWords();
+                        }
+                    });
+
+                    input.addEventListener('input', () => {
+                        syncBankWords();
                     });
                 });
 
@@ -841,24 +1003,21 @@ class TjTest extends HTMLElement {
 
         // Multiple Choice Questions
         if (section.questions.length > 0) {
-            const optionLetters = ['a', 'b', 'c', 'd', 'e', 'f'];
             section.questions.forEach((q, qIdx) => {
                 const qItem = document.createElement('div');
                 qItem.className = 'tj-question-item';
 
-                const optionsHtml = q.o.map((opt, oIdx) => {
-                    const hasPrefix = /^[a-fA-F0-9][\.\)]\s*/.test(opt.trim());
-                    const displayLabel = hasPrefix ? opt : `${optionLetters[oIdx] || oIdx + 1}. ${opt}`;
+                const optionsHtml = q.o.map((opt) => {
                     return `
                         <label class="tj-option-label">
-                            <input type="radio" name="q-${section.index}-${qIdx}" value="${opt}">
-                            <span>${displayLabel}</span>
+                            <input type="radio" name="q-${section.index}-${qIdx}" value="${this.escapeHtml(opt)}">
+                            <span>${this.escapeHtml(opt)}</span>
                         </label>
                     `;
                 }).join('');
 
-                const situationHtml = q.s ? `<div class="tj-question-situation"><strong>Situation:</strong> ${q.s}</div>` : '';
-                const questionTextHtml = q.q ? `<p class="tj-question-title">${qIdx + 1}. ${q.q}</p>` : `<p class="tj-question-title">${qIdx + 1}.</p>`;
+                const situationHtml = q.s ? `<div class="tj-question-situation"><strong>Situation:</strong> ${this.escapeHtml(q.s).replace(/\n/g, '<br>')}</div>` : '';
+                const questionTextHtml = q.q ? `<p class="tj-question-title">${this.escapeHtml(q.q).replace(/\n/g, '<br>')}</p>` : '';
 
                 qItem.innerHTML = `
                     ${situationHtml}
