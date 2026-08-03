@@ -225,16 +225,26 @@ class TjBuilder extends HTMLElement {
             this.box2ThresholdContainer.style.display = isTest ? 'flex' : 'none';
         }
 
-        if (isTest) {
-            const mode = (this.parsedState.jsonObject && this.parsedState.jsonObject._thresholdMode) || 'disabled';
-            const val = (this.parsedState.jsonObject && this.parsedState.jsonObject.passThreshold && this.parsedState.jsonObject.passThreshold !== '0%') ? this.parsedState.jsonObject.passThreshold : '70%';
-            
-            if (this.box2ThresholdMode) {
-                this.box2ThresholdMode.value = mode;
-            }
-            if (this.box2ThresholdValue) {
-                this.box2ThresholdValue.value = val;
-                this.box2ThresholdValue.style.display = (mode === 'enabled') ? 'block' : 'none';
+        if (isTest && this.parsedState.jsonObject) {
+            const rawVal = this.parsedState.jsonObject.passThreshold;
+            const isDisabled = !rawVal || rawVal === '0%' || this.parsedState.jsonObject._thresholdMode === 'disabled';
+            const presets = ['50%', '60%', '70%', '75%', '80%', '90%'];
+
+            if (isDisabled) {
+                if (this.box2ThresholdMode) this.box2ThresholdMode.value = 'disabled';
+                if (this.box2ThresholdValue) this.box2ThresholdValue.style.display = 'none';
+            } else if (presets.includes(rawVal)) {
+                if (this.box2ThresholdMode) this.box2ThresholdMode.value = rawVal;
+                if (this.box2ThresholdValue) {
+                    this.box2ThresholdValue.value = rawVal;
+                    this.box2ThresholdValue.style.display = 'none';
+                }
+            } else {
+                if (this.box2ThresholdMode) this.box2ThresholdMode.value = 'custom';
+                if (this.box2ThresholdValue) {
+                    this.box2ThresholdValue.value = rawVal || '70%';
+                    this.box2ThresholdValue.style.display = 'inline-block';
+                }
             }
         }
     }
@@ -440,14 +450,19 @@ class TjBuilder extends HTMLElement {
 
         // Box 2 Pass Threshold controls change
         this.box2ThresholdMode?.addEventListener('change', (e) => {
-            const newMode = e.target.value;
+            const val = e.target.value;
             if (this.parsedState.jsonObject) {
-                this.parsedState.jsonObject._thresholdMode = newMode;
-                if (newMode === 'disabled') {
+                if (val === 'disabled') {
+                    this.parsedState.jsonObject._thresholdMode = 'disabled';
                     this.parsedState.jsonObject.passThreshold = "0%";
+                } else if (val === 'custom') {
+                    this.parsedState.jsonObject._thresholdMode = 'enabled';
+                    const customVal = this.box2ThresholdValue?.value?.trim() || "70%";
+                    this.parsedState.jsonObject.passThreshold = customVal;
                 } else {
-                    const val = this.parsedState.jsonObject.passThreshold && this.parsedState.jsonObject.passThreshold !== '0%' ? this.parsedState.jsonObject.passThreshold : "70%";
+                    this.parsedState.jsonObject._thresholdMode = 'enabled';
                     this.parsedState.jsonObject.passThreshold = val;
+                    if (this.box2ThresholdValue) this.box2ThresholdValue.value = val;
                 }
                 if (Array.isArray(this.parsedState.jsonObject.sections)) {
                     this.parsedState.jsonObject.sections.forEach(s => delete s.passThreshold);
@@ -1065,8 +1080,11 @@ class TjBuilder extends HTMLElement {
 
         const renderFormContent = () => {
             container.innerHTML = '';
-            const currentMode = jsonObject._thresholdMode || 'disabled';
-            const isThresholdEnabled = currentMode === 'enabled';
+            const presets = ['50%', '60%', '70%', '75%', '80%', '90%'];
+            const currentPass = jsonObject.passThreshold;
+            const isDisabledMode = !currentPass || currentPass === '0%' || jsonObject._thresholdMode === 'disabled';
+            const selectedMode = isDisabledMode ? 'disabled' : (presets.includes(currentPass) ? currentPass : 'custom');
+            const showCustomInput = selectedMode === 'custom';
 
             // 1. Root / Activity Level Configuration
             const rootSec = document.createElement('div');
@@ -1084,13 +1102,19 @@ class TjBuilder extends HTMLElement {
                     <div class="field-group">
                         <label for="vf-test-threshold-mode">Pass Threshold Requirement</label>
                         <select id="vf-test-threshold-mode" class="vf-select-input">
-                            <option value="disabled" ${!isThresholdEnabled ? 'selected' : ''}>Disabled (No minimum score required)</option>
-                            <option value="enabled" ${isThresholdEnabled ? 'selected' : ''}>Pass Threshold (Set percentage)</option>
+                            <option value="disabled" ${selectedMode === 'disabled' ? 'selected' : ''}>Disabled (No minimum score)</option>
+                            <option value="50%" ${selectedMode === '50%' ? 'selected' : ''}>50%</option>
+                            <option value="60%" ${selectedMode === '60%' ? 'selected' : ''}>60%</option>
+                            <option value="70%" ${selectedMode === '70%' ? 'selected' : ''}>70%</option>
+                            <option value="75%" ${selectedMode === '75%' ? 'selected' : ''}>75%</option>
+                            <option value="80%" ${selectedMode === '80%' ? 'selected' : ''}>80%</option>
+                            <option value="90%" ${selectedMode === '90%' ? 'selected' : ''}>90%</option>
+                            <option value="custom" ${selectedMode === 'custom' ? 'selected' : ''}>Custom %...</option>
                         </select>
                     </div>
                 </div>
-                <div id="vf-threshold-value-group" class="field-group" style="margin-top: 0.75rem; display: ${isThresholdEnabled ? 'block' : 'none'};">
-                    <label for="vf-test-threshold">Pass Threshold</label>
+                <div id="vf-threshold-value-group" class="field-group" style="margin-top: 0.75rem; display: ${showCustomInput ? 'block' : 'none'};">
+                    <label for="vf-test-threshold">Custom Pass Threshold</label>
                     <input type="text" id="vf-test-threshold" value="${this._escapeHtml(jsonObject.passThreshold && jsonObject.passThreshold !== '0%' ? jsonObject.passThreshold : '70%')}" placeholder="e.g. 70%" />
                     <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;">Sets score cutoff percentage required to unlock subsequent test sections.</p>
                 </div>
@@ -1283,11 +1307,16 @@ class TjBuilder extends HTMLElement {
         container.addEventListener('change', (e) => {
             const t = e.target;
             if (t.id === 'vf-test-threshold-mode') {
-                jsonObject._thresholdMode = t.value;
-                if (t.value === 'disabled') {
+                const val = t.value;
+                if (val === 'disabled') {
+                    jsonObject._thresholdMode = 'disabled';
                     jsonObject.passThreshold = "0%";
+                } else if (val === 'custom') {
+                    jsonObject._thresholdMode = 'enabled';
+                    const customElem = container.querySelector('#vf-test-threshold');
+                    jsonObject.passThreshold = customElem?.value?.trim() || "70%";
                 } else {
-                    const val = jsonObject.passThreshold && jsonObject.passThreshold !== '0%' ? jsonObject.passThreshold : "70%";
+                    jsonObject._thresholdMode = 'enabled';
                     jsonObject.passThreshold = val;
                 }
                 if (Array.isArray(jsonObject.sections)) {

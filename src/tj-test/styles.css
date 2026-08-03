@@ -160,8 +160,9 @@
 
 .tj-section-header-banner {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
   border-bottom: 1px dashed var(--tj-border-main);
   padding-bottom: 0.75rem;
 }
@@ -170,6 +171,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .tj-section-badge {
@@ -181,6 +183,8 @@
   font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tj-pass-threshold-info {
