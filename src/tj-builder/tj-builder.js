@@ -445,15 +445,12 @@ class TjBuilder extends HTMLElement {
                 this.parsedState.jsonObject._thresholdMode = newMode;
                 if (newMode === 'disabled') {
                     this.parsedState.jsonObject.passThreshold = "0%";
-                    if (Array.isArray(this.parsedState.jsonObject.sections)) {
-                        this.parsedState.jsonObject.sections.forEach(s => s.passThreshold = "0%");
-                    }
                 } else {
                     const val = this.parsedState.jsonObject.passThreshold && this.parsedState.jsonObject.passThreshold !== '0%' ? this.parsedState.jsonObject.passThreshold : "70%";
                     this.parsedState.jsonObject.passThreshold = val;
-                    if (Array.isArray(this.parsedState.jsonObject.sections)) {
-                        this.parsedState.jsonObject.sections.forEach(s => s.passThreshold = val);
-                    }
+                }
+                if (Array.isArray(this.parsedState.jsonObject.sections)) {
+                    this.parsedState.jsonObject.sections.forEach(s => delete s.passThreshold);
                 }
             }
             this._syncBox2ThresholdDisplay();
@@ -466,7 +463,7 @@ class TjBuilder extends HTMLElement {
             if (this.parsedState.jsonObject) {
                 this.parsedState.jsonObject.passThreshold = val;
                 if (Array.isArray(this.parsedState.jsonObject.sections)) {
-                    this.parsedState.jsonObject.sections.forEach(s => s.passThreshold = val);
+                    this.parsedState.jsonObject.sections.forEach(s => delete s.passThreshold);
                 }
             }
             this._renderVisualForm();
@@ -1050,7 +1047,17 @@ class TjBuilder extends HTMLElement {
 
         // Default threshold mode to 'disabled' unless explicitly enabled by user
         if (!jsonObject._thresholdMode) {
-            jsonObject._thresholdMode = 'disabled';
+            if (jsonObject.passThreshold && jsonObject.passThreshold !== '0%') {
+                jsonObject._thresholdMode = 'enabled';
+            } else {
+                const legacySec = jsonObject.sections.find(s => s.passThreshold && s.passThreshold !== '0%');
+                if (legacySec) {
+                    jsonObject.passThreshold = legacySec.passThreshold;
+                    jsonObject._thresholdMode = 'enabled';
+                } else {
+                    jsonObject._thresholdMode = 'disabled';
+                }
+            }
         }
 
         const container = document.createElement('div');
@@ -1078,18 +1085,13 @@ class TjBuilder extends HTMLElement {
                         <label for="vf-test-threshold-mode">Pass Threshold Requirement</label>
                         <select id="vf-test-threshold-mode" class="vf-select-input">
                             <option value="disabled" ${!isThresholdEnabled ? 'selected' : ''}>Disabled (No minimum score required)</option>
-                            <option value="enabled" ${isThresholdEnabled ? 'selected' : ''}>Global Threshold (Set percentage)</option>
+                            <option value="enabled" ${isThresholdEnabled ? 'selected' : ''}>Pass Threshold (Set percentage)</option>
                         </select>
                     </div>
                 </div>
                 <div id="vf-threshold-value-group" class="field-group" style="margin-top: 0.75rem; display: ${isThresholdEnabled ? 'block' : 'none'};">
-                    <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
-                        <div style="flex: 1;">
-                            <label for="vf-test-threshold">Global Pass Threshold</label>
-                            <input type="text" id="vf-test-threshold" value="${this._escapeHtml(jsonObject.passThreshold && jsonObject.passThreshold !== '0%' ? jsonObject.passThreshold : '70%')}" placeholder="e.g. 70%" />
-                        </div>
-                        <button type="button" class="vf-btn-secondary" id="vf-btn-apply-global-threshold" style="white-space: nowrap; height: 38px;">Apply Global to All Sections</button>
-                    </div>
+                    <label for="vf-test-threshold">Pass Threshold</label>
+                    <input type="text" id="vf-test-threshold" value="${this._escapeHtml(jsonObject.passThreshold && jsonObject.passThreshold !== '0%' ? jsonObject.passThreshold : '70%')}" placeholder="e.g. 70%" />
                     <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;">Sets score cutoff percentage required to unlock subsequent test sections.</p>
                 </div>
             `;
@@ -1105,9 +1107,6 @@ class TjBuilder extends HTMLElement {
                 secCard.dataset.sidx = sIdx;
 
                 const secTitle = sec.title || `Section ${sIdx + 1}`;
-                const secThreshold = isThresholdEnabled 
-                    ? (sec.passThreshold && sec.passThreshold !== '0%' ? sec.passThreshold : (jsonObject.passThreshold || '70%'))
-                    : '0%';
                 const passages = Array.isArray(sec.passages) ? sec.passages : (sec.passage ? [sec.passage] : []);
                 const questions = Array.isArray(sec.questions) ? sec.questions : [];
                 const vocabulary = Array.isArray(sec.vocabulary) ? sec.vocabulary : (Array.isArray(sec.vocab) ? sec.vocab : []);
@@ -1200,10 +1199,6 @@ class TjBuilder extends HTMLElement {
                             <input type="text" class="vf-sec-title-input" value="${this._escapeHtml(secTitle)}" data-sidx="${sIdx}" placeholder="Section Title (e.g. Level A1 - Beginner)" />
                         </div>
                         <div class="vf-section-actions">
-                            <div class="field-group inline-field">
-                                <label>Pass Cutoff:</label>
-                                <input type="text" class="vf-sec-threshold-input" value="${this._escapeHtml(secThreshold)}" data-sidx="${sIdx}" placeholder="${isThresholdEnabled ? '70%' : '0%'}" ${!isThresholdEnabled ? 'disabled title="Pass threshold is disabled globally"' : ''} />
-                            </div>
                             <button type="button" class="vf-btn-delete vf-btn-del-sec" data-sidx="${sIdx}">Delete Section</button>
                         </div>
                     </div>
@@ -1262,21 +1257,14 @@ class TjBuilder extends HTMLElement {
             const currentMode = jsonObject._thresholdMode || 'disabled';
             if (currentMode === 'disabled') {
                 jsonObject.passThreshold = "0%";
-                if (Array.isArray(jsonObject.sections)) {
-                    jsonObject.sections.forEach(sec => {
-                        sec.passThreshold = "0%";
-                    });
-                }
             } else {
                 const globalVal = (jsonObject.passThreshold && jsonObject.passThreshold !== '0%') ? jsonObject.passThreshold : '70%';
                 jsonObject.passThreshold = globalVal;
-                if (Array.isArray(jsonObject.sections)) {
-                    jsonObject.sections.forEach(sec => {
-                        if (!sec.passThreshold || sec.passThreshold === '0%') {
-                            sec.passThreshold = globalVal;
-                        }
-                    });
-                }
+            }
+            if (Array.isArray(jsonObject.sections)) {
+                jsonObject.sections.forEach(sec => {
+                    delete sec.passThreshold;
+                });
             }
         };
 
@@ -1298,15 +1286,12 @@ class TjBuilder extends HTMLElement {
                 jsonObject._thresholdMode = t.value;
                 if (t.value === 'disabled') {
                     jsonObject.passThreshold = "0%";
-                    if (Array.isArray(jsonObject.sections)) {
-                        jsonObject.sections.forEach(s => s.passThreshold = "0%");
-                    }
                 } else {
                     const val = jsonObject.passThreshold && jsonObject.passThreshold !== '0%' ? jsonObject.passThreshold : "70%";
                     jsonObject.passThreshold = val;
-                    if (Array.isArray(jsonObject.sections)) {
-                        jsonObject.sections.forEach(s => s.passThreshold = val);
-                    }
+                }
+                if (Array.isArray(jsonObject.sections)) {
+                    jsonObject.sections.forEach(s => delete s.passThreshold);
                 }
                 renderFormContent();
                 syncState();
@@ -1345,8 +1330,6 @@ class TjBuilder extends HTMLElement {
 
             if (t.classList.contains('vf-sec-title-input')) {
                 sec.title = t.value;
-            } else if (t.classList.contains('vf-sec-threshold-input')) {
-                sec.passThreshold = t.value;
             } 
             else if (t.classList.contains('vf-passage-input')) {
                 const pIdx = parseInt(t.dataset.pidx, 10);
@@ -1432,7 +1415,6 @@ class TjBuilder extends HTMLElement {
             if (t.id === 'vf-btn-add-section') {
                 jsonObject.sections.push({
                     title: `Section ${jsonObject.sections.length + 1}`,
-                    passThreshold: "70%",
                     passages: ["Sample passage text..."],
                     questions: [
                         {
@@ -2651,17 +2633,12 @@ class TjBuilder extends HTMLElement {
         const mode = obj._thresholdMode || 'disabled';
         if (mode === 'disabled') {
             obj.passThreshold = "0%";
-            if (Array.isArray(obj.sections)) {
-                obj.sections.forEach(s => s.passThreshold = "0%");
-            }
         } else {
             const glob = (obj.passThreshold && obj.passThreshold !== '0%') ? obj.passThreshold : "70%";
             obj.passThreshold = glob;
-            if (Array.isArray(obj.sections)) {
-                obj.sections.forEach(s => {
-                    if (!s.passThreshold || s.passThreshold === '0%') s.passThreshold = glob;
-                });
-            }
+        }
+        if (Array.isArray(obj.sections)) {
+            obj.sections.forEach(s => delete s.passThreshold);
         }
         const cleanObj = { ...obj };
         delete cleanObj._thresholdMode;

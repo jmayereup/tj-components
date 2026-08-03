@@ -21,9 +21,9 @@ If the user does not specify, default to generating a **Comprehensive Multi-Sect
 ---
 
 ## **Output Requirements**
-All output MUST be formatted as a `<tj-test>` custom element containing a `<script type="application/json">` block.
+Output MUST be formatted as a `<tj-test>` custom element containing a `<script type="application/json">` block.
 - Output ONLY the `<tj-test>` HTML element tag with embedded `<script type="application/json">`.
-- Do NOT include conversational filler or extra markdown text outside the element tag.
+- Place the tag within a code block for easy copy and paste into my application.
 - Ensure all JSON syntax inside the script tag is valid.
 
 ---
@@ -40,7 +40,6 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
   "sections": [
     {
       "title": "Section 1: Vocabulary",
-      "passThreshold": "70%",
       "vocabulary": [
         { "word": "Resilient", "def": "Able to withstand or recover quickly from difficult conditions." },
         { "word": "Innovate", "def": "Make changes in something established, especially by introducing new methods or ideas." },
@@ -49,7 +48,6 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
     },
     {
       "title": "Section 2: Grammar",
-      "passThreshold": "75%",
       "questions": [
         {
           "situation": "Two colleagues are discussing their weekend plans.",
@@ -78,7 +76,6 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
     },
     {
       "title": "Section 3: Reading Comprehension",
-      "passThreshold": "75%",
       "passages": [
         "Renewable energy sources such as solar and wind power are becoming increasingly vital in combating global climate change. Unlike fossil fuels, solar energy generates electricity without producing greenhouse gas emissions during operation. However, effective energy storage technologies, such as advanced lithium-ion batteries, are essential to ensure a stable supply when sunlight or wind is unavailable."
       ],
@@ -109,7 +106,6 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
     },
     {
       "title": "Section 4: Cloze",
-      "passThreshold": "70%",
       "cloze": [
         {
           "text": "Every *morning*, Alex wakes *up* early to prepare for work. He enjoys drinking *coffee* while reading the daily *news* before leaving the house."
@@ -118,7 +114,6 @@ All output MUST be formatted as a `<tj-test>` custom element containing a `<scri
     },
     {
       "title": "Section 5: Short Answer",
-      "passThreshold": "0%",
       "questions": [
         {
           "question": "Explain in 2-3 sentences why renewable energy adoption is important for the environment.",

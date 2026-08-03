@@ -1068,11 +1068,9 @@ function doPost(e) {
 &lt;script type="application/json"&gt;
 {
   "title": "Comprehensive English Assessment",
-  "passThreshold": "75%",
   "sections": [
     {
       "title": "Section 1: Vocabulary",
-      "passThreshold": "70%",
       "vocabulary": [
         { "word": "Resilient", "def": "Able to withstand or recover quickly from difficult conditions." },
         { "word": "Innovate", "def": "Make changes in something established, especially by introducing new methods or ideas." },
@@ -1081,7 +1079,6 @@ function doPost(e) {
     },
     {
       "title": "Section 2: Grammar",
-      "passThreshold": "75%",
       "questions": [
         {
           "situation": "Two colleagues are discussing their weekend plans.",
@@ -1110,7 +1107,6 @@ function doPost(e) {
     },
     {
       "title": "Section 3: Reading Comprehension",
-      "passThreshold": "75%",
       "passages": [
         "Renewable energy sources such as solar and wind power are becoming increasingly vital in combating global climate change. Unlike fossil fuels, solar energy generates electricity without producing greenhouse gas emissions during operation. However, effective energy storage technologies, such as advanced lithium-ion batteries, are essential to ensure a stable supply when sunlight or wind is unavailable."
       ],
@@ -1141,7 +1137,6 @@ function doPost(e) {
     },
     {
       "title": "Section 4: Cloze",
-      "passThreshold": "70%",
       "cloze": [
         {
           "text": "Every *morning*, Alex wakes *up* early to prepare for work. He enjoys drinking *coffee* while reading the daily *news* before leaving the house."
@@ -1150,7 +1145,6 @@ function doPost(e) {
     },
     {
       "title": "Section 5: Short Answer",
-      "passThreshold": "0%",
       "questions": [
         {
           "question": "Explain in 2-3 sentences why renewable energy adoption is important for the environment.",
@@ -1170,7 +1164,7 @@ function doPost(e) {
                 <div class="feature-grid">
                     <div class="feature-item">
                         <h4>📈 Progressive Sections</h4>
-                        <p>Use JSON <code>sections</code> array with <code>"passThreshold": "70%"</code> per section to split placement levels and set unlock cutoffs.</p>
+                        <p>Set a universal <code>"passThreshold": "75%"</code> at the root JSON level (or via <code>pass-threshold="75%"</code> attribute) to specify score cutoffs for section unlock.</p>
                     </div>
                     <div class="feature-item">
                         <h4>🔒 Test Mode</h4>
@@ -1503,7 +1497,6 @@ A: Sleeping
   "sections": [
     {
       "title": "Section 1: Vocabulary",
-      "passThreshold": "70%",
       "vocabulary": [
         { "word": "Resilient", "def": "Able to withstand or recover quickly from difficult conditions." },
         { "word": "Innovate", "def": "Make changes in something established, especially by introducing new methods or ideas." },
@@ -1512,7 +1505,6 @@ A: Sleeping
     },
     {
       "title": "Section 2: Grammar",
-      "passThreshold": "75%",
       "questions": [
         {
           "situation": "Two colleagues are discussing their weekend plans.",
@@ -1541,7 +1533,6 @@ A: Sleeping
     },
     {
       "title": "Section 3: Reading Comprehension",
-      "passThreshold": "75%",
       "passages": [
         "Renewable energy sources such as solar and wind power are becoming increasingly vital in combating global climate change. Unlike fossil fuels, solar energy generates electricity without producing greenhouse gas emissions during operation. However, effective energy storage technologies, such as advanced lithium-ion batteries, are essential to ensure a stable supply when sunlight or wind is unavailable."
       ],
@@ -1572,7 +1563,6 @@ A: Sleeping
     },
     {
       "title": "Section 4: Cloze",
-      "passThreshold": "70%",
       "cloze": [
         {
           "text": "Every *morning*, Alex wakes *up* early to prepare for work. He enjoys drinking *coffee* while reading the daily *news* before leaving the house."
@@ -1581,7 +1571,6 @@ A: Sleeping
     },
     {
       "title": "Section 5: Short Answer",
-      "passThreshold": "0%",
       "questions": [
         {
           "question": "Explain in 2-3 sentences why renewable energy adoption is important for the environment.",
@@ -1609,7 +1598,6 @@ A: Sleeping
   "sections": [
     {
       "title": "Section 1: Vocabulary",
-      "passThreshold": "70%",
       "vocabulary": [
         { "word": "Resilient", "def": "Able to withstand or recover quickly from difficult conditions." },
         { "word": "Innovate", "def": "Make changes in something established, especially by introducing new methods or ideas." },
@@ -1618,7 +1606,6 @@ A: Sleeping
     },
     {
       "title": "Section 2: Grammar",
-      "passThreshold": "75%",
       "questions": [
         {
           "situation": "Two colleagues are discussing their weekend plans.",
@@ -1647,7 +1634,6 @@ A: Sleeping
     },
     {
       "title": "Section 3: Reading Comprehension",
-      "passThreshold": "75%",
       "passages": [
         "Renewable energy sources such as solar and wind power are becoming increasingly vital in combating global climate change. Unlike fossil fuels, solar energy generates electricity without producing greenhouse gas emissions during operation. However, effective energy storage technologies, such as advanced lithium-ion batteries, are essential to ensure a stable supply when sunlight or wind is unavailable."
       ],
@@ -1678,7 +1664,6 @@ A: Sleeping
     },
     {
       "title": "Section 4: Cloze",
-      "passThreshold": "70%",
       "cloze": [
         {
           "text": "Every *morning*, Alex wakes *up* early to prepare for work. He enjoys drinking *coffee* while reading the daily *news* before leaving the house."
@@ -1687,7 +1672,6 @@ A: Sleeping
     },
     {
       "title": "Section 5: Short Answer",
-      "passThreshold": "0%",
       "questions": [
         {
           "question": "Explain in 2-3 sentences why renewable energy adoption is important for the environment.",

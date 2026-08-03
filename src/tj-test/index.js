@@ -291,13 +291,12 @@ class TjTest extends HTMLElement {
         }
 
         const globalPassThreshold = data.passThreshold || data.pass_threshold || data.pass || this.defaultPassThreshold;
+        const passThreshold = this._parseThreshold(globalPassThreshold);
+        const passLabel = `${Math.round(passThreshold * 100)}%`;
         const rawSections = Array.isArray(data.sections) ? data.sections : (Array.isArray(data) ? data : []);
 
         rawSections.forEach((sec, idx) => {
             const secTitle = sec.title || `Section ${idx + 1}`;
-            const secThresholdRaw = sec.passThreshold || sec.pass_threshold || sec.pass || globalPassThreshold;
-            const passThreshold = this._parseThreshold(secThresholdRaw);
-            const passLabel = `${Math.round(passThreshold * 100)}%`;
 
             const rawPassages = Array.isArray(sec.passages) ? sec.passages : (sec.passage ? [sec.passage] : []);
             const passages = rawPassages.map(p => {
@@ -378,10 +377,9 @@ class TjTest extends HTMLElement {
 
             if (headerLine.startsWith('section')) {
                 const titleMatch = headerLine.match(/title=["']([^"']+)["']/i);
-                const passMatch = headerLine.match(/pass=["']?(\d+%?|\d+\.\d+)["']?/i);
 
                 const title = titleMatch ? titleMatch[1] : `Section ${defaultSectionIndex}`;
-                const passThreshold = passMatch ? this._parseThreshold(passMatch[1]) : this.defaultPassThreshold;
+                const passThreshold = this.defaultPassThreshold;
                 const passLabel = `${Math.round(passThreshold * 100)}%`;
 
                 currentSection = {
