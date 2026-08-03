@@ -13,11 +13,11 @@ class TjTest extends HTMLElement {
         if (this.hasAttribute('practice-mode') || this.getAttribute('test-mode') === 'false') {
             return false;
         }
-        return true;
+        return this.hasAttribute('test-mode');
     }
 
     set testMode(value) {
-        if (value) {
+        if (value && value !== 'false') {
             this.setAttribute('test-mode', '');
         } else {
             this.removeAttribute('test-mode');
@@ -99,7 +99,7 @@ class TjTest extends HTMLElement {
             this.submissionUrl = newValue || '';
         } else if (name === 'test-mode') {
             if (this.isConnected) {
-                if (newValue !== null) {
+                if (this.testMode) {
                     this.testUnlocked = false;
                     this.lockStartOverlay();
                     this.setupSecurityListeners();

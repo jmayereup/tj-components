@@ -14,10 +14,10 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 		];
 	}
 	get testMode() {
-		return this.hasAttribute("test-mode");
+		return this.hasAttribute("test-mode") && this.getAttribute("test-mode") !== "false";
 	}
 	set testMode(e) {
-		e ? this.setAttribute("test-mode", "") : this.removeAttribute("test-mode");
+		e && e !== "false" ? this.setAttribute("test-mode", "") : this.removeAttribute("test-mode");
 	}
 	get startCode() {
 		return this.getAttribute("start-code") || this.getAttribute("start_code") || this.getAttribute("start-quiz-code") || this.getAttribute("code") || r(this).startCode || "1234";

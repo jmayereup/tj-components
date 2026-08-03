@@ -34,6 +34,12 @@
   --tj-error-light: #fef2f2;         /* Red 50 */
   --tj-error-border: #fecaca;        /* Red 200 */
 
+  /* Warning/Caution (Amber/Yellow) */
+  --tj-warning-color: #78350f;       /* Amber 900 */
+  --tj-warning-hover: #451a03;       /* Amber 950 */
+  --tj-warning-light: #fef3c7;       /* Amber 100 */
+  --tj-warning-border: #fcd34d;      /* Amber 300 */
+
   /* Neutrals / Grayscale (Slate) */
   --tj-text-main: #1e293b;           /* Slate 800 */
   --tj-text-muted: #64748b;          /* Slate 500 */
@@ -91,6 +97,12 @@
     --tj-error-light: #7f1d1d;       /* Red 900 */
     --tj-error-border: #991b1b;      /* Red 800 */
 
+    /* Warning */
+    --tj-warning-color: #fef08a;     /* Yellow 200 */
+    --tj-warning-hover: #fde047;     /* Yellow 300 */
+    --tj-warning-light: rgba(120, 53, 15, 0.85); /* Deep translucent amber background */
+    --tj-warning-border: #b45309;    /* Amber 700 */
+
     /* Neutrals */
     --tj-text-main: #f8fafc;         /* Slate 50 */
     --tj-text-muted: #94a3b8;        /* Slate 400 */
@@ -104,6 +116,39 @@
     --tj-border-main: #475569;       /* Slate 600 */
     --tj-border-dark: #64748b;       /* Slate 500 */
   }
+}
+
+:host(.dark), :host([theme="dark"]) {
+  /* Primary */
+  --tj-primary-light: #1e3a8a;     /* Blue 900 */
+  --tj-primary-border: #1e40af;    /* Blue 800 */
+
+  /* Success */
+  --tj-success-light: #14532d;     /* Green 900 */
+  --tj-success-border: #166534;    /* Green 800 */
+
+  /* Error */
+  --tj-error-light: #7f1d1d;       /* Red 900 */
+  --tj-error-border: #991b1b;      /* Red 800 */
+
+  /* Warning */
+  --tj-warning-color: #fef08a;     /* Yellow 200 */
+  --tj-warning-hover: #fde047;     /* Yellow 300 */
+  --tj-warning-light: rgba(120, 53, 15, 0.85); /* Deep translucent amber background */
+  --tj-warning-border: #b45309;    /* Amber 700 */
+
+  /* Neutrals */
+  --tj-text-main: #f8fafc;         /* Slate 50 */
+  --tj-text-muted: #94a3b8;        /* Slate 400 */
+  --tj-text-light: #cbd5e1;        /* Slate 300 */
+  
+  --tj-bg-main: #0f172a;           /* Slate 900 */
+  --tj-bg-card: rgba(30, 41, 59, 0.95); /* Slate 800 */
+  --tj-bg-alt: #1e293b;            /* Slate 800 */
+  
+  --tj-border-light: #334155;      /* Slate 700 */
+  --tj-border-main: #475569;       /* Slate 600 */
+  --tj-border-dark: #64748b;       /* Slate 500 */
 }
 
 :host * {

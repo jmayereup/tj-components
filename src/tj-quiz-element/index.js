@@ -9,11 +9,11 @@ class TjQuizElement extends HTMLElement {
     }
 
     get testMode() {
-        return this.hasAttribute('test-mode');
+        return this.hasAttribute('test-mode') && this.getAttribute('test-mode') !== 'false';
     }
 
     set testMode(value) {
-        if (value) {
+        if (value && value !== 'false') {
             this.setAttribute('test-mode', '');
         } else {
             this.removeAttribute('test-mode');

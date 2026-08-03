@@ -619,19 +619,20 @@
 
 /* Warnings & Banners */
 .tj-banner {
-  padding: 0.75rem 1.25rem;
+  padding: 0.85rem 1.25rem;
   border-radius: var(--tj-border-radius-md);
   font-weight: 600;
   font-size: 0.9rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .tj-banner-warning {
-  background: var(--tj-warning-light);
-  color: var(--tj-warning-color);
-  border: 1px solid var(--tj-warning-border);
+  background: var(--tj-warning-light, #fef3c7);
+  color: var(--tj-warning-color, #78350f);
+  border: 1px solid var(--tj-warning-border, #fcd34d);
 }
 
 .tj-error-msg {
