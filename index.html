@@ -1067,24 +1067,99 @@ function doPost(e) {
                 <pre><code>&lt;tj-test test-mode start-code="1234" teacher-code="7676" pass-threshold="75%" submission-url="YOUR_GAS_URL"&gt;
 &lt;script type="application/json"&gt;
 {
-  "title": "CEFR English Placement Assessment",
+  "title": "Comprehensive English Assessment",
   "passThreshold": "75%",
   "sections": [
     {
-      "title": "Level A1 - Beginner",
+      "title": "Section 1: Vocabulary",
       "passThreshold": "70%",
+      "vocabulary": [
+        { "word": "Resilient", "def": "Able to withstand or recover quickly from difficult conditions." },
+        { "word": "Innovate", "def": "Make changes in something established, especially by introducing new methods or ideas." },
+        { "word": "Perspective", "def": "A particular attitude toward or way of regarding something; a point of view." }
+      ]
+    },
+    {
+      "title": "Section 2: Grammar",
+      "passThreshold": "75%",
+      "questions": [
+        {
+          "situation": "Two colleagues are discussing their weekend plans.",
+          "question": "Alex: \"Have you finished the project report yet?\"\nTaylor: \"Not yet. If I ______________ more time yesterday, I would have completed it.\"",
+          "options": [
+            "had had",
+            "have had",
+            "would have",
+            "was having"
+          ],
+          "answer": "had had",
+          "explanation": "Third conditional requires past perfect ('had had') in the if-clause."
+        },
+        {
+          "question": "Choose the correct sentence:",
+          "options": [
+            "Neither of the answers are correct.",
+            "Neither of the answers is correct.",
+            "Neither of the answers were correct.",
+            "Neither of the answers be correct."
+          ],
+          "answer": "Neither of the answers is correct.",
+          "explanation": "'Neither' takes a singular verb ('is')."
+        }
+      ]
+    },
+    {
+      "title": "Section 3: Reading Comprehension",
+      "passThreshold": "75%",
       "passages": [
-        "Hello! My name is Alex. I live in London with my family. Every morning, I wake up at 7:00 AM and have breakfast."
+        "Renewable energy sources such as solar and wind power are becoming increasingly vital in combating global climate change. Unlike fossil fuels, solar energy generates electricity without producing greenhouse gas emissions during operation. However, effective energy storage technologies, such as advanced lithium-ion batteries, are essential to ensure a stable supply when sunlight or wind is unavailable."
       ],
       "questions": [
         {
-          "question": "What time does Alex wake up in the morning?",
-          "options": ["6:30 AM", "7:00 AM", "8:30 AM"],
-          "answer": "7:00 AM"
+          "question": "What is mentioned as a key benefit of solar energy compared to fossil fuels?",
+          "options": [
+            "It is less expensive to install.",
+            "It generates electricity without greenhouse gas emissions during operation.",
+            "It works continuously regardless of weather conditions.",
+            "It requires no battery storage."
+          ],
+          "answer": "It generates electricity without greenhouse gas emissions during operation.",
+          "explanation": "The text states solar energy generates electricity without producing greenhouse gas emissions during operation."
+        },
+        {
+          "question": "Why are energy storage technologies essential for renewable energy?",
+          "options": [
+            "To reduce the cost of solar panels.",
+            "To maintain a stable power supply when sunlight or wind is unavailable.",
+            "To replace fossil fuels immediately.",
+            "To export energy to other countries."
+          ],
+          "answer": "To maintain a stable power supply when sunlight or wind is unavailable.",
+          "explanation": "The passage notes batteries ensure a stable supply when sunlight or wind is unavailable."
         }
-      ],
-      "vocabulary": [
-        { "word": "Breakfast", "def": "A meal eaten in the morning, the first meal of the day." }
+      ]
+    },
+    {
+      "title": "Section 4: Cloze",
+      "passThreshold": "70%",
+      "cloze": [
+        {
+          "text": "Every *morning*, Alex wakes *up* early to prepare for work. He enjoys drinking *coffee* while reading the daily *news* before leaving the house."
+        }
+      ]
+    },
+    {
+      "title": "Section 5: Short Answer",
+      "passThreshold": "0%",
+      "questions": [
+        {
+          "question": "Explain in 2-3 sentences why renewable energy adoption is important for the environment.",
+          "options": []
+        },
+        {
+          "question": "Describe a personal experience where you had to solve a difficult problem at school or work.",
+          "options": []
+        }
       ]
     }
   ]
@@ -1423,24 +1498,99 @@ A: Sleeping
 <tj-test pass-threshold="75%" submission-url="YOUR_GAS_URL">
 <script type="application/json">
 {
-  "title": "CEFR English Placement Assessment",
+  "title": "Comprehensive English Assessment",
   "passThreshold": "75%",
   "sections": [
     {
-      "title": "Level A1 - Beginner",
+      "title": "Section 1: Vocabulary",
       "passThreshold": "70%",
+      "vocabulary": [
+        { "word": "Resilient", "def": "Able to withstand or recover quickly from difficult conditions." },
+        { "word": "Innovate", "def": "Make changes in something established, especially by introducing new methods or ideas." },
+        { "word": "Perspective", "def": "A particular attitude toward or way of regarding something; a point of view." }
+      ]
+    },
+    {
+      "title": "Section 2: Grammar",
+      "passThreshold": "75%",
+      "questions": [
+        {
+          "situation": "Two colleagues are discussing their weekend plans.",
+          "question": "Alex: \"Have you finished the project report yet?\"\nTaylor: \"Not yet. If I ______________ more time yesterday, I would have completed it.\"",
+          "options": [
+            "had had",
+            "have had",
+            "would have",
+            "was having"
+          ],
+          "answer": "had had",
+          "explanation": "Third conditional requires past perfect ('had had') in the if-clause."
+        },
+        {
+          "question": "Choose the correct sentence:",
+          "options": [
+            "Neither of the answers are correct.",
+            "Neither of the answers is correct.",
+            "Neither of the answers were correct.",
+            "Neither of the answers be correct."
+          ],
+          "answer": "Neither of the answers is correct.",
+          "explanation": "'Neither' takes a singular verb ('is')."
+        }
+      ]
+    },
+    {
+      "title": "Section 3: Reading Comprehension",
+      "passThreshold": "75%",
       "passages": [
-        "Hello! My name is Alex. I live in London with my family. Every morning, I wake up at 7:00 AM and have breakfast."
+        "Renewable energy sources such as solar and wind power are becoming increasingly vital in combating global climate change. Unlike fossil fuels, solar energy generates electricity without producing greenhouse gas emissions during operation. However, effective energy storage technologies, such as advanced lithium-ion batteries, are essential to ensure a stable supply when sunlight or wind is unavailable."
       ],
       "questions": [
         {
-          "question": "What time does Alex wake up in the morning?",
-          "options": ["6:30 AM", "7:00 AM", "8:30 AM"],
-          "answer": "7:00 AM"
+          "question": "What is mentioned as a key benefit of solar energy compared to fossil fuels?",
+          "options": [
+            "It is less expensive to install.",
+            "It generates electricity without greenhouse gas emissions during operation.",
+            "It works continuously regardless of weather conditions.",
+            "It requires no battery storage."
+          ],
+          "answer": "It generates electricity without greenhouse gas emissions during operation.",
+          "explanation": "The text states solar energy generates electricity without producing greenhouse gas emissions during operation."
+        },
+        {
+          "question": "Why are energy storage technologies essential for renewable energy?",
+          "options": [
+            "To reduce the cost of solar panels.",
+            "To maintain a stable power supply when sunlight or wind is unavailable.",
+            "To replace fossil fuels immediately.",
+            "To export energy to other countries."
+          ],
+          "answer": "To maintain a stable power supply when sunlight or wind is unavailable.",
+          "explanation": "The passage notes batteries ensure a stable supply when sunlight or wind is unavailable."
         }
-      ],
-      "vocabulary": [
-        { "word": "Breakfast", "def": "A meal eaten in the morning, the first meal of the day." }
+      ]
+    },
+    {
+      "title": "Section 4: Cloze",
+      "passThreshold": "70%",
+      "cloze": [
+        {
+          "text": "Every *morning*, Alex wakes *up* early to prepare for work. He enjoys drinking *coffee* while reading the daily *news* before leaving the house."
+        }
+      ]
+    },
+    {
+      "title": "Section 5: Short Answer",
+      "passThreshold": "0%",
+      "questions": [
+        {
+          "question": "Explain in 2-3 sentences why renewable energy adoption is important for the environment.",
+          "options": []
+        },
+        {
+          "question": "Describe a personal experience where you had to solve a difficult problem at school or work.",
+          "options": []
+        }
       ]
     }
   ]
@@ -1454,24 +1604,99 @@ A: Sleeping
 <tj-test test-mode start-code="1234" teacher-code="7676" pass-threshold="75%" submission-url="YOUR_GAS_URL">
 <script type="application/json">
 {
-  "title": "CEFR English Placement Assessment",
+  "title": "Comprehensive English Assessment",
   "passThreshold": "75%",
   "sections": [
     {
-      "title": "Level A1 - Beginner",
+      "title": "Section 1: Vocabulary",
       "passThreshold": "70%",
+      "vocabulary": [
+        { "word": "Resilient", "def": "Able to withstand or recover quickly from difficult conditions." },
+        { "word": "Innovate", "def": "Make changes in something established, especially by introducing new methods or ideas." },
+        { "word": "Perspective", "def": "A particular attitude toward or way of regarding something; a point of view." }
+      ]
+    },
+    {
+      "title": "Section 2: Grammar",
+      "passThreshold": "75%",
+      "questions": [
+        {
+          "situation": "Two colleagues are discussing their weekend plans.",
+          "question": "Alex: \"Have you finished the project report yet?\"\nTaylor: \"Not yet. If I ______________ more time yesterday, I would have completed it.\"",
+          "options": [
+            "had had",
+            "have had",
+            "would have",
+            "was having"
+          ],
+          "answer": "had had",
+          "explanation": "Third conditional requires past perfect ('had had') in the if-clause."
+        },
+        {
+          "question": "Choose the correct sentence:",
+          "options": [
+            "Neither of the answers are correct.",
+            "Neither of the answers is correct.",
+            "Neither of the answers were correct.",
+            "Neither of the answers be correct."
+          ],
+          "answer": "Neither of the answers is correct.",
+          "explanation": "'Neither' takes a singular verb ('is')."
+        }
+      ]
+    },
+    {
+      "title": "Section 3: Reading Comprehension",
+      "passThreshold": "75%",
       "passages": [
-        "Hello! My name is Alex. I live in London with my family. Every morning, I wake up at 7:00 AM and have breakfast."
+        "Renewable energy sources such as solar and wind power are becoming increasingly vital in combating global climate change. Unlike fossil fuels, solar energy generates electricity without producing greenhouse gas emissions during operation. However, effective energy storage technologies, such as advanced lithium-ion batteries, are essential to ensure a stable supply when sunlight or wind is unavailable."
       ],
       "questions": [
         {
-          "question": "What time does Alex wake up in the morning?",
-          "options": ["6:30 AM", "7:00 AM", "8:30 AM"],
-          "answer": "7:00 AM"
+          "question": "What is mentioned as a key benefit of solar energy compared to fossil fuels?",
+          "options": [
+            "It is less expensive to install.",
+            "It generates electricity without greenhouse gas emissions during operation.",
+            "It works continuously regardless of weather conditions.",
+            "It requires no battery storage."
+          ],
+          "answer": "It generates electricity without greenhouse gas emissions during operation.",
+          "explanation": "The text states solar energy generates electricity without producing greenhouse gas emissions during operation."
+        },
+        {
+          "question": "Why are energy storage technologies essential for renewable energy?",
+          "options": [
+            "To reduce the cost of solar panels.",
+            "To maintain a stable power supply when sunlight or wind is unavailable.",
+            "To replace fossil fuels immediately.",
+            "To export energy to other countries."
+          ],
+          "answer": "To maintain a stable power supply when sunlight or wind is unavailable.",
+          "explanation": "The passage notes batteries ensure a stable supply when sunlight or wind is unavailable."
         }
-      ],
-      "vocabulary": [
-        { "word": "Breakfast", "def": "A meal eaten in the morning, the first meal of the day." }
+      ]
+    },
+    {
+      "title": "Section 4: Cloze",
+      "passThreshold": "70%",
+      "cloze": [
+        {
+          "text": "Every *morning*, Alex wakes *up* early to prepare for work. He enjoys drinking *coffee* while reading the daily *news* before leaving the house."
+        }
+      ]
+    },
+    {
+      "title": "Section 5: Short Answer",
+      "passThreshold": "0%",
+      "questions": [
+        {
+          "question": "Explain in 2-3 sentences why renewable energy adoption is important for the environment.",
+          "options": []
+        },
+        {
+          "question": "Describe a personal experience where you had to solve a difficult problem at school or work.",
+          "options": []
+        }
       ]
     }
   ]

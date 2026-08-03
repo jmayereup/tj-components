@@ -272,6 +272,36 @@
   height: 1.15em;
 }
 
+/* Written / Short Answer Inputs */
+.tj-written-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.tj-written-input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 90px;
+  padding: 0.75rem;
+  border: 1px solid var(--tj-border-main);
+  border-radius: var(--tj-border-radius-sm);
+  background: var(--tj-bg-card);
+  color: var(--tj-text-main);
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+  transition: var(--tj-transition-fast);
+}
+
+.tj-written-input:focus {
+  outline: none;
+  border-color: var(--tj-primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
 /* Vocabulary Grid Table */
 .tj-vocab-container {
   display: flex;
@@ -531,6 +561,60 @@
 .tj-status-tag.failed {
   background: var(--tj-error-light);
   color: var(--tj-error-color);
+}
+
+/* Written Answers Section on Final Report */
+.tj-written-answers-section {
+  width: 100%;
+  max-width: 600px;
+  background: var(--tj-bg-alt);
+  border: 1px solid var(--tj-border-main);
+  border-radius: var(--tj-border-radius-md);
+  padding: 1.25rem;
+  box-sizing: border-box;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.tj-written-answers-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--tj-text-main);
+  border-bottom: 1px dashed var(--tj-border-main);
+  padding-bottom: 0.5rem;
+}
+
+.tj-written-qa {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--tj-bg-card);
+  border: 1px solid var(--tj-border-main);
+  border-radius: var(--tj-border-radius-sm);
+  font-size: 0.95rem;
+}
+
+.tj-written-question {
+  font-weight: 600;
+  color: var(--tj-text-main);
+}
+
+.tj-written-answer {
+  color: var(--tj-primary-color);
+  font-weight: 500;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.tj-score-note-written {
+  font-size: 0.85rem;
+  color: var(--tj-text-muted);
+  font-style: italic;
+  margin-top: 0.25rem;
 }
 
 /* Warnings & Banners */

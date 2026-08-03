@@ -519,7 +519,7 @@ class TjTest extends HTMLElement {
                 const sitVal = trimmed.replace(/^(S:|Situation:)/i, '').trim();
                 currentQ.s = currentQ.s ? `${currentQ.s}\n${sitVal}` : sitVal;
             } else if (trimmed.startsWith('Q:') || trimmed.startsWith('Q.')) {
-                if (currentQ && currentQ.q && currentQ.o.length > 0) {
+                if (currentQ && currentQ.q) {
                     questions.push(this.normalizeQuestion(currentQ));
                     currentQ = null;
                 }
@@ -1001,29 +1001,62 @@ class TjTest extends HTMLElement {
             });
         }
 
-        // Multiple Choice Questions
+        // Multiple Choice / Written Questions
         if (section.questions.length > 0) {
             section.questions.forEach((q, qIdx) => {
                 const qItem = document.createElement('div');
                 qItem.className = 'tj-question-item';
 
-                const optionsHtml = q.o.map((opt) => {
-                    return `
-                        <label class="tj-option-label">
-                            <input type="radio" name="q-${section.index}-${qIdx}" value="${this.escapeHtml(opt)}">
-                            <span>${this.escapeHtml(opt)}</span>
-                        </label>
-                    `;
-                }).join('');
+                const isShortAnswer = !q.o || q.o.length === 0;
+                const savedAns = (this.userAnswers && this.userAnswers[`q_${section.index}_${qIdx}`]) || '';
 
                 const situationHtml = q.s ? `<div class="tj-question-situation"><strong>Situation:</strong> ${this.escapeHtml(q.s).replace(/\n/g, '<br>')}</div>` : '';
                 const questionTextHtml = q.q ? `<p class="tj-question-title">${this.escapeHtml(q.q).replace(/\n/g, '<br>')}</p>` : '';
 
-                qItem.innerHTML = `
-                    ${situationHtml}
-                    ${questionTextHtml}
-                    <div class="tj-options-list">${optionsHtml}</div>
-                `;
+                if (isShortAnswer) {
+                    qItem.innerHTML = `
+                        ${situationHtml}
+                        ${questionTextHtml}
+                        <div class="tj-written-container">
+                            <textarea class="tj-written-input" data-q-key="q_${section.index}_${qIdx}" placeholder="Type your answer here...">${this.escapeHtml(savedAns)}</textarea>
+                        </div>
+                    `;
+                    const textarea = qItem.querySelector('.tj-written-input');
+                    if (textarea) {
+                        textarea.addEventListener('input', (e) => {
+                            const val = e.target.value;
+                            this.userAnswers[`q_${section.index}_${qIdx}`] = val;
+                            this.saveStateToLocalStorage();
+                        });
+                    }
+                } else {
+                    const optionsHtml = q.o.map((opt) => {
+                        const isChecked = savedAns === opt ? 'checked' : '';
+                        return `
+                            <label class="tj-option-label">
+                                <input type="radio" name="q-${section.index}-${qIdx}" value="${this.escapeHtml(opt)}" ${isChecked}>
+                                <span>${this.escapeHtml(opt)}</span>
+                            </label>
+                        `;
+                    }).join('');
+
+                    qItem.innerHTML = `
+                        ${situationHtml}
+                        ${questionTextHtml}
+                        <div class="tj-options-list">${optionsHtml}</div>
+                    `;
+
+                    const radioInputs = qItem.querySelectorAll(`input[name="q-${section.index}-${qIdx}"]`);
+                    radioInputs.forEach(r => {
+                        r.addEventListener('change', (e) => {
+                            if (e.target.checked) {
+                                this.userAnswers[`q_${section.index}_${qIdx}`] = e.target.value;
+                                this.saveStateToLocalStorage();
+                            }
+                        });
+                    });
+                }
+
                 sectionCard.appendChild(qItem);
             });
         }
@@ -1075,13 +1108,17 @@ class TjTest extends HTMLElement {
         let score = 0;
         let total = 0;
 
-        // Evaluate Multiple Choice
+        // Evaluate Multiple Choice (Written questions are excluded from score)
         if (section.questions.length > 0) {
             section.questions.forEach((q, qIdx) => {
-                total++;
-                const selected = this.shadowRoot.querySelector(`input[name="q-${section.index}-${qIdx}"]:checked`);
-                if (selected && selected.value.trim().toLowerCase() === q.a.trim().toLowerCase()) {
-                    score++;
+                const isShortAnswer = !q.o || q.o.length === 0;
+                if (!isShortAnswer) {
+                    total++;
+                    const selected = this.shadowRoot.querySelector(`input[name="q-${section.index}-${qIdx}"]:checked`);
+                    const selectedVal = selected ? selected.value : (this.userAnswers[`q_${section.index}_${qIdx}`] || '');
+                    if (selectedVal && selectedVal.trim().toLowerCase() === q.a.trim().toLowerCase()) {
+                        score++;
+                    }
                 }
             });
         }
@@ -1198,6 +1235,36 @@ class TjTest extends HTMLElement {
             `;
         }).join('');
 
+        const allWrittenQuestions = [];
+        this.sections.forEach(sec => {
+            sec.questions.forEach((q, qIdx) => {
+                if (!q.o || q.o.length === 0) {
+                    allWrittenQuestions.push({
+                        q: q.q,
+                        ans: (this.userAnswers && this.userAnswers[`q_${sec.index}_${qIdx}`]) || '-'
+                    });
+                }
+            });
+        });
+
+        let writtenAnswersHTML = '';
+        let writtenNoteHTML = '';
+        if (allWrittenQuestions.length > 0) {
+            writtenNoteHTML = `<div class="tj-score-note-written">*Written answers are not included in the score.</div>`;
+            const qaItems = allWrittenQuestions.map(item => `
+                <div class="tj-written-qa">
+                    <div class="tj-written-question">Q: ${this.escapeHtml(item.q)}</div>
+                    <div class="tj-written-answer">A: ${this.escapeHtml(item.ans)}</div>
+                </div>
+            `).join('');
+            writtenAnswersHTML = `
+                <div class="tj-written-answers-section">
+                    <div class="tj-written-answers-title">Written Answers (To Be Graded Manually)</div>
+                    ${qaItems}
+                </div>
+            `;
+        }
+
         reportContainer.innerHTML = `
             <h3 class="tj-h3" style="font-size: 1.6rem; margin: 0;">Test Summary</h3>
             <div class="tj-final-score-badge">YOUR SCORE: ${highestPassedTitle.toUpperCase()}</div>
@@ -1218,6 +1285,8 @@ class TjTest extends HTMLElement {
                     ${summaryRows}
                 </tbody>
             </table>
+            ${writtenAnswersHTML}
+            ${writtenNoteHTML}
             ${this.submissionUrl ? `
             <div class="tj-submission-box">
                 <h4 style="margin: 0; color: var(--tj-text-main);">Submit Score Report</h4>
@@ -1285,7 +1354,7 @@ class TjTest extends HTMLElement {
             studentId: '',
             score: totalScore,
             total: totalQuestions,
-            writtenAnswers: `Tab-aways: ${this.tabAwayCount} | ${sectionSummary}`,
+            writtenAnswers: this.getWrittenAnswersString(),
             timestamp: new Date().toISOString(),
             teacherCode: enteredCode
         };
@@ -1346,6 +1415,27 @@ class TjTest extends HTMLElement {
         }
     }
 
+    getWrittenAnswersString() {
+        const shortAnswerPairs = [];
+        this.sections.forEach((sec) => {
+            sec.questions.forEach((q, qIdx) => {
+                const isShortAnswer = !q.o || q.o.length === 0;
+                if (isShortAnswer) {
+                    const ans = (this.userAnswers && this.userAnswers[`q_${sec.index}_${qIdx}`]) || '';
+                    shortAnswerPairs.push(`Q: ${q.q}\nA: ${ans}`);
+                }
+            });
+        });
+
+        const baseString = shortAnswerPairs.join('\n\n');
+        const tabAwayNote = (this.testMode && this.tabAwayCount > 0)
+            ? `[Tab Away Count: ${this.tabAwayCount}]`
+            : '';
+
+        if (!tabAwayNote) return baseString;
+        return baseString ? `${baseString}\n\n${tabAwayNote}` : tabAwayNote;
+    }
+
     getStorageKey() {
         return `tj_test_${location.pathname}_${this.activityTitle.replace(/\s+/g, '_')}`;
     }
@@ -1356,7 +1446,8 @@ class TjTest extends HTMLElement {
             sectionResults: this.sectionResults,
             testCompleted: this.testCompleted,
             tabAwayCount: this.tabAwayCount,
-            testUnlocked: this.testUnlocked
+            testUnlocked: this.testUnlocked,
+            userAnswers: this.userAnswers
         };
         try {
             localStorage.setItem(this.getStorageKey(), JSON.stringify(data));
@@ -1379,6 +1470,7 @@ class TjTest extends HTMLElement {
         this.testCompleted = saved.testCompleted || false;
         this.tabAwayCount = saved.tabAwayCount || 0;
         this.testUnlocked = saved.testUnlocked || false;
+        this.userAnswers = saved.userAnswers || {};
 
         this.updateTabAwayBanner();
         this.updateSecurityState();
@@ -1392,6 +1484,7 @@ class TjTest extends HTMLElement {
         this.testCompleted = false;
         this.tabAwayCount = 0;
         this.testUnlocked = false;
+        this.userAnswers = {};
         this.sectionResults = this.sections.map(() => ({ completed: false, passed: false, score: 0, total: 0, percentage: 0 }));
         this.updateTabAwayBanner();
         this.renderTestUI();
