@@ -1,6 +1,6 @@
 import stylesText from "./styles.css?inline";
 import templateHtml from "./template.html?raw";
-import { COMPONENT_CATALOG, getComponentByTag, SAMPLE_QUIZ_MD, SAMPLE_INFOGAP_JSON, SAMPLE_SPEED_JSON } from "../tj-catalog.js";
+import { COMPONENT_CATALOG, getComponentByTag, getDemoContent, SAMPLE_QUIZ_MD, SAMPLE_INFOGAP_JSON, SAMPLE_SPEED_JSON } from "../tj-catalog.js";
 import { openGeminiUrlWithTip } from "../tj-gemini-tip.js";
 import { showBuilderInstructionsTip } from "../tj-builder-tip.js";
 
@@ -64,11 +64,25 @@ class TjBuilder extends HTMLElement {
             });
         }, { threshold: 0.1 });
         observer.observe(this);
+
+        // Check for ?demo= component URL parameter
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const demoParam = urlParams.get('demo') || urlParams.get('load') || urlParams.get('component');
+            if (demoParam) {
+                this.loadDemo(demoParam);
+            }
+        } catch (e) {
+            // Ignore URL parameter parsing errors
+        }
     }
 
     _getCleanTagName(typeStr) {
         if (!typeStr) return 'tj-test';
-        const match = String(typeStr).match(/(tj-[a-z0-9-]+)/i);
+        const str = String(typeStr).toLowerCase();
+        if (str.includes('lbl-reader') || str.includes('tj-reader')) return 'tj-reader';
+        if (str.includes('grammar-hearts')) return 'tj-grammar-hearts';
+        const match = str.match(/(tj-[a-z0-9-]+)/i);
         if (match) {
             return match[1].toLowerCase();
         }
@@ -117,6 +131,7 @@ class TjBuilder extends HTMLElement {
         this.btnClearInput = this.shadowRoot.getElementById('btn-clear-input');
         
         this.selectComponentType = this.shadowRoot.getElementById('component-type-select');
+        this.btnLoadDemo = this.shadowRoot.getElementById('btn-load-demo');
         this.btnPasteClipboard = this.shadowRoot.getElementById('btn-paste-clipboard');
         
         this.geminiPromptOverlay = this.shadowRoot.getElementById('gemini-prompt-overlay');
@@ -376,6 +391,17 @@ class TjBuilder extends HTMLElement {
         });
         updateInputStats();
 
+        this.btnLoadDemo?.addEventListener('click', () => {
+            const selectedType = this.selectComponentType?.value || this.parsedState.componentType;
+            const demoContent = getDemoContent(selectedType);
+            if (demoContent) {
+                this._loadSample(demoContent, selectedType);
+                this._showToast(`Loaded demo for ${selectedType}`);
+            } else {
+                this._showToast('No demo available for selected component');
+            }
+        });
+
         this.btnClearInput?.addEventListener('click', () => {
             if (this.inputGemini) {
                 this.inputGemini.value = '';
@@ -609,9 +635,28 @@ class TjBuilder extends HTMLElement {
         }
     }
 
+    loadDemo(tagOrId) {
+        const demoContent = getDemoContent(tagOrId);
+        if (demoContent) {
+            const comp = getComponentByTag(tagOrId);
+            const targetTag = comp ? comp.tagName : tagOrId;
+            this._loadSample(demoContent, targetTag);
+            this._showToast(`Loaded demo for ${targetTag}`);
+            return true;
+        }
+        return false;
+    }
+
     _loadSample(sampleContent, componentType) {
-        this.inputGemini.value = sampleContent;
-        this.selectComponentType.value = this._getCleanTagName(componentType);
+        if (!this.inputGemini) return;
+        this.inputGemini.value = sampleContent || '';
+        if (this.inputCharCount) {
+            this.inputCharCount.textContent = `${this.inputGemini.value.length.toLocaleString()} chars`;
+        }
+        if (this.selectComponentType) {
+            this.selectComponentType.value = this._getCleanTagName(componentType);
+        }
+        this._checkOverlayVisibility();
         this._handleParseInput();
     }
 
@@ -644,7 +689,7 @@ class TjBuilder extends HTMLElement {
         let jsonObject = null;
 
         // 2. Check if raw contains custom element tag
-        const tagMatch = raw.match(/<(?:\s*)(tj-[a-z0-9-]+)[\s>]/i);
+        const tagMatch = raw.match(/<(?:\s*)(tj-[a-z0-9-]+|lbl-reader|grammar-hearts)[\s>]/i);
         if (tagMatch) {
             detectedType = tagMatch[1].toLowerCase();
             
@@ -691,10 +736,10 @@ class TjBuilder extends HTMLElement {
                 if (jsonObject.gaps) detectedType = 'tj-info-gap';
                 else if (jsonObject.chapters) detectedType = 'tj-chapter-book';
                 else if (jsonObject.deck || jsonObject.cards) detectedType = 'tj-speed-review';
-                else if (jsonObject.targetWords || jsonObject.words) detectedType = 'tj-pronunciation';
-                else if (jsonObject.heart || jsonObject.grammar) detectedType = 'tj-grammar-hearts';
-                else if (jsonObject.audio || jsonObject.lessons) detectedType = 'tj-listening';
-                else if (jsonObject.passages || jsonObject.pages) detectedType = 'tj-reader';
+                else if (jsonObject.targetWords || jsonObject.words || jsonObject.activities) detectedType = 'tj-pronunciation';
+                else if (jsonObject.heart || jsonObject.grammar || jsonObject.hearts || jsonObject.questions) detectedType = 'tj-grammar-hearts';
+                else if (jsonObject.audio || jsonObject.lessons || jsonObject.audioSrc) detectedType = 'tj-listening';
+                else if (jsonObject.passages || jsonObject.pages || Array.isArray(jsonObject)) detectedType = 'tj-reader';
             }
         } catch (e) {
             isJson = false;
