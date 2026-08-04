@@ -356,18 +356,63 @@ var t = class extends HTMLElement {
           font-family: 'Outfit', 'Inter', sans-serif;
           margin: 2em auto;
           color: #1e293b;
-          background: whitesmoke;
+          background: transparent;
+
+          --gh-text: #1e293b;
+          --gh-text-muted: #64748b;
+          --gh-container-bg: #f8fafc;
+          --gh-container-border: rgba(0,0,0,0.08);
+          --gh-option-bg: #ffffff;
+          --gh-option-border: #cbd5e1;
+          --gh-feedback-bg: rgba(0,0,0,0.03);
+          --gh-explanation-color: #475569;
+          --gh-badge-bg: #f1f5f9;
+          --gh-badge-border: #e2e8f0;
+          --gh-badge-color: #64748b;
+          --gh-input-bg: #f5f5f5;
+          --gh-input-border: #b2b2b2;
+          --gh-input-color: #1e293b;
+          --gh-label-color: #1e293b;
+          --gh-identity-bg: rgba(0,0,0,0.03);
+          --gh-identity-border: rgba(0,0,0,0.08);
+          --gh-card-bg: #f8fafc;
+          --gh-card-border: #e2e8f0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          :host {
+            color: #e2e8f0;
+            --gh-text: #e2e8f0;
+            --gh-text-muted: #94a3b8;
+            --gh-container-bg: #1e293b;
+            --gh-container-border: rgba(255,255,255,0.08);
+            --gh-option-bg: #0f172a;
+            --gh-option-border: #475569;
+            --gh-feedback-bg: rgba(255,255,255,0.05);
+            --gh-explanation-color: #94a3b8;
+            --gh-badge-bg: #334155;
+            --gh-badge-border: #475569;
+            --gh-badge-color: #94a3b8;
+            --gh-input-bg: #0f172a;
+            --gh-input-border: #475569;
+            --gh-input-color: #e2e8f0;
+            --gh-label-color: #94a3b8;
+            --gh-identity-bg: rgba(255,255,255,0.03);
+            --gh-identity-border: rgba(255,255,255,0.1);
+            --gh-card-bg: #1e293b;
+            --gh-card-border: #475569;
+          }
         }
 
         .container {
-          background: white;
-          backdrop-filter: blur(12px);
-          border-radius: 2em;
+          background: var(--gh-container-bg);
+          border-radius: 1.5em;
           padding: 2em;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-          border: 1px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+          border: 1px solid var(--gh-container-border);
           position: relative;
           overflow: hidden;
+          color: var(--gh-text);
         }
 
         .header {
@@ -375,6 +420,8 @@ var t = class extends HTMLElement {
           flex-direction: column;
           gap: 1em;
           margin-bottom: 2em;
+          border-bottom: 1px solid var(--gh-container-border);
+          padding-bottom: 1em;
         }
 
         .header-top-row {
@@ -386,7 +433,7 @@ var t = class extends HTMLElement {
 
         .question-indicator {
           font-weight: 700;
-          color: #64748b;
+          color: var(--gh-text-muted);
           font-size: 0.95em;
           display: flex;
           align-items: center;
@@ -394,7 +441,7 @@ var t = class extends HTMLElement {
         }
 
         .question-indicator span {
-          color: #1e293b;
+          color: var(--gh-text);
         }
 
         .score-pill {
@@ -516,7 +563,7 @@ var t = class extends HTMLElement {
         h2 {
           margin: 0 0 0.5em 0;
           font-size: 1.5em;
-          background: linear-gradient(135deg, #1e293b, #3b82f6);
+          background: linear-gradient(135deg, var(--gh-text), #3b82f6);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
         }
@@ -524,7 +571,7 @@ var t = class extends HTMLElement {
         .instruction {
           font-size: 0.9em;
           font-weight: 600;
-          color: #64748b;
+          color: var(--gh-text-muted);
           margin-bottom: 0.5em;
           text-transform: uppercase;
           letter-spacing: 0.05em;
@@ -532,7 +579,7 @@ var t = class extends HTMLElement {
 
         .hint-content {
           line-height: 1.6;
-          color: #475569;
+          color: var(--gh-explanation-color);
           margin-bottom: 2em;
         }
 
@@ -564,18 +611,19 @@ var t = class extends HTMLElement {
           padding: 1em;
           margin-bottom: 0.8em;
           text-align: left;
-          background: white;
-          border: 2px solid #f1f5f9;
-          border-radius: 1em;
+          background: var(--gh-option-bg);
+          border: 2px solid var(--gh-option-border);
+          border-radius: 0.8em;
           cursor: pointer;
           transition: all 0.2s;
           font-size: 1em;
-          color: #334155;
+          color: var(--gh-text);
+          font-weight: 600;
         }
 
         .option-btn:hover:not(:disabled) {
           border-color: #3b82f6;
-          background: #f8fafc;
+          background: var(--gh-container-bg);
         }
 
         .option-btn:disabled {
@@ -601,16 +649,17 @@ var t = class extends HTMLElement {
           gap: 0.5em;
           min-height: 3em;
           padding: 1em;
-          background: #f8fafc;
+          background: var(--gh-card-bg);
           border-radius: 1em;
           margin-bottom: 1em;
-          border: 2px dashed #e2e8f0;
+          border: 2px dashed var(--gh-card-border);
         }
 
         .scramble-token {
           padding: 0.5em 1em;
-          background: white;
-          border: 1px solid #e2e8f0;
+          background: var(--gh-option-bg);
+          border: 1px solid var(--gh-option-border);
+          color: var(--gh-text);
           border-radius: 0.6em;
           cursor: pointer;
           transition: all 0.2s;
@@ -625,8 +674,10 @@ var t = class extends HTMLElement {
         .input-field {
           width: 100%;
           padding: 1em;
-          border: 2px solid #e2e8f0;
-          border-radius: 1em;
+          background: var(--gh-input-bg);
+          color: var(--gh-input-color);
+          border: 1px solid var(--gh-input-border);
+          border-radius: 0.8em;
           font-size: 1em;
           margin-bottom: 1.5em;
           box-sizing: border-box;
@@ -659,21 +710,21 @@ var t = class extends HTMLElement {
 
         .hint-collapsible {
           margin-top: 1.5em;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--gh-card-border);
           border-radius: 1em;
           overflow: hidden;
-          background: rgba(248, 250, 252, 0.5);
+          background: var(--gh-card-bg);
           transition: all 0.3s ease;
         }
 
         .hint-toggle {
           width: 100%;
           padding: 1em;
-          background: #f1f5f9;
+          background: var(--gh-badge-bg);
           border: none;
           text-align: left;
           font-weight: 600;
-          color: #475569;
+          color: var(--gh-text-muted);
           cursor: pointer;
           display: flex;
           justify-content: space-between;
@@ -682,7 +733,7 @@ var t = class extends HTMLElement {
         }
 
         .hint-toggle:hover {
-          background: #e2e8f0;
+          background: var(--gh-card-border);
         }
 
         .hint-toggle-icon {
@@ -703,8 +754,9 @@ var t = class extends HTMLElement {
         .hint-drawer.open {
           max-height: 500px;
           padding: 1em;
-          border-top: 1px solid #e2e8f0;
+          border-top: 1px solid var(--gh-card-border);
         }
+
         .feedback-box {
           margin-top: 1.5em;
           padding: 1.25em;
@@ -739,7 +791,7 @@ var t = class extends HTMLElement {
         .feedback-explanation {
           font-size: 0.95em;
           line-height: 1.5;
-          color: #475569;
+          color: var(--gh-explanation-color);
         }
 
         .next-btn {
@@ -768,7 +820,7 @@ var t = class extends HTMLElement {
           display: block;
           font-size: 0.8em;
           font-weight: 600;
-          color: #64748b;
+          color: var(--gh-text-muted);
           text-transform: uppercase;
           letter-spacing: 0.05em;
           margin-bottom: 0.4em;
@@ -776,7 +828,9 @@ var t = class extends HTMLElement {
         .form-field {
           width: 100%;
           padding: 0.9em;
-          border: 2px solid #e2e8f0;
+          background: var(--gh-input-bg);
+          color: var(--gh-input-color);
+          border: 1px solid var(--gh-input-border);
           border-radius: 0.8em;
           font-size: 1em;
           box-sizing: border-box;
@@ -794,13 +848,13 @@ var t = class extends HTMLElement {
         .rc-title {
           font-size: 1.2em;
           font-weight: 700;
-          color: #1e293b;
+          color: var(--gh-text);
           background: none;
           -webkit-text-fill-color: initial;
         }
         .rc-subtitle {
           font-size: 0.85em;
-          color: #94a3b8;
+          color: var(--gh-text-muted);
           text-transform: uppercase;
           letter-spacing: 0.1em;
         }
@@ -808,16 +862,16 @@ var t = class extends HTMLElement {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          background: #f8fafc;
+          background: var(--gh-card-bg);
           border-radius: 0.8em;
           padding: 0.8em 1em;
           margin-bottom: 1em;
           font-size: 0.9em;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--gh-card-border);
         }
-        .rc-label { color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.8em; }
-        .rc-value { color: #1e293b; font-weight: 600; }
-        .rc-number { color: #94a3b8; font-size: 0.9em; }
+        .rc-label { color: var(--gh-text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.8em; }
+        .rc-value { color: var(--gh-text); font-weight: 600; }
+        .rc-number { color: var(--gh-text-muted); font-size: 0.9em; }
         .best-score-highlight {
           background: rgba(251, 191, 36, 0.1);
           border: 1px solid rgba(251, 191, 36, 0.4);
@@ -862,7 +916,7 @@ var t = class extends HTMLElement {
         .rc-score-label {
           font-size: 1em;
           font-weight: 700;
-          color: #1e293b;
+          color: var(--gh-text);
           text-align: left;
         }
         .rc-bar-track {
@@ -879,32 +933,32 @@ var t = class extends HTMLElement {
           transition: width 0.5s ease;
         }
         .rc-details {
-          background: #f8fafc;
+          background: var(--gh-card-bg);
           border-radius: 0.8em;
           padding: 1em;
           margin-bottom: 1em;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--gh-card-border);
         }
         .rc-detail-row {
           display: flex;
           justify-content: space-between;
           font-size: 0.85em;
-          color: #64748b;
+          color: var(--gh-text-muted);
           padding: 0.3em 0;
         }
-        .rc-detail-row span:last-child { color: #1e293b; font-weight: 600; }
+        .rc-detail-row span:last-child { color: var(--gh-text); font-weight: 600; }
         .rc-submission-box {
           margin-top: 1em;
           padding: 1em;
-          background: #f8fafc;
+          background: var(--gh-card-bg);
           border-radius: 0.8em;
-          border: 1px dashed #cbd5e1;
+          border: 1px dashed var(--gh-card-border);
           text-align: left;
         }
         .rc-submission-box p {
           margin: 0 0 8px 0;
           font-size: 0.8em;
-          color: #64748b;
+          color: var(--gh-text-muted);
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.05em;
@@ -913,7 +967,9 @@ var t = class extends HTMLElement {
           width: 100%;
           box-sizing: border-box;
           padding: 0.7em;
-          border: 1px solid #cbd5e1;
+          background: var(--gh-input-bg);
+          color: var(--gh-input-color);
+          border: 1px solid var(--gh-input-border);
           border-radius: 0.5em;
           font-size: 0.9em;
           margin-bottom: 4px;
@@ -924,7 +980,7 @@ var t = class extends HTMLElement {
         .rc-helper-text {
           margin: 4px 0 0 0;
           font-size: 0.75em;
-          color: #94a3b8;
+          color: var(--gh-text-muted);
         }
         .rc-submit-btn {
           margin-top: 1em;
@@ -958,7 +1014,7 @@ var t = class extends HTMLElement {
         .version-text {
           text-align: center;
           font-size: 0.75em;
-          color: #64748b;
+          color: var(--gh-text-muted);
           margin-top: 1em;
           opacity: 0.9;
         }
