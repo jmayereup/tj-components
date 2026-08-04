@@ -3,11 +3,11 @@
 .tj-test-wrapper {
   max-width: 900px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1em;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.5em;
 }
 
 /* Header & Section Stepper */
@@ -16,11 +16,11 @@
   backdrop-filter: var(--tj-backdrop-blur);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-lg);
-  padding: 1.25rem 1.5rem;
+  padding: 1.25em 1.5em;
   box-shadow: var(--tj-shadow-md);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1em;
 }
 
 .tj-header-title-row {
@@ -30,7 +30,7 @@
 }
 
 .tj-test-title {
-  font-size: 1.4rem;
+  font-size: 1.4em;
   font-weight: 700;
   color: var(--tj-text-main);
   margin: 0;
@@ -40,9 +40,9 @@
 .tj-section-stepper {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.5em;
   overflow-x: auto;
-  padding: 0.25rem 0.25rem 0.5rem 0.25rem;
+  padding: 0.25em 0.25em 0.5em 0.25em;
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--tj-border-main) transparent;
@@ -65,10 +65,10 @@
 .tj-stepper-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.9rem;
+  gap: 0.5em;
+  padding: 0.45em 0.9em;
   border-radius: var(--tj-border-radius-full);
-  font-size: 0.88rem;
+  font-size: 0.88em;
   font-weight: 600;
   border: 1px solid var(--tj-border-main);
   background: var(--tj-bg-alt);
@@ -111,13 +111,13 @@
 }
 
 .tj-stepper-icon {
-  font-size: 0.75rem;
+  font-size: 0.75em;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.3rem;
-  height: 1.3rem;
+  width: 1.3em;
+  height: 1.3em;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
@@ -143,18 +143,18 @@
 .tj-main-content {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.5em;
 }
 
 .tj-section-card {
   background: var(--tj-bg-card);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-lg);
-  padding: 1.75rem;
+  padding: 1.75em;
   box-shadow: var(--tj-shadow-md);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.25em;
   animation: tj-fadeIn 0.3s ease;
 }
 
@@ -162,15 +162,15 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.4rem;
+  gap: 0.4em;
   border-bottom: 1px dashed var(--tj-border-main);
-  padding-bottom: 0.75rem;
+  padding-bottom: 0.75em;
 }
 
 .tj-section-title-badge {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.75em;
   flex-wrap: wrap;
 }
 
@@ -178,9 +178,9 @@
   background: var(--tj-primary-light);
   color: var(--tj-primary-color);
   border: 1px solid var(--tj-primary-border);
-  padding: 0.25rem 0.65rem;
+  padding: 0.25em 0.65em;
   border-radius: var(--tj-border-radius-sm);
-  font-size: 0.85rem;
+  font-size: 0.85em;
   font-weight: 700;
   text-transform: uppercase;
   white-space: nowrap;
@@ -188,7 +188,7 @@
 }
 
 .tj-pass-threshold-info {
-  font-size: 0.85rem;
+  font-size: 0.85em;
   color: var(--tj-text-muted);
   font-weight: 600;
 }
@@ -197,9 +197,9 @@
 .tj-passage-box {
   background: var(--tj-bg-alt);
   border-left: 4px solid var(--tj-primary-color);
-  padding: 1.25rem;
+  padding: 1.25em;
   border-radius: var(--tj-border-radius-sm);
-  font-size: 1.05rem;
+  font-size: 1.05em;
   line-height: 1.7;
   color: var(--tj-text-main);
   position: relative;
@@ -208,9 +208,9 @@
 .tj-passage-audio-bar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
+  gap: 0.75em;
+  margin-top: 0.75em;
+  padding-top: 0.75em;
   border-top: 1px solid var(--tj-border-light);
 }
 
@@ -219,18 +219,18 @@
   background: var(--tj-bg-alt);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-md);
-  padding: 1.25rem;
+  padding: 1.25em;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.85em;
 }
 
 .tj-question-situation {
-  font-size: 0.95rem;
+  font-size: 0.95em;
   font-weight: 600;
   color: var(--tj-text-muted, #64748b);
   background: var(--tj-bg-card);
-  padding: 0.6rem 0.9rem;
+  padding: 0.6em 0.9em;
   border-left: 3px solid var(--tj-primary-color, #3b82f6);
   border-radius: var(--tj-border-radius-sm);
   line-height: 1.4;
@@ -239,7 +239,7 @@
 
 .tj-question-title {
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: 1.05em;
   color: var(--tj-text-main);
   margin: 0;
   white-space: pre-wrap;
@@ -249,20 +249,20 @@
 .tj-options-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.5em;
 }
 
 .tj-option-label {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0.9rem;
+  gap: 0.75em;
+  padding: 0.65em 0.9em;
   background: var(--tj-bg-card);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-sm);
   cursor: pointer;
   transition: var(--tj-transition-fast);
-  font-size: 0.95rem;
+  font-size: 0.95em;
 }
 
 .tj-option-label:hover {
@@ -280,7 +280,7 @@
 .tj-written-container {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.5em;
   width: 100%;
 }
 
@@ -288,13 +288,13 @@
   width: 100%;
   box-sizing: border-box;
   min-height: 90px;
-  padding: 0.75rem;
+  padding: 0.75em;
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-sm);
   background: var(--tj-bg-card);
   color: var(--tj-text-main);
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 0.95em;
   line-height: 1.5;
   resize: vertical;
   transition: var(--tj-transition-fast);
@@ -310,7 +310,7 @@
 .tj-vocab-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1em;
 }
 
 .tj-vocab-table {
@@ -323,7 +323,7 @@
 }
 
 .tj-vocab-th, .tj-vocab-td {
-  padding: 0.75rem 1rem;
+  padding: 0.75em 1em;
   border-bottom: 1px solid var(--tj-border-main);
   text-align: left;
 }
@@ -332,12 +332,12 @@
   background: var(--tj-bg-alt);
   font-weight: 700;
   color: var(--tj-text-muted);
-  font-size: 0.9rem;
+  font-size: 0.9em;
 }
 
 .tj-vocab-select {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.5em;
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-sm);
   background: var(--tj-bg-card);
@@ -347,35 +347,35 @@
 /* Cloze Fill in the Blanks */
 .tj-cloze-box {
   background: var(--tj-bg-alt);
-  padding: 1.25rem;
+  padding: 1.25em;
   border-radius: var(--tj-border-radius-md);
   line-height: 2.2;
-  font-size: 1.05rem;
+  font-size: 1.05em;
 }
 
 .tj-cloze-word-bank {
   background: var(--tj-bg-card);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-sm);
-  padding: 0.85rem 1rem;
-  margin-bottom: 1rem;
+  padding: 0.85em 1em;
+  margin-bottom: 1em;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .tj-cloze-bank-title {
-  font-size: 0.8rem;
+  font-size: 0.8em;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--tj-text-muted);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.5em;
   line-height: 1;
 }
 
 .tj-cloze-bank-words {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.5em;
   align-items: center;
 }
 
@@ -383,9 +383,9 @@
   background: var(--tj-bg-alt);
   color: var(--tj-primary-color);
   border: 1px solid var(--tj-border-main);
-  padding: 0.25rem 0.65rem;
+  padding: 0.25em 0.65em;
   border-radius: 6px;
-  font-size: 0.95rem;
+  font-size: 0.95em;
   font-weight: 600;
   user-select: none;
   cursor: pointer;
@@ -431,12 +431,12 @@
 .tj-cloze-input {
   display: inline-block;
   width: 120px;
-  padding: 0.25rem 0.5rem;
-  margin: 0 0.25rem;
+  padding: 0.25em 0.5em;
+  margin: 0 0.25em;
   border: 1px solid var(--tj-border-main);
   border-bottom: 2px solid var(--tj-primary-color);
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 1em;
   text-align: center;
   background: var(--tj-bg-card);
   color: var(--tj-text-main);
@@ -472,7 +472,7 @@
   background: var(--tj-bg-card);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-lg);
-  padding: 2rem;
+  padding: 2em;
   max-width: 480px;
   width: 90%;
   box-shadow: var(--tj-shadow-lg);
@@ -480,28 +480,28 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 1rem;
+  gap: 1em;
   box-sizing: border-box;
 }
 
 .tj-result-icon {
-  font-size: 3rem;
+  font-size: 3em;
   line-height: 1;
 }
 
 .tj-score-badge {
-  font-size: 2.2rem;
+  font-size: 2.2em;
   font-weight: 800;
   color: var(--tj-primary-color);
   background: var(--tj-primary-light);
-  padding: 0.4rem 1.2rem;
+  padding: 0.4em 1.2em;
   border-radius: var(--tj-border-radius-md);
   border: 1px solid var(--tj-primary-border);
 }
 
 .tj-result-msg {
   color: var(--tj-text-muted);
-  font-size: 1rem;
+  font-size: 1em;
   margin: 0;
 }
 
@@ -510,21 +510,21 @@
   background: var(--tj-bg-card);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-lg);
-  padding: 2rem;
+  padding: 2em;
   box-shadow: var(--tj-shadow-lg);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.5em;
   text-align: center;
 }
 
 .tj-final-score-badge {
   background: linear-gradient(135deg, #2563eb, #7c3aed);
   color: white;
-  padding: 0.75rem 1.75rem;
+  padding: 0.75em 1.75em;
   border-radius: var(--tj-border-radius-full);
-  font-size: 1.4rem;
+  font-size: 1.4em;
   font-weight: 800;
   letter-spacing: 0.05em;
   box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
@@ -533,12 +533,12 @@
 .tj-summary-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
-  font-size: 0.95rem;
+  margin-top: 1em;
+  font-size: 0.95em;
 }
 
 .tj-summary-table th, .tj-summary-table td {
-  padding: 0.75rem 1rem;
+  padding: 0.75em 1em;
   border-bottom: 1px solid var(--tj-border-main);
   text-align: left;
 }
@@ -550,9 +550,9 @@
 
 .tj-status-tag {
   display: inline-block;
-  padding: 0.2rem 0.5rem;
+  padding: 0.2em 0.5em;
   border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 0.8em;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -574,32 +574,32 @@
   background: var(--tj-bg-alt);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-md);
-  padding: 1.25rem;
+  padding: 1.25em;
   box-sizing: border-box;
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
+  gap: 0.75em;
+  margin-top: 0.5em;
 }
 
 .tj-written-answers-title {
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1.05em;
   color: var(--tj-text-main);
   border-bottom: 1px dashed var(--tj-border-main);
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.5em;
 }
 
 .tj-written-qa {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.6rem 0.75rem;
+  gap: 0.25em;
+  padding: 0.6em 0.75em;
   background: var(--tj-bg-card);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-sm);
-  font-size: 0.95rem;
+  font-size: 0.95em;
 }
 
 .tj-written-question {
@@ -615,21 +615,21 @@
 }
 
 .tj-score-note-written {
-  font-size: 0.85rem;
+  font-size: 0.85em;
   color: var(--tj-text-muted);
   font-style: italic;
-  margin-top: 0.25rem;
+  margin-top: 0.25em;
 }
 
 /* Warnings & Banners */
 .tj-banner {
-  padding: 0.85rem 1.25rem;
+  padding: 0.85em 1.25em;
   border-radius: var(--tj-border-radius-md);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.9em;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.5em;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -641,7 +641,7 @@
 
 .tj-error-msg {
   color: var(--tj-error-color);
-  font-size: 0.85rem;
+  font-size: 0.85em;
   font-weight: 600;
 }
 
@@ -653,7 +653,7 @@
 .voice-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.5em;
   max-height: 250px;
   overflow-y: auto;
   width: 100%;
@@ -663,13 +663,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.6rem 0.9rem;
+  padding: 0.6em 0.9em;
   background: var(--tj-bg-alt);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-sm);
   color: var(--tj-text-main);
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.9em;
 }
 
 .voice-option-btn.active {
@@ -681,9 +681,9 @@
 .voice-option-btn .badge {
   background: var(--tj-primary-color);
   color: white;
-  padding: 0.15rem 0.4rem;
+  padding: 0.15em 0.4em;
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: 0.75em;
 }
 
 /* Submission Box */
@@ -693,18 +693,18 @@
   background: var(--tj-bg-alt);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-md);
-  padding: 1.25rem;
+  padding: 1.25em;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.75em;
   text-align: left;
-  margin-top: 1rem;
+  margin-top: 1em;
 }
 
 .tj-submission-row {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.75em;
   flex-wrap: wrap;
   align-items: center;
 }
@@ -712,12 +712,12 @@
 .tj-submission-input {
   flex: 1;
   min-width: 200px;
-  padding: 0.6rem 0.85rem;
+  padding: 0.6em 0.85em;
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-sm);
   background: var(--tj-bg-card);
   color: var(--tj-text-main);
-  font-size: 0.95rem;
+  font-size: 0.95em;
   box-sizing: border-box;
 }
 
@@ -725,4 +725,3 @@
   outline: none;
   border-color: var(--tj-primary-color);
 }
-

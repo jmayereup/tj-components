@@ -77,6 +77,7 @@
   /* Component Base Styles */
   display: block;
   font-family: var(--tj-font-family);
+  font-size: var(--tj-font-size-base, 16px);
   color: var(--tj-text-main);
   background-color: transparent;
   position: relative;

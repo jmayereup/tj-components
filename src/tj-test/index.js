@@ -867,7 +867,7 @@ class TjTest extends HTMLElement {
                 });
 
                 clozeBox.innerHTML = `
-                    <h4 style="margin-top: 0; color: var(--tj-text-main); margin-bottom: 0.75rem;">Fill in the Blanks</h4>
+                    <h4 style="margin-top: 0; color: var(--tj-text-main); margin-bottom: 0.75em;">Fill in the Blanks</h4>
                     ${bankHtml}
                     <div class="tj-cloze-text">${replacedText}</div>
                 `;
@@ -1064,7 +1064,7 @@ class TjTest extends HTMLElement {
         submitBtn.type = 'button';
         submitBtn.className = 'tj-btn tj-btn-primary';
         submitBtn.style.alignSelf = 'flex-end';
-        submitBtn.style.marginTop = '1rem';
+        submitBtn.style.marginTop = '1em';
         submitBtn.textContent = this.sections.length > 1 ? `Submit Section ${section.index + 1}` : 'Submit Test';
         submitBtn.onclick = () => this.evaluateActiveSection();
 
@@ -1264,7 +1264,7 @@ class TjTest extends HTMLElement {
         }
 
         reportContainer.innerHTML = `
-            <h3 class="tj-h3" style="font-size: 1.6rem; margin: 0;">Test Summary</h3>
+            <h3 class="tj-h3" style="font-size: 1.6em; margin: 0;">Test Summary</h3>
             <div class="tj-final-score-badge">YOUR SCORE: ${highestPassedTitle.toUpperCase()}</div>
             <p style="color: var(--tj-text-muted); max-width: 600px;">
                 Based on your test performance, your score has been evaluated and verified.
@@ -1288,7 +1288,7 @@ class TjTest extends HTMLElement {
             ${this.submissionUrl ? `
             <div class="tj-submission-box">
                 <h4 style="margin: 0; color: var(--tj-text-main);">Submit Score Report</h4>
-                <p style="margin: 0; font-size: 0.9rem; color: var(--tj-text-muted);">
+                <p style="margin: 0; font-size: 0.9em; color: var(--tj-text-muted);">
                     Enter your Submit Code to log results to your teacher's spreadsheet, or take a screenshot of this page.
                 </p>
                 <div class="tj-submission-row">
@@ -1300,8 +1300,8 @@ class TjTest extends HTMLElement {
                 <div id="submitStatusMsg" class="tj-error-msg hidden"></div>
             </div>
             ` : ''}
-            <div class="tj-banner" style="background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.3); color: #38bdf8; border-radius: 8px; padding: 0.85rem 1.25rem; margin-top: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.6rem; max-width: 600px; width: 100%; box-sizing: border-box;">
-                <span style="font-size: 1.3rem;">📸</span>
+            <div class="tj-banner" style="background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.3); color: #38bdf8; border-radius: 8px; padding: 0.85em 1.25em; margin-top: 0.5em; font-weight: 600; display: flex; align-items: center; gap: 0.6em; max-width: 600px; width: 100%; box-sizing: border-box;">
+                <span style="font-size: 1.3em;">📸</span>
                 <span>${this.submissionUrl ? 'Alternatively, take' : 'Take'} a screenshot of this summary table to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
             </div>
         `;
