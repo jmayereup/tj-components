@@ -87,6 +87,14 @@ class TjGrammarHearts extends HTMLElement {
     }
   }
 
+  _decodeHTMLEntities(str) {
+    if (!str || typeof str !== 'string') return str;
+    if (!str.includes('&')) return str;
+    const txt = document.createElement('textarea');
+    txt.innerHTML = str;
+    return txt.value;
+  }
+
   async loadData() {
     try {
       const resolved = resolveComponentParams(this);
@@ -124,12 +132,21 @@ class TjGrammarHearts extends HTMLElement {
       else if (this.querySelector('script[type="application/json"]')) {
           jsonText = this.querySelector('script[type="application/json"]').textContent.trim();
       }
+      else if (this.querySelector('script[type="text/plain"]')) {
+          jsonText = this.querySelector('script[type="text/plain"]').textContent.trim();
+      }
+      else if (this.querySelector('script')) {
+          jsonText = this.querySelector('script').textContent.trim();
+      }
       // 5. Default: Text Content
       else {
           jsonText = this.textContent.trim();
       }
       
       if (!jsonText) return;
+
+      // Decode HTML entities (handles Google Sites HTML sanitizer escaping)
+      jsonText = this._decodeHTMLEntities(jsonText);
 
       // Pre-process: escape literal newlines inside JSON strings
       const sanitized = jsonText.replace(/"((?:\\.|[^"\\])*)"/gs, (match, p1) => {

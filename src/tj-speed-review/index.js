@@ -108,6 +108,14 @@ class TjSpeedReview extends HTMLElement {
     }
   }
 
+  _decodeHTMLEntities(str) {
+    if (!str || typeof str !== 'string') return str;
+    if (!str.includes('&')) return str;
+    const txt = document.createElement('textarea');
+    txt.innerHTML = str;
+    return txt.value;
+  }
+
   async loadData() {
     try {
       const resolved = resolveComponentParams(this);
@@ -143,6 +151,15 @@ class TjSpeedReview extends HTMLElement {
       else if (this.querySelector('script[type="application/json"]')) {
           jsonText = this.querySelector('script[type="application/json"]').textContent.trim();
       }
+      else if (this.querySelector('script[type="text/markdown"]')) {
+          jsonText = this.querySelector('script[type="text/markdown"]').textContent.trim();
+      }
+      else if (this.querySelector('script[type="text/plain"]')) {
+          jsonText = this.querySelector('script[type="text/plain"]').textContent.trim();
+      }
+      else if (this.querySelector('script')) {
+          jsonText = this.querySelector('script').textContent.trim();
+      }
       // 5. Default: Text Content
       else {
           jsonText = this.textContent.trim();
@@ -150,18 +167,67 @@ class TjSpeedReview extends HTMLElement {
 
       if (!jsonText) return;
 
+      // Decode HTML entities (handles Google Sites HTML sanitizer escaping)
+      jsonText = this._decodeHTMLEntities(jsonText);
+
       // Pre-process: escape literal newlines inside JSON strings
       const sanitized = jsonText.replace(/"((?:\\.|[^"\\])*)"/gs, (match, p1) => {
         return '"' + p1.replace(/\n/g, '\\n').replace(/\r/g, '\\r') + '"';
       });
 
-      let data = JSON.parse(sanitized);
-      this._processParsedData(data);
+      try {
+        let data = JSON.parse(sanitized);
+        this._processParsedData(data);
+      } catch (jsonErr) {
+        // Fallback: Try parsing Markdown format
+        const mdQuestions = this._parseMarkdownQuestions(jsonText);
+        if (mdQuestions.length > 0) {
+          this.questions = mdQuestions;
+        } else {
+          throw jsonErr;
+        }
+      }
+
       this.innerHTML = ''; // Only clear after successful parse
     } catch (e) {
-      console.error('Failed to parse JSON for tj-speed-review', e);
+      console.error('Failed to parse data for tj-speed-review', e);
       this.shadowRoot.innerHTML = `<div class="error-msg">Error loading quiz data. Check console.</div>`;
     }
+  }
+
+  _parseMarkdownQuestions(text) {
+    const lines = text.split('\n');
+    const questions = [];
+    let currentTitle = '';
+    let currentQ = null;
+
+    for (let rawLine of lines) {
+      const line = rawLine.trim();
+      if (!line) continue;
+
+      if (!currentQ && !line.startsWith('Q:') && !line.startsWith('Q.') && !line.startsWith('A:') && !line.startsWith('---')) {
+        if (!text.includes('---') && !currentTitle) currentTitle = line;
+      }
+
+      if (line.startsWith('Q:') || line.startsWith('Q.')) {
+        if (currentQ && currentQ.q && currentQ.o.length > 0) {
+          questions.push(currentQ);
+        }
+        const qVal = line.replace(/^Q[:\.]\s*/i, '').trim();
+        currentQ = { q: qVal, o: [], a: '' };
+      } else if (line.startsWith('A:') && currentQ) {
+        const ansText = line.substring(2).trim();
+        const isCorrect = ansText.includes('[correct]');
+        const cleanAns = ansText.replace('[correct]', '').trim();
+        currentQ.o.push(cleanAns);
+        if (isCorrect) currentQ.a = cleanAns;
+      }
+    }
+    if (currentQ && currentQ.q && currentQ.o.length > 0) {
+      questions.push(currentQ);
+    }
+    if (currentTitle) this.activityTitle = currentTitle;
+    return questions;
   }
 
   _processParsedData(data) {

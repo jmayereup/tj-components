@@ -52,6 +52,11 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 	_normalizeText(e) {
 		return typeof e == "string" ? e.trim().toLowerCase().replace(/['’‘]/g, "'").replace(/["“”]/g, "\"").replace(/\s+/g, " ") : String(e || "");
 	}
+	_decodeHTMLEntities(e) {
+		if (!e || typeof e != "string" || !e.includes("&")) return e;
+		let t = document.createElement("textarea");
+		return t.innerHTML = e, t.value;
+	}
 	connectedCallback() {
 		this._visibilityHandler = () => this._handleVisibilityChange(), document.addEventListener("visibilitychange", this._visibilityHandler), requestAnimationFrame(async () => {
 			let e = r(this);
@@ -63,8 +68,8 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 			} catch (e) {
 				console.error("Error loading quiz content from dataUrl:", e);
 			}
-			else this.querySelector("script[type=\"text/markdown\"]") ? this.originalContent = this.querySelector("script[type=\"text/markdown\"]").textContent : this.querySelector("script[type=\"application/json\"]") ? this.originalContent = this.querySelector("script[type=\"application/json\"]").textContent : this.originalContent = this.textContent;
-			if (this.hasAttribute("submission-url") && (this.submissionUrl = this.getAttribute("submission-url")), this.loadTemplate(), this.setAttribute("translate", "no"), this.classList.add("notranslate"), !document.querySelector("meta[name=\"google\"][content=\"notranslate\"]")) {
+			else this.querySelector("script[type=\"text/markdown\"]") ? this.originalContent = this.querySelector("script[type=\"text/markdown\"]").textContent : this.querySelector("script[type=\"application/json\"]") ? this.originalContent = this.querySelector("script[type=\"application/json\"]").textContent : this.querySelector("script[type=\"text/plain\"]") ? this.originalContent = this.querySelector("script[type=\"text/plain\"]").textContent : this.querySelector("script") ? this.originalContent = this.querySelector("script").textContent : this.originalContent = this.textContent;
+			if (this.originalContent = this._decodeHTMLEntities(this.originalContent), this.hasAttribute("submission-url") && (this.submissionUrl = this.getAttribute("submission-url")), this.loadTemplate(), this.setAttribute("translate", "no"), this.classList.add("notranslate"), !document.querySelector("meta[name=\"google\"][content=\"notranslate\"]")) {
 				let e = document.createElement("meta");
 				e.name = "google", e.content = "notranslate", document.head.appendChild(e);
 			}
@@ -1164,5 +1169,5 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 		s && s.classList.add("hidden"), this.saveCurrentStateToLocalStorage();
 	}
 };
-customElements.define("tj-quiz-element", o);
+customElements.get("tj-quiz-element") || customElements.define("tj-quiz-element", o), customElements.get("quiz-element") || customElements.define("quiz-element", class extends o {});
 //#endregion

@@ -114,6 +114,14 @@ class TjTest extends HTMLElement {
         }
     }
 
+    _decodeHTMLEntities(str) {
+        if (!str || typeof str !== 'string') return str;
+        if (!str.includes('&')) return str;
+        const txt = document.createElement('textarea');
+        txt.innerHTML = str;
+        return txt.value;
+    }
+
     connectedCallback() {
         this._visibilityHandler = () => this._handleVisibilityChange();
         document.addEventListener('visibilitychange', this._visibilityHandler);
@@ -123,8 +131,10 @@ class TjTest extends HTMLElement {
             // Resolve submission-url property explicitly or fall back to resolved default
             this.submissionUrl = this.getAttribute('submission-url') || this.getAttribute('submission_url') || resolved.submissionUrl || '';
 
-            // Load content from config, url, script tag, or inner text
-            if (this.hasAttribute('config')) {
+            // Load content from config property, config attribute, url, script tag, or inner text
+            if (this.config) {
+                this.originalContent = typeof this.config === 'object' ? JSON.stringify(this.config) : String(this.config);
+            } else if (this.hasAttribute('config')) {
                 this.originalContent = this.getAttribute('config');
             } else if (resolved.dataUrl) {
                 try {
@@ -137,9 +147,16 @@ class TjTest extends HTMLElement {
                 this.originalContent = this.querySelector('script[type="text/markdown"]').textContent;
             } else if (this.querySelector('script[type="application/json"]')) {
                 this.originalContent = this.querySelector('script[type="application/json"]').textContent;
+            } else if (this.querySelector('script[type="text/plain"]')) {
+                this.originalContent = this.querySelector('script[type="text/plain"]').textContent;
+            } else if (this.querySelector('script')) {
+                this.originalContent = this.querySelector('script').textContent;
             } else {
                 this.originalContent = this.textContent;
             }
+
+            // Decode HTML entities (handles Google Sites HTML sanitizer escaping)
+            this.originalContent = this._decodeHTMLEntities(this.originalContent);
 
             this.loadTemplate();
             this.setupSecurityListeners();
@@ -375,6 +392,12 @@ class TjTest extends HTMLElement {
             const headerLine = (blockLines[0] || '').trim().toLowerCase();
             const bodyContent = blockLines.slice(1).join('\n');
 
+            const isKnownType = headerLine.startsWith('section') || 
+                                headerLine.startsWith('text') || 
+                                headerLine.startsWith('questions') || 
+                                headerLine.startsWith('vocab') || 
+                                headerLine.startsWith('cloze');
+
             if (headerLine.startsWith('section')) {
                 const titleMatch = headerLine.match(/title=["']([^"']+)["']/i);
 
@@ -395,6 +418,11 @@ class TjTest extends HTMLElement {
                 this.sections.push(currentSection);
                 defaultSectionIndex++;
             } else {
+                if (i === 0 && !isKnownType) {
+                    // First block was just the overall title, skip creating a dummy empty section
+                    continue;
+                }
+
                 if (!currentSection) {
                     currentSection = {
                         index: 0,
@@ -1495,6 +1523,12 @@ if (!customElements.get('tj-test')) {
 }
 if (!customElements.get('tj-progressive-test')) {
     customElements.define('tj-progressive-test', class extends TjTest {});
+}
+if (!customElements.get('progressive-test')) {
+    customElements.define('progressive-test', class extends TjTest {});
+}
+if (!customElements.get('test-element')) {
+    customElements.define('test-element', class extends TjTest {});
 }
 
 export default TjTest;

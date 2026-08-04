@@ -80,8 +80,16 @@ class TjBuilder extends HTMLElement {
     _getCleanTagName(typeStr) {
         if (!typeStr) return 'tj-test';
         const str = String(typeStr).toLowerCase();
-        if (str.includes('lbl-reader') || str.includes('tj-reader')) return 'tj-reader';
+        if (str.includes('lbl-reader') || str.includes('reader')) return 'tj-reader';
         if (str.includes('grammar-hearts')) return 'tj-grammar-hearts';
+        if (str.includes('speed-review') || str === 'speed-review') return 'tj-speed-review';
+        if (str.includes('quiz-element') || str === 'quiz-element') return 'tj-quiz-element';
+        if (str.includes('info-gap') || str === 'info-gap') return 'tj-info-gap';
+        if (str.includes('listening') || str === 'listening') return 'tj-listening';
+        if (str.includes('pronunciation') || str === 'pronunciation') return 'tj-pronunciation';
+        if (str.includes('chapter-book') || str === 'chapter-book') return 'tj-chapter-book';
+        if (str.includes('progressive-test')) return 'tj-progressive-test';
+        if (str.includes('test')) return 'tj-test';
         const match = str.match(/(tj-[a-z0-9-]+)/i);
         if (match) {
             return match[1].toLowerCase();
@@ -2807,10 +2815,12 @@ class TjBuilder extends HTMLElement {
         let innerContentTag = '';
         if (componentType === 'tj-quiz-element') {
             innerContentTag = `<script type="text/markdown">\n${rawContent}\n</script>`;
-        } else if (isJson || componentType.startsWith('tj-')) {
+        } else if (isJson) {
             innerContentTag = `<script type="application/json">\n${rawContent}\n</script>`;
         } else {
-            innerContentTag = rawContent;
+            const looksLikeMd = rawContent.includes('---') || (rawContent.includes('Q:') && rawContent.includes('A:'));
+            const tagType = looksLikeMd ? 'text/markdown' : 'application/json';
+            innerContentTag = `<script type="${tagType}">\n${rawContent}\n</script>`;
         }
 
         return `<!-- TJ Component Embed Code -->\n${scriptTag}<${componentType} ${attrs}>\n${innerContentTag}\n</${componentType}>`;

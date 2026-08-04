@@ -137,6 +137,14 @@ class TjQuizElement extends HTMLElement {
             .replace(/\s+/g, ' ');
     }
 
+    _decodeHTMLEntities(str) {
+        if (!str || typeof str !== 'string') return str;
+        if (!str.includes('&')) return str;
+        const txt = document.createElement('textarea');
+        txt.innerHTML = str;
+        return txt.value;
+    }
+
     connectedCallback() {
         // Register visibilitychange listener for tab-away tracking (test mode only)
         this._visibilityHandler = () => this._handleVisibilityChange();
@@ -176,10 +184,19 @@ class TjQuizElement extends HTMLElement {
             else if (this.querySelector('script[type="application/json"]')) {
                 this.originalContent = this.querySelector('script[type="application/json"]').textContent;
             }
+            else if (this.querySelector('script[type="text/plain"]')) {
+                this.originalContent = this.querySelector('script[type="text/plain"]').textContent;
+            }
+            else if (this.querySelector('script')) {
+                this.originalContent = this.querySelector('script').textContent;
+            }
             // 5. Default: Text Content
             else {
                 this.originalContent = this.textContent;
             }
+
+            // Decode HTML entities (handles Google Sites HTML sanitizer escaping)
+            this.originalContent = this._decodeHTMLEntities(this.originalContent);
 
             // Get submission URL from attribute if provided (overrides config file)
             if (this.hasAttribute('submission-url')) {
@@ -2796,4 +2813,9 @@ class TjQuizElement extends HTMLElement {
 }
 
 // Register the custom element
-customElements.define('tj-quiz-element', TjQuizElement);
+if (!customElements.get('tj-quiz-element')) {
+    customElements.define('tj-quiz-element', TjQuizElement);
+}
+if (!customElements.get('quiz-element')) {
+    customElements.define('quiz-element', class extends TjQuizElement {});
+}

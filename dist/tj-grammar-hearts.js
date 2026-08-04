@@ -34,6 +34,11 @@ var t = class extends HTMLElement {
 			e.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js", e.onload = () => this.render(), document.head.appendChild(e);
 		}
 	}
+	_decodeHTMLEntities(e) {
+		if (!e || typeof e != "string" || !e.includes("&")) return e;
+		let t = document.createElement("textarea");
+		return t.innerHTML = e, t.value;
+	}
 	async loadData() {
 		try {
 			let t = e(this);
@@ -52,8 +57,9 @@ var t = class extends HTMLElement {
 				console.error("Failed to fetch remote JSON for grammar-hearts", e), this.shadowRoot.innerHTML = "<div class=\"error-msg\">Error loading grammar data from URL.</div>";
 				return;
 			}
-			else n = this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.textContent.trim();
+			else n = this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.querySelector("script[type=\"text/plain\"]") ? this.querySelector("script[type=\"text/plain\"]").textContent.trim() : this.querySelector("script") ? this.querySelector("script").textContent.trim() : this.textContent.trim();
 			if (!n) return;
+			n = this._decodeHTMLEntities(n);
 			let r = n.replace(/"((?:\\.|[^"\\])*)"/gs, (e, t) => "\"" + t.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + "\""), i = JSON.parse(r);
 			this._processParsedData(i), this.innerHTML = "";
 		} catch (e) {

@@ -34,6 +34,11 @@ var t = class extends HTMLElement {
 	async playSound(e) {
 		this.audioInitialized && (await window.Tone.start(), e === "correct" ? this.synthCorrect.triggerAttackRelease("C5", "8n") : this.synthIncorrect.triggerAttackRelease("G2", "8n"));
 	}
+	_decodeHTMLEntities(e) {
+		if (!e || typeof e != "string" || !e.includes("&")) return e;
+		let t = document.createElement("textarea");
+		return t.innerHTML = e, t.value;
+	}
 	async loadData() {
 		try {
 			let t = e(this);
@@ -51,13 +56,40 @@ var t = class extends HTMLElement {
 			} catch (e) {
 				console.error("Failed to fetch data from dataUrl for tj-speed-review", e);
 			}
-			else n = this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.textContent.trim();
+			else n = this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.querySelector("script[type=\"text/markdown\"]") ? this.querySelector("script[type=\"text/markdown\"]").textContent.trim() : this.querySelector("script[type=\"text/plain\"]") ? this.querySelector("script[type=\"text/plain\"]").textContent.trim() : this.querySelector("script") ? this.querySelector("script").textContent.trim() : this.textContent.trim();
 			if (!n) return;
-			let r = n.replace(/"((?:\\.|[^"\\])*)"/gs, (e, t) => "\"" + t.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + "\""), i = JSON.parse(r);
-			this._processParsedData(i), this.innerHTML = "";
+			n = this._decodeHTMLEntities(n);
+			let r = n.replace(/"((?:\\.|[^"\\])*)"/gs, (e, t) => "\"" + t.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + "\"");
+			try {
+				let e = JSON.parse(r);
+				this._processParsedData(e);
+			} catch (e) {
+				let t = this._parseMarkdownQuestions(n);
+				if (t.length > 0) this.questions = t;
+				else throw e;
+			}
+			this.innerHTML = "";
 		} catch (e) {
-			console.error("Failed to parse JSON for tj-speed-review", e), this.shadowRoot.innerHTML = "<div class=\"error-msg\">Error loading quiz data. Check console.</div>";
+			console.error("Failed to parse data for tj-speed-review", e), this.shadowRoot.innerHTML = "<div class=\"error-msg\">Error loading quiz data. Check console.</div>";
 		}
+	}
+	_parseMarkdownQuestions(e) {
+		let t = e.split("\n"), n = [], r = "", i = null;
+		for (let a of t) {
+			let t = a.trim();
+			if (t) {
+				if (!i && !t.startsWith("Q:") && !t.startsWith("Q.") && !t.startsWith("A:") && !t.startsWith("---") && !e.includes("---") && !r && (r = t), t.startsWith("Q:") || t.startsWith("Q.")) i && i.q && i.o.length > 0 && n.push(i), i = {
+					q: t.replace(/^Q[:\.]\s*/i, "").trim(),
+					o: [],
+					a: ""
+				};
+				else if (t.startsWith("A:") && i) {
+					let e = t.substring(2).trim(), n = e.includes("[correct]"), r = e.replace("[correct]", "").trim();
+					i.o.push(r), n && (i.a = r);
+				}
+			}
+		}
+		return i && i.q && i.o.length > 0 && n.push(i), r && (this.activityTitle = r), n;
 	}
 	_processParsedData(e) {
 		Array.isArray(e) && (e = e[0]), e.title && (this.activityTitle = e.title), e.questions && (this.questions = e.questions);
