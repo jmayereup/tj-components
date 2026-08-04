@@ -300,6 +300,19 @@ class TjBuilder extends HTMLElement {
                     this.inputSubmissionUrl.disabled = true;
                     this.inputSubmissionUrl.title = `Locked to preset URL for ${matchingTeacher.name}`;
                 }
+            } else if (!currentUrl && items.length > 0) {
+                // If no submission URL is set yet, default to the first teacher for this school preset
+                const firstTeacher = items[0];
+                this.selectTeacherImport.value = firstTeacher.url;
+                if (this.inputSubmissionUrl) {
+                    this.inputSubmissionUrl.value = firstTeacher.url;
+                    this.inputSubmissionUrl.disabled = true;
+                    this.inputSubmissionUrl.title = `Locked to preset URL for ${firstTeacher.name}`;
+                }
+                this.currentSettings.submissionUrl = firstTeacher.url;
+                this._updateCredentialsSummaryBadges();
+                this._saveSettings();
+                this._updateOutputs();
             }
         } catch (e) {
             console.warn('TJ Builder: Could not fetch teacher info presets', e);
