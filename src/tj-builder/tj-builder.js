@@ -696,6 +696,8 @@ class TjBuilder extends HTMLElement {
         let isJson = false;
         let jsonObject = null;
 
+        let parsedAttrs = {};
+
         // 2. Check if raw contains custom element tag
         const tagMatch = raw.match(/<(?:\s*)(tj-[a-z0-9-]+|lbl-reader|grammar-hearts)[\s>]/i);
         if (tagMatch) {
@@ -721,6 +723,26 @@ class TjBuilder extends HTMLElement {
                 if (this.chkTestMode) this.chkTestMode.checked = true;
                 this.currentSettings.isTestMode = true;
             }
+
+            // Extract component-specific attributes if present
+            const timeLimitMatch = raw.match(/time-limit=["']([^"']+)["']/i);
+            if (timeLimitMatch) parsedAttrs.timeLimit = timeLimitMatch[1];
+
+            const roundSizeMatch = raw.match(/round-size=["']([^"']+)["']/i);
+            if (roundSizeMatch) parsedAttrs.roundSize = roundSizeMatch[1];
+
+            const heartsMatch = raw.match(/hearts=["']([^"']+)["']/i);
+            if (heartsMatch) parsedAttrs.hearts = heartsMatch[1];
+
+            const langOrgMatch = raw.match(/lang-original=["']([^"']+)["']/i);
+            if (langOrgMatch) parsedAttrs.langOriginal = langOrgMatch[1];
+
+            const langTransMatch = raw.match(/lang-translation=["']([^"']+)["']/i);
+            if (langTransMatch) parsedAttrs.langTranslation = langTransMatch[1];
+
+            const passThreshMatch = raw.match(/pass-threshold=["']([^"']+)["']/i);
+            if (passThreshMatch) parsedAttrs.passThreshold = passThreshMatch[1];
+
             const closingTagRegex = new RegExp(`<${detectedType}\\b[^>]*>([\\s\\S]*?)(?:<\\/${detectedType}>|$)`, 'i');
             const innerMatch = raw.match(closingTagRegex);
             if (innerMatch && innerMatch[1].trim()) {
@@ -764,6 +786,7 @@ class TjBuilder extends HTMLElement {
             rawContent: content,
             isJson,
             jsonObject,
+            parsedAttributes: parsedAttrs,
             markdownAst: (!isJson && detectedType === 'tj-quiz-element') ? this._parseMarkdownAst(content) : null
         };
 
@@ -2799,6 +2822,27 @@ class TjBuilder extends HTMLElement {
         const supportsTestMode = (componentType === 'tj-quiz-element' || componentType === 'tj-test' || componentType === 'tj-progressive-test');
         const isTestMode = supportsTestMode && this.chkTestMode && this.chkTestMode.checked;
 
+        const parsedAttrs = this.parsedState?.parsedAttributes || {};
+        const jsonObject = this.parsedState?.jsonObject || {};
+
+        let componentAttrs = '';
+        if (componentType === 'tj-speed-review') {
+            const timeLimit = parsedAttrs.timeLimit || jsonObject.timeLimit || jsonObject.timer || '15';
+            const roundSize = parsedAttrs.roundSize || jsonObject.roundSize || jsonObject.questionsPerRound || '10';
+            componentAttrs = `time-limit="${timeLimit}" round-size="${roundSize}" `;
+        } else if (componentType === 'tj-grammar-hearts') {
+            const hearts = parsedAttrs.hearts || jsonObject.hearts || jsonObject.maxHearts || '3';
+            const roundSize = parsedAttrs.roundSize || jsonObject.roundSize || jsonObject.questionsPerRound || '5';
+            componentAttrs = `hearts="${hearts}" round-size="${roundSize}" `;
+        } else if (componentType === 'tj-reader' || componentType === 'lbl-reader') {
+            const langOrg = parsedAttrs.langOriginal || jsonObject.langOriginal || 'en';
+            const langTrans = parsedAttrs.langTranslation || jsonObject.langTranslation || 'th';
+            componentAttrs = `lang-original="${langOrg}" lang-translation="${langTrans}" `;
+        } else if (componentType === 'tj-test' || componentType === 'tj-progressive-test') {
+            const passThresh = parsedAttrs.passThreshold || jsonObject.passThreshold || '75%';
+            componentAttrs = `pass-threshold="${passThresh}" `;
+        }
+
         let attrs = '';
         if (supportsTestMode) {
             if (isTestMode) {
@@ -2807,7 +2851,7 @@ class TjBuilder extends HTMLElement {
                 attrs += 'test-mode="false" ';
             }
         }
-        attrs += `start-code="${startCode}" teacher-code="${teacherCode}"`;
+        attrs += `${componentAttrs}start-code="${startCode}" teacher-code="${teacherCode}"`;
         if (submissionUrl) {
             attrs += ` submission-url="${submissionUrl}"`;
         }
@@ -2874,6 +2918,21 @@ class TjBuilder extends HTMLElement {
             } else if (supportsTestMode) {
                 previewEl.setAttribute('test-mode', 'false');
             }
+
+            const parsedAttrs = this.parsedState?.parsedAttributes || {};
+            if (componentType === 'tj-speed-review') {
+                previewEl.setAttribute('time-limit', parsedAttrs.timeLimit || jsonObject?.timeLimit || jsonObject?.timer || '15');
+                previewEl.setAttribute('round-size', parsedAttrs.roundSize || jsonObject?.roundSize || jsonObject?.questionsPerRound || '10');
+            } else if (componentType === 'tj-grammar-hearts') {
+                previewEl.setAttribute('hearts', parsedAttrs.hearts || jsonObject?.hearts || jsonObject?.maxHearts || '3');
+                previewEl.setAttribute('round-size', parsedAttrs.roundSize || jsonObject?.roundSize || jsonObject?.questionsPerRound || '5');
+            } else if (componentType === 'tj-reader' || componentType === 'lbl-reader') {
+                previewEl.setAttribute('lang-original', parsedAttrs.langOriginal || jsonObject?.langOriginal || 'en');
+                previewEl.setAttribute('lang-translation', parsedAttrs.langTranslation || jsonObject?.langTranslation || 'th');
+            } else if (componentType === 'tj-test' || componentType === 'tj-progressive-test') {
+                previewEl.setAttribute('pass-threshold', parsedAttrs.passThreshold || jsonObject?.passThreshold || '75%');
+            }
+
             previewEl.setAttribute('start-code', this.currentSettings.startCode || '1234');
             previewEl.setAttribute('teacher-code', this.currentSettings.teacherCode || '7676');
             previewEl.setAttribute('submission-url', this.currentSettings.submissionUrl || '');
