@@ -261,12 +261,18 @@ class TjTest extends HTMLElement {
 
     lockTeacherOverlay() {
         const overlay = this.shadowRoot.getElementById('teacherLockOverlay');
+        const input = this.shadowRoot.getElementById('teacherCodeInput');
+        if (input) input.value = '';
+        const errorMsg = this.shadowRoot.getElementById('teacherCodeError');
+        if (errorMsg) errorMsg.classList.add('hidden');
         if (overlay) overlay.classList.add('active');
     }
 
     unlockAllSecurityOverlays() {
         const startOverlay = this.shadowRoot.getElementById('startLockOverlay');
         const teacherOverlay = this.shadowRoot.getElementById('teacherLockOverlay');
+        const input = this.shadowRoot.getElementById('teacherCodeInput');
+        if (input) input.value = '';
         if (startOverlay) startOverlay.classList.remove('active');
         if (teacherOverlay) teacherOverlay.classList.remove('active');
     }
@@ -605,8 +611,9 @@ class TjTest extends HTMLElement {
 
         // Unlock Start button
         const unlockStartBtn = shadow.getElementById('unlockStartBtn');
+        const startCodeInput = shadow.getElementById('startCodeInput');
         if (unlockStartBtn) {
-            unlockStartBtn.onclick = () => {
+            const handleStartUnlock = () => {
                 const val = shadow.getElementById('startCodeInput').value.trim();
                 if (val === this.startCode) {
                     this.testUnlocked = true;
@@ -618,13 +625,25 @@ class TjTest extends HTMLElement {
                     shadow.getElementById('startCodeError').classList.remove('hidden');
                 }
             };
+            unlockStartBtn.onclick = handleStartUnlock;
+            if (startCodeInput) {
+                startCodeInput.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleStartUnlock();
+                    }
+                };
+            }
         }
 
         // Unlock Teacher button
         const unlockTeacherBtn = shadow.getElementById('unlockTeacherBtn');
+        const teacherCodeInput = shadow.getElementById('teacherCodeInput');
         if (unlockTeacherBtn) {
-            unlockTeacherBtn.onclick = () => {
-                const val = shadow.getElementById('teacherCodeInput').value.trim();
+            const handleTeacherUnlock = () => {
+                const input = shadow.getElementById('teacherCodeInput');
+                const val = input ? input.value.trim() : '';
+                if (input) input.value = '';
                 if (val === this.teacherCode) {
                     shadow.getElementById('teacherCodeError').classList.add('hidden');
                     shadow.getElementById('teacherLockOverlay').classList.remove('active');
@@ -633,6 +652,15 @@ class TjTest extends HTMLElement {
                     shadow.getElementById('teacherCodeError').classList.remove('hidden');
                 }
             };
+            unlockTeacherBtn.onclick = handleTeacherUnlock;
+            if (teacherCodeInput) {
+                teacherCodeInput.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleTeacherUnlock();
+                    }
+                };
+            }
         }
 
         // Voice button
