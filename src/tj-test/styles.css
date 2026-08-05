@@ -686,7 +686,49 @@
   font-size: 0.75em;
 }
 
-/* Submission Box */
+/* Submission Box & Form Controls */
+.tj-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.tj-form-label {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--tj-text-main);
+  text-align: left;
+}
+
+.tj-form-row {
+  display: flex;
+  gap: 0.75em;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tj-input {
+  width: 100%;
+  padding: 0.6em 0.85em;
+  border: 1px solid var(--tj-border-main);
+  border-radius: var(--tj-border-radius-sm);
+  background: var(--tj-bg-card);
+  color: var(--tj-text-main);
+  font-size: 0.95em;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: var(--tj-transition-fast);
+}
+
+.tj-input:focus {
+  outline: none;
+  border-color: var(--tj-primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
 .tj-submission-box {
   width: 100%;
   max-width: 600px;
@@ -700,6 +742,13 @@
   gap: 0.75em;
   text-align: left;
   margin-top: 1em;
+}
+
+.tj-submission-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+  width: 100%;
 }
 
 .tj-submission-row {

@@ -7,8 +7,29 @@
         <div class="tj-modal-card">
             <div class="tj-modal-icon">🔒</div>
             <h3 class="tj-h3">Test</h3>
-            <p>Please enter the Start Code provided by your teacher/instructor to begin the test.</p>
+            <p>Please enter your information and the Start Code provided by your teacher/instructor to begin the test.</p>
             <div class="tj-form-group">
+                <label class="tj-form-label" for="startNicknameInput">Student Nickname *</label>
+                <input type="text" id="startNicknameInput" name="tj_nickname_no_autofill" class="tj-input"
+                    placeholder="e.g. Jake" autocomplete="one-time-code" data-lpignore="true"
+                    data-form-type="other">
+            </div>
+            <div class="tj-form-row">
+                <div class="tj-form-group">
+                    <label class="tj-form-label" for="startStudentIdInput">Student ID *</label>
+                    <input type="text" id="startStudentIdInput" name="tj_studentid_no_autofill" class="tj-input"
+                        placeholder="e.g. 01" autocomplete="one-time-code" data-lpignore="true"
+                        data-form-type="other">
+                </div>
+                <div class="tj-form-group">
+                    <label class="tj-form-label" for="startHomeroomInput">Homeroom</label>
+                    <input type="text" id="startHomeroomInput" name="tj_homeroom_no_autofill" class="tj-input"
+                        placeholder="e.g. 1/1" autocomplete="one-time-code" data-lpignore="true"
+                        data-form-type="other">
+                </div>
+            </div>
+            <div class="tj-form-group">
+                <label class="tj-form-label" for="startCodeInput">Start Code *</label>
                 <input type="text" id="startCodeInput" name="tj_test_code_no_autofill" class="tj-input"
                     placeholder="Start Code (e.g. 1234)" autocomplete="one-time-code" data-lpignore="true"
                     data-form-type="other">

@@ -612,28 +612,52 @@ class TjTest extends HTMLElement {
         // Unlock Start button
         const unlockStartBtn = shadow.getElementById('unlockStartBtn');
         const startCodeInput = shadow.getElementById('startCodeInput');
+        const startNicknameInput = shadow.getElementById('startNicknameInput');
+        const startStudentIdInput = shadow.getElementById('startStudentIdInput');
+        const startHomeroomInput = shadow.getElementById('startHomeroomInput');
+
         if (unlockStartBtn) {
             const handleStartUnlock = () => {
+                const nickname = startNicknameInput ? startNicknameInput.value.trim() : '';
+                const studentId = startStudentIdInput ? startStudentIdInput.value.trim() : '';
+                const homeroom = startHomeroomInput ? startHomeroomInput.value.trim() : '';
+                const errorMsg = shadow.getElementById('startCodeError');
+
+                if (!nickname || !studentId) {
+                    if (errorMsg) {
+                        errorMsg.textContent = '⚠️ Please enter your Student Nickname and Student ID to begin.';
+                        errorMsg.classList.remove('hidden');
+                    }
+                    return;
+                }
+
                 const val = shadow.getElementById('startCodeInput').value.trim();
                 if (val === this.startCode) {
+                    this.studentInfo = { nickname, studentId, homeroom };
                     this.testUnlocked = true;
-                    shadow.getElementById('startCodeError').classList.add('hidden');
+                    if (errorMsg) errorMsg.classList.add('hidden');
                     shadow.getElementById('startLockOverlay').classList.remove('active');
                     this.renderTestUI();
                     this.saveStateToLocalStorage();
                 } else {
-                    shadow.getElementById('startCodeError').classList.remove('hidden');
+                    if (errorMsg) {
+                        errorMsg.textContent = 'Invalid start code. Please check and try again.';
+                        errorMsg.classList.remove('hidden');
+                    }
                 }
             };
             unlockStartBtn.onclick = handleStartUnlock;
-            if (startCodeInput) {
-                startCodeInput.onkeydown = (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleStartUnlock();
-                    }
-                };
-            }
+            const inputElements = [startCodeInput, startNicknameInput, startStudentIdInput, startHomeroomInput];
+            inputElements.forEach(inp => {
+                if (inp) {
+                    inp.onkeydown = (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleStartUnlock();
+                        }
+                    };
+                }
+            });
         }
 
         // Unlock Teacher button
@@ -1341,24 +1365,40 @@ class TjTest extends HTMLElement {
             </table>
             ${writtenAnswersHTML}
             ${writtenNoteHTML}
-            ${this.submissionUrl ? `
+            ${this.hasValidSubmissionUrl ? `
             <div class="tj-submission-box">
                 <h4 style="margin: 0; color: var(--tj-text-main);">Submit Score Report</h4>
                 <p style="margin: 0; font-size: 0.9em; color: var(--tj-text-muted);">
-                    Enter your Submit Code to log results to your teacher's spreadsheet, or take a screenshot of this page.
+                    Enter your details and Submit Code to log results to your teacher's spreadsheet, or take a screenshot of this page.
                 </p>
-                <div class="tj-submission-row">
-                    <input type="text" id="reportTeacherCodeInput" class="tj-submission-input" placeholder="Enter Submit Code" autocomplete="one-time-code" data-lpignore="true">
-                    <button id="submitResultsBtn" class="tj-btn tj-btn-primary">
-                        📤 Submit Score Report
-                    </button>
+                <div class="tj-submission-form">
+                    <div class="tj-form-group">
+                        <label class="tj-form-label" for="reportNicknameInput">Student Nickname *</label>
+                        <input type="text" id="reportNicknameInput" class="tj-input" placeholder="e.g. Jake" value="${this.escapeHtml(this.studentInfo.nickname || '')}">
+                    </div>
+                    <div class="tj-form-row">
+                        <div class="tj-form-group">
+                            <label class="tj-form-label" for="reportStudentIdInput">Student ID *</label>
+                            <input type="text" id="reportStudentIdInput" class="tj-input" placeholder="e.g. 01" value="${this.escapeHtml(this.studentInfo.studentId || '')}">
+                        </div>
+                        <div class="tj-form-group">
+                            <label class="tj-form-label" for="reportHomeroomInput">Homeroom</label>
+                            <input type="text" id="reportHomeroomInput" class="tj-input" placeholder="e.g. 1/1" value="${this.escapeHtml(this.studentInfo.homeroom || '')}">
+                        </div>
+                    </div>
+                    <div class="tj-submission-row" style="margin-top: 0.5em;">
+                        <input type="text" id="reportTeacherCodeInput" class="tj-submission-input" placeholder="Enter Submit Code" autocomplete="one-time-code" data-lpignore="true">
+                        <button id="submitResultsBtn" class="tj-btn tj-btn-primary">
+                            📤 Submit Score Report
+                        </button>
+                    </div>
                 </div>
                 <div id="submitStatusMsg" class="tj-error-msg hidden"></div>
             </div>
             ` : ''}
             <div class="tj-banner" style="background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.3); color: #38bdf8; border-radius: 8px; padding: 0.85em 1.25em; margin-top: 0.5em; font-weight: 600; display: flex; align-items: center; gap: 0.6em; max-width: 600px; width: 100%; box-sizing: border-box;">
                 <span style="font-size: 1.3em;">📸</span>
-                <span>${this.submissionUrl ? 'Alternatively, take' : 'Take'} a screenshot of this summary table to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
+                <span>${this.hasValidSubmissionUrl ? 'Alternatively, take' : 'Take'} a screenshot of this summary table to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
             </div>
         `;
 
@@ -1370,10 +1410,27 @@ class TjTest extends HTMLElement {
     }
 
     async submitScoreReport() {
+        const nicknameElem = this.shadowRoot.getElementById('reportNicknameInput');
+        const studentIdElem = this.shadowRoot.getElementById('reportStudentIdInput');
+        const homeroomElem = this.shadowRoot.getElementById('reportHomeroomInput');
         const codeInput = this.shadowRoot.getElementById('reportTeacherCodeInput');
+
+        const nickname = nicknameElem ? nicknameElem.value.trim() : (this.studentInfo.nickname || '');
+        const studentId = studentIdElem ? studentIdElem.value.trim() : (this.studentInfo.studentId || '');
+        const homeroom = homeroomElem ? homeroomElem.value.trim() : (this.studentInfo.homeroom || '');
         const enteredCode = codeInput ? codeInput.value.trim() : '';
+
         const msgElem = this.shadowRoot.getElementById('submitStatusMsg');
         const submitBtn = this.shadowRoot.getElementById('submitResultsBtn');
+
+        if (!nickname || !studentId) {
+            if (msgElem) {
+                msgElem.classList.remove('hidden');
+                msgElem.style.color = 'var(--tj-error-color)';
+                msgElem.textContent = '⚠️ Student Nickname and Student ID are required before submitting.';
+            }
+            return;
+        }
 
         if (!enteredCode) {
             if (msgElem) {
@@ -1393,6 +1450,9 @@ class TjTest extends HTMLElement {
             return;
         }
 
+        this.studentInfo = { nickname, studentId, homeroom };
+        this.saveStateToLocalStorage();
+
         const totalScore = this.sectionResults.reduce((sum, r) => sum + (r ? r.score : 0), 0);
         const totalQuestions = this.sectionResults.reduce((sum, r) => sum + (r ? r.total : 0), 0);
         const sectionSummary = this.sections.map((sec, idx) => {
@@ -1403,9 +1463,9 @@ class TjTest extends HTMLElement {
 
         const payload = {
             quizName: this.activityTitle,
-            nickname: '',
-            homeroom: '',
-            studentId: '',
+            nickname: nickname,
+            homeroom: homeroom,
+            studentId: studentId,
             score: totalScore,
             total: totalQuestions,
             writtenAnswers: this.getWrittenAnswersString(),
@@ -1422,12 +1482,13 @@ class TjTest extends HTMLElement {
         if (submitBtn) submitBtn.disabled = true;
 
         try {
-            const submissionUrl = this.submissionUrl || resolveComponentParams(this).submissionUrl;
-            if (!submissionUrl) {
+            const rawSubmissionUrl = this.submissionUrl || resolveComponentParams(this).submissionUrl;
+            const submissionUrl = (rawSubmissionUrl || '').trim();
+            if (!submissionUrl || submissionUrl.includes('YOUR_GAS_URL') || submissionUrl.includes('YOUR_SCRIPT_ID')) {
                 if (msgElem) {
                     msgElem.classList.remove('hidden');
                     msgElem.style.color = 'var(--tj-error-color)';
-                    msgElem.textContent = '⚠️ No submission URL configured. Please take a screenshot of this table.';
+                    msgElem.textContent = '⚠️ No valid submission URL configured. Please take a screenshot of this table.';
                 }
                 if (submitBtn) submitBtn.disabled = false;
                 return;
@@ -1501,7 +1562,8 @@ class TjTest extends HTMLElement {
             testCompleted: this.testCompleted,
             tabAwayCount: this.tabAwayCount,
             testUnlocked: this.testUnlocked,
-            userAnswers: this.userAnswers
+            userAnswers: this.userAnswers,
+            studentInfo: this.studentInfo
         };
         try {
             localStorage.setItem(this.getStorageKey(), JSON.stringify(data));
@@ -1525,6 +1587,7 @@ class TjTest extends HTMLElement {
         this.tabAwayCount = saved.tabAwayCount || 0;
         this.testUnlocked = saved.testUnlocked || false;
         this.userAnswers = saved.userAnswers || {};
+        this.studentInfo = saved.studentInfo || { nickname: '', studentId: '', homeroom: '' };
 
         if (this.testMode && !this.testCompleted) {
             if (this.testUnlocked) {
@@ -1551,10 +1614,16 @@ class TjTest extends HTMLElement {
         this.tabAwayCount = 0;
         this.testUnlocked = false;
         this.userAnswers = {};
+        this.studentInfo = { nickname: '', studentId: '', homeroom: '' };
         this.sectionResults = this.sections.map(() => ({ completed: false, passed: false, score: 0, total: 0, percentage: 0 }));
         this.updateTabAwayBanner();
         this.renderTestUI();
         this.updateSecurityState();
+    }
+
+    get hasValidSubmissionUrl() {
+        const url = (this.submissionUrl || '').trim();
+        return Boolean(url) && !url.includes('YOUR_GAS_URL') && !url.includes('YOUR_SCRIPT_ID');
     }
 }
 
