@@ -1526,8 +1526,20 @@ class TjTest extends HTMLElement {
         this.testUnlocked = saved.testUnlocked || false;
         this.userAnswers = saved.userAnswers || {};
 
-        this.updateTabAwayBanner();
-        this.updateSecurityState();
+        if (this.testMode && !this.testCompleted) {
+            if (this.testUnlocked) {
+                this.tabAwayCount++;
+                this.updateTabAwayBanner();
+                this.lockTeacherOverlay();
+                this.saveStateToLocalStorage();
+            } else {
+                this.lockStartOverlay();
+            }
+        } else {
+            this.updateTabAwayBanner();
+            this.updateSecurityState();
+        }
+
         this.renderTestUI();
     }
 
