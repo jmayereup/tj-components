@@ -23,7 +23,7 @@
                 <p class="student-instructions instruction" id="lockSectionInstruction">This quiz is in Test Mode. Please enter the Start Quiz Code to unlock the questions. / แบบทดสอบนี้อยู่ในโหมดการสอบ กรุณากรอกรหัสเริ่มทำข้อสอบเพื่อปลดล็อก</p>
                 <div class="input-group">
                     <label for="lockTeacherCode" class="input-label" id="lockTeacherCodeLabel">Start Quiz Code</label>
-                    <input type="text" id="lockTeacherCode" name="tj_quiz_code_no_autofill" class="form-input" placeholder="Enter Start Quiz Code" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
+                    <input type="password" id="lockTeacherCode" name="tj_quiz_code_no_autofill" class="form-input" placeholder="Enter Start Quiz Code" autocomplete="off" data-lpignore="true" data-form-type="other">
                 </div>
                 <p id="lockErrorAlert" style="color: var(--red-color, #ef4444); margin-top: 0.5rem; font-size: 0.9em; min-height: 1.5rem; font-weight: 500;" class="hidden"></p>
                 <div style="margin-top: 1rem;">
@@ -84,7 +84,7 @@
                     <div id="teacherActionsSection" class="teacher-actions-section hidden">
                         <p class="teacher-actions-title">Reopen or Reset Quiz (Teacher Only)</p>
                         <div class="teacher-actions-controls">
-                            <input type="text" id="teacherResetCode" name="tj_resetcode_no_autofill" class="form-input" placeholder="Reset Code" title="Reset Code" autocomplete="one-time-code" data-lpignore="true" data-form-type="other">
+                            <input type="password" id="teacherResetCode" name="tj_resetcode_no_autofill" class="form-input" placeholder="Reset Code" title="Reset Code" autocomplete="off" data-lpignore="true" data-form-type="other">
                             <button type="button" id="reopenEditButton" class="button button-slate">Reopen & Edit</button>
                             <button type="button" id="resetTryAgainButton" class="button button-red">Reset & Try Again</button>
                         </div>

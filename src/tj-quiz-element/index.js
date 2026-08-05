@@ -1809,6 +1809,7 @@ class TjQuizElement extends HTMLElement {
             vocabUserChoices: this.vocabUserChoices,
             vocabSubmitted: this.vocabSubmitted,
             clozeSubmitted: this.clozeSubmitted,
+            scoreSubmitted: this.scoreSubmitted,
             tabAwayCount: this.tabAwayCount,
             isVisibilityLocked: this.isVisibilityLocked,
             quizUnlocked: this.quizUnlocked
@@ -1889,6 +1890,7 @@ class TjQuizElement extends HTMLElement {
 
         this.vocabSubmitted = data.vocabSubmitted || false;
         this.clozeSubmitted = data.clozeSubmitted || false;
+        this.scoreSubmitted = data.scoreSubmitted || false;
 
         if (this.testMode) {
             this.isVisibilityLocked = data.isVisibilityLocked || false;
@@ -1906,7 +1908,9 @@ class TjQuizElement extends HTMLElement {
             }
         }
 
-        this.showFinalScore(false);
+        if (this.scoreSubmitted) {
+            this.showFinalScore(false);
+        }
     }
 
     showStudentInfoAlert(message = '', type = '') {
@@ -1975,6 +1979,11 @@ class TjQuizElement extends HTMLElement {
     unlockQuizContent() {
         const quizContent = this.shadowRoot.getElementById('quizContent');
         if (quizContent) quizContent.classList.remove('hidden');
+
+        const dynamicContent = this.shadowRoot.getElementById('dynamicContent');
+        if (dynamicContent && !this.scoreSubmitted) {
+            dynamicContent.classList.remove('hidden');
+        }
 
         const testModeLockSection = this.shadowRoot.getElementById('testModeLockSection');
         if (testModeLockSection) {
