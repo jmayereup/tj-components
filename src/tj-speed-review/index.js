@@ -550,6 +550,7 @@ class TjSpeedReview extends HTMLElement {
           margin-bottom: 1.5em;
           line-height: 1.4;
           min-height: 3em;
+          white-space: pre-wrap;
         }
         .question-text p, .explanation p {
           margin: 0;
@@ -617,6 +618,7 @@ class TjSpeedReview extends HTMLElement {
           font-size: 0.95em;
           color: var(--sr-explanation-color);
           line-height: 1.5;
+          white-space: pre-wrap;
         }
         .btn-large {
           display: block;
