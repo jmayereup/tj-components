@@ -293,7 +293,7 @@ class TjBuilder extends HTMLElement {
             this.fieldGroupTeacherImport.style.display = '';
         }
         
-        const url = `https://blog.teacherjake.com/api/collections/tj_components_teacher_info/records?filter=(school='${encodeURIComponent(school)}')`;
+        const url = `https://pb.teacherjake.com/api/collections/tj_components_teacher_info/records?filter=(school='${encodeURIComponent(school)}')`;
         
         try {
             const res = await fetch(url);
