@@ -25,7 +25,7 @@ var a = ":host{color:#1e293b;--tj-primary-color:#2563eb;--tj-primary-hover:#1d4e
 			number: "",
 			homeroom: "",
 			teacherCode: ""
-		}, this.submissionUrl = "", this.isSubmitting = !1, this.score = 0, this.answeredCount = 0, this.isPlayingAll = !1, this.playbackIndex = 0, this.isPaused = !1, this.playbackUtterance = null;
+		}, this.submissionUrl = "", this.isSubmitting = !1, this.hasSubmitted = !1, this.score = 0, this.answeredCount = 0, this.isPlayingAll = !1, this.playbackIndex = 0, this.isPaused = !1, this.playbackUtterance = null;
 		let e = parseFloat(localStorage.getItem("tj-reader-speed"));
 		this.playbackSpeed = isNaN(e) ? .7 : e, this.isAutoplay = !0, this.unscrambleData = [], this.currentUnscrambleIndex = 0, this.unscrambleScore = 0, this.userUnscrambledWords = [], this.memoryGameData = [], this.flippedCards = [], this.matchedPairsCount = 0, this.matchingGamesCompleted = 0, this.isCheckingMatch = !1, this.isSwapped = !1, this.selectedVoiceName = null, this.recordedBlobs = /* @__PURE__ */ new Map(), this.recordedSentences = /* @__PURE__ */ new Set(), this.completedIndices = /* @__PURE__ */ new Set(), this.unscrambleCompleted = !1, this.memoryCompleted = !1, this.unscrambleTotal = 0, this.memoryTotal = 0, this.isRecordingLine = null, this.mediaRecorder = null, this.recordingStartTime = 0, this.isPlayingRecording = null, this.shadowRoot.querySelector(".generate-btn").onclick = () => this.generateReport(), this.shadowRoot.querySelector("#play-pause-btn").onclick = () => this.toggleFullPlayback(), this.shadowRoot.querySelector("#stop-btn").onclick = () => this.stopFullPlayback(), this.shadowRoot.querySelector("#voice-btn").onclick = () => this._showVoiceOverlay(), this.shadowRoot.querySelector(".close-voice-btn").onclick = () => this._hideVoiceOverlay(), this.shadowRoot.querySelector(".voice-overlay").onclick = (e) => {
 			e.target.classList.contains("voice-overlay") && this._hideVoiceOverlay();
@@ -558,14 +558,13 @@ var a = ":host{color:#1e293b;--tj-primary-color:#2563eb;--tj-primary-hover:#1d4e
 		};
 	}
 	async _submitScore() {
-		let e = this.shadowRoot.getElementById("report-teacher-code"), t = e ? e.value.trim() : this.studentInfo.teacherCode;
-		if (this.studentInfo.teacherCode = t, t !== this.code) {
+		if (this.isSubmitting || this.hasSubmitted) return;
+		let e = this.shadowRoot.getElementById("submit-score-btn"), t = e ? e.textContent : "Submit Score Online", n = this.shadowRoot.getElementById("report-teacher-code"), r = n ? n.value.trim() : this.studentInfo.teacherCode;
+		if (this.studentInfo.teacherCode = r, r !== this.code) {
 			alert("Invalid or missing Submit Code. Please take a screenshot of this report and show it to your teacher instead.");
 			return;
 		}
-		if (this.isSubmitting) return;
-		let n = this.shadowRoot.getElementById("submit-score-btn"), r = n.textContent;
-		this.isSubmitting = !0, n.textContent = "Submitting...", n.disabled = !0;
+		this.isSubmitting = !0, e && (e.innerHTML = "<span class=\"tj-spinner\"></span>Submitting...", e.disabled = !0);
 		let i = this.getAttribute("story-title") || "Story Practice", a = this.data.length > 0 ? this.score / this.data.length : 0, o = this.unscrambleData.length || this.unscrambleTotal, s = o > 0 ? this.unscrambleScore / o : 0, c = this.memoryGameData.length / 2 || this.memoryTotal, l = c > 0 ? this.matchedPairsCount / c : 0, u = 85, d = 10;
 		this.unscrambleData.length === 0 && (u += d, d = 0);
 		let f = a * u + s * d + l * 5, p = {
@@ -581,9 +580,9 @@ var a = ":host{color:#1e293b;--tj-primary-color:#2563eb;--tj-primary-hover:#1d4e
 				method: "POST",
 				mode: "no-cors",
 				body: JSON.stringify(p)
-			}), alert("Score successfully submitted!"), n.textContent = "Submitted ✓", n.style.background = "var(--tj-text-muted)";
-		} catch (e) {
-			console.error("Error submitting score:", e), alert("There was an error submitting your score. Please try again."), n.textContent = r, n.disabled = !1, this.isSubmitting = !1;
+			}), this.hasSubmitted = !0, this.isSubmitting = !1, alert("Score successfully submitted!"), e && (e.textContent = "Submitted ✓", e.disabled = !0, e.style.background = "var(--tj-text-muted)");
+		} catch (n) {
+			console.error("Error submitting score:", n), alert("There was an error submitting your score. Please try again."), e && (e.textContent = t, e.disabled = !1), this.isSubmitting = !1;
 		}
 	}
 	swapLanguages() {

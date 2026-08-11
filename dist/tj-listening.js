@@ -15,7 +15,7 @@ var i = ":host{color:#1e293b;--ls-bg:#fff;--ls-container-bg:#fff;--ls-border:#e2
 			number: "",
 			homeroom: "",
 			teacherCode: ""
-		}, this.submissionUrl = "", this.isSubmitting = !1, this.selectedVoiceName = null, this.isPlaying = !1, this._currentAudioEl = null;
+		}, this.submissionUrl = "", this.isSubmitting = !1, this.hasSubmitted = !1, this.selectedVoiceName = null, this.isPlaying = !1, this._currentAudioEl = null;
 		let e = typeof window < "u" && window.location ? new URLSearchParams(window.location.search) : new URLSearchParams();
 		this.isQuizMode = e.get("quiz") === "1", o._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList());
 	}
@@ -404,16 +404,13 @@ var i = ":host{color:#1e293b;--ls-bg:#fff;--ls-container-bg:#fff;--ls-border:#e2
 		});
 	}
 	async _submitScore() {
-		let e = this.shadowRoot.getElementById("report-teacher-code"), t = e ? e.value.trim() : this.studentInfo.teacherCode;
-		if (this.studentInfo.teacherCode = t, t !== this.code) {
+		if (this.isSubmitting || this.hasSubmitted) return;
+		let e = this.shadowRoot.getElementById("submit-score-btn"), t = e ? e.textContent : "Submit Score Online", n = this.shadowRoot.getElementById("report-teacher-code"), r = n ? n.value.trim() : this.studentInfo.teacherCode;
+		if (this.studentInfo.teacherCode = r, r !== this.code) {
 			alert("Invalid or missing Submit Code. Please take a screenshot of this report and show it to your teacher instead.");
 			return;
 		}
-		if (this.isSubmitting) return;
-		let n = this.shadowRoot.getElementById("submit-score-btn");
-		if (!n) return;
-		let r = n.textContent;
-		this.isSubmitting = !0, n.textContent = "Submitting...", n.disabled = !0;
+		this.isSubmitting = !0, e && (e.innerHTML = "<span class=\"tj-spinner\"></span>Submitting...", e.disabled = !0);
 		let i = this._getCombinedScore(), a = Math.round(i.totalScore / i.totalQuestions * 100) || 0, o = {
 			nickname: this.studentInfo.nickname,
 			homeroom: this.studentInfo.homeroom || "",
@@ -427,9 +424,9 @@ var i = ":host{color:#1e293b;--ls-bg:#fff;--ls-container-bg:#fff;--ls-border:#e2
 				method: "POST",
 				mode: "no-cors",
 				body: JSON.stringify(o)
-			}), alert("Score successfully submitted!"), n.textContent = "Submitted ✓", n.style.background = "#64748b";
-		} catch (e) {
-			console.error("Error submitting score:", e), alert("There was an error submitting your score. Please try again."), n.textContent = r, n.disabled = !1, this.isSubmitting = !1;
+			}), this.hasSubmitted = !0, this.isSubmitting = !1, alert("Score successfully submitted!"), e && (e.textContent = "Submitted ✓", e.disabled = !0, e.style.background = "#64748b");
+		} catch (n) {
+			console.error("Error submitting score:", n), alert("There was an error submitting your score. Please try again."), e && (e.textContent = t, e.disabled = !1), this.isSubmitting = !1;
 		}
 	}
 	_getBestVoice(e) {

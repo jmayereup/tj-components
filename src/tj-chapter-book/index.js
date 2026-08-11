@@ -75,6 +75,7 @@ class TjChapterBook extends HTMLElement {
         this.studentInfo = { nickname: '', number: '', homeroom: '', teacherCode: '' };
         this.submissionUrl = '';
         this.isSubmitting = false;
+        this.hasSubmitted = false;
         this.ttsState = {
             status: 'idle',
             activeButtonId: null,
@@ -1274,6 +1275,11 @@ class TjChapterBook extends HTMLElement {
     }
 
     async _submitScore() {
+        if (this.isSubmitting || this.hasSubmitted) return;
+
+        const submitBtn = this.shadowRoot.querySelector('#submit-score-btn');
+        const originalText = submitBtn ? submitBtn.textContent : 'Submit Score Online';
+
         const reportTeacherCodeInput = this.shadowRoot.querySelector('#report-teacher-code');
         const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : this.studentInfo.teacherCode;
         
@@ -1285,15 +1291,11 @@ class TjChapterBook extends HTMLElement {
             return;
         }
 
-        if (this.isSubmitting) return;
-
-        const submitBtn = this.shadowRoot.querySelector('#submit-score-btn');
-        if (!submitBtn) return;
-        const originalText = submitBtn.textContent;
-        
         this.isSubmitting = true;
-        submitBtn.textContent = 'Submitting...';
-        submitBtn.disabled = true;
+        if (submitBtn) {
+            submitBtn.innerHTML = '<span class="tj-spinner"></span>Submitting...';
+            submitBtn.disabled = true;
+        }
 
         const bookTitle = this.shadowRoot.querySelector('.book-title').innerText;
         const percentage = this.absoluteTotalQuestions > 0 ? Math.round((this.totalScore / this.absoluteTotalQuestions) * 100) : 0;
@@ -1314,14 +1316,21 @@ class TjChapterBook extends HTMLElement {
                 body: JSON.stringify(payload)
             });
             
+            this.hasSubmitted = true;
+            this.isSubmitting = false;
             this._showToast('Score successfully submitted! ✓', 'success');
-            submitBtn.textContent = 'Submitted ✓';
-            submitBtn.style.background = 'var(--tj-subtitle-color)';
+            if (submitBtn) {
+                submitBtn.textContent = 'Submitted ✓';
+                submitBtn.disabled = true;
+                submitBtn.style.background = 'var(--tj-subtitle-color)';
+            }
         } catch (err) {
             console.error('Error submitting score:', err);
             this._showToast('There was an error submitting your score. Please try again.', 'error');
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
+            if (submitBtn) {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
             this.isSubmitting = false;
         }
     }

@@ -90,6 +90,8 @@ class TjTest extends HTMLElement {
         this.selectedVoiceName = null;
         this.currentAudioPlayer = null;
         this.submissionUrl = '';
+        this.isSubmitting = false;
+        this.hasSubmitted = false;
         this.userAnswers = {}; // Global answers map
         this._visibilityHandler = null;
     }
@@ -1423,6 +1425,8 @@ class TjTest extends HTMLElement {
         const msgElem = this.shadowRoot.getElementById('submitStatusMsg');
         const submitBtn = this.shadowRoot.getElementById('submitResultsBtn');
 
+        if (this.isSubmitting || this.hasSubmitted) return;
+
         if (!nickname || !studentId) {
             if (msgElem) {
                 msgElem.classList.remove('hidden');
@@ -1448,6 +1452,12 @@ class TjTest extends HTMLElement {
                 msgElem.textContent = '❌ Invalid Submit Code. Please check the code provided by your teacher, or take a screenshot of this table.';
             }
             return;
+        }
+
+        this.isSubmitting = true;
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="tj-spinner"></span>Submitting...';
         }
 
         this.studentInfo = { nickname, studentId, homeroom };
@@ -1479,8 +1489,6 @@ class TjTest extends HTMLElement {
             msgElem.textContent = 'Submitting report...';
         }
 
-        if (submitBtn) submitBtn.disabled = true;
-
         try {
             const rawSubmissionUrl = this.submissionUrl || resolveComponentParams(this).submissionUrl;
             const submissionUrl = (rawSubmissionUrl || '').trim();
@@ -1490,7 +1498,11 @@ class TjTest extends HTMLElement {
                     msgElem.style.color = 'var(--tj-error-color)';
                     msgElem.textContent = '⚠️ No valid submission URL configured. Please take a screenshot of this table.';
                 }
-                if (submitBtn) submitBtn.disabled = false;
+                this.isSubmitting = false;
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Score Online';
+                }
                 return;
             }
             await fetch(submissionUrl, {
@@ -1498,18 +1510,30 @@ class TjTest extends HTMLElement {
                 mode: 'no-cors',
                 body: JSON.stringify(payload)
             });
+            this.hasSubmitted = true;
+            this.isSubmitting = false;
             if (msgElem) {
                 msgElem.style.color = 'var(--tj-success-color)';
                 msgElem.textContent = '✓ Score report successfully submitted to your teacher!';
             }
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitted ✓';
+                submitBtn.style.background = 'var(--tj-text-muted)';
+            }
         } catch (err) {
             console.log('Submission payload simulated/sent:', payload);
+            this.hasSubmitted = true;
+            this.isSubmitting = false;
             if (msgElem) {
                 msgElem.style.color = 'var(--tj-success-color)';
                 msgElem.textContent = '✓ Score report logged successfully.';
             }
-        } finally {
-            if (submitBtn) submitBtn.disabled = false;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitted ✓';
+                submitBtn.style.background = 'var(--tj-text-muted)';
+            }
         }
     }
 

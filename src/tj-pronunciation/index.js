@@ -38,6 +38,7 @@ class TjPronunciation extends HTMLElement {
     this.submissionUrl = '';
     this.studentInfo = { nickname: '', number: '', homeroom: '' };
     this.isSubmitting = false;
+    this.hasSubmitted = false;
 
     const storedSpeed = parseFloat(localStorage.getItem("tj-pronunciation-speed"));
     this.playbackSpeed = isNaN(storedSpeed) ? 0.7 : storedSpeed;
@@ -880,6 +881,11 @@ class TjPronunciation extends HTMLElement {
   }
 
   async _submitScore() {
+      if (this.isSubmitting || this.hasSubmitted) return;
+
+      const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
+      const originalText = submitBtn ? submitBtn.textContent : 'Submit Score';
+
       const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
       const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : this.studentInfo.teacherCode;
       
@@ -890,14 +896,11 @@ class TjPronunciation extends HTMLElement {
           return;
       }
 
-      if (this.isSubmitting) return;
-
-      const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
-      const originalText = submitBtn.textContent;
-      
       this.isSubmitting = true;
-      submitBtn.textContent = 'Submitting...';
-      submitBtn.disabled = true;
+      if (submitBtn) {
+          submitBtn.innerHTML = '<span class="tj-spinner"></span>Submitting...';
+          submitBtn.disabled = true;
+      }
 
       const total = this.shadowRoot.querySelectorAll(".tj-card[id^='act-']").length;
       const completed = this.shadowRoot.querySelectorAll(".tj-card.completed").length;
@@ -920,14 +923,21 @@ class TjPronunciation extends HTMLElement {
               body: JSON.stringify(payload)
           });
           
+          this.hasSubmitted = true;
+          this.isSubmitting = false;
           alert('Score successfully submitted!');
-          submitBtn.textContent = 'Submitted ✓';
-          submitBtn.style.background = 'var(--tj-text-muted)';
+          if (submitBtn) {
+              submitBtn.textContent = 'Submitted ✓';
+              submitBtn.disabled = true;
+              submitBtn.style.background = 'var(--tj-text-muted)';
+          }
       } catch (err) {
           console.error('Error submitting score:', err);
           alert('There was an error submitting your score. Please try again.');
-          submitBtn.textContent = originalText;
-          submitBtn.disabled = false;
+          if (submitBtn) {
+              submitBtn.textContent = originalText;
+              submitBtn.disabled = false;
+          }
           this.isSubmitting = false;
       }
   }

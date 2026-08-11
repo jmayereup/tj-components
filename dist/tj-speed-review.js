@@ -8,7 +8,7 @@ var t = class extends HTMLElement {
 		e == null ? this.removeAttribute("code") : this.setAttribute("code", e);
 	}
 	constructor() {
-		super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.activityTitle = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = "", this.isSubmitting = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
+		super(), this.attachShadow({ mode: "open" }), this.questions = [], this.currentPool = [], this.currentIndex = 0, this.score = 0, this.bestScore = 0, this.timeLeft = 15, this.timeLimit = 15, this.timerInterval = null, this.activityTitle = "Speed Review", this.questionsPerRound = 10, this.nickname = "", this.studentNumber = "", this.homeroom = "", this.identityLocked = !1, this.gameState = "start", this.isAnswered = !1, this.isCorrect = !1, this.userAnswer = null, this.feedbackText = "", this.feedbackExplanation = "", this.shuffledOptions = [], this.submissionUrl = "", this.isSubmitting = !1, this.hasSubmitted = !1, this.synthCorrect = null, this.synthIncorrect = null, this.audioInitialized = !1;
 	}
 	connectedCallback() {
 		let t = e(this);
@@ -158,14 +158,13 @@ var t = class extends HTMLElement {
 		e && (e.style.display = "none");
 	}
 	async _submitScore() {
-		let e = this.shadowRoot.getElementById("report-teacher-code");
-		if ((e ? e.value.trim() : "") !== this.code) {
+		if (this.isSubmitting || this.hasSubmitted) return;
+		let e = this.shadowRoot.getElementById("submit-score-btn"), t = e ? e.textContent : "Submit Score", n = this.shadowRoot.getElementById("report-teacher-code");
+		if ((n ? n.value.trim() : "") !== this.code) {
 			alert("Invalid or missing Submit Code. Please take a screenshot of this report and show it to your teacher instead.");
 			return;
 		}
-		if (this.isSubmitting) return;
-		let t = this.shadowRoot.getElementById("submit-score-btn"), n = t ? t.textContent : "Submit";
-		this.isSubmitting = !0, t && (t.textContent = "Submitting...", t.disabled = !0);
+		this.isSubmitting = !0, e && (e.innerHTML = "<span class=\"tj-spinner\"></span>Submitting...", e.disabled = !0);
 		let r = {
 			nickname: this.nickname,
 			homeroom: this.homeroom || "",
@@ -179,9 +178,9 @@ var t = class extends HTMLElement {
 				method: "POST",
 				mode: "no-cors",
 				body: JSON.stringify(r)
-			}), alert("Score successfully submitted!"), t && (t.textContent = "Submitted ✓", t.style.background = "#64748b");
-		} catch (e) {
-			console.error("Error submitting score:", e), alert("There was an error submitting your score. Please try again."), t && (t.textContent = n, t.disabled = !1), this.isSubmitting = !1;
+			}), this.hasSubmitted = !0, this.isSubmitting = !1, alert("Score successfully submitted!"), e && (e.textContent = "Submitted ✓", e.disabled = !0, e.style.background = "#64748b");
+		} catch (n) {
+			console.error("Error submitting score:", n), alert("There was an error submitting your score. Please try again."), e && (e.textContent = t, e.disabled = !1), this.isSubmitting = !1;
 		}
 	}
 	render() {

@@ -1012,9 +1012,10 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 	}
 	async sendScore(e = !1, t = !1) {
 		if (this.scoreSentToServer && !t || this.autoSubmissionInProgress) return;
+		this.autoSubmissionInProgress = !0;
 		let n = this.shadowRoot.getElementById("validationMessage"), r = this.shadowRoot.getElementById("sendButton"), i = this.shadowRoot.getElementById("tryAgainButton"), a = this.shadowRoot.getElementById("retrySubmissionSection");
 		if (this.shadowRoot.getElementById("retrySendButton"), !this.validateStudentInfoFields({ showAlert: !0 })) {
-			n && (n.textContent = "Please fill out all student information fields.", n.className = "error"), r && e && (r.classList.remove("hidden"), r.disabled = !1);
+			n && (n.textContent = "Please fill out all student information fields.", n.className = "error"), r && e && (r.classList.remove("hidden"), r.disabled = !1), this.autoSubmissionInProgress = !1;
 			return;
 		}
 		let o = "";
@@ -1045,7 +1046,7 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 			n && (n.innerHTML = "\n                    <div style=\"display: flex; align-items: center; gap: 0.6rem; font-weight: 600;\">\n                        <span style=\"font-size: 1.3rem;\">📸</span>\n                        <span>Report card generated! Take a screenshot of this page to send your score to your teacher. / แคปหน้าจอนี้ส่งให้ครูผู้สอน</span>\n                    </div>\n                ", n.className = "warning"), r && r.classList.add("hidden"), a && a.classList.add("hidden"), i && (i.disabled = !1), this.scoreSubmitted = !0, this.saveCurrentStateToLocalStorage(), this.autoSubmissionInProgress = !1;
 			return;
 		}
-		this.autoSubmissionInProgress = !0, r && (e ? r.classList.add("hidden") : (r.disabled = !0, r.textContent = "Sending...")), n && (n.innerHTML = e ? "<span>Submitting score to teacher...</span>" : "", n.className = ""), i && (i.disabled = !0);
+		r && (e ? r.classList.add("hidden") : (r.disabled = !0, r.innerHTML = "<span class=\"tj-spinner\"></span>Sending...")), n && (n.innerHTML = e ? "<span>Submitting score to teacher...</span>" : "", n.className = ""), i && (i.disabled = !0);
 		try {
 			await fetch(this.submissionUrl, {
 				method: "POST",

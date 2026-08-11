@@ -16,7 +16,7 @@ var t = class extends HTMLElement {
 			number: "",
 			homeroom: "",
 			teacherCode: ""
-		}, this.activityTitle = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = "", this.isSubmitting = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
+		}, this.activityTitle = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = "", this.isSubmitting = !1, this.hasSubmitted = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
 	}
 	connectedCallback() {
 		let t = e(this);
@@ -165,14 +165,13 @@ var t = class extends HTMLElement {
 		i > this.bestScore && (this.bestScore = i), this.gameState = "report", this.render();
 	}
 	async _submitScore() {
-		let e = this.shadowRoot.getElementById("report-teacher-code"), t = e ? e.value.trim() : this.studentInfo.teacherCode;
-		if (this.studentInfo.teacherCode = t, t !== this.code) {
+		if (this.isSubmitting || this.hasSubmitted) return;
+		let e = this.shadowRoot.getElementById("submit-score-btn"), t = e ? e.textContent : "Submit Score", n = this.shadowRoot.getElementById("report-teacher-code"), r = n ? n.value.trim() : this.studentInfo.teacherCode;
+		if (this.studentInfo.teacherCode = r, r !== this.code) {
 			this.submissionError = "Invalid or missing Submit Code. Please take a screenshot of this report and show it to your teacher instead.", this.render();
 			return;
 		}
-		if (this.submissionError = "", this.render(), this.isSubmitting) return;
-		let n = this.shadowRoot.getElementById("submit-score-btn"), r = n ? n.textContent : "Submit";
-		this.isSubmitting = !0, n && (n.textContent = "Submitting...", n.disabled = !0);
+		this.submissionError = "", this.isSubmitting = !0, e && (e.innerHTML = "<span class=\"tj-spinner\"></span>Submitting...", e.disabled = !0);
 		let i = {
 			nickname: this.studentInfo.nickname,
 			homeroom: this.studentInfo.homeroom || "",
@@ -180,16 +179,16 @@ var t = class extends HTMLElement {
 			quizName: "Grammar- " + this.activityTitle,
 			score: this.bestScore,
 			total: this.totalQuestionsInRound,
-			teacherCode: t
+			teacherCode: r
 		};
 		try {
 			await fetch(this.submissionUrl, {
 				method: "POST",
 				mode: "no-cors",
 				body: JSON.stringify(i)
-			}), n && (n.textContent = "Submitted ✓", n.style.background = "green");
-		} catch (e) {
-			console.error("Error submitting score:", e), this.submissionError = "There was an error submitting your score. Please try again.", n && (n.textContent = r, n.disabled = !1), this.isSubmitting = !1, this.render();
+			}), this.hasSubmitted = !0, this.isSubmitting = !1, e && (e.textContent = "Submitted ✓", e.disabled = !0, e.style.background = "green");
+		} catch (n) {
+			console.error("Error submitting score:", n), this.submissionError = "There was an error submitting your score. Please try again.", e && (e.textContent = t, e.disabled = !1), this.isSubmitting = !1, this.render();
 		}
 	}
 	getInstruction(e) {

@@ -2363,6 +2363,8 @@ class TjQuizElement extends HTMLElement {
             return;
         }
 
+        this.autoSubmissionInProgress = true;
+
         const validationMessage = this.shadowRoot.getElementById('validationMessage');
         const sendButton = this.shadowRoot.getElementById('sendButton');
         const tryAgainButton = this.shadowRoot.getElementById('tryAgainButton');
@@ -2379,6 +2381,7 @@ class TjQuizElement extends HTMLElement {
                 sendButton.classList.remove('hidden');
                 sendButton.disabled = false;
             }
+            this.autoSubmissionInProgress = false;
             return;
         }
 
@@ -2468,13 +2471,12 @@ class TjQuizElement extends HTMLElement {
             return;
         }
 
-        this.autoSubmissionInProgress = true;
         if (sendButton) {
             if (autoTriggered) {
                 sendButton.classList.add('hidden');
             } else {
                 sendButton.disabled = true;
-                sendButton.textContent = 'Sending...';
+                sendButton.innerHTML = '<span class="tj-spinner"></span>Sending...';
             }
         }
         if (validationMessage) {

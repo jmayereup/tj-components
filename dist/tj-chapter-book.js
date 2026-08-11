@@ -38,7 +38,7 @@ var n = "@import \"https://fonts.googleapis.com/css2?family=Lato:wght@300;400;70
 			number: "",
 			homeroom: "",
 			teacherCode: ""
-		}, this.submissionUrl = "", this.isSubmitting = !1, this.ttsState = {
+		}, this.submissionUrl = "", this.isSubmitting = !1, this.hasSubmitted = !1, this.ttsState = {
 			status: "idle",
 			activeButtonId: null,
 			activeElementId: null,
@@ -568,16 +568,13 @@ var n = "@import \"https://fonts.googleapis.com/css2?family=Lato:wght@300;400;70
 		this.shadowRoot.querySelector(".report-overlay").classList.remove("visible");
 	}
 	async _submitScore() {
-		let e = this.shadowRoot.querySelector("#report-teacher-code"), t = e ? e.value.trim() : this.studentInfo.teacherCode;
-		if (this.studentInfo.teacherCode = t, t !== this.code) {
+		if (this.isSubmitting || this.hasSubmitted) return;
+		let e = this.shadowRoot.querySelector("#submit-score-btn"), t = e ? e.textContent : "Submit Score Online", n = this.shadowRoot.querySelector("#report-teacher-code"), r = n ? n.value.trim() : this.studentInfo.teacherCode;
+		if (this.studentInfo.teacherCode = r, r !== this.code) {
 			this._showToast("Invalid Submit Code. Please show your report card screenshot to your teacher.", "error");
 			return;
 		}
-		if (this.isSubmitting) return;
-		let n = this.shadowRoot.querySelector("#submit-score-btn");
-		if (!n) return;
-		let r = n.textContent;
-		this.isSubmitting = !0, n.textContent = "Submitting...", n.disabled = !0;
+		this.isSubmitting = !0, e && (e.innerHTML = "<span class=\"tj-spinner\"></span>Submitting...", e.disabled = !0);
 		let i = this.shadowRoot.querySelector(".book-title").innerText, a = this.absoluteTotalQuestions > 0 ? Math.round(this.totalScore / this.absoluteTotalQuestions * 100) : 0, o = {
 			nickname: this.studentInfo.nickname,
 			homeroom: this.studentInfo.homeroom || "",
@@ -591,9 +588,9 @@ var n = "@import \"https://fonts.googleapis.com/css2?family=Lato:wght@300;400;70
 				method: "POST",
 				mode: "no-cors",
 				body: JSON.stringify(o)
-			}), this._showToast("Score successfully submitted! ✓", "success"), n.textContent = "Submitted ✓", n.style.background = "var(--tj-subtitle-color)";
-		} catch (e) {
-			console.error("Error submitting score:", e), this._showToast("There was an error submitting your score. Please try again.", "error"), n.textContent = r, n.disabled = !1, this.isSubmitting = !1;
+			}), this.hasSubmitted = !0, this.isSubmitting = !1, this._showToast("Score successfully submitted! ✓", "success"), e && (e.textContent = "Submitted ✓", e.disabled = !0, e.style.background = "var(--tj-subtitle-color)");
+		} catch (n) {
+			console.error("Error submitting score:", n), this._showToast("There was an error submitting your score. Please try again.", "error"), e && (e.textContent = t, e.disabled = !1), this.isSubmitting = !1;
 		}
 	}
 	async resetApp(e = !1) {

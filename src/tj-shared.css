@@ -375,5 +375,23 @@
   50% { transform: scale(1.1); }
 }
 
+@keyframes tj-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.tj-spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: tj-spin 0.75s linear infinite;
+  vertical-align: middle;
+  margin-right: 0.4em;
+}
+
 .tj-anim-shake { animation: tj-shake 0.4s ease; }
 .tj-anim-bounce { animation: tj-bounce 0.4s ease; }
+

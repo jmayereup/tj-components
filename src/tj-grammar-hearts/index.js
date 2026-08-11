@@ -46,6 +46,7 @@ class TjGrammarHearts extends HTMLElement {
     // Submission
     this.submissionUrl = '';
     this.isSubmitting = false;
+    this.hasSubmitted = false;
 
     // Retry & Continue play state
     this.continuesCount = 0;
@@ -454,6 +455,11 @@ class TjGrammarHearts extends HTMLElement {
   }
 
   async _submitScore() {
+    if (this.isSubmitting || this.hasSubmitted) return;
+
+    const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
+    const originalText = submitBtn ? submitBtn.textContent : 'Submit Score';
+
     const reportTeacherCodeInput = this.shadowRoot.getElementById('report-teacher-code');
     const currentTeacherCode = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : this.studentInfo.teacherCode;
 
@@ -467,16 +473,9 @@ class TjGrammarHearts extends HTMLElement {
     }
 
     this.submissionError = '';
-    this.render();
-
-    if (this.isSubmitting) return;
-
-    const submitBtn = this.shadowRoot.getElementById('submit-score-btn');
-    const originalText = submitBtn ? submitBtn.textContent : 'Submit';
-
     this.isSubmitting = true;
     if (submitBtn) {
-      submitBtn.textContent = 'Submitting...';
+      submitBtn.innerHTML = '<span class="tj-spinner"></span>Submitting...';
       submitBtn.disabled = true;
     }
 
@@ -496,8 +495,11 @@ class TjGrammarHearts extends HTMLElement {
         mode: 'no-cors',
         body: JSON.stringify(payload)
       });
+      this.hasSubmitted = true;
+      this.isSubmitting = false;
       if (submitBtn) {
         submitBtn.textContent = 'Submitted ✓';
+        submitBtn.disabled = true;
         submitBtn.style.background = 'green';
       }
     } catch (err) {
