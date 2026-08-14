@@ -282,18 +282,25 @@ class TjBuilder extends HTMLElement {
     async _fetchTeacherPresets() {
         if (!this.selectTeacherImport) return;
 
-        const school = this.hasAttribute('school') ? this.getAttribute('school')?.trim() : null;
+        let school = this.hasAttribute('school') ? this.getAttribute('school')?.trim() : null;
 
+        // Check for ?school= URL query parameter if not provided as attribute
         if (!school) {
-            if (this.fieldGroupTeacherImport) this.fieldGroupTeacherImport.style.display = 'none';
-            return;
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                school = urlParams.get('school')?.trim() || null;
+            } catch (e) {
+                // Ignore URL parsing errors
+            }
         }
 
         if (this.fieldGroupTeacherImport) {
             this.fieldGroupTeacherImport.style.display = '';
         }
         
-        const url = `https://pb.teacherjake.com/api/collections/tj_components_teacher_info/records?filter=(school='${encodeURIComponent(school)}')`;
+        const url = school
+            ? `https://pb.teacherjake.com/api/collections/tj_components_teacher_info/records?filter=(school~'${encodeURIComponent(school)}')&sort=name`
+            : `https://pb.teacherjake.com/api/collections/tj_components_teacher_info/records?sort=school,name`;
         
         try {
             const res = await fetch(url);
@@ -302,15 +309,35 @@ class TjBuilder extends HTMLElement {
             const items = data.items || [];
             
             if (items.length === 0) {
-                this.selectTeacherImport.innerHTML = `<option value="" disabled selected>No presets for ${school}</option>`;
+                if (school) {
+                    this.selectTeacherImport.innerHTML = `<option value="" disabled selected>No presets for ${school}</option>`;
+                } else if (this.fieldGroupTeacherImport) {
+                    this.fieldGroupTeacherImport.style.display = 'none';
+                }
                 return;
             }
 
-            const optionsHtml = [
-                `<option value="" disabled selected>Import Teacher...</option>`,
-                ...items.map(teacher => `<option value="${teacher.url}">${teacher.name}</option>`),
-                `<option value="__custom__">✏️ Custom Submission URL...</option>`
-            ].join('');
+            let optionsHtml = `<option value="" disabled selected>Import Teacher...</option>`;
+
+            if (school) {
+                optionsHtml += items.map(teacher => `<option value="${teacher.url}">${teacher.name}</option>`).join('');
+            } else {
+                // Group teachers by school if no specific school is targeted
+                const schools = {};
+                items.forEach(t => {
+                    const s = t.school || 'General';
+                    if (!schools[s]) schools[s] = [];
+                    schools[s].push(t);
+                });
+                
+                Object.keys(schools).forEach(s => {
+                    optionsHtml += `<optgroup label="${s}">`;
+                    optionsHtml += schools[s].map(teacher => `<option value="${teacher.url}">${teacher.name} (${s})</option>`).join('');
+                    optionsHtml += `</optgroup>`;
+                });
+            }
+
+            optionsHtml += `<option value="__custom__">✏️ Custom Submission URL...</option>`;
 
             this.selectTeacherImport.innerHTML = optionsHtml;
 
@@ -323,8 +350,8 @@ class TjBuilder extends HTMLElement {
                     this.inputSubmissionUrl.disabled = true;
                     this.inputSubmissionUrl.title = `Locked to preset URL for ${matchingTeacher.name}`;
                 }
-            } else if (!currentUrl && items.length > 0) {
-                // If no submission URL is set yet, default to the first teacher for this school preset
+            } else if (!currentUrl && school && items.length > 0) {
+                // If a school preset is active and no submission URL is set yet, default to the first teacher
                 const firstTeacher = items[0];
                 this.selectTeacherImport.value = firstTeacher.url;
                 if (this.inputSubmissionUrl) {
@@ -339,7 +366,11 @@ class TjBuilder extends HTMLElement {
             }
         } catch (e) {
             console.warn('TJ Builder: Could not fetch teacher info presets', e);
-            this.selectTeacherImport.innerHTML = `<option value="" disabled selected>Import Teacher...</option>`;
+            if (!school && this.fieldGroupTeacherImport) {
+                this.fieldGroupTeacherImport.style.display = 'none';
+            } else {
+                this.selectTeacherImport.innerHTML = `<option value="" disabled selected>Import Teacher...</option>`;
+            }
         }
     }
 
