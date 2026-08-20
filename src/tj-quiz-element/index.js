@@ -2328,11 +2328,7 @@ class TjQuizElement extends HTMLElement {
         }
         if (tryAgainButton) {
             tryAgainButton.disabled = false;
-            if (this.testMode) {
-                tryAgainButton.classList.add('hidden');
-            } else {
-                tryAgainButton.classList.remove('hidden');
-            }
+            tryAgainButton.classList.remove('hidden');
         }
 
         if (this.testMode) {

@@ -816,7 +816,12 @@ class TjTest extends HTMLElement {
 
         if (this.testCompleted) {
             mainContainer.classList.add('hidden');
-            if (finalReport) finalReport.classList.remove('hidden');
+            if (finalReport) {
+                finalReport.classList.remove('hidden');
+                if (!finalReport.innerHTML.trim()) {
+                    this.renderFinalReport();
+                }
+            }
             return;
         } else {
             mainContainer.classList.remove('hidden');
@@ -1402,12 +1407,29 @@ class TjTest extends HTMLElement {
                 <span style="font-size: 1.3em;">📸</span>
                 <span>${this.hasValidSubmissionUrl ? 'Alternatively, take' : 'Take'} a screenshot of this summary table to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
             </div>
+
+            <div class="tj-report-actions">
+                <button id="clearAndRetakeBtn" class="tj-btn-restart" type="button">
+                    🔄 Clear Cache & Start Again / ล้างข้อมูลและเริ่มใหม่
+                </button>
+            </div>
         `;
 
         const submitBtn = reportContainer.querySelector('#submitResultsBtn');
         if (submitBtn) {
             submitBtn.onclick = () => this.submitScoreReport();
         }
+
+        const clearBtn = reportContainer.querySelector('#clearAndRetakeBtn');
+        if (clearBtn) {
+            clearBtn.onclick = () => {
+                const requireCodeMsg = this.testMode ? '\n\n(This will clear your saved progress and require the Start Code again).' : '';
+                if (window.confirm(`Are you sure you want to clear your saved score and start the test again?${requireCodeMsg}`)) {
+                    this.resetTest();
+                }
+            };
+        }
+
         this.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -1628,6 +1650,9 @@ class TjTest extends HTMLElement {
         }
 
         this.renderTestUI();
+        if (this.testCompleted) {
+            this.renderFinalReport();
+        }
     }
 
     resetTest() {
@@ -1640,9 +1665,41 @@ class TjTest extends HTMLElement {
         this.userAnswers = {};
         this.studentInfo = { nickname: '', studentId: '', homeroom: '' };
         this.sectionResults = this.sections.map(() => ({ completed: false, passed: false, score: 0, total: 0, percentage: 0 }));
+
+        const finalReport = this.shadowRoot.getElementById('finalReportContainer');
+        if (finalReport) {
+            finalReport.innerHTML = '';
+            finalReport.classList.add('hidden');
+        }
+
+        const activeContainer = this.shadowRoot.getElementById('activeSectionContainer');
+        if (activeContainer) {
+            activeContainer.classList.remove('hidden');
+        }
+
+        const modal = this.shadowRoot.getElementById('sectionResultModal');
+        if (modal) modal.classList.remove('active');
+
+        // Reset input fields in startLockOverlay
+        const nickInput = this.shadowRoot.getElementById('startNicknameInput');
+        const idInput = this.shadowRoot.getElementById('startStudentIdInput');
+        const hrInput = this.shadowRoot.getElementById('startHomeroomInput');
+        const startCodeInput = this.shadowRoot.getElementById('startCodeInput');
+        const startCodeError = this.shadowRoot.getElementById('startCodeError');
+        if (nickInput) nickInput.value = '';
+        if (idInput) idInput.value = '';
+        if (hrInput) hrInput.value = '';
+        if (startCodeInput) startCodeInput.value = '';
+        if (startCodeError) startCodeError.classList.add('hidden');
+
         this.updateTabAwayBanner();
+        if (this.testMode) {
+            this.lockStartOverlay();
+        } else {
+            this.updateSecurityState();
+        }
         this.renderTestUI();
-        this.updateSecurityState();
+        this.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     get hasValidSubmissionUrl() {

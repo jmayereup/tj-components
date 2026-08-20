@@ -993,7 +993,7 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
                 </div>
             `;
 		} else t.innerHTML = "<div class=\"score-report-card\"><div class=\"score-main-compact\">No score data available</div></div>";
-		if (d > 0 && f / d, t.className = "", n && n.classList.add("hidden"), i && i.classList.remove("hidden"), r && r.classList.remove("hidden"), a && (a.disabled = !0, a.textContent = "Resend Score to Teacher", a.classList.add("hidden")), o && (o.disabled = !1, this.testMode ? o.classList.add("hidden") : o.classList.remove("hidden")), this.testMode) {
+		if (d > 0 && f / d, t.className = "", n && n.classList.add("hidden"), i && i.classList.remove("hidden"), r && r.classList.remove("hidden"), a && (a.disabled = !0, a.textContent = "Resend Score to Teacher", a.classList.add("hidden")), o && (o.disabled = !1, o.classList.remove("hidden")), this.testMode) {
 			let e = this.shadowRoot.getElementById("dynamicContent");
 			e && e.classList.add("hidden");
 		}
