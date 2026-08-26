@@ -22,6 +22,34 @@
             min-height: 100vh;
         }
 
+        body.light-theme {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+        }
+
+        body.light-theme .header-nav {
+            border-bottom-color: #e2e8f0;
+        }
+
+        body.light-theme .demo-controls-card {
+            border-color: #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .control-btn {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        body.light-theme .control-btn:hover {
+            background: #cbd5e1;
+        }
+
+        body.light-theme .switch-slider {
+            background-color: #cbd5e1;
+        }
+
         .header-nav {
             max-width: 900px;
             margin: 0 auto 2rem auto;
@@ -69,6 +97,7 @@
             display: flex;
             align-items: center;
             gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .switch-label {
@@ -164,6 +193,12 @@
         
         <div class="demo-controls-row">
             <div class="toggle-group">
+                <label class="switch-label" for="themeToggle">
+                    <input type="checkbox" id="themeToggle" checked>
+                    <span class="switch-slider"></span>
+                    <span class="control-text">Dark Mode</span>
+                </label>
+
                 <label class="switch-label" for="testModeToggle">
                     <input type="checkbox" id="testModeToggle">
                     <span class="switch-slider"></span>
@@ -292,11 +327,28 @@
     <script>
         customElements.whenDefined('tj-test').then(() => {
             const testElem = document.querySelector('tj-test');
+            const themeToggle = document.getElementById('themeToggle');
             const testModeToggle = document.getElementById('testModeToggle');
             const ttsToggle = document.getElementById('ttsToggle');
             const resetBtn = document.getElementById('resetTestBtn');
 
             if (testElem) {
+                if (themeToggle) {
+                    themeToggle.addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            document.body.classList.remove('light-theme');
+                            testElem.removeAttribute('theme');
+                            testElem.classList.remove('light');
+                            testElem.classList.add('dark');
+                        } else {
+                            document.body.classList.add('light-theme');
+                            testElem.setAttribute('theme', 'light');
+                            testElem.classList.remove('dark');
+                            testElem.classList.add('light');
+                        }
+                    });
+                }
+
                 testModeToggle.checked = testElem.hasAttribute('test-mode');
                 ttsToggle.checked = testElem.hasAttribute('tts') || testElem.hasAttribute('enable-tts');
 

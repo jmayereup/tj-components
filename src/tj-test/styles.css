@@ -1,5 +1,12 @@
 /* tj-test styles.css */
 
+:host {
+  display: block;
+  font-family: var(--tj-font-family, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  color: var(--tj-text-main);
+  color-scheme: light dark;
+}
+
 .tj-test-wrapper {
   max-width: 900px;
   margin: 0 auto;
@@ -521,7 +528,7 @@
 
 .tj-final-score-badge {
   background: linear-gradient(135deg, #2563eb, #7c3aed);
-  color: white;
+  color: #ffffff;
   padding: 0.75em 1.75em;
   border-radius: var(--tj-border-radius-full);
   font-size: 1.4em;
@@ -532,9 +539,14 @@
 
 .tj-summary-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin-top: 1em;
   font-size: 0.95em;
+  border: 1px solid var(--tj-border-main);
+  border-radius: var(--tj-border-radius-md, 8px);
+  overflow: hidden;
+  background: var(--tj-bg-card);
 }
 
 .tj-summary-table th, .tj-summary-table td {
@@ -546,25 +558,59 @@
 .tj-summary-table th {
   background: var(--tj-bg-alt);
   color: var(--tj-text-muted);
+  font-weight: 700;
+  font-size: 0.9em;
+}
+
+.tj-summary-table td {
+  color: var(--tj-text-main);
+}
+
+.tj-summary-table tbody tr:nth-child(even) td {
+  background: var(--tj-bg-alt);
+}
+
+.tj-summary-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tj-summary-table tbody tr:hover td {
+  background: var(--tj-primary-light);
 }
 
 .tj-status-tag {
   display: inline-block;
-  padding: 0.2em 0.5em;
+  padding: 0.25em 0.6em;
   border-radius: 4px;
   font-size: 0.8em;
   font-weight: 700;
   text-transform: uppercase;
+  border: 1px solid transparent;
+  line-height: 1.2;
 }
 
 .tj-status-tag.passed {
   background: var(--tj-success-light);
   color: var(--tj-success-color);
+  border-color: var(--tj-success-border);
 }
 
 .tj-status-tag.failed {
   background: var(--tj-error-light);
   color: var(--tj-error-color);
+  border-color: var(--tj-error-border);
+}
+
+.tj-status-tag.completed {
+  background: var(--tj-primary-light);
+  color: var(--tj-primary-color);
+  border-color: var(--tj-primary-border);
+}
+
+.tj-status-tag.locked {
+  background: var(--tj-bg-alt);
+  color: var(--tj-text-muted);
+  border-color: var(--tj-border-main);
 }
 
 /* Written Answers Section on Final Report */
@@ -652,6 +698,28 @@
 .tj-btn-restart:hover {
   background: rgba(239, 68, 68, 0.16);
   border-color: #ef4444;
+}
+
+.tj-screenshot-banner {
+  background: rgba(2, 132, 199, 0.08);
+  border: 1px solid rgba(2, 132, 199, 0.25);
+  color: #0284c7;
+  border-radius: var(--tj-border-radius-md, 8px);
+  padding: 0.85em 1.25em;
+  margin-top: 0.5em;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  max-width: 600px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.tj-screenshot-icon {
+  font-size: 1.3em;
+  flex-shrink: 0;
 }
 
 /* Warnings & Banners */
@@ -754,6 +822,7 @@
   box-sizing: border-box;
   font-family: inherit;
   transition: var(--tj-transition-fast);
+  color-scheme: light dark;
 }
 
 .tj-input:focus {
@@ -801,9 +870,429 @@
   color: var(--tj-text-main);
   font-size: 0.95em;
   box-sizing: border-box;
+  color-scheme: light dark;
 }
 
 .tj-submission-input:focus {
   outline: none;
   border-color: var(--tj-primary-color);
+}
+
+/* =========================================
+   Dark Mode Styles & Theming Refinements
+   ========================================= */
+@media (prefers-color-scheme: dark) {
+  :host {
+    color-scheme: dark;
+    --tj-primary-color: #3b82f6;
+    --tj-primary-hover: #60a5fa;
+    --tj-success-color: #4ade80;
+    --tj-error-color: #f87171;
+    --tj-warning-color: #fde047;
+  }
+
+  .tj-header {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  .tj-stepper-item {
+    background: var(--tj-bg-alt);
+    border-color: var(--tj-border-main);
+    color: var(--tj-text-muted);
+  }
+
+  .tj-stepper-item.passed {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.3);
+  }
+
+  .tj-stepper-item.failed {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.3);
+  }
+
+  .tj-stepper-icon {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--tj-text-muted);
+  }
+
+  .tj-stepper-item.passed .tj-stepper-icon {
+    background: rgba(74, 222, 128, 0.25);
+    color: #4ade80;
+  }
+
+  .tj-stepper-item.failed .tj-stepper-icon {
+    background: rgba(248, 113, 113, 0.25);
+    color: #f87171;
+  }
+
+  .tj-passage-box {
+    border: 1px solid var(--tj-border-main);
+    border-left: 4px solid #3b82f6;
+  }
+
+  .tj-question-situation {
+    background: var(--tj-bg-card);
+    color: var(--tj-text-muted);
+    border-left-color: #3b82f6;
+  }
+
+  .tj-option-label:hover {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
+  }
+
+  .tj-vocab-table {
+    border-color: var(--tj-border-main);
+  }
+
+  .tj-vocab-select {
+    background: var(--tj-bg-card);
+    color: var(--tj-text-main);
+  }
+
+  .tj-vocab-select option {
+    background: #1e293b;
+    color: #f8fafc;
+  }
+
+  .tj-cloze-box {
+    border: 1px solid var(--tj-border-main);
+  }
+
+  .tj-cloze-bank-word {
+    background: var(--tj-bg-card);
+    color: #60a5fa;
+    border-color: var(--tj-border-main);
+  }
+
+  .tj-cloze-bank-word:hover,
+  .tj-cloze-bank-word.selected {
+    background: #3b82f6;
+    color: #ffffff;
+    border-color: #3b82f6;
+  }
+
+  .tj-cloze-input {
+    background: var(--tj-bg-card);
+    color: var(--tj-text-main);
+    border-color: var(--tj-border-main);
+    border-bottom: 2px solid #3b82f6;
+  }
+
+  .tj-cloze-input.filled {
+    color: #60a5fa;
+  }
+
+  .tj-score-badge {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border-color: rgba(96, 165, 250, 0.3);
+  }
+
+  .tj-final-score-badge {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+  }
+
+  .tj-summary-table {
+    border-color: var(--tj-border-main);
+    background: var(--tj-bg-card);
+  }
+
+  .tj-summary-table th {
+    background: var(--tj-bg-alt);
+    color: var(--tj-text-muted);
+    border-bottom-color: var(--tj-border-main);
+  }
+
+  .tj-summary-table td {
+    color: var(--tj-text-main);
+    border-bottom-color: var(--tj-border-main);
+  }
+
+  .tj-summary-table tbody tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .tj-summary-table tbody tr:hover td {
+    background: rgba(59, 130, 246, 0.12);
+  }
+
+  .tj-status-tag.passed {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.35);
+  }
+
+  .tj-status-tag.failed {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.35);
+  }
+
+  .tj-status-tag.completed {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border-color: rgba(96, 165, 250, 0.35);
+  }
+
+  .tj-status-tag.locked {
+    background: var(--tj-bg-alt);
+    color: var(--tj-text-muted);
+    border-color: var(--tj-border-main);
+  }
+
+  .tj-written-answers-section {
+    background: var(--tj-bg-alt);
+    border-color: var(--tj-border-main);
+  }
+
+  .tj-written-qa {
+    background: var(--tj-bg-card);
+    border-color: var(--tj-border-main);
+  }
+
+  .tj-written-answer {
+    color: #60a5fa;
+  }
+
+  .tj-screenshot-banner {
+    background: rgba(56, 189, 248, 0.12);
+    border-color: rgba(56, 189, 248, 0.35);
+    color: #38bdf8;
+  }
+
+  .tj-btn-restart {
+    border-color: rgba(248, 113, 113, 0.4);
+    background: rgba(248, 113, 113, 0.12);
+    color: #f87171;
+  }
+
+  .tj-btn-restart:hover {
+    background: rgba(248, 113, 113, 0.22);
+    border-color: #f87171;
+  }
+
+  .tj-input,
+  .tj-submission-input,
+  .tj-written-input {
+    background: var(--tj-bg-card);
+    color: var(--tj-text-main);
+    border-color: var(--tj-border-main);
+  }
+}
+
+:host(.dark), :host([theme="dark"]), :host([data-theme="dark"]) {
+  color-scheme: dark;
+  --tj-primary-color: #3b82f6;
+  --tj-primary-hover: #60a5fa;
+  --tj-success-color: #4ade80;
+  --tj-error-color: #f87171;
+  --tj-warning-color: #fde047;
+}
+
+:host(.dark) .tj-header, :host([theme="dark"]) .tj-header, :host([data-theme="dark"]) .tj-header {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+:host(.dark) .tj-stepper-item, :host([theme="dark"]) .tj-stepper-item, :host([data-theme="dark"]) .tj-stepper-item {
+  background: var(--tj-bg-alt);
+  border-color: var(--tj-border-main);
+  color: var(--tj-text-muted);
+}
+
+:host(.dark) .tj-stepper-item.passed, :host([theme="dark"]) .tj-stepper-item.passed, :host([data-theme="dark"]) .tj-stepper-item.passed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+:host(.dark) .tj-stepper-item.failed, :host([theme="dark"]) .tj-stepper-item.failed, :host([data-theme="dark"]) .tj-stepper-item.failed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+:host(.dark) .tj-stepper-icon, :host([theme="dark"]) .tj-stepper-icon, :host([data-theme="dark"]) .tj-stepper-icon {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--tj-text-muted);
+}
+
+:host(.dark) .tj-stepper-item.passed .tj-stepper-icon, :host([theme="dark"]) .tj-stepper-item.passed .tj-stepper-icon, :host([data-theme="dark"]) .tj-stepper-item.passed .tj-stepper-icon {
+  background: rgba(74, 222, 128, 0.25);
+  color: #4ade80;
+}
+
+:host(.dark) .tj-stepper-item.failed .tj-stepper-icon, :host([theme="dark"]) .tj-stepper-item.failed .tj-stepper-icon, :host([data-theme="dark"]) .tj-stepper-item.failed .tj-stepper-icon {
+  background: rgba(248, 113, 113, 0.25);
+  color: #f87171;
+}
+
+:host(.dark) .tj-passage-box, :host([theme="dark"]) .tj-passage-box, :host([data-theme="dark"]) .tj-passage-box {
+  border: 1px solid var(--tj-border-main);
+  border-left: 4px solid #3b82f6;
+}
+
+:host(.dark) .tj-question-situation, :host([theme="dark"]) .tj-question-situation, :host([data-theme="dark"]) .tj-question-situation {
+  background: var(--tj-bg-card);
+  color: var(--tj-text-muted);
+  border-left-color: #3b82f6;
+}
+
+:host(.dark) .tj-option-label:hover, :host([theme="dark"]) .tj-option-label:hover, :host([data-theme="dark"]) .tj-option-label:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: #3b82f6;
+}
+
+:host(.dark) .tj-vocab-table, :host([theme="dark"]) .tj-vocab-table, :host([data-theme="dark"]) .tj-vocab-table {
+  border-color: var(--tj-border-main);
+}
+
+:host(.dark) .tj-vocab-select, :host([theme="dark"]) .tj-vocab-select, :host([data-theme="dark"]) .tj-vocab-select {
+  background: var(--tj-bg-card);
+  color: var(--tj-text-main);
+}
+
+:host(.dark) .tj-vocab-select option, :host([theme="dark"]) .tj-vocab-select option, :host([data-theme="dark"]) .tj-vocab-select option {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+:host(.dark) .tj-cloze-box, :host([theme="dark"]) .tj-cloze-box, :host([data-theme="dark"]) .tj-cloze-box {
+  border: 1px solid var(--tj-border-main);
+}
+
+:host(.dark) .tj-cloze-bank-word, :host([theme="dark"]) .tj-cloze-bank-word, :host([data-theme="dark"]) .tj-cloze-bank-word {
+  background: var(--tj-bg-card);
+  color: #60a5fa;
+  border-color: var(--tj-border-main);
+}
+
+:host(.dark) .tj-cloze-bank-word:hover,
+:host(.dark) .tj-cloze-bank-word.selected,
+:host([theme="dark"]) .tj-cloze-bank-word:hover,
+:host([theme="dark"]) .tj-cloze-bank-word.selected,
+:host([data-theme="dark"]) .tj-cloze-bank-word:hover,
+:host([data-theme="dark"]) .tj-cloze-bank-word.selected {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+:host(.dark) .tj-cloze-input, :host([theme="dark"]) .tj-cloze-input, :host([data-theme="dark"]) .tj-cloze-input {
+  background: var(--tj-bg-card);
+  color: var(--tj-text-main);
+  border-color: var(--tj-border-main);
+  border-bottom: 2px solid #3b82f6;
+}
+
+:host(.dark) .tj-cloze-input.filled, :host([theme="dark"]) .tj-cloze-input.filled, :host([data-theme="dark"]) .tj-cloze-input.filled {
+  color: #60a5fa;
+}
+
+:host(.dark) .tj-score-badge, :host([theme="dark"]) .tj-score-badge, :host([data-theme="dark"]) .tj-score-badge {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+:host(.dark) .tj-final-score-badge, :host([theme="dark"]) .tj-final-score-badge, :host([data-theme="dark"]) .tj-final-score-badge {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+}
+
+:host(.dark) .tj-summary-table, :host([theme="dark"]) .tj-summary-table, :host([data-theme="dark"]) .tj-summary-table {
+  border-color: var(--tj-border-main);
+  background: var(--tj-bg-card);
+}
+
+:host(.dark) .tj-summary-table th, :host([theme="dark"]) .tj-summary-table th, :host([data-theme="dark"]) .tj-summary-table th {
+  background: var(--tj-bg-alt);
+  color: var(--tj-text-muted);
+  border-bottom-color: var(--tj-border-main);
+}
+
+:host(.dark) .tj-summary-table td, :host([theme="dark"]) .tj-summary-table td, :host([data-theme="dark"]) .tj-summary-table td {
+  color: var(--tj-text-main);
+  border-bottom-color: var(--tj-border-main);
+}
+
+:host(.dark) .tj-summary-table tbody tr:nth-child(even) td, :host([theme="dark"]) .tj-summary-table tbody tr:nth-child(even) td, :host([data-theme="dark"]) .tj-summary-table tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+:host(.dark) .tj-summary-table tbody tr:hover td, :host([theme="dark"]) .tj-summary-table tbody tr:hover td, :host([data-theme="dark"]) .tj-summary-table tbody tr:hover td {
+  background: rgba(59, 130, 246, 0.12);
+}
+
+:host(.dark) .tj-status-tag.passed, :host([theme="dark"]) .tj-status-tag.passed, :host([data-theme="dark"]) .tj-status-tag.passed {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.35);
+}
+
+:host(.dark) .tj-status-tag.failed, :host([theme="dark"]) .tj-status-tag.failed, :host([data-theme="dark"]) .tj-status-tag.failed {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+:host(.dark) .tj-status-tag.completed, :host([theme="dark"]) .tj-status-tag.completed, :host([data-theme="dark"]) .tj-status-tag.completed {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+:host(.dark) .tj-status-tag.locked, :host([theme="dark"]) .tj-status-tag.locked, :host([data-theme="dark"]) .tj-status-tag.locked {
+  background: var(--tj-bg-alt);
+  color: var(--tj-text-muted);
+  border-color: var(--tj-border-main);
+}
+
+:host(.dark) .tj-written-answers-section, :host([theme="dark"]) .tj-written-answers-section, :host([data-theme="dark"]) .tj-written-answers-section {
+  background: var(--tj-bg-alt);
+  border-color: var(--tj-border-main);
+}
+
+:host(.dark) .tj-written-qa, :host([theme="dark"]) .tj-written-qa, :host([data-theme="dark"]) .tj-written-qa {
+  background: var(--tj-bg-card);
+  border-color: var(--tj-border-main);
+}
+
+:host(.dark) .tj-written-answer, :host([theme="dark"]) .tj-written-answer, :host([data-theme="dark"]) .tj-written-answer {
+  color: #60a5fa;
+}
+
+:host(.dark) .tj-screenshot-banner, :host([theme="dark"]) .tj-screenshot-banner, :host([data-theme="dark"]) .tj-screenshot-banner {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+}
+
+:host(.dark) .tj-btn-restart, :host([theme="dark"]) .tj-btn-restart, :host([data-theme="dark"]) .tj-btn-restart {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+}
+
+:host(.dark) .tj-btn-restart:hover, :host([theme="dark"]) .tj-btn-restart:hover, :host([data-theme="dark"]) .tj-btn-restart:hover {
+  background: rgba(248, 113, 113, 0.22);
+  border-color: #f87171;
+}
+
+:host(.dark) .tj-input,
+:host(.dark) .tj-submission-input,
+:host(.dark) .tj-written-input,
+:host([theme="dark"]) .tj-input,
+:host([theme="dark"]) .tj-submission-input,
+:host([theme="dark"]) .tj-written-input,
+:host([data-theme="dark"]) .tj-input,
+:host([data-theme="dark"]) .tj-submission-input,
+:host([data-theme="dark"]) .tj-written-input {
+  background: var(--tj-bg-card);
+  color: var(--tj-text-main);
+  border-color: var(--tj-border-main);
 }

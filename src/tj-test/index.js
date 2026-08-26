@@ -365,11 +365,16 @@ class TjTest extends HTMLElement {
                 return { text, words, title: (typeof c === 'object' && c.title) ? c.title : '' };
             });
 
+            const secPassThreshold = (sec.passThreshold !== undefined || sec.pass_threshold !== undefined || sec.pass !== undefined)
+                ? this._parseThreshold(sec.passThreshold ?? sec.pass_threshold ?? sec.pass)
+                : passThreshold;
+            const secPassLabel = `${Math.round(secPassThreshold * 100)}%`;
+
             this.sections.push({
                 index: idx,
                 title: secTitle,
-                passThreshold: passThreshold,
-                passPercentageLabel: passLabel,
+                passThreshold: secPassThreshold,
+                passPercentageLabel: secPassLabel,
                 passages,
                 questions,
                 vocabulary,
@@ -1267,14 +1272,15 @@ class TjTest extends HTMLElement {
         badge.textContent = scorePct;
 
         if (passed) {
+            const isZeroThreshold = (passLabel === '0%' || passLabel === '0');
             icon.textContent = '🎉';
-            title.textContent = 'Section Passed!';
+            title.textContent = isZeroThreshold ? 'Section Completed!' : 'Section Passed!';
             title.style.color = 'var(--tj-success-color)';
-            msg.textContent = (passLabel === '0%' || passLabel === '0')
+            msg.textContent = isZeroThreshold
                 ? `Great job! You completed this section with a score of ${scorePct}.`
                 : `Excellent job! You scored ${scorePct}, meeting the required threshold of ${passLabel}.`;
             continueBtn.className = 'tj-btn tj-btn-success';
-            continueBtn.textContent = this.testCompleted ? 'View Placement Report →' : 'Proceed to Next Section →';
+            continueBtn.textContent = this.testCompleted ? 'View Final Report →' : 'Proceed to Next Section →';
         } else {
             icon.textContent = '📊';
             title.textContent = 'Placement Complete';
@@ -1295,9 +1301,15 @@ class TjTest extends HTMLElement {
         if (mainContainer) mainContainer.classList.add('hidden');
         reportContainer.classList.remove('hidden');
 
+        const totalScore = this.sectionResults.reduce((sum, r) => sum + (r ? r.score : 0), 0);
+        const totalQuestions = this.sectionResults.reduce((sum, r) => sum + (r ? r.total : 0), 0);
+        const totalPct = totalQuestions > 0 ? Math.round((totalScore / totalQuestions) * 100) : 0;
+
+        const hasAnyThreshold = this.sections.some(s => (s.passThreshold || 0) > 0);
+
         let highestPassedTitle = 'Starter Section';
         for (let i = this.sections.length - 1; i >= 0; i--) {
-            if (this.sectionResults[i] && this.sectionResults[i].passed) {
+            if (this.sectionResults[i] && this.sectionResults[i].passed && (this.sections[i].passThreshold || 0) > 0) {
                 highestPassedTitle = this.sections[i].title;
                 break;
             }
@@ -1305,16 +1317,25 @@ class TjTest extends HTMLElement {
 
         let summaryRows = this.sections.map((sec, idx) => {
             const res = this.sectionResults[idx] || { completed: false, passed: false, score: 0, total: 0, percentage: 0 };
-            const statusBadge = res.completed
-                ? (res.passed ? '<span class="tj-status-tag passed">PASSED</span>' : '<span class="tj-status-tag failed">HALTED</span>')
-                : '<span class="tj-status-tag" style="background: var(--tj-bg-alt); color: var(--tj-text-muted);">LOCKED</span>';
+            let statusBadge = '<span class="tj-status-tag locked">LOCKED</span>';
+            if (res.completed) {
+                if (!sec.passThreshold || sec.passThreshold === 0) {
+                    statusBadge = '<span class="tj-status-tag completed">COMPLETED</span>';
+                } else {
+                    statusBadge = res.passed
+                        ? '<span class="tj-status-tag passed">PASSED</span>'
+                        : '<span class="tj-status-tag failed">HALTED</span>';
+                }
+            }
+
+            const passReqLabel = (!sec.passThreshold || sec.passThreshold === 0) ? '-' : sec.passPercentageLabel;
 
             return `
                 <tr>
                     <td style="font-weight: 600;">${sec.title}</td>
                     <td>${res.score} / ${res.total}</td>
                     <td>${res.percentage}%</td>
-                    <td>${sec.passPercentageLabel}</td>
+                    <td>${passReqLabel}</td>
                     <td>${statusBadge}</td>
                 </tr>
             `;
@@ -1350,9 +1371,13 @@ class TjTest extends HTMLElement {
             `;
         }
 
+        const scoreBadgeContent = hasAnyThreshold
+            ? `YOUR SCORE: ${highestPassedTitle.toUpperCase()}`
+            : `YOUR SCORE: ${totalScore} / ${totalQuestions} (${totalPct}%)`;
+
         reportContainer.innerHTML = `
-            <h3 class="tj-h3" style="font-size: 1.6em; margin: 0;">Test Summary</h3>
-            <div class="tj-final-score-badge">YOUR SCORE: ${highestPassedTitle.toUpperCase()}</div>
+            <h3 class="tj-h3" style="font-size: 1.6em; margin: 0; color: var(--tj-text-main);">Test Summary</h3>
+            <div class="tj-final-score-badge">${scoreBadgeContent}</div>
             <p style="color: var(--tj-text-muted); max-width: 600px;">
                 Based on your test performance, your score has been evaluated and verified.
             </p>
@@ -1403,8 +1428,8 @@ class TjTest extends HTMLElement {
                 <div id="submitStatusMsg" class="tj-error-msg hidden"></div>
             </div>
             ` : ''}
-            <div class="tj-banner" style="background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.3); color: #38bdf8; border-radius: 8px; padding: 0.85em 1.25em; margin-top: 0.5em; font-weight: 600; display: flex; align-items: center; gap: 0.6em; max-width: 600px; width: 100%; box-sizing: border-box;">
-                <span style="font-size: 1.3em;">📸</span>
+            <div class="tj-screenshot-banner">
+                <span class="tj-screenshot-icon">📸</span>
                 <span>${this.hasValidSubmissionUrl ? 'Alternatively, take' : 'Take'} a screenshot of this summary table to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
             </div>
 
@@ -1490,6 +1515,9 @@ class TjTest extends HTMLElement {
         const sectionSummary = this.sections.map((sec, idx) => {
             const r = this.sectionResults[idx];
             if (!r || !r.completed) return `${sec.title}: Not reached`;
+            if (!sec.passThreshold || sec.passThreshold === 0) {
+                return `${sec.title}: ${r.score}/${r.total} (${r.percentage}%) - COMPLETED`;
+            }
             return `${sec.title}: ${r.score}/${r.total} (${r.percentage}%) - ${r.passed ? 'PASSED' : 'HALTED'}`;
         }).join(' | ');
 
