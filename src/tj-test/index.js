@@ -93,6 +93,7 @@ class TjTest extends HTMLElement {
         this.isSubmitting = false;
         this.hasSubmitted = false;
         this.userAnswers = {}; // Global answers map
+        this.studentInfo = { nickname: '', studentId: '', homeroom: '' };
         this._visibilityHandler = null;
     }
 
@@ -1406,16 +1407,16 @@ class TjTest extends HTMLElement {
                 <div class="tj-submission-form">
                     <div class="tj-form-group">
                         <label class="tj-form-label" for="reportNicknameInput">Student Nickname *</label>
-                        <input type="text" id="reportNicknameInput" class="tj-input" placeholder="e.g. Jake" value="${this.escapeHtml(this.studentInfo.nickname || '')}">
+                        <input type="text" id="reportNicknameInput" class="tj-input" placeholder="e.g. Jake" value="${this.escapeHtml(this.studentInfo?.nickname || '')}">
                     </div>
                     <div class="tj-form-row">
                         <div class="tj-form-group">
                             <label class="tj-form-label" for="reportStudentIdInput">Student ID *</label>
-                            <input type="text" id="reportStudentIdInput" class="tj-input" placeholder="e.g. 01" value="${this.escapeHtml(this.studentInfo.studentId || '')}">
+                            <input type="text" id="reportStudentIdInput" class="tj-input" placeholder="e.g. 01" value="${this.escapeHtml(this.studentInfo?.studentId || '')}">
                         </div>
                         <div class="tj-form-group">
                             <label class="tj-form-label" for="reportHomeroomInput">Homeroom</label>
-                            <input type="text" id="reportHomeroomInput" class="tj-input" placeholder="e.g. 1/1" value="${this.escapeHtml(this.studentInfo.homeroom || '')}">
+                            <input type="text" id="reportHomeroomInput" class="tj-input" placeholder="e.g. 1/1" value="${this.escapeHtml(this.studentInfo?.homeroom || '')}">
                         </div>
                     </div>
                     <div class="tj-submission-row" style="margin-top: 0.5em;">
@@ -1464,9 +1465,9 @@ class TjTest extends HTMLElement {
         const homeroomElem = this.shadowRoot.getElementById('reportHomeroomInput');
         const codeInput = this.shadowRoot.getElementById('reportTeacherCodeInput');
 
-        const nickname = nicknameElem ? nicknameElem.value.trim() : (this.studentInfo.nickname || '');
-        const studentId = studentIdElem ? studentIdElem.value.trim() : (this.studentInfo.studentId || '');
-        const homeroom = homeroomElem ? homeroomElem.value.trim() : (this.studentInfo.homeroom || '');
+        const nickname = nicknameElem ? nicknameElem.value.trim() : (this.studentInfo?.nickname || '');
+        const studentId = studentIdElem ? studentIdElem.value.trim() : (this.studentInfo?.studentId || '');
+        const homeroom = homeroomElem ? homeroomElem.value.trim() : (this.studentInfo?.homeroom || '');
         const enteredCode = codeInput ? codeInput.value.trim() : '';
 
         const msgElem = this.shadowRoot.getElementById('submitStatusMsg');
