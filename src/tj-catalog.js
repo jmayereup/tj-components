@@ -192,7 +192,7 @@ export const COMPONENT_CATALOG = [
         geminiUrl: 'https://gemini.google.com/gem/1GR1C-bhcrWfUS79b0SA1Llna4NiWaCef?usp=sharing',
         demoUrl: 'src/tj-test/test-progressive.html',
         description: 'Multi-stage level placement test powered by JSON configuration where students unlock subsequent levels by meeting target score cutoffs.',
-        demoContent: `<tj-test pass-threshold="75%" submission-url="YOUR_GAS_URL">
+        demoContent: `<tj-test pass-threshold="75%">
 <script type="application/json">
 {
   "title": "Comprehensive English Assessment",
@@ -347,7 +347,7 @@ export const COMPONENT_CATALOG = [
         geminiUrl: 'https://gemini.google.com/gem/4bbfe190f849',
         demoUrl: 'src/tj-quiz-element/test-quiz.html',
         description: 'Legacy quiz component. Maintained for support of existing quizzes.',
-        demoContent: `<tj-quiz-element submission-url="YOUR_GAS_URL">
+        demoContent: `<tj-quiz-element>
 <script type="text/markdown">
 B1 English Practice: Past Simple & Past Continuous
 

@@ -6,6 +6,22 @@ import { showBuilderInstructionsTip } from "../tj-builder-tip.js";
 
 const STORAGE_KEY = 'tj_builder_settings';
 
+function isPlaceholderUrl(url) {
+    if (!url || typeof url !== 'string') return true;
+    const trimmed = url.trim();
+    if (!trimmed) return true;
+    const upper = trimmed.toUpperCase();
+    return (
+        upper.includes('YOUR_GAS_URL') ||
+        upper.includes('YOUR_SCRIPT_ID') ||
+        upper.includes('YOUR_WEB_APP_URL') ||
+        upper.includes('YOUR_DEPLOYMENT_ID') ||
+        upper.includes('EXAMPLE.COM') ||
+        upper.includes('INSERT_') ||
+        upper === 'YOUR_URL'
+    );
+}
+
 class TjBuilder extends HTMLElement {
     static get observedAttributes() {
         return ['school'];
@@ -102,6 +118,9 @@ class TjBuilder extends HTMLElement {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 const parsed = JSON.parse(saved);
+                if (parsed.submissionUrl && isPlaceholderUrl(parsed.submissionUrl)) {
+                    delete parsed.submissionUrl;
+                }
                 this.currentSettings = { ...this.currentSettings, ...parsed };
             }
         } catch (e) {
@@ -343,14 +362,17 @@ class TjBuilder extends HTMLElement {
 
             // Check if saved submission URL matches an imported teacher preset
             const currentUrl = this.currentSettings.submissionUrl;
-            const matchingTeacher = items.find(t => t.url === currentUrl);
+            const hasValidSavedUrl = currentUrl && !isPlaceholderUrl(currentUrl);
+            const matchingTeacher = hasValidSavedUrl ? items.find(t => t.url === currentUrl) : null;
             if (matchingTeacher) {
                 this.selectTeacherImport.value = matchingTeacher.url;
                 if (this.inputSubmissionUrl) {
+                    this.inputSubmissionUrl.value = matchingTeacher.url;
                     this.inputSubmissionUrl.disabled = true;
                     this.inputSubmissionUrl.title = `Locked to preset URL for ${matchingTeacher.name}`;
                 }
-            } else if (!currentUrl && school && items.length > 0) {
+                this._updateOutputs();
+            } else if (!hasValidSavedUrl && school && items.length > 0) {
                 // If a school preset is active and no submission URL is set yet, default to the first teacher
                 const firstTeacher = items[0];
                 this.selectTeacherImport.value = firstTeacher.url;
@@ -746,9 +768,35 @@ class TjBuilder extends HTMLElement {
                 this.currentSettings.teacherCode = teacherCodeMatch[1];
             }
             const subUrlMatch = raw.match(/submission-url=["']([^"']+)["']/i);
-            if (subUrlMatch && this.inputSubmissionUrl) {
-                this.inputSubmissionUrl.value = subUrlMatch[1];
-                this.currentSettings.submissionUrl = subUrlMatch[1];
+            if (subUrlMatch) {
+                const parsedSubUrl = subUrlMatch[1]?.trim();
+                if (parsedSubUrl && !isPlaceholderUrl(parsedSubUrl)) {
+                    if (this.inputSubmissionUrl) {
+                        this.inputSubmissionUrl.value = parsedSubUrl;
+                    }
+                    this.currentSettings.submissionUrl = parsedSubUrl;
+
+                    if (this.selectTeacherImport) {
+                        const matchingOpt = Array.from(this.selectTeacherImport.options).find(opt => opt.value === parsedSubUrl);
+                        if (matchingOpt) {
+                            this.selectTeacherImport.value = parsedSubUrl;
+                            if (this.inputSubmissionUrl) {
+                                this.inputSubmissionUrl.disabled = true;
+                                this.inputSubmissionUrl.title = `Locked to preset URL for ${matchingOpt.text}`;
+                            }
+                        } else {
+                            this.selectTeacherImport.value = '__custom__';
+                            if (this.inputSubmissionUrl) {
+                                this.inputSubmissionUrl.disabled = false;
+                                this.inputSubmissionUrl.title = '';
+                            }
+                        }
+                    }
+                } else if (this.currentSettings.submissionUrl && !isPlaceholderUrl(this.currentSettings.submissionUrl)) {
+                    if (this.inputSubmissionUrl) {
+                        this.inputSubmissionUrl.value = this.currentSettings.submissionUrl;
+                    }
+                }
             }
             if (raw.toLowerCase().includes('test-mode')) {
                 if (this.chkTestMode) this.chkTestMode.checked = true;
@@ -2883,7 +2931,7 @@ class TjBuilder extends HTMLElement {
             }
         }
         attrs += `${componentAttrs}start-code="${startCode}" teacher-code="${teacherCode}"`;
-        if (submissionUrl) {
+        if (submissionUrl && !isPlaceholderUrl(submissionUrl)) {
             attrs += ` submission-url="${submissionUrl}"`;
         }
 
@@ -2966,7 +3014,7 @@ class TjBuilder extends HTMLElement {
 
             previewEl.setAttribute('start-code', this.currentSettings.startCode || '1234');
             previewEl.setAttribute('teacher-code', this.currentSettings.teacherCode || '7676');
-            previewEl.setAttribute('submission-url', this.currentSettings.submissionUrl || '');
+            previewEl.setAttribute('submission-url', (this.currentSettings.submissionUrl && !isPlaceholderUrl(this.currentSettings.submissionUrl)) ? this.currentSettings.submissionUrl : '');
 
             // 4. Set config property AND attribute before appending to DOM
             const jsonText = isJson ? (typeof rawContent === 'string' ? rawContent : JSON.stringify(rawContent)) : rawContent;
