@@ -521,9 +521,120 @@
   box-shadow: var(--tj-shadow-lg);
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 1.5em;
   text-align: center;
+}
+
+/* Student Information Card on Final Report */
+.tj-report-student-card {
+  width: 100%;
+  max-width: 600px;
+  background: var(--tj-bg-alt);
+  border: 1px solid var(--tj-border-main);
+  border-radius: var(--tj-border-radius-md);
+  padding: 1em 1.25em;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75em;
+  text-align: left;
+}
+
+.tj-report-student-main {
+  display: flex;
+  align-items: center;
+  gap: 0.85em;
+}
+
+.tj-report-student-icon {
+  font-size: 1.5em;
+  background: var(--tj-primary-light);
+  color: var(--tj-primary-color);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tj-report-student-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.tj-report-student-name {
+  font-size: 1.15em;
+  font-weight: 700;
+  color: var(--tj-text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  flex-wrap: wrap;
+}
+
+.tj-report-student-id {
+  color: var(--tj-primary-color);
+  font-weight: 600;
+  font-size: 0.95em;
+}
+
+.tj-report-student-homeroom {
+  color: var(--tj-text-muted);
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+.tj-report-timestamp {
+  font-size: 0.8em;
+  color: var(--tj-text-muted);
+  font-weight: 500;
+}
+
+.tj-btn-edit-info {
+  background: transparent;
+  border: 1px solid var(--tj-border-main);
+  color: var(--tj-text-muted);
+  padding: 0.4em 0.8em;
+  border-radius: var(--tj-border-radius-sm, 6px);
+  font-size: 0.85em;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  transition: all 0.2s ease;
+}
+
+.tj-btn-edit-info:hover {
+  background: var(--tj-bg-card);
+  color: var(--tj-text-main);
+  border-color: var(--tj-primary-color);
+}
+
+/* Student Information Form Card on Final Report */
+.tj-report-student-form-card {
+  width: 100%;
+  max-width: 600px;
+  background: var(--tj-bg-alt);
+  border: 1px solid var(--tj-primary-border);
+  border-radius: var(--tj-border-radius-md);
+  padding: 1.25em;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  text-align: left;
+}
+
+.tj-report-student-form-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
 }
 
 .tj-final-score-badge {
@@ -1295,4 +1406,36 @@
   background: var(--tj-bg-card);
   color: var(--tj-text-main);
   border-color: var(--tj-border-main);
+}
+
+:host(.dark) .tj-report-student-card,
+:host([theme="dark"]) .tj-report-student-card,
+:host([data-theme="dark"]) .tj-report-student-card,
+:host(.dark) .tj-report-student-form-card,
+:host([theme="dark"]) .tj-report-student-form-card,
+:host([data-theme="dark"]) .tj-report-student-form-card {
+  background: var(--tj-bg-alt);
+  border-color: var(--tj-border-main);
+}
+
+:host(.dark) .tj-report-student-icon,
+:host([theme="dark"]) .tj-report-student-icon,
+:host([data-theme="dark"]) .tj-report-student-icon {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+
+:host(.dark) .tj-btn-edit-info,
+:host([theme="dark"]) .tj-btn-edit-info,
+:host([data-theme="dark"]) .tj-btn-edit-info {
+  border-color: var(--tj-border-main);
+  color: var(--tj-text-muted);
+}
+
+:host(.dark) .tj-btn-edit-info:hover,
+:host([theme="dark"]) .tj-btn-edit-info:hover,
+:host([data-theme="dark"]) .tj-btn-edit-info:hover {
+  background: var(--tj-bg-card);
+  color: #60a5fa;
+  border-color: #60a5fa;
 }
