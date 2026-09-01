@@ -1111,7 +1111,7 @@ class TjTest extends HTMLElement {
                         ${situationHtml}
                         ${questionTextHtml}
                         <div class="tj-written-container">
-                            <textarea class="tj-written-input" data-q-key="q_${section.index}_${qIdx}" placeholder="Type your answer here...">${this.escapeHtml(savedAns)}</textarea>
+                            <textarea class="tj-written-input" rows="6" data-q-key="q_${section.index}_${qIdx}" placeholder="Type your answer here...">${this.escapeHtml(savedAns)}</textarea>
                         </div>
                     `;
                     const textarea = qItem.querySelector('.tj-written-input');
