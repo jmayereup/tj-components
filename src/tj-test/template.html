@@ -49,7 +49,7 @@
                 test.</p>
             <div class="tj-form-group">
                 <input type="password" id="teacherCodeInput" name="tj_test_code_no_autofill" class="tj-input"
-                    placeholder="Teacher Code (e.g. 1234)" autocomplete="off" data-lpignore="true"
+                    placeholder="Enter Teacher Code" autocomplete="off" data-lpignore="true"
                     data-form-type="other">
             </div>
             <div id="teacherCodeError" class="tj-error-msg hidden">Invalid teacher code.</div>
@@ -108,8 +108,9 @@
             <p id="resultModalMessage" class="tj-result-msg">Great job! You met the passing threshold of 75% for this
                 section.</p>
             <div id="resultModalDetails" class="tj-result-details"></div>
-            <div class="tj-modal-actions">
-                <button id="resultModalContinueBtn" class="tj-btn tj-btn-success" style="width: 100%;">Proceed to Next
+            <div class="tj-modal-actions" style="display: flex; gap: 0.75em; width: 100%;">
+                <button id="resultModalRetryBtn" class="tj-btn tj-btn-secondary hidden" style="flex: 1;">✏️ Fix Mistakes</button>
+                <button id="resultModalContinueBtn" class="tj-btn tj-btn-success" style="flex: 1;">Proceed to Next
                     Section →</button>
             </div>
         </div>

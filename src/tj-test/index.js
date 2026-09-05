@@ -96,6 +96,8 @@ class TjTest extends HTMLElement {
         this.studentInfo = { nickname: '', studentId: '', homeroom: '' };
         this.completedTimestamp = null;
         this._isEditingStudentInfo = false;
+        this._isEvaluatingSection = false;
+        this._pendingNextSection = false;
         this._visibilityHandler = null;
     }
 
@@ -642,7 +644,10 @@ class TjTest extends HTMLElement {
                 }
 
                 const val = shadow.getElementById('startCodeInput').value.trim();
-                if (val === this.startCode) {
+                const cleanVal = val.toLowerCase();
+                const matchesStart = cleanVal === (this.startCode || '').trim().toLowerCase();
+                const matchesTeacher = cleanVal === (this.teacherCode || '').trim().toLowerCase();
+                if (matchesStart || matchesTeacher) {
                     this.studentInfo = { nickname, studentId, homeroom };
                     this.testUnlocked = true;
                     if (errorMsg) errorMsg.classList.add('hidden');
@@ -678,7 +683,9 @@ class TjTest extends HTMLElement {
                 const input = shadow.getElementById('teacherCodeInput');
                 const val = input ? input.value.trim() : '';
                 if (input) input.value = '';
-                if (val === this.teacherCode) {
+                const cleanVal = val.toLowerCase();
+                const matchesTeacher = cleanVal === (this.teacherCode || '').trim().toLowerCase();
+                if (matchesTeacher) {
                     shadow.getElementById('teacherCodeError').classList.add('hidden');
                     shadow.getElementById('teacherLockOverlay').classList.remove('active');
                     this.saveStateToLocalStorage();
@@ -714,11 +721,29 @@ class TjTest extends HTMLElement {
             };
         }
 
+        // Result Modal Retry / Fix Mistakes Button
+        const retryBtn = shadow.getElementById('resultModalRetryBtn');
+        if (retryBtn) {
+            retryBtn.onclick = () => {
+                this._isEvaluatingSection = false;
+                this._pendingNextSection = false;
+                this.testCompleted = false;
+                shadow.getElementById('sectionResultModal').classList.remove('active');
+                this.renderTestUI();
+                this.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
+        }
+
         // Result Modal Continue Button
         const continueBtn = shadow.getElementById('resultModalContinueBtn');
         if (continueBtn) {
             continueBtn.onclick = () => {
+                this._isEvaluatingSection = false;
                 shadow.getElementById('sectionResultModal').classList.remove('active');
+                if (this._pendingNextSection && this.activeSectionIndex < this.sections.length - 1) {
+                    this._pendingNextSection = false;
+                    this.activeSectionIndex++;
+                }
                 if (this.testCompleted) {
                     this.renderFinalReport();
                 } else {
@@ -807,6 +832,9 @@ class TjTest extends HTMLElement {
                 item.style.cursor = 'pointer';
                 item.addEventListener('click', () => {
                     this.activeSectionIndex = idx;
+                    if (!this.testMode) {
+                        this.testCompleted = false;
+                    }
                     this.renderTestUI();
                     this.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 });
@@ -922,6 +950,12 @@ class TjTest extends HTMLElement {
                         </select>
                     </td>
                 `;
+                const sel = tr.querySelector('.tj-vocab-select');
+                if (sel) {
+                    sel.addEventListener('change', () => {
+                        sel.classList.remove('correct', 'incorrect');
+                    });
+                }
                 tbody.appendChild(tr);
             });
 
@@ -1086,6 +1120,7 @@ class TjTest extends HTMLElement {
                     });
 
                     input.addEventListener('input', () => {
+                        input.classList.remove('correct', 'incorrect');
                         syncBankWords();
                     });
                 });
@@ -1145,6 +1180,11 @@ class TjTest extends HTMLElement {
                             if (e.target.checked) {
                                 this.userAnswers[`q_${section.index}_${qIdx}`] = e.target.value;
                                 this.saveStateToLocalStorage();
+                                if (!this.testMode) {
+                                    qItem.querySelectorAll('.tj-option-label').forEach(lbl => {
+                                        lbl.classList.remove('correct', 'incorrect');
+                                    });
+                                }
                             }
                         });
                     });
@@ -1195,8 +1235,14 @@ class TjTest extends HTMLElement {
     }
 
     evaluateActiveSection() {
+        if (this._isEvaluatingSection) return;
+        this._isEvaluatingSection = true;
+
         const section = this.sections[this.activeSectionIndex];
-        if (!section) return;
+        if (!section) {
+            this._isEvaluatingSection = false;
+            return;
+        }
 
         let score = 0;
         let total = 0;
@@ -1209,8 +1255,21 @@ class TjTest extends HTMLElement {
                     total++;
                     const selected = this.shadowRoot.querySelector(`input[name="q-${section.index}-${qIdx}"]:checked`);
                     const selectedVal = selected ? selected.value : (this.userAnswers[`q_${section.index}_${qIdx}`] || '');
-                    if (selectedVal && selectedVal.trim().toLowerCase() === q.a.trim().toLowerCase()) {
+                    const isCorrect = selectedVal && selectedVal.trim().toLowerCase() === q.a.trim().toLowerCase();
+                    if (isCorrect) {
                         score++;
+                    }
+                    if (!this.testMode && selected) {
+                        const label = selected.closest('.tj-option-label');
+                        if (label) {
+                            if (isCorrect) {
+                                label.classList.add('correct');
+                                label.classList.remove('incorrect');
+                            } else {
+                                label.classList.add('incorrect');
+                                label.classList.remove('correct');
+                            }
+                        }
                     }
                 }
             });
@@ -1221,8 +1280,18 @@ class TjTest extends HTMLElement {
             section.vocabulary.forEach((v) => {
                 total++;
                 const select = this.shadowRoot.querySelector(`.tj-vocab-select[data-word="${v.word}"]`);
-                if (select && select.value.trim().toLowerCase() === v.def.trim().toLowerCase()) {
+                const isCorrect = select && select.value.trim().toLowerCase() === v.def.trim().toLowerCase();
+                if (isCorrect) {
                     score++;
+                }
+                if (!this.testMode && select) {
+                    if (isCorrect) {
+                        select.classList.add('correct');
+                        select.classList.remove('incorrect');
+                    } else if (select.value) {
+                        select.classList.add('incorrect');
+                        select.classList.remove('correct');
+                    }
                 }
             });
         }
@@ -1233,8 +1302,18 @@ class TjTest extends HTMLElement {
             clozeInputs.forEach((input) => {
                 total++;
                 const target = input.getAttribute('data-target') || '';
-                if (input.value.trim().toLowerCase() === target.trim().toLowerCase()) {
+                const isCorrect = input.value.trim().toLowerCase() === target.trim().toLowerCase();
+                if (isCorrect) {
                     score++;
+                }
+                if (!this.testMode) {
+                    if (isCorrect) {
+                        input.classList.add('correct');
+                        input.classList.remove('incorrect');
+                    } else if (input.value) {
+                        input.classList.add('incorrect');
+                        input.classList.remove('correct');
+                    }
                 }
             });
         }
@@ -1253,9 +1332,13 @@ class TjTest extends HTMLElement {
 
         // Determine next state
         if (passed && this.activeSectionIndex < this.sections.length - 1) {
-            this.activeSectionIndex++;
+            this._pendingNextSection = true;
             this.showResultModal(true, percentage, section.passPercentageLabel);
+        } else if (!this.testMode && this.activeSectionIndex < this.sections.length - 1) {
+            this._pendingNextSection = true;
+            this.showResultModal(false, percentage, section.passPercentageLabel);
         } else {
+            this._pendingNextSection = false;
             this.testCompleted = true;
             this.showResultModal(passed, percentage, section.passPercentageLabel);
         }
@@ -1270,9 +1353,19 @@ class TjTest extends HTMLElement {
         const badge = this.shadowRoot.getElementById('resultModalScoreBadge');
         const msg = this.shadowRoot.getElementById('resultModalMessage');
         const continueBtn = this.shadowRoot.getElementById('resultModalContinueBtn');
+        const retryBtn = this.shadowRoot.getElementById('resultModalRetryBtn');
 
         const scorePct = `${Math.round(percentageFloat * 100)}%`;
         badge.textContent = scorePct;
+
+        if (retryBtn) {
+            if (!this.testMode && (!passed || percentageFloat < 1)) {
+                retryBtn.classList.remove('hidden');
+                retryBtn.textContent = '✏️ Fix Mistakes';
+            } else {
+                retryBtn.classList.add('hidden');
+            }
+        }
 
         if (passed) {
             const isZeroThreshold = (passLabel === '0%' || passLabel === '0');
@@ -1286,11 +1379,19 @@ class TjTest extends HTMLElement {
             continueBtn.textContent = this.testCompleted ? 'View Final Report →' : 'Proceed to Next Section →';
         } else {
             icon.textContent = '📊';
-            title.textContent = 'Placement Complete';
-            title.style.color = 'var(--tj-primary-color)';
-            msg.textContent = `You scored ${scorePct}. The required pass score was ${passLabel}. Your assessment is complete.`;
-            continueBtn.className = 'tj-btn tj-btn-primary';
-            continueBtn.textContent = 'View Final Placement Report →';
+            if (this.testMode) {
+                title.textContent = 'Placement Complete';
+                title.style.color = 'var(--tj-primary-color)';
+                msg.textContent = `You scored ${scorePct}. The required pass score was ${passLabel}. Your assessment is complete.`;
+                continueBtn.className = 'tj-btn tj-btn-primary';
+                continueBtn.textContent = 'View Final Placement Report →';
+            } else {
+                title.textContent = 'Section Needs Improvement';
+                title.style.color = 'var(--tj-primary-color)';
+                msg.textContent = `You scored ${scorePct}. The pass score is ${passLabel}. You can fix your mistakes or proceed.`;
+                continueBtn.className = 'tj-btn tj-btn-primary';
+                continueBtn.textContent = this.testCompleted ? 'View Final Report →' : 'Proceed to Next Section →';
+            }
         }
 
         if (modal) modal.classList.add('active');
@@ -1500,6 +1601,11 @@ class TjTest extends HTMLElement {
             </div>
 
             <div class="tj-report-actions">
+                ${!this.testMode ? `
+                <button id="reviewAndFixBtn" class="tj-btn tj-btn-primary" type="button" style="display: inline-flex; align-items: center; gap: 0.5em;">
+                    ✏️ Review & Fix Mistakes / แก้ไขข้อผิดพลาด
+                </button>
+                ` : ''}
                 <button id="clearAndRetakeBtn" class="tj-btn-restart" type="button">
                     🔄 Clear Cache & Start Again / ล้างข้อมูลและเริ่มใหม่
                 </button>
@@ -1530,6 +1636,7 @@ class TjTest extends HTMLElement {
 
                 this.studentInfo = { nickname, studentId, homeroom };
                 this._isEditingStudentInfo = false;
+                this.hasSubmitted = false;
                 this.saveStateToLocalStorage();
                 this.renderFinalReport();
             };
@@ -1562,8 +1669,54 @@ class TjTest extends HTMLElement {
         }
 
         const submitBtn = reportContainer.querySelector('#submitResultsBtn');
+        const codeInput = reportContainer.querySelector('#reportTeacherCodeInput');
+        const statusMsg = reportContainer.querySelector('#submitStatusMsg');
+
+        if (this.hasSubmitted) {
+            if (submitBtn) {
+                if (this.testMode) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Submitted ✓';
+                    submitBtn.style.background = 'var(--tj-text-muted)';
+                } else {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '📤 Submit Updated Score';
+                    submitBtn.style.background = '';
+                }
+            }
+            if (codeInput && this.testMode) {
+                codeInput.disabled = true;
+            }
+            if (statusMsg) {
+                statusMsg.classList.remove('hidden');
+                statusMsg.style.color = 'var(--tj-success-color)';
+                statusMsg.textContent = this.testMode
+                    ? '✓ Score report successfully submitted to your teacher!'
+                    : '✓ Score report submitted! You can fix mistakes and submit an updated score anytime.';
+            }
+        }
+
         if (submitBtn) {
             submitBtn.onclick = () => this.submitScoreReport();
+        }
+        if (codeInput) {
+            codeInput.onkeydown = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.submitScoreReport();
+                }
+            };
+        }
+
+        const reviewBtn = reportContainer.querySelector('#reviewAndFixBtn');
+        if (reviewBtn) {
+            reviewBtn.onclick = () => {
+                this.testCompleted = false;
+                const firstImperfection = this.sectionResults.findIndex(r => !r || !r.passed || r.percentage < 100);
+                this.activeSectionIndex = firstImperfection !== -1 ? firstImperfection : 0;
+                this.renderTestUI();
+                this.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
         }
 
         const clearBtn = reportContainer.querySelector('#clearAndRetakeBtn');
@@ -1598,7 +1751,8 @@ class TjTest extends HTMLElement {
         const msgElem = this.shadowRoot.getElementById('submitStatusMsg');
         const submitBtn = this.shadowRoot.getElementById('submitResultsBtn');
 
-        if (this.isSubmitting || this.hasSubmitted) return;
+        if (this.isSubmitting) return;
+        if (this.testMode && this.hasSubmitted) return;
 
         if (!nickname || !studentId) {
             if (msgElem) {
@@ -1618,7 +1772,11 @@ class TjTest extends HTMLElement {
             return;
         }
 
-        if (enteredCode !== this.teacherCode && enteredCode !== this.startCode) {
+        const cleanEntered = enteredCode.toLowerCase();
+        const matchesTeacher = cleanEntered === (this.teacherCode || '').trim().toLowerCase();
+        const matchesStart = cleanEntered === (this.startCode || '').trim().toLowerCase();
+
+        if (!matchesTeacher && !matchesStart) {
             if (msgElem) {
                 msgElem.classList.remove('hidden');
                 msgElem.style.color = 'var(--tj-error-color)';
@@ -1689,27 +1847,51 @@ class TjTest extends HTMLElement {
             });
             this.hasSubmitted = true;
             this.isSubmitting = false;
+            this.saveStateToLocalStorage();
             if (msgElem) {
                 msgElem.style.color = 'var(--tj-success-color)';
-                msgElem.textContent = '✓ Score report successfully submitted to your teacher!';
+                msgElem.textContent = this.testMode
+                    ? '✓ Score report successfully submitted to your teacher!'
+                    : '✓ Score report submitted! You can fix mistakes and submit an updated score anytime.';
             }
             if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Submitted ✓';
-                submitBtn.style.background = 'var(--tj-text-muted)';
+                if (this.testMode) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Submitted ✓';
+                    submitBtn.style.background = 'var(--tj-text-muted)';
+                } else {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '📤 Submit Updated Score';
+                    submitBtn.style.background = '';
+                }
+            }
+            if (codeInput && this.testMode) {
+                codeInput.disabled = true;
             }
         } catch (err) {
             console.log('Submission payload simulated/sent:', payload);
             this.hasSubmitted = true;
             this.isSubmitting = false;
+            this.saveStateToLocalStorage();
             if (msgElem) {
                 msgElem.style.color = 'var(--tj-success-color)';
-                msgElem.textContent = '✓ Score report logged successfully.';
+                msgElem.textContent = this.testMode
+                    ? '✓ Score report logged successfully.'
+                    : '✓ Score report logged! You can fix mistakes and submit an updated score anytime.';
             }
             if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Submitted ✓';
-                submitBtn.style.background = 'var(--tj-text-muted)';
+                if (this.testMode) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Submitted ✓';
+                    submitBtn.style.background = 'var(--tj-text-muted)';
+                } else {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '📤 Submit Updated Score';
+                    submitBtn.style.background = '';
+                }
+            }
+            if (codeInput && this.testMode) {
+                codeInput.disabled = true;
             }
         }
     }
@@ -1765,7 +1947,8 @@ class TjTest extends HTMLElement {
             testUnlocked: this.testUnlocked,
             userAnswers: this.userAnswers,
             studentInfo: this.studentInfo,
-            completedTimestamp: this.completedTimestamp
+            completedTimestamp: this.completedTimestamp,
+            hasSubmitted: this.hasSubmitted
         };
         try {
             localStorage.setItem(this.getStorageKey(), JSON.stringify(data));
@@ -1791,6 +1974,7 @@ class TjTest extends HTMLElement {
         this.userAnswers = saved.userAnswers || {};
         this.studentInfo = saved.studentInfo || { nickname: '', studentId: '', homeroom: '' };
         this.completedTimestamp = saved.completedTimestamp || null;
+        this.hasSubmitted = saved.hasSubmitted || false;
 
         if (this.testMode && !this.testCompleted) {
             if (this.testUnlocked) {
@@ -1823,6 +2007,10 @@ class TjTest extends HTMLElement {
         this.studentInfo = { nickname: '', studentId: '', homeroom: '' };
         this.completedTimestamp = null;
         this._isEditingStudentInfo = false;
+        this._isEvaluatingSection = false;
+        this._pendingNextSection = false;
+        this.hasSubmitted = false;
+        this.isSubmitting = false;
         this.sectionResults = this.sections.map(() => ({ completed: false, passed: false, score: 0, total: 0, percentage: 0 }));
 
         const finalReport = this.shadowRoot.getElementById('finalReportContainer');
