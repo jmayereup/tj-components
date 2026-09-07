@@ -366,6 +366,7 @@ class TjTest extends HTMLElement {
 
         rawSections.forEach((sec, idx) => {
             const secTitle = sec.title || `Section ${idx + 1}`;
+            const secInstructions = (sec.instructions || sec.instruction || sec.directions || sec.direction || '').trim();
 
             const rawPassages = Array.isArray(sec.passages) ? sec.passages : (sec.passage ? [sec.passage] : []);
             const passages = rawPassages.map(p => {
@@ -417,6 +418,7 @@ class TjTest extends HTMLElement {
             this.sections.push({
                 index: idx,
                 title: secTitle,
+                instructions: secInstructions,
                 passThreshold: secPassThreshold,
                 passPercentageLabel: secPassLabel,
                 passages,
@@ -453,18 +455,23 @@ class TjTest extends HTMLElement {
                                 headerLine.startsWith('text') || 
                                 headerLine.startsWith('questions') || 
                                 headerLine.startsWith('vocab') || 
-                                headerLine.startsWith('cloze');
+                                headerLine.startsWith('cloze') ||
+                                headerLine.startsWith('instruction') ||
+                                headerLine.startsWith('direction');
 
             if (headerLine.startsWith('section')) {
                 const titleMatch = headerLine.match(/title=["']([^"']+)["']/i);
+                const instructionsMatch = headerLine.match(/(?:instructions|instruction|directions|direction)=["']([^"']+)["']/i);
 
                 const title = titleMatch ? titleMatch[1] : `Section ${defaultSectionIndex}`;
+                const instructions = instructionsMatch ? instructionsMatch[1] : '';
                 const passThreshold = this.defaultPassThreshold;
                 const passLabel = `${Math.round(passThreshold * 100)}%`;
 
                 currentSection = {
                     index: this.sections.length,
                     title: title,
+                    instructions: instructions,
                     passThreshold: passThreshold,
                     passPercentageLabel: passLabel,
                     passages: [],
@@ -484,6 +491,7 @@ class TjTest extends HTMLElement {
                     currentSection = {
                         index: 0,
                         title: 'Section 1',
+                        instructions: '',
                         passThreshold: this.defaultPassThreshold,
                         passPercentageLabel: `${Math.round(this.defaultPassThreshold * 100)}%`,
                         passages: [],
@@ -509,6 +517,8 @@ class TjTest extends HTMLElement {
                 } else if (headerLine.startsWith('cloze')) {
                     const parsedCloze = this.parseClozeBlock(bodyContent);
                     currentSection.cloze.push(parsedCloze);
+                } else if (headerLine.startsWith('instruction') || headerLine.startsWith('direction')) {
+                    currentSection.instructions = bodyContent.trim();
                 }
             }
         }
@@ -901,9 +911,10 @@ class TjTest extends HTMLElement {
         banner.innerHTML = `
             <div class="tj-section-title-badge">
                 <span class="tj-section-badge">Section ${section.index + 1}</span>
-                <h3 class="tj-h3" style="margin: 0;">${section.title}</h3>
+                <h3 class="tj-h3" style="margin: 0;">${this.escapeHtml(section.title)}</h3>
             </div>
             <div class="tj-pass-threshold-info">Pass Requirement: ${reqText}</div>
+            ${section.instructions ? `<div class="tj-section-instructions">${this.formatInstructions(section.instructions)}</div>` : ''}
         `;
         sectionCard.appendChild(banner);
 
@@ -1838,6 +1849,15 @@ class TjTest extends HTMLElement {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
+    }
+
+    formatInstructions(str) {
+        if (!str) return '';
+        let escaped = this.escapeHtml(str);
+        escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        escaped = escaped.replace(/^(Directions|Instructions|Direction|Instruction):/i, '<strong>$1:</strong>');
+        return escaped.replace(/\n/g, '<br>');
     }
 
     shuffleArray(arr) {

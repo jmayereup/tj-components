@@ -40,6 +40,7 @@ Output MUST be formatted as a `<tj-test>` custom element containing a `<script t
   "sections": [
     {
       "title": "Section 1: Vocabulary",
+      "instructions": "Directions: Match each word on the left with its corresponding definition on the right.",
       "vocabulary": [
         { "word": "Resilient", "def": "Able to withstand or recover quickly from difficult conditions." },
         { "word": "Innovate", "def": "Make changes in something established, especially by introducing new methods or ideas." },
@@ -48,7 +49,19 @@ Output MUST be formatted as a `<tj-test>` custom element containing a `<script t
     },
     {
       "title": "Section 2: Grammar",
+      "instructions": "Directions: Choose the correct reported question form. Assume that events are being reported at least one day after the initial speech. Use the most formal form.",
       "questions": [
+        {
+          "question": "Direct: \"Where do you live?\" she asked me. --> Indirect: She asked me where I _____.",
+          "options": [
+            "live",
+            "lived",
+            "do live",
+            "was living"
+          ],
+          "answer": "lived",
+          "explanation": "In reported questions, present simple ('do you live') shifts back to past simple ('lived')."
+        },
         {
           "situation": "Two colleagues are discussing their weekend plans.",
           "question": "Alex: \"Have you finished the project report yet?\"\nTaylor: \"Not yet. If I ______________ more time yesterday, I would have completed it.\"",
@@ -76,6 +89,7 @@ Output MUST be formatted as a `<tj-test>` custom element containing a `<script t
     },
     {
       "title": "Section 3: Reading Comprehension",
+      "instructions": "Directions: Read the passage carefully and choose the best answer for each question.",
       "passages": [
         "Renewable energy sources such as solar and wind power are becoming increasingly vital in combating global climate change. Unlike fossil fuels, solar energy generates electricity without producing greenhouse gas emissions during operation. However, effective energy storage technologies, such as advanced lithium-ion batteries, are essential to ensure a stable supply when sunlight or wind is unavailable."
       ],
@@ -106,6 +120,7 @@ Output MUST be formatted as a `<tj-test>` custom element containing a `<script t
     },
     {
       "title": "Section 4: Cloze",
+      "instructions": "Directions: Fill in each blank with the most appropriate word from the word bank.",
       "cloze": [
         {
           "text": "Every *morning*, Alex wakes *up* early to prepare for work. He enjoys drinking *coffee* while reading the daily *news* before leaving the house."
@@ -114,6 +129,7 @@ Output MUST be formatted as a `<tj-test>` custom element containing a `<script t
     },
     {
       "title": "Section 5: Short Answer",
+      "instructions": "Directions: Answer each prompt thoroughly in 2-3 complete sentences.",
       "questions": [
         {
           "question": "Explain in 2-3 sentences why renewable energy adoption is important for the environment.",
@@ -140,6 +156,7 @@ Output MUST be formatted as a `<tj-test>` custom element containing a `<script t
   "sections": [
     {
       "title": "Main Assessment",
+      "instructions": "Directions: Read the passage and complete all questions, vocabulary matching, and cloze activities below.",
       "passages": [
         "Reading passage text here..."
       ],
@@ -187,10 +204,12 @@ Output MUST be formatted as a `<tj-test>` custom element containing a `<script t
      - Used exclusively by the instructor to unlock the screen if a student leaves the window/screen in `test-mode` (`teacherLockOverlay`) or for administrative reset.
      - Never use `teacher-code` as the student submission code.
    - **Screenshots (No Code Required)**: If teachers do not have a Google Apps Script backend or do not provide a code, students can simply click "Just Take Screenshot" to lock their identity and take a screenshot without any code.
-
+3. **Section Instructions (`instructions`)**:
+   - Every section supports an optional `"instructions"` (or `"directions"`) string to clearly guide the student on how to complete the section (e.g. `"instructions": "Directions: Choose the correct reported question form. Assume that events are being reported at least one day after the initial speech. Use the most formal form."`).
+   - Instructions are displayed prominently in italics below the section header. Supports `**bold**`, `*italics*`, and `\n` line breaks.
 4. **Section Types**:
    - **Vocabulary**: Defined in the `"vocabulary"` array with `{ "word": "...", "def": "..." }`. Automatically renders interactive definition matching cards.
-   - **Grammar**: Formatted in the `"questions"` array using multiple-choice options, optional context with `"situation"`, and dialogue fill-in-the-blanks (`______`).
+   - **Grammar**: Formatted in the `"questions"` array using multiple-choice options, optional context with `"situation"`, dialogue fill-in-the-blanks (`______`), or reported speech transformations.
    - **Reading Comprehension**: Uses the `"passages"` array for passage text, paired with `"questions"` array items containing `"options"`, `"answer"`, and optional `"explanation"`.
    - **Cloze Test**: Formatted in the `"cloze"` array with `*target words*` enclosed in asterisks.
    - **Short Answer**: Formatted in the `"questions"` array with an empty options array (`"options": []`). `<tj-test>` renders these as open-ended text input boxes (`<textarea>`).

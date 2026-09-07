@@ -200,6 +200,27 @@
   font-weight: 600;
 }
 
+.tj-section-instructions {
+  font-size: 0.95em;
+  line-height: 1.6;
+  color: var(--tj-text-muted);
+  font-style: italic;
+  margin-top: 0.35em;
+  padding: 0.6em 0.85em;
+  background: var(--tj-bg-alt);
+  border-left: 3px solid var(--tj-primary-color);
+  border-radius: var(--tj-border-radius-sm);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tj-section-instructions strong,
+.tj-section-instructions b {
+  font-style: normal;
+  color: var(--tj-text-main);
+  font-weight: 600;
+}
+
 /* Passage Text Styling */
 .tj-passage-box {
   background: var(--tj-bg-alt);
@@ -1104,7 +1125,8 @@
     border-left: 4px solid #3b82f6;
   }
 
-  .tj-question-situation {
+  .tj-question-situation,
+  .tj-section-instructions {
     background: var(--tj-bg-card);
     color: var(--tj-text-muted);
     border-left-color: #3b82f6;
@@ -1307,7 +1329,8 @@
   border-left: 4px solid #3b82f6;
 }
 
-:host(.dark) .tj-question-situation, :host([theme="dark"]) .tj-question-situation, :host([data-theme="dark"]) .tj-question-situation {
+:host(.dark) .tj-question-situation, :host([theme="dark"]) .tj-question-situation, :host([data-theme="dark"]) .tj-question-situation,
+:host(.dark) .tj-section-instructions, :host([theme="dark"]) .tj-section-instructions, :host([data-theme="dark"]) .tj-section-instructions {
   background: var(--tj-bg-card);
   color: var(--tj-text-muted);
   border-left-color: #3b82f6;

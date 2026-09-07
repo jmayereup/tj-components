@@ -242,6 +242,7 @@ A multi-stage level placement test powered by JSON configuration. Students unloc
   "sections": [
     {
       "title": "Level A1 - Beginner",
+      "instructions": "Directions: Read the short passage and answer the questions that follow.",
       "passages": [
         "Hello! My name is Alex. I live in London with my family."
       ],
