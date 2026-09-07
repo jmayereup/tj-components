@@ -133,7 +133,7 @@ Output MUST be formatted as a `<tj-test>` custom element containing a `<script t
 
 ### **2. Standard Single-Section Test Schema (Practice Mode)**
 ```html
-<tj-test test-mode="false" submit-code="7676" submission-url="YOUR_GAS_URL">
+<tj-test test-mode="false" code="1234" submission-url="YOUR_GAS_URL">
 <script type="application/json">
 {
   "title": "Unit 1 Practice Quiz",
@@ -173,13 +173,21 @@ Output MUST be formatted as a `<tj-test>` custom element containing a `<script t
 ## **Content Guidelines**
 
 1. **Test Mode vs Practice Mode**:
-   - **`test-mode`** (boolean attribute, no value): Locks the test behind a `start-code` overlay. Students must enter the start code before they can begin. Enables tab-away detection. Use for formal assessments.
-   - **`test-mode="false"`** (explicit false): Practice mode. Students can open and begin the test immediately with no start code. Use for homework, self-study, or informal practice.
-   - In **both modes**, students must enter a valid `submit-code` / `teacher-code` at the end to digitally submit their score report to the teacher's Google Sheet. Students without a code can take a screenshot instead.
-2. **Attribute Aliases**:
-   - `submit-code="7676"` and `teacher-code="7676"` are interchangeable. `submit-code` is cleaner for practice-mode components where the code is only used at submission time, not for unlocking.
-   - `start-code` is only relevant in test mode. It is ignored in practice mode.
-3. **`submission-url`**: Required for digital score submissions to reach the teacher's Google Sheet. If omitted, students are directed to take a screenshot.
+   - **`test-mode`** (boolean attribute, no value): Locks the test behind a `start-code` overlay. Students must enter the start code before they can begin. Students are locked out if they leave the screen (tab switch, window blur, app change) until the teacher enters the `teacher-code`. Mistakes cannot be fixed, and completed sections are locked. Use for formal assessments.
+   - **`test-mode="false"`** (explicit false, or omit attribute): Practice mode. Students can open and begin the test immediately with no start code. Students can freely fix questions, review mistakes, and resubmit updated scores.
+   - In **both modes**, student information (Nickname, Student ID, Homeroom) and `submit-code` (if configured) are entered in the **same Submission Card** at the end. Once sent or verified, student information is permanently locked to prevent submitting the same results under a friend's name. In practice mode, any resubmission is strictly tied to the verified student.
+2. **Code Roles & Security (CRITICAL - DO NOT CONFUSE)**:
+   - **Student Code (`start-code` / `submit-code` / `code`, default: `1234`)**:
+     - The code given to **students**.
+     - The **Start Code** and **Submit Code** are the **SAME**!
+     - In `test-mode`, students enter it to unlock the test and begin.
+     - In both practice and test modes, students enter this SAME code in the Submission Card to submit their score report.
+   - **Teacher Code (`teacher-code` / `reset-code`, default: `7676`)**:
+     - Kept **STRICTLY PRIVATE** by the teacher. **NEVER give the teacher code to students!**
+     - Used exclusively by the instructor to unlock the screen if a student leaves the window/screen in `test-mode` (`teacherLockOverlay`) or for administrative reset.
+     - Never use `teacher-code` as the student submission code.
+   - **Screenshots (No Code Required)**: If teachers do not have a Google Apps Script backend or do not provide a code, students can simply click "Just Take Screenshot" to lock their identity and take a screenshot without any code.
+
 4. **Section Types**:
    - **Vocabulary**: Defined in the `"vocabulary"` array with `{ "word": "...", "def": "..." }`. Automatically renders interactive definition matching cards.
    - **Grammar**: Formatted in the `"questions"` array using multiple-choice options, optional context with `"situation"`, and dialogue fill-in-the-blanks (`______`).

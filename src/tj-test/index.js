@@ -37,11 +37,16 @@ class TjTest extends HTMLElement {
         }
     }
 
+    // Student Code: The start code and submit code are the SAME (given to students to begin and submit)
     get startCode() {
         return this.getAttribute('start-code') || 
                this.getAttribute('start_code') || 
+               this.getAttribute('submit-code') || 
+               this.getAttribute('submit_code') || 
                this.getAttribute('code') || 
                resolveComponentParams(this).startCode || 
+               resolveComponentParams(this).submitCode || 
+               resolveComponentParams(this).code || 
                '1234';
     }
 
@@ -53,13 +58,14 @@ class TjTest extends HTMLElement {
         }
     }
 
+    // Teacher Code: Kept PRIVATE by the teacher (used ONLY to unlock screen lockout or administrative reset)
     get teacherCode() {
         return this.getAttribute('teacher-code') || 
                this.getAttribute('teacher_code') || 
-               this.getAttribute('submit-code') || 
-               this.getAttribute('submit_code') || 
                this.getAttribute('reset-code') || 
+               this.getAttribute('reset_code') || 
                resolveComponentParams(this).teacherCode || 
+               resolveComponentParams(this).resetCode || 
                '7676';
     }
 
@@ -69,6 +75,20 @@ class TjTest extends HTMLElement {
         } else {
             this.removeAttribute('teacher-code');
         }
+    }
+
+    // Student Submit Code: Same as startCode! Never alias to private teacherCode
+    get submitCode() {
+        return (this.getAttribute('submit-code') || 
+               this.getAttribute('submit_code') || 
+               this.getAttribute('start-code') || 
+               this.getAttribute('start_code') || 
+               this.getAttribute('code') || 
+               resolveComponentParams(this).submitCode || 
+               resolveComponentParams(this).startCode || 
+               resolveComponentParams(this).code || 
+               this.startCode || 
+               '1234').trim();
     }
 
     get defaultPassThreshold() {
@@ -92,6 +112,7 @@ class TjTest extends HTMLElement {
         this.submissionUrl = '';
         this.isSubmitting = false;
         this.hasSubmitted = false;
+        this._submittedViaScreenshot = false;
         this.userAnswers = {}; // Global answers map
         this.studentInfo = { nickname: '', studentId: '', homeroom: '' };
         this.completedTimestamp = null;
@@ -99,6 +120,7 @@ class TjTest extends HTMLElement {
         this._isEvaluatingSection = false;
         this._pendingNextSection = false;
         this._visibilityHandler = null;
+        this._blurHandler = null;
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -130,8 +152,20 @@ class TjTest extends HTMLElement {
     }
 
     connectedCallback() {
-        this._visibilityHandler = () => this._handleVisibilityChange();
+        this._visibilityHandler = () => {
+            if (document.hidden) {
+                this._handleScreenLeft();
+            }
+        };
+        this._blurHandler = () => {
+            setTimeout(() => {
+                if (!document.hasFocus() || document.hidden) {
+                    this._handleScreenLeft();
+                }
+            }, 150);
+        };
         document.addEventListener('visibilitychange', this._visibilityHandler);
+        window.addEventListener('blur', this._blurHandler);
 
         requestAnimationFrame(async () => {
             const resolved = resolveComponentParams(this);
@@ -198,6 +232,10 @@ class TjTest extends HTMLElement {
             document.removeEventListener('visibilitychange', this._visibilityHandler);
             this._visibilityHandler = null;
         }
+        if (this._blurHandler) {
+            window.removeEventListener('blur', this._blurHandler);
+            this._blurHandler = null;
+        }
     }
 
     _parseThreshold(val) {
@@ -212,14 +250,15 @@ class TjTest extends HTMLElement {
         return num > 1 ? num / 100 : num;
     }
 
-    _handleVisibilityChange() {
-        if (!this.testMode || this.testCompleted) return;
-        if (document.hidden) {
-            this.tabAwayCount++;
-            this.updateTabAwayBanner();
-            this.lockTeacherOverlay();
-            this.saveStateToLocalStorage();
-        }
+    _handleScreenLeft() {
+        if (!this.testMode || this.testCompleted || !this.testUnlocked) return;
+        const teacherOverlay = this.shadowRoot.getElementById('teacherLockOverlay');
+        if (teacherOverlay && teacherOverlay.classList.contains('active')) return;
+
+        this.tabAwayCount++;
+        this.updateTabAwayBanner();
+        this.lockTeacherOverlay();
+        this.saveStateToLocalStorage();
     }
 
     updateTabAwayBanner() {
@@ -227,7 +266,7 @@ class TjTest extends HTMLElement {
         if (!banner) return;
         if (this.tabAwayCount > 0 && this.testMode) {
             const label = this.tabAwayCount === 1 ? 'time' : 'times';
-            banner.textContent = `⚠️ Warning: You switched tabs/windows ${this.tabAwayCount} ${label}. Please stay focused on your test.`;
+            banner.textContent = `⚠️ Warning: You switched tabs/windows or left the screen ${this.tabAwayCount} ${label}. Please stay focused on your test.`;
             banner.classList.remove('hidden');
         } else {
             banner.classList.add('hidden');
@@ -624,31 +663,16 @@ class TjTest extends HTMLElement {
         // Unlock Start button
         const unlockStartBtn = shadow.getElementById('unlockStartBtn');
         const startCodeInput = shadow.getElementById('startCodeInput');
-        const startNicknameInput = shadow.getElementById('startNicknameInput');
-        const startStudentIdInput = shadow.getElementById('startStudentIdInput');
-        const startHomeroomInput = shadow.getElementById('startHomeroomInput');
 
         if (unlockStartBtn) {
             const handleStartUnlock = () => {
-                const nickname = startNicknameInput ? startNicknameInput.value.trim() : '';
-                const studentId = startStudentIdInput ? startStudentIdInput.value.trim() : '';
-                const homeroom = startHomeroomInput ? startHomeroomInput.value.trim() : '';
-                const errorMsg = shadow.getElementById('startCodeError');
-
-                if (!nickname || !studentId) {
-                    if (errorMsg) {
-                        errorMsg.textContent = '⚠️ Please enter your Student Nickname and Student ID to begin.';
-                        errorMsg.classList.remove('hidden');
-                    }
-                    return;
-                }
-
-                const val = shadow.getElementById('startCodeInput').value.trim();
+                const val = startCodeInput ? startCodeInput.value.trim() : '';
                 const cleanVal = val.toLowerCase();
                 const matchesStart = cleanVal === (this.startCode || '').trim().toLowerCase();
                 const matchesTeacher = cleanVal === (this.teacherCode || '').trim().toLowerCase();
+                const errorMsg = shadow.getElementById('startCodeError');
+
                 if (matchesStart || matchesTeacher) {
-                    this.studentInfo = { nickname, studentId, homeroom };
                     this.testUnlocked = true;
                     if (errorMsg) errorMsg.classList.add('hidden');
                     shadow.getElementById('startLockOverlay').classList.remove('active');
@@ -662,17 +686,14 @@ class TjTest extends HTMLElement {
                 }
             };
             unlockStartBtn.onclick = handleStartUnlock;
-            const inputElements = [startCodeInput, startNicknameInput, startStudentIdInput, startHomeroomInput];
-            inputElements.forEach(inp => {
-                if (inp) {
-                    inp.onkeydown = (e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            handleStartUnlock();
-                        }
-                    };
-                }
-            });
+            if (startCodeInput) {
+                startCodeInput.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleStartUnlock();
+                    }
+                };
+            }
         }
 
         // Unlock Teacher button
@@ -938,13 +959,24 @@ class TjTest extends HTMLElement {
             const allDefs = section.vocabulary.map(v => v.def);
             this.shuffleArray(allDefs);
 
+            const isCompleted = Boolean(this.sectionResults[section.index]?.completed);
+            const isTestModeLocked = isCompleted && this.testMode;
+
             section.vocabulary.forEach((v, vIdx) => {
                 const tr = document.createElement('tr');
-                const optionsHtml = allDefs.map(d => `<option value="${d}">${d}</option>`).join('');
+                const vKey = `vocab_${section.index}_${v.word}`;
+                const savedDef = (this.userAnswers && this.userAnswers[vKey]) || '';
+
+                let feedbackClass = '';
+                if (isCompleted && !this.testMode && savedDef) {
+                    feedbackClass = savedDef.trim().toLowerCase() === v.def.trim().toLowerCase() ? 'correct' : 'incorrect';
+                }
+
+                const optionsHtml = allDefs.map(d => `<option value="${this.escapeHtml(d)}" ${savedDef === d ? 'selected' : ''}>${this.escapeHtml(d)}</option>`).join('');
                 tr.innerHTML = `
                     <td class="tj-vocab-td" style="font-weight: 600;">${v.word}</td>
                     <td class="tj-vocab-td">
-                        <select class="tj-vocab-select" data-word="${v.word}">
+                        <select class="tj-vocab-select ${feedbackClass}" data-word="${this.escapeHtml(v.word)}" data-vkey="${vKey}" ${isTestModeLocked ? 'disabled' : ''}>
                             <option value="">-- Choose Definition --</option>
                             ${optionsHtml}
                         </select>
@@ -954,6 +986,8 @@ class TjTest extends HTMLElement {
                 if (sel) {
                     sel.addEventListener('change', () => {
                         sel.classList.remove('correct', 'incorrect');
+                        this.userAnswers[vKey] = sel.value;
+                        this.saveStateToLocalStorage();
                     });
                 }
                 tbody.appendChild(tr);
@@ -965,7 +999,10 @@ class TjTest extends HTMLElement {
 
         // Cloze Blanks
         if (section.cloze.length > 0) {
-            section.cloze.forEach((clozeData) => {
+            const isCompleted = Boolean(this.sectionResults[section.index]?.completed);
+            const isTestModeLocked = isCompleted && this.testMode;
+
+            section.cloze.forEach((clozeData, cIdx) => {
                 const clozeBox = document.createElement('div');
                 clozeBox.className = 'tj-cloze-box';
 
@@ -987,10 +1024,15 @@ class TjTest extends HTMLElement {
                     `;
                 }
 
-                let replacedText = clozeData.text;
                 let clozeIndex = 0;
-                replacedText = replacedText.replace(/\*([^*]+)\*/g, (match, word) => {
-                    const inputHtml = `<input type="text" class="tj-cloze-input" data-cloze-idx="${clozeIndex}" data-target="${this.escapeHtml(word)}">`;
+                let replacedText = clozeData.text.replace(/\*([^*]+)\*/g, (match, word) => {
+                    const cKey = `cloze_${section.index}_${cIdx}_${clozeIndex}`;
+                    const savedVal = (this.userAnswers && this.userAnswers[cKey]) || '';
+                    let feedbackClass = '';
+                    if (isCompleted && !this.testMode && savedVal) {
+                        feedbackClass = savedVal.trim().toLowerCase() === word.trim().toLowerCase() ? 'correct' : 'incorrect';
+                    }
+                    const inputHtml = `<input type="text" class="tj-cloze-input ${feedbackClass}" data-cloze-idx="${clozeIndex}" data-ckey="${cKey}" data-target="${this.escapeHtml(word)}" value="${this.escapeHtml(savedVal)}" ${isTestModeLocked ? 'disabled' : ''}>`;
                     clozeIndex++;
                     return inputHtml;
                 });
@@ -1001,7 +1043,7 @@ class TjTest extends HTMLElement {
                     <div class="tj-cloze-text">${replacedText}</div>
                 `;
 
-                // Add interactive click support for word bank items and blanks
+                // Interactive bank word handling
                 const bankWords = Array.from(clozeBox.querySelectorAll('.tj-cloze-bank-word'));
                 const inputs = Array.from(clozeBox.querySelectorAll('.tj-cloze-input'));
 
@@ -1053,84 +1095,94 @@ class TjTest extends HTMLElement {
                     }
                 };
 
-                bankWords.forEach((wordSpan) => {
-                    wordSpan.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const bIdx = wordSpan.getAttribute('data-bank-idx');
-                        const isPlaced = wordSpan.classList.contains('placed');
-                        const isSelected = wordSpan.classList.contains('selected');
+                if (!isTestModeLocked) {
+                    bankWords.forEach((wordSpan) => {
+                        wordSpan.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const bIdx = wordSpan.getAttribute('data-bank-idx');
+                            const isPlaced = wordSpan.classList.contains('placed');
+                            const isSelected = wordSpan.classList.contains('selected');
 
-                        if (isPlaced) {
-                            // Clicking placed word in bank returns it to the word bank
-                            const linkedInput = inputs.find(inp => inp.getAttribute('data-placed-bank-idx') === bIdx)
-                                || inputs.find(inp => inp.value.trim() === wordSpan.getAttribute('data-word'));
-                            if (linkedInput) {
-                                linkedInput.value = '';
-                                linkedInput.removeAttribute('data-placed-bank-idx');
-                                linkedInput.dispatchEvent(new Event('input', { bubbles: true }));
-                                linkedInput.dispatchEvent(new Event('change', { bubbles: true }));
+                            if (isPlaced) {
+                                const linkedInput = inputs.find(inp => inp.getAttribute('data-placed-bank-idx') === bIdx)
+                                    || inputs.find(inp => inp.value.trim() === wordSpan.getAttribute('data-word'));
+                                if (linkedInput) {
+                                    linkedInput.value = '';
+                                    linkedInput.removeAttribute('data-placed-bank-idx');
+                                    const cKey = linkedInput.getAttribute('data-ckey');
+                                    if (cKey) this.userAnswers[cKey] = '';
+                                    linkedInput.dispatchEvent(new Event('input', { bubbles: true }));
+                                    linkedInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                    this.saveStateToLocalStorage();
+                                }
+                                bankWords.forEach(w => w.classList.remove('selected'));
+                                syncBankWords();
+                            } else if (isSelected) {
+                                wordSpan.classList.remove('selected');
+                                syncBankWords();
+                            } else {
+                                bankWords.forEach(w => w.classList.remove('selected'));
+                                wordSpan.classList.add('selected');
+                                syncBankWords();
                             }
-                            bankWords.forEach(w => w.classList.remove('selected'));
-                            syncBankWords();
-                        } else if (isSelected) {
-                            // Toggle off highlight
-                            wordSpan.classList.remove('selected');
-                            syncBankWords();
-                        } else {
-                            // First click on a word to highlight
-                            bankWords.forEach(w => w.classList.remove('selected'));
-                            wordSpan.classList.add('selected');
-                            syncBankWords();
-                        }
+                        });
                     });
-                });
 
-                inputs.forEach((input) => {
-                    input.addEventListener('click', () => {
-                        const selectedSpan = clozeBox.querySelector('.tj-cloze-bank-word.selected');
+                    inputs.forEach((input) => {
+                        input.addEventListener('click', () => {
+                            const selectedSpan = clozeBox.querySelector('.tj-cloze-bank-word.selected');
+                            if (selectedSpan) {
+                                const wordToInsert = selectedSpan.getAttribute('data-word');
+                                const bIdx = selectedSpan.getAttribute('data-bank-idx');
 
-                        if (selectedSpan) {
-                            // Fill blank with highlighted word
-                            const wordToInsert = selectedSpan.getAttribute('data-word');
-                            const bIdx = selectedSpan.getAttribute('data-bank-idx');
+                                input.value = wordToInsert;
+                                input.setAttribute('data-placed-bank-idx', bIdx);
+                                const cKey = input.getAttribute('data-ckey');
+                                if (cKey) this.userAnswers[cKey] = wordToInsert;
 
-                            input.value = wordToInsert;
-                            input.setAttribute('data-placed-bank-idx', bIdx);
+                                selectedSpan.classList.remove('selected');
+                                input.dispatchEvent(new Event('input', { bubbles: true }));
+                                input.dispatchEvent(new Event('change', { bubbles: true }));
+                                this.saveStateToLocalStorage();
+                                syncBankWords();
 
-                            selectedSpan.classList.remove('selected');
-
-                            input.dispatchEvent(new Event('input', { bubbles: true }));
-                            input.dispatchEvent(new Event('change', { bubbles: true }));
-
-                            syncBankWords();
-
-                            const currentIdx = inputs.indexOf(input);
-                            const nextEmpty = inputs.slice(currentIdx + 1).find(inp => !inp.value.trim());
-                            if (nextEmpty) {
-                                nextEmpty.focus();
+                                const currentIdx = inputs.indexOf(input);
+                                const nextEmpty = inputs.slice(currentIdx + 1).find(inp => !inp.value.trim());
+                                if (nextEmpty) {
+                                    nextEmpty.focus();
+                                }
+                            } else if (input.value.trim() !== '') {
+                                input.value = '';
+                                input.removeAttribute('data-placed-bank-idx');
+                                const cKey = input.getAttribute('data-ckey');
+                                if (cKey) this.userAnswers[cKey] = '';
+                                input.dispatchEvent(new Event('input', { bubbles: true }));
+                                input.dispatchEvent(new Event('change', { bubbles: true }));
+                                this.saveStateToLocalStorage();
+                                syncBankWords();
                             }
-                        } else if (input.value.trim() !== '') {
-                            // Clicking filled blank clears it & returns word to bank
-                            input.value = '';
-                            input.removeAttribute('data-placed-bank-idx');
-                            input.dispatchEvent(new Event('input', { bubbles: true }));
-                            input.dispatchEvent(new Event('change', { bubbles: true }));
+                        });
+
+                        input.addEventListener('input', () => {
+                            input.classList.remove('correct', 'incorrect');
+                            const cKey = input.getAttribute('data-ckey');
+                            if (cKey) this.userAnswers[cKey] = input.value;
+                            this.saveStateToLocalStorage();
                             syncBankWords();
-                        }
+                        });
                     });
+                }
 
-                    input.addEventListener('input', () => {
-                        input.classList.remove('correct', 'incorrect');
-                        syncBankWords();
-                    });
-                });
-
+                syncBankWords();
                 sectionCard.appendChild(clozeBox);
             });
         }
 
         // Multiple Choice / Written Questions
         if (section.questions.length > 0) {
+            const isCompleted = Boolean(this.sectionResults[section.index]?.completed);
+            const isTestModeLocked = isCompleted && this.testMode;
+
             section.questions.forEach((q, qIdx) => {
                 const qItem = document.createElement('div');
                 qItem.className = 'tj-question-item';
@@ -1146,11 +1198,11 @@ class TjTest extends HTMLElement {
                         ${situationHtml}
                         ${questionTextHtml}
                         <div class="tj-written-container">
-                            <textarea class="tj-written-input" rows="6" data-q-key="q_${section.index}_${qIdx}" placeholder="Type your answer here...">${this.escapeHtml(savedAns)}</textarea>
+                            <textarea class="tj-written-input" rows="6" data-q-key="q_${section.index}_${qIdx}" placeholder="Type your answer here..." ${isTestModeLocked ? 'disabled' : ''}>${this.escapeHtml(savedAns)}</textarea>
                         </div>
                     `;
                     const textarea = qItem.querySelector('.tj-written-input');
-                    if (textarea) {
+                    if (textarea && !isTestModeLocked) {
                         textarea.addEventListener('input', (e) => {
                             const val = e.target.value;
                             this.userAnswers[`q_${section.index}_${qIdx}`] = val;
@@ -1160,9 +1212,13 @@ class TjTest extends HTMLElement {
                 } else {
                     const optionsHtml = q.o.map((opt) => {
                         const isChecked = savedAns === opt ? 'checked' : '';
+                        let feedbackClass = '';
+                        if (isCompleted && !this.testMode && isChecked) {
+                            feedbackClass = opt.trim().toLowerCase() === q.a.trim().toLowerCase() ? 'correct' : 'incorrect';
+                        }
                         return `
-                            <label class="tj-option-label">
-                                <input type="radio" name="q-${section.index}-${qIdx}" value="${this.escapeHtml(opt)}" ${isChecked}>
+                            <label class="tj-option-label ${feedbackClass}">
+                                <input type="radio" name="q-${section.index}-${qIdx}" value="${this.escapeHtml(opt)}" ${isChecked} ${isTestModeLocked ? 'disabled' : ''}>
                                 <span>${this.escapeHtml(opt)}</span>
                             </label>
                         `;
@@ -1174,20 +1230,22 @@ class TjTest extends HTMLElement {
                         <div class="tj-options-list">${optionsHtml}</div>
                     `;
 
-                    const radioInputs = qItem.querySelectorAll(`input[name="q-${section.index}-${qIdx}"]`);
-                    radioInputs.forEach(r => {
-                        r.addEventListener('change', (e) => {
-                            if (e.target.checked) {
-                                this.userAnswers[`q_${section.index}_${qIdx}`] = e.target.value;
-                                this.saveStateToLocalStorage();
-                                if (!this.testMode) {
-                                    qItem.querySelectorAll('.tj-option-label').forEach(lbl => {
-                                        lbl.classList.remove('correct', 'incorrect');
-                                    });
+                    if (!isTestModeLocked) {
+                        const radioInputs = qItem.querySelectorAll(`input[name="q-${section.index}-${qIdx}"]`);
+                        radioInputs.forEach(r => {
+                            r.addEventListener('change', (e) => {
+                                if (e.target.checked) {
+                                    this.userAnswers[`q_${section.index}_${qIdx}`] = e.target.value;
+                                    this.saveStateToLocalStorage();
+                                    if (!this.testMode) {
+                                        qItem.querySelectorAll('.tj-option-label').forEach(lbl => {
+                                            lbl.classList.remove('correct', 'incorrect');
+                                        });
+                                    }
                                 }
-                            }
+                            });
                         });
-                    });
+                    }
                 }
 
                 sectionCard.appendChild(qItem);
@@ -1195,13 +1253,24 @@ class TjTest extends HTMLElement {
         }
 
         // Submit Section Button
+        const isCompleted = Boolean(this.sectionResults[section.index]?.completed);
         const submitBtn = document.createElement('button');
         submitBtn.type = 'button';
         submitBtn.className = 'tj-btn tj-btn-primary';
         submitBtn.style.alignSelf = 'flex-end';
         submitBtn.style.marginTop = '1em';
-        submitBtn.textContent = this.sections.length > 1 ? `Submit Section ${section.index + 1}` : 'Submit Test';
-        submitBtn.onclick = () => this.evaluateActiveSection();
+
+        if (this.testMode && isCompleted) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Section Completed ✓';
+            submitBtn.style.background = 'var(--tj-text-muted)';
+        } else if (!this.testMode && isCompleted) {
+            submitBtn.textContent = this.sections.length > 1 ? `Update Section ${section.index + 1}` : 'Update Test Score';
+            submitBtn.onclick = () => this.evaluateActiveSection();
+        } else {
+            submitBtn.textContent = this.sections.length > 1 ? `Submit Section ${section.index + 1}` : 'Submit Test';
+            submitBtn.onclick = () => this.evaluateActiveSection();
+        }
 
         sectionCard.appendChild(submitBtn);
         mainContainer.appendChild(sectionCard);
@@ -1253,23 +1322,10 @@ class TjTest extends HTMLElement {
                 const isShortAnswer = !q.o || q.o.length === 0;
                 if (!isShortAnswer) {
                     total++;
-                    const selected = this.shadowRoot.querySelector(`input[name="q-${section.index}-${qIdx}"]:checked`);
-                    const selectedVal = selected ? selected.value : (this.userAnswers[`q_${section.index}_${qIdx}`] || '');
+                    const selectedVal = (this.userAnswers && this.userAnswers[`q_${section.index}_${qIdx}`]) || '';
                     const isCorrect = selectedVal && selectedVal.trim().toLowerCase() === q.a.trim().toLowerCase();
                     if (isCorrect) {
                         score++;
-                    }
-                    if (!this.testMode && selected) {
-                        const label = selected.closest('.tj-option-label');
-                        if (label) {
-                            if (isCorrect) {
-                                label.classList.add('correct');
-                                label.classList.remove('incorrect');
-                            } else {
-                                label.classList.add('incorrect');
-                                label.classList.remove('correct');
-                            }
-                        }
                     }
                 }
             });
@@ -1279,42 +1335,31 @@ class TjTest extends HTMLElement {
         if (section.vocabulary.length > 0) {
             section.vocabulary.forEach((v) => {
                 total++;
-                const select = this.shadowRoot.querySelector(`.tj-vocab-select[data-word="${v.word}"]`);
-                const isCorrect = select && select.value.trim().toLowerCase() === v.def.trim().toLowerCase();
+                const vKey = `vocab_${section.index}_${v.word}`;
+                const selVal = (this.userAnswers && this.userAnswers[vKey]) || '';
+                const isCorrect = selVal && selVal.trim().toLowerCase() === v.def.trim().toLowerCase();
                 if (isCorrect) {
                     score++;
-                }
-                if (!this.testMode && select) {
-                    if (isCorrect) {
-                        select.classList.add('correct');
-                        select.classList.remove('incorrect');
-                    } else if (select.value) {
-                        select.classList.add('incorrect');
-                        select.classList.remove('correct');
-                    }
                 }
             });
         }
 
         // Evaluate Cloze
         if (section.cloze.length > 0) {
-            const clozeInputs = this.shadowRoot.querySelectorAll('.tj-cloze-input');
-            clozeInputs.forEach((input) => {
-                total++;
-                const target = input.getAttribute('data-target') || '';
-                const isCorrect = input.value.trim().toLowerCase() === target.trim().toLowerCase();
-                if (isCorrect) {
-                    score++;
-                }
-                if (!this.testMode) {
+            section.cloze.forEach((clozeData, cIdx) => {
+                let clozeIndex = 0;
+                const matches = (clozeData.text || '').match(/\*([^*]+)\*/g) || [];
+                matches.forEach((m) => {
+                    total++;
+                    const target = m.replace(/\*/g, '');
+                    const cKey = `cloze_${section.index}_${cIdx}_${clozeIndex}`;
+                    const val = (this.userAnswers && this.userAnswers[cKey]) || '';
+                    const isCorrect = val && val.trim().toLowerCase() === target.trim().toLowerCase();
                     if (isCorrect) {
-                        input.classList.add('correct');
-                        input.classList.remove('incorrect');
-                    } else if (input.value) {
-                        input.classList.add('incorrect');
-                        input.classList.remove('correct');
+                        score++;
                     }
-                }
+                    clozeIndex++;
+                });
             });
         }
 
@@ -1491,75 +1536,95 @@ class TjTest extends HTMLElement {
             completedDate = new Date().toLocaleString();
         }
 
-        const hasStudentInfo = Boolean(this.studentInfo?.nickname && this.studentInfo?.studentId);
-        const isEditingStudentInfo = Boolean(this._isEditingStudentInfo) || !hasStudentInfo;
+        const scoreBadgeContent = hasAnyThreshold
+            ? `YOUR SCORE: ${highestPassedTitle.toUpperCase()}`
+            : `YOUR SCORE: ${totalScore} / ${totalQuestions} (${totalPct}%)`;
 
-        let studentInfoHTML = '';
-        if (!isEditingStudentInfo) {
-            studentInfoHTML = `
-                <div class="tj-report-student-card">
-                    <div class="tj-report-student-main">
-                        <span class="tj-report-student-icon">👤</span>
-                        <div class="tj-report-student-details">
-                            <div class="tj-report-student-name">
+        // UNIFIED SUBMISSION CARD: Student information and submit code are entered in the SAME place
+        let submissionCardHTML = '';
+        if (this.hasSubmitted) {
+            // IMMUTABLE LOCKED STATE: Once sent / verified, student information cannot be edited under any circumstances
+            const isScreenshot = Boolean(this._submittedViaScreenshot);
+            submissionCardHTML = `
+                <div class="tj-submission-card tj-verified-card">
+                    <div class="tj-submission-header">
+                        <span class="tj-verified-icon">🔒</span>
+                        <div>
+                            <div class="tj-verified-name">
                                 ${this.escapeHtml(this.studentInfo.nickname)}
-                                <span class="tj-report-student-id">(${this.escapeHtml(this.studentInfo.studentId)})</span>
-                                ${this.studentInfo.homeroom ? `<span class="tj-report-student-homeroom">• Class ${this.escapeHtml(this.studentInfo.homeroom)}</span>` : ''}
+                                <span class="tj-verified-id">(${this.escapeHtml(this.studentInfo.studentId)})</span>
+                                ${this.studentInfo.homeroom ? `<span class="tj-verified-homeroom">• Class ${this.escapeHtml(this.studentInfo.homeroom)}</span>` : ''}
                             </div>
-                            <div class="tj-report-timestamp">
-                                <span>📅 Completed: ${completedDate}</span>
-                            </div>
+                            <div class="tj-report-timestamp">📅 Completed: ${completedDate}</div>
                         </div>
                     </div>
-                    <button id="editStudentInfoBtn" class="tj-btn-edit-info" type="button" title="Edit Student Information">
-                        ✏️ Edit Info
-                    </button>
+                    <div class="tj-verified-status">
+                        ${isScreenshot 
+                            ? '📸 Report card verified! Take a screenshot of this summary to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน'
+                            : '✓ Score report successfully submitted and recorded.'}
+                    </div>
+                    ${!this.testMode ? `
+                    <div class="tj-resubmit-row">
+                        <span class="tj-resubmit-hint">Student identity is permanently locked to <strong>${this.escapeHtml(this.studentInfo.nickname)}</strong>. You can fix mistakes and resubmit updated scores anytime.</span>
+                        <button id="resubmitResultsBtn" class="tj-btn tj-btn-primary" type="button">
+                            ${isScreenshot ? '📸 Update Score for Screenshot' : '📤 Resubmit Updated Score'}
+                        </button>
+                    </div>
+                    ` : `
+                    <div class="tj-testmode-locked-note">
+                        🔒 Test mode assessment completed. Submission is final.
+                    </div>
+                    `}
                 </div>
             `;
         } else {
-            studentInfoHTML = `
-                <div class="tj-report-student-form-card">
-                    <div class="tj-report-student-form-header">
-                        <span class="tj-report-student-icon">👤</span>
+            // UNIFIED ENTRY FORM: Nickname, Student ID, Homeroom, and Submit Code for BOTH practice/formative and test modes
+            submissionCardHTML = `
+                <div class="tj-submission-card">
+                    <div class="tj-submission-header">
+                        <span class="tj-submission-icon">📝</span>
                         <div>
-                            <h4 style="margin: 0; color: var(--tj-text-main); font-size: 1.05em;">Student Information</h4>
+                            <h4 style="margin: 0; color: var(--tj-text-main); font-size: 1.1em;">
+                                ${this.testMode ? 'Test Assessment Submission' : 'Practice / Formative Assessment Submission'}
+                            </h4>
                             <p style="margin: 0; font-size: 0.85em; color: var(--tj-text-muted);">
-                                Enter your nickname and student ID so your teacher can identify your score screenshot.
+                                Enter your details and the Submit Code provided by your teacher. If no code was provided, you can simply take a screenshot!
                             </p>
                         </div>
                     </div>
                     <div class="tj-form-row" style="margin-top: 0.75em;">
                         <div class="tj-form-group" style="flex: 1;">
-                            <label class="tj-form-label" for="reportNicknameInput">Student Nickname *</label>
-                            <input type="text" id="reportNicknameInput" class="tj-input" placeholder="e.g. Jake" value="${this.escapeHtml(this.studentInfo?.nickname || '')}">
+                            <label class="tj-form-label" for="submitNicknameInput">Student Nickname *</label>
+                            <input type="text" id="submitNicknameInput" class="tj-input" placeholder="e.g. Jake" value="${this.escapeHtml(this.studentInfo?.nickname || '')}" autocomplete="one-time-code" data-lpignore="true">
                         </div>
                         <div class="tj-form-group" style="flex: 1;">
-                            <label class="tj-form-label" for="reportStudentIdInput">Student ID *</label>
-                            <input type="text" id="reportStudentIdInput" class="tj-input" placeholder="e.g. 01" value="${this.escapeHtml(this.studentInfo?.studentId || '')}">
+                            <label class="tj-form-label" for="submitStudentIdInput">Student ID *</label>
+                            <input type="text" id="submitStudentIdInput" class="tj-input" placeholder="e.g. 01" value="${this.escapeHtml(this.studentInfo?.studentId || '')}" autocomplete="one-time-code" data-lpignore="true">
                         </div>
                         <div class="tj-form-group" style="flex: 1;">
-                            <label class="tj-form-label" for="reportHomeroomInput">Homeroom</label>
-                            <input type="text" id="reportHomeroomInput" class="tj-input" placeholder="e.g. 1/1" value="${this.escapeHtml(this.studentInfo?.homeroom || '')}">
+                            <label class="tj-form-label" for="submitHomeroomInput">Homeroom</label>
+                            <input type="text" id="submitHomeroomInput" class="tj-input" placeholder="e.g. 1/1" value="${this.escapeHtml(this.studentInfo?.homeroom || '')}" autocomplete="one-time-code" data-lpignore="true">
                         </div>
                     </div>
-                    <div id="studentInfoErrorMsg" class="tj-error-msg hidden" style="margin-top: 0.5em;"></div>
-                    <div style="display: flex; gap: 0.5em; justify-content: flex-end; margin-top: 0.75em; flex-wrap: wrap;">
-                        ${hasStudentInfo ? `<button id="cancelEditStudentInfoBtn" class="tj-btn tj-btn-secondary" type="button">Cancel</button>` : ''}
-                        <button id="saveStudentInfoBtn" class="tj-btn tj-btn-primary" type="button">
-                            💾 Save Details / บันทึกข้อมูล
+                    <div class="tj-form-group" style="margin-top: 0.75em;">
+                        <label class="tj-form-label" for="submitTeacherCodeInput">Submit Code (same as Start Code, if provided)</label>
+                        <input type="text" id="submitTeacherCodeInput" class="tj-submission-input" placeholder="Enter Submit Code (e.g. 1234)" autocomplete="one-time-code" data-lpignore="true">
+                    </div>
+                    <div class="tj-submission-actions">
+                        <button id="submitResultsBtn" class="tj-btn tj-btn-primary" type="button">
+                            📤 Submit Score / ส่งคะแนน
+                        </button>
+                        <button id="verifyScreenshotBtn" class="tj-btn-screenshot" type="button">
+                            📸 Just Take Screenshot (No Code Required) / แคปหน้าจอเท่านั้น
                         </button>
                     </div>
+                    <div id="submitStatusMsg" class="tj-error-msg hidden" style="margin-top: 0.5em;"></div>
                 </div>
             `;
         }
 
-        const scoreBadgeContent = hasAnyThreshold
-            ? `YOUR SCORE: ${highestPassedTitle.toUpperCase()}`
-            : `YOUR SCORE: ${totalScore} / ${totalQuestions} (${totalPct}%)`;
-
         reportContainer.innerHTML = `
             <h3 class="tj-h3" style="font-size: 1.6em; margin: 0; color: var(--tj-text-main);">Test Summary</h3>
-            ${studentInfoHTML}
             <div class="tj-final-score-badge">${scoreBadgeContent}</div>
             <p style="color: var(--tj-text-muted); max-width: 600px; margin: 0;">
                 Based on your test performance, your score has been evaluated and verified.
@@ -1580,132 +1645,47 @@ class TjTest extends HTMLElement {
             </table>
             ${writtenAnswersHTML}
             ${writtenNoteHTML}
-            ${this.hasValidSubmissionUrl ? `
-            <div class="tj-submission-box">
-                <h4 style="margin: 0; color: var(--tj-text-main);">Submit Score to Teacher's Google Sheet</h4>
-                <p style="margin: 0; font-size: 0.9em; color: var(--tj-text-muted);">
-                    Enter the Submit Code provided by your teacher to digitally log your results.
-                </p>
-                <div class="tj-submission-row" style="margin-top: 0.5em;">
-                    <input type="text" id="reportTeacherCodeInput" class="tj-submission-input" placeholder="Enter Submit Code" autocomplete="one-time-code" data-lpignore="true">
-                    <button id="submitResultsBtn" class="tj-btn tj-btn-primary">
-                        📤 Submit Score Report
-                    </button>
-                </div>
-                <div id="submitStatusMsg" class="tj-error-msg hidden"></div>
-            </div>
-            ` : ''}
+
+            ${submissionCardHTML}
+
             <div class="tj-screenshot-banner">
                 <span class="tj-screenshot-icon">📸</span>
                 <span>${this.hasValidSubmissionUrl ? 'Alternatively, take' : 'Take'} a screenshot of this summary table to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
             </div>
 
+            ${!this.testMode ? `
             <div class="tj-report-actions">
-                ${!this.testMode ? `
                 <button id="reviewAndFixBtn" class="tj-btn tj-btn-primary" type="button" style="display: inline-flex; align-items: center; gap: 0.5em;">
                     ✏️ Review & Fix Mistakes / แก้ไขข้อผิดพลาด
                 </button>
-                ` : ''}
                 <button id="clearAndRetakeBtn" class="tj-btn-restart" type="button">
                     🔄 Clear Cache & Start Again / ล้างข้อมูลและเริ่มใหม่
                 </button>
             </div>
+            ` : ''}
         `;
 
-        const saveInfoBtn = reportContainer.querySelector('#saveStudentInfoBtn');
-        const cancelInfoBtn = reportContainer.querySelector('#cancelEditStudentInfoBtn');
-        const editInfoBtn = reportContainer.querySelector('#editStudentInfoBtn');
-        const nicknameInput = reportContainer.querySelector('#reportNicknameInput');
-        const studentIdInput = reportContainer.querySelector('#reportStudentIdInput');
-        const homeroomInput = reportContainer.querySelector('#reportHomeroomInput');
-
-        if (saveInfoBtn) {
-            const handleSaveStudentInfo = () => {
-                const nickname = nicknameInput ? nicknameInput.value.trim() : '';
-                const studentId = studentIdInput ? studentIdInput.value.trim() : '';
-                const homeroom = homeroomInput ? homeroomInput.value.trim() : '';
-                const errorMsg = reportContainer.querySelector('#studentInfoErrorMsg');
-
-                if (!nickname || !studentId) {
-                    if (errorMsg) {
-                        errorMsg.textContent = '⚠️ Please enter your Student Nickname and Student ID.';
-                        errorMsg.classList.remove('hidden');
-                    }
-                    return;
-                }
-
-                this.studentInfo = { nickname, studentId, homeroom };
-                this._isEditingStudentInfo = false;
-                this.hasSubmitted = false;
-                this.saveStateToLocalStorage();
-                this.renderFinalReport();
-            };
-
-            saveInfoBtn.onclick = handleSaveStudentInfo;
-            [nicknameInput, studentIdInput, homeroomInput].forEach(inp => {
-                if (inp) {
-                    inp.onkeydown = (e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            handleSaveStudentInfo();
-                        }
-                    };
-                }
-            });
-        }
-
-        if (cancelInfoBtn) {
-            cancelInfoBtn.onclick = () => {
-                this._isEditingStudentInfo = false;
-                this.renderFinalReport();
-            };
-        }
-
-        if (editInfoBtn) {
-            editInfoBtn.onclick = () => {
-                this._isEditingStudentInfo = true;
-                this.renderFinalReport();
-            };
-        }
-
         const submitBtn = reportContainer.querySelector('#submitResultsBtn');
-        const codeInput = reportContainer.querySelector('#reportTeacherCodeInput');
-        const statusMsg = reportContainer.querySelector('#submitStatusMsg');
-
-        if (this.hasSubmitted) {
-            if (submitBtn) {
-                if (this.testMode) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Submitted ✓';
-                    submitBtn.style.background = 'var(--tj-text-muted)';
-                } else {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = '📤 Submit Updated Score';
-                    submitBtn.style.background = '';
-                }
-            }
-            if (codeInput && this.testMode) {
-                codeInput.disabled = true;
-            }
-            if (statusMsg) {
-                statusMsg.classList.remove('hidden');
-                statusMsg.style.color = 'var(--tj-success-color)';
-                statusMsg.textContent = this.testMode
-                    ? '✓ Score report successfully submitted to your teacher!'
-                    : '✓ Score report submitted! You can fix mistakes and submit an updated score anytime.';
-            }
-        }
+        const verifyScreenshotBtn = reportContainer.querySelector('#verifyScreenshotBtn');
+        const codeInput = reportContainer.querySelector('#submitTeacherCodeInput');
+        const resubmitBtn = reportContainer.querySelector('#resubmitResultsBtn');
 
         if (submitBtn) {
-            submitBtn.onclick = () => this.submitScoreReport();
+            submitBtn.onclick = () => this.submitScoreReport(false);
+        }
+        if (verifyScreenshotBtn) {
+            verifyScreenshotBtn.onclick = () => this.submitScoreReport(true);
         }
         if (codeInput) {
             codeInput.onkeydown = (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    this.submitScoreReport();
+                    this.submitScoreReport(false);
                 }
             };
+        }
+        if (resubmitBtn) {
+            resubmitBtn.onclick = () => this.submitScoreReport(Boolean(this._submittedViaScreenshot));
         }
 
         const reviewBtn = reportContainer.querySelector('#reviewAndFixBtn');
@@ -1722,8 +1702,7 @@ class TjTest extends HTMLElement {
         const clearBtn = reportContainer.querySelector('#clearAndRetakeBtn');
         if (clearBtn) {
             clearBtn.onclick = () => {
-                const requireCodeMsg = this.testMode ? '\n\n(This will clear your saved progress and require the Start Code again).' : '';
-                if (window.confirm(`Are you sure you want to clear your saved score and start the test again?${requireCodeMsg}`)) {
+                if (window.confirm('Are you sure you want to clear your saved score and start again?')) {
                     this.resetTest();
                 }
             };
@@ -1732,24 +1711,30 @@ class TjTest extends HTMLElement {
         this.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    async submitScoreReport() {
-        const nicknameElem = this.shadowRoot.getElementById('reportNicknameInput');
-        const studentIdElem = this.shadowRoot.getElementById('reportStudentIdInput');
-        const homeroomElem = this.shadowRoot.getElementById('reportHomeroomInput');
-        const codeInput = this.shadowRoot.getElementById('reportTeacherCodeInput');
+    async submitScoreReport(isScreenshotOnly = false) {
+        const nicknameElem = this.shadowRoot.getElementById('submitNicknameInput');
+        const studentIdElem = this.shadowRoot.getElementById('submitStudentIdInput');
+        const homeroomElem = this.shadowRoot.getElementById('submitHomeroomInput');
+        const codeInput = this.shadowRoot.getElementById('submitTeacherCodeInput');
 
         let nickname = (this.studentInfo?.nickname || '').trim();
         let studentId = (this.studentInfo?.studentId || '').trim();
         let homeroom = (this.studentInfo?.homeroom || '').trim();
 
-        if (nicknameElem && nicknameElem.value.trim()) nickname = nicknameElem.value.trim();
-        if (studentIdElem && studentIdElem.value.trim()) studentId = studentIdElem.value.trim();
-        if (homeroomElem) homeroom = homeroomElem.value.trim();
+        // If not already submitted, read from form inputs
+        if (!this.hasSubmitted) {
+            if (nicknameElem && nicknameElem.value.trim()) nickname = nicknameElem.value.trim();
+            if (studentIdElem && studentIdElem.value.trim()) studentId = studentIdElem.value.trim();
+            if (homeroomElem) homeroom = homeroomElem.value.trim();
+        }
+        // If already submitted, student identity is permanently locked to prevent sending under a friend's name
 
-        const enteredCode = codeInput ? codeInput.value.trim() : '';
+        const enteredCode = codeInput ? codeInput.value.trim() : (this._lastEnteredSubmitCode || '');
 
         const msgElem = this.shadowRoot.getElementById('submitStatusMsg');
-        const submitBtn = this.shadowRoot.getElementById('submitResultsBtn');
+        const submitBtn = this.shadowRoot.getElementById('submitResultsBtn') || 
+                          this.shadowRoot.getElementById('verifyScreenshotBtn') || 
+                          this.shadowRoot.getElementById('resubmitResultsBtn');
 
         if (this.isSubmitting) return;
         if (this.testMode && this.hasSubmitted) return;
@@ -1758,142 +1743,91 @@ class TjTest extends HTMLElement {
             if (msgElem) {
                 msgElem.classList.remove('hidden');
                 msgElem.style.color = 'var(--tj-error-color)';
-                msgElem.textContent = '⚠️ Student Nickname and Student ID are required before submitting.';
+                msgElem.textContent = '⚠️ Student Nickname and Student ID are required before continuing.';
             }
             return;
         }
 
-        if (!enteredCode) {
-            if (msgElem) {
-                msgElem.classList.remove('hidden');
-                msgElem.style.color = 'var(--tj-error-color)';
-                msgElem.textContent = '⚠️ Submit Code required. Please enter the code provided by your teacher, or take a screenshot of this table.';
-            }
-            return;
-        }
+        // Submitting via code (works for BOTH practice/formative assessments and tests)
+        if (!isScreenshotOnly) {
+            const configuredCode = (this.submitCode || '').trim().toLowerCase();
+            // If teacher configured a submit code:
+            if (configuredCode) {
+                if (!enteredCode) {
+                    if (msgElem) {
+                        msgElem.classList.remove('hidden');
+                        msgElem.style.color = 'var(--tj-primary-color)';
+                        msgElem.textContent = 'ℹ️ Submit Code required to submit score. If your teacher did not provide a code, click "Just Take Screenshot" instead.';
+                    }
+                    return;
+                }
+                const cleanEntered = enteredCode.toLowerCase();
+                const matchesSubmit = cleanEntered === configuredCode;
+                const matchesTeacher = cleanEntered === (this.teacherCode || '').trim().toLowerCase();
+                const matchesStart = cleanEntered === (this.startCode || '').trim().toLowerCase();
 
-        const cleanEntered = enteredCode.toLowerCase();
-        const matchesTeacher = cleanEntered === (this.teacherCode || '').trim().toLowerCase();
-        const matchesStart = cleanEntered === (this.startCode || '').trim().toLowerCase();
-
-        if (!matchesTeacher && !matchesStart) {
-            if (msgElem) {
-                msgElem.classList.remove('hidden');
-                msgElem.style.color = 'var(--tj-error-color)';
-                msgElem.textContent = '❌ Invalid Submit Code. Please check the code provided by your teacher, or take a screenshot of this table.';
+                if (!matchesSubmit && !matchesTeacher && !matchesStart) {
+                    if (msgElem) {
+                        msgElem.classList.remove('hidden');
+                        msgElem.style.color = 'var(--tj-error-color)';
+                        msgElem.textContent = '❌ Invalid Submit Code. If your teacher did not provide a code, click "Just Take Screenshot" instead.';
+                    }
+                    return;
+                }
             }
-            return;
         }
 
         this.isSubmitting = true;
+        this._lastEnteredSubmitCode = enteredCode;
+        this._submittedViaScreenshot = isScreenshotOnly;
         if (submitBtn) {
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="tj-spinner"></span>Submitting...';
+            submitBtn.innerHTML = '<span class="tj-spinner"></span>Saving...';
         }
 
+        // Lock studentInfo permanently once sent
         this.studentInfo = { nickname, studentId, homeroom };
         this._isEditingStudentInfo = false;
         this.saveStateToLocalStorage();
 
         const totalScore = this.sectionResults.reduce((sum, r) => sum + (r ? r.score : 0), 0);
         const totalQuestions = this.sectionResults.reduce((sum, r) => sum + (r ? r.total : 0), 0);
-        const sectionSummary = this.sections.map((sec, idx) => {
-            const r = this.sectionResults[idx];
-            if (!r || !r.completed) return `${sec.title}: Not reached`;
-            if (!sec.passThreshold || sec.passThreshold === 0) {
-                return `${sec.title}: ${r.score}/${r.total} (${r.percentage}%) - COMPLETED`;
+
+        if (!isScreenshotOnly) {
+            const payload = {
+                quizName: this.activityTitle,
+                nickname: nickname,
+                homeroom: homeroom,
+                studentId: studentId,
+                score: totalScore,
+                total: totalQuestions,
+                writtenAnswers: this.getWrittenAnswersString(),
+                timestamp: new Date().toISOString(),
+                teacherCode: enteredCode,
+                mode: this.testMode ? 'test' : 'practice'
+            };
+
+            try {
+                const rawSubmissionUrl = this.submissionUrl || resolveComponentParams(this).submissionUrl;
+                const submissionUrl = (rawSubmissionUrl || '').trim();
+                if (submissionUrl && !submissionUrl.includes('YOUR_GAS_URL') && !submissionUrl.includes('YOUR_SCRIPT_ID')) {
+                    await fetch(submissionUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify(payload)
+                    });
+                } else {
+                    console.log(`[${this.testMode ? 'Test' : 'Practice'}] Score report logged via code:`, payload);
+                }
+            } catch (err) {
+                console.log('Submission payload error/fallback:', err, payload);
             }
-            return `${sec.title}: ${r.score}/${r.total} (${r.percentage}%) - ${r.passed ? 'PASSED' : 'HALTED'}`;
-        }).join(' | ');
-
-        const payload = {
-            quizName: this.activityTitle,
-            nickname: nickname,
-            homeroom: homeroom,
-            studentId: studentId,
-            score: totalScore,
-            total: totalQuestions,
-            writtenAnswers: this.getWrittenAnswersString(),
-            timestamp: new Date().toISOString(),
-            teacherCode: enteredCode
-        };
-
-        if (msgElem) {
-            msgElem.classList.remove('hidden');
-            msgElem.style.color = 'var(--tj-primary-color)';
-            msgElem.textContent = 'Submitting report...';
         }
 
-        try {
-            const rawSubmissionUrl = this.submissionUrl || resolveComponentParams(this).submissionUrl;
-            const submissionUrl = (rawSubmissionUrl || '').trim();
-            if (!submissionUrl || submissionUrl.includes('YOUR_GAS_URL') || submissionUrl.includes('YOUR_SCRIPT_ID')) {
-                if (msgElem) {
-                    msgElem.classList.remove('hidden');
-                    msgElem.style.color = 'var(--tj-error-color)';
-                    msgElem.textContent = '⚠️ No valid submission URL configured. Please take a screenshot of this table.';
-                }
-                this.isSubmitting = false;
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit Score Online';
-                }
-                return;
-            }
-            await fetch(submissionUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(payload)
-            });
-            this.hasSubmitted = true;
-            this.isSubmitting = false;
-            this.saveStateToLocalStorage();
-            if (msgElem) {
-                msgElem.style.color = 'var(--tj-success-color)';
-                msgElem.textContent = this.testMode
-                    ? '✓ Score report successfully submitted to your teacher!'
-                    : '✓ Score report submitted! You can fix mistakes and submit an updated score anytime.';
-            }
-            if (submitBtn) {
-                if (this.testMode) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Submitted ✓';
-                    submitBtn.style.background = 'var(--tj-text-muted)';
-                } else {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = '📤 Submit Updated Score';
-                    submitBtn.style.background = '';
-                }
-            }
-            if (codeInput && this.testMode) {
-                codeInput.disabled = true;
-            }
-        } catch (err) {
-            console.log('Submission payload simulated/sent:', payload);
-            this.hasSubmitted = true;
-            this.isSubmitting = false;
-            this.saveStateToLocalStorage();
-            if (msgElem) {
-                msgElem.style.color = 'var(--tj-success-color)';
-                msgElem.textContent = this.testMode
-                    ? '✓ Score report logged successfully.'
-                    : '✓ Score report logged! You can fix mistakes and submit an updated score anytime.';
-            }
-            if (submitBtn) {
-                if (this.testMode) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Submitted ✓';
-                    submitBtn.style.background = 'var(--tj-text-muted)';
-                } else {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = '📤 Submit Updated Score';
-                    submitBtn.style.background = '';
-                }
-            }
-            if (codeInput && this.testMode) {
-                codeInput.disabled = true;
-            }
-        }
+        this.hasSubmitted = true;
+        this.isSubmitting = false;
+        this.saveStateToLocalStorage();
+        this.renderFinalReport();
     }
 
     escapeHtml(str) {
@@ -1948,7 +1882,8 @@ class TjTest extends HTMLElement {
             userAnswers: this.userAnswers,
             studentInfo: this.studentInfo,
             completedTimestamp: this.completedTimestamp,
-            hasSubmitted: this.hasSubmitted
+            hasSubmitted: this.hasSubmitted,
+            submittedViaScreenshot: this._submittedViaScreenshot
         };
         try {
             localStorage.setItem(this.getStorageKey(), JSON.stringify(data));
@@ -1975,6 +1910,7 @@ class TjTest extends HTMLElement {
         this.studentInfo = saved.studentInfo || { nickname: '', studentId: '', homeroom: '' };
         this.completedTimestamp = saved.completedTimestamp || null;
         this.hasSubmitted = saved.hasSubmitted || false;
+        this._submittedViaScreenshot = saved.submittedViaScreenshot || false;
 
         if (this.testMode && !this.testCompleted) {
             if (this.testUnlocked) {
@@ -2010,6 +1946,7 @@ class TjTest extends HTMLElement {
         this._isEvaluatingSection = false;
         this._pendingNextSection = false;
         this.hasSubmitted = false;
+        this._submittedViaScreenshot = false;
         this.isSubmitting = false;
         this.sectionResults = this.sections.map(() => ({ completed: false, passed: false, score: 0, total: 0, percentage: 0 }));
 
@@ -2028,14 +1965,8 @@ class TjTest extends HTMLElement {
         if (modal) modal.classList.remove('active');
 
         // Reset input fields in startLockOverlay
-        const nickInput = this.shadowRoot.getElementById('startNicknameInput');
-        const idInput = this.shadowRoot.getElementById('startStudentIdInput');
-        const hrInput = this.shadowRoot.getElementById('startHomeroomInput');
         const startCodeInput = this.shadowRoot.getElementById('startCodeInput');
         const startCodeError = this.shadowRoot.getElementById('startCodeError');
-        if (nickInput) nickInput.value = '';
-        if (idInput) idInput.value = '';
-        if (hrInput) hrInput.value = '';
         if (startCodeInput) startCodeInput.value = '';
         if (startCodeError) startCodeError.classList.add('hidden');
 

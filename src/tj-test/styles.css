@@ -548,30 +548,31 @@
   text-align: center;
 }
 
-/* Student Information Card on Final Report */
-.tj-report-student-card {
+/* Unified Submission Card & Verified Card on Final Report */
+.tj-submission-card,
+.tj-submission-box {
   width: 100%;
   max-width: 600px;
   background: var(--tj-bg-alt);
   border: 1px solid var(--tj-border-main);
   border-radius: var(--tj-border-radius-md);
-  padding: 1em 1.25em;
+  padding: 1.25em;
   box-sizing: border-box;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 0.75em;
   text-align: left;
+  margin-top: 1em;
 }
 
-.tj-report-student-main {
+.tj-submission-header {
   display: flex;
   align-items: center;
   gap: 0.85em;
 }
 
-.tj-report-student-icon {
+.tj-submission-icon,
+.tj-verified-icon {
   font-size: 1.5em;
   background: var(--tj-primary-light);
   color: var(--tj-primary-color);
@@ -584,14 +585,19 @@
   flex-shrink: 0;
 }
 
-.tj-report-student-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2em;
+/* Verified Student Card (Locked Once Sent) */
+.tj-verified-card {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, var(--tj-bg-alt) 0%, rgba(16, 185, 129, 0.05) 100%);
 }
 
-.tj-report-student-name {
-  font-size: 1.15em;
+.tj-verified-card .tj-verified-icon {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.tj-verified-name {
+  font-size: 1.2em;
   font-weight: 700;
   color: var(--tj-text-main);
   display: flex;
@@ -600,58 +606,60 @@
   flex-wrap: wrap;
 }
 
-.tj-report-student-id {
+.tj-verified-id {
   color: var(--tj-primary-color);
   font-weight: 600;
   font-size: 0.95em;
 }
 
-.tj-report-student-homeroom {
+.tj-verified-homeroom {
   color: var(--tj-text-muted);
   font-weight: 500;
   font-size: 0.9em;
+}
+
+.tj-verified-status {
+  margin-top: 0.25em;
+  padding: 0.5em 0.75em;
+  border-radius: var(--tj-border-radius-sm);
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  font-weight: 600;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.tj-resubmit-row {
+  margin-top: 0.75em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75em;
+  padding-top: 0.75em;
+  border-top: 1px solid var(--tj-border-main);
+}
+
+.tj-resubmit-hint {
+  font-size: 0.85em;
+  color: var(--tj-text-muted);
+  flex: 1;
+  min-width: 200px;
+}
+
+.tj-testmode-locked-note {
+  margin-top: 0.5em;
+  font-size: 0.85em;
+  color: var(--tj-text-muted);
+  font-style: italic;
 }
 
 .tj-report-timestamp {
   font-size: 0.8em;
   color: var(--tj-text-muted);
   font-weight: 500;
-}
-
-.tj-btn-edit-info {
-  background: transparent;
-  border: 1px solid var(--tj-border-main);
-  color: var(--tj-text-muted);
-  padding: 0.4em 0.8em;
-  border-radius: var(--tj-border-radius-sm, 6px);
-  font-size: 0.85em;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35em;
-  transition: all 0.2s ease;
-}
-
-.tj-btn-edit-info:hover {
-  background: var(--tj-bg-card);
-  color: var(--tj-text-main);
-  border-color: var(--tj-primary-color);
-}
-
-/* Student Information Form Card on Final Report */
-.tj-report-student-form-card {
-  width: 100%;
-  max-width: 600px;
-  background: var(--tj-bg-alt);
-  border: 1px solid var(--tj-primary-border);
-  border-radius: var(--tj-border-radius-md);
-  padding: 1.25em;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  text-align: left;
 }
 
 .tj-report-student-form-header {
@@ -1010,6 +1018,35 @@
 .tj-submission-input:focus {
   outline: none;
   border-color: var(--tj-primary-color);
+}
+
+.tj-submission-actions {
+  display: flex;
+  gap: 0.75em;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 0.5em;
+}
+
+.tj-btn-screenshot {
+  background: var(--tj-bg-card);
+  border: 1px solid var(--tj-border-main);
+  color: var(--tj-text-main);
+  padding: 0.6em 1em;
+  border-radius: var(--tj-border-radius-sm, 6px);
+  font-weight: 600;
+  font-size: 0.9em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  transition: all 0.2s ease;
+}
+
+.tj-btn-screenshot:hover {
+  background: var(--tj-bg-alt);
+  border-color: var(--tj-primary-color);
+  color: var(--tj-primary-color);
 }
 
 /* =========================================
