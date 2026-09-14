@@ -229,7 +229,7 @@ A multi-stage level placement test powered by JSON configuration. Students unloc
 - `submission-url`: (Optional) Google Apps Script deployment URL to log scored placement reports. If omitted, digital submission is disabled and students are directed to take a screenshot.
 - `test-mode`: (Optional) Boolean attribute. When present, locks test behind `start-code`, prevents fixing mistakes, and triggers screen lockout on tab switch or window blur until `teacher-code` is entered. Set to `test-mode="false"` or omit for practice mode (no start overlay, students can fix questions and resubmit).
 - `start-code` / `submit-code` / `code`: (Optional) The **Student Code** (default: `'1234'`). The start code and submit code are the **SAME code**. In `test-mode`, students use it to begin the test; in both practice and test modes, students enter this same code in the submission card to submit their score report.
-- `teacher-code` / `reset-code`: (Optional) The **Teacher Unlock Code** (default: `'7676'`). Kept **STRICTLY PRIVATE** by the teacher. Used exclusively by instructors to unlock the screen lockout if a student leaves the window/screen in `test-mode` (`teacherLockOverlay`). **NEVER give the teacher code to students.**
+- `teacher-code` / `reset-code`: (Optional) The **Teacher Unlock Code** (default: `'7676'`). Kept **STRICTLY PRIVATE** by the teacher. Used exclusively by instructors to unlock the screen lockout if a student leaves the window/screen in `test-mode` (`teacherLockOverlay`) or to authorize a full re-test. **NEVER give the teacher code to students.**
 - `pass-threshold`: (Optional) Default percentage required to progress to the next section (default: `'75%'`).
 
 #### Usage

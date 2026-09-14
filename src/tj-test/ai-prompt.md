@@ -104,7 +104,7 @@ When given a topic or source text, check if the user specified:
 ## **Component Rules**
 
 1. **Tag Attributes**:
-   - `test-mode`: Formal exam. Requires student `start-code="1234"` to start. Locks if student leaves window (teacher unlocks with `teacher-code="7676"`).
+   - `test-mode`: Formal exam. Requires student `start-code="1234"` to start. Locks if student leaves window (teacher unlocks with `teacher-code="7676"`). Re-tests can be authorized by teachers using the `teacher-code`.
    - `test-mode="false"`: Informal practice. Opens immediately without start code; students can retry questions.
    - `pass-threshold="75%"`: Minimum score required to pass each section.
 2. **Section Instructions (`instructions`)**: Include clear directions under each section (e.g. `"instructions": "Directions: ..."`). Supports `**bold**`, `*italics*`, and `\n`.

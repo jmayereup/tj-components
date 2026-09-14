@@ -128,6 +128,7 @@ class TjTest extends HTMLElement {
             this.submissionUrl = newValue || '';
         } else if (name === 'test-mode') {
             if (this.isConnected) {
+                this.updateTeacherHeaderButton();
                 if (this.testMode) {
                     this.testUnlocked = false;
                     this.lockStartOverlay();
@@ -141,6 +142,95 @@ class TjTest extends HTMLElement {
                 this.renderActiveSection();
             }
         }
+    }
+
+    validateTeacherCode(val) {
+        if (!val || typeof val !== 'string') return false;
+        const cleanEntered = val.trim().toLowerCase();
+        const cleanTeacher = (this.teacherCode || '').trim().toLowerCase();
+        return Boolean(cleanTeacher && cleanEntered === cleanTeacher);
+    }
+
+    updateTeacherHeaderButton() {
+        const btn = this.shadowRoot ? this.shadowRoot.getElementById('teacherHeaderBtn') : null;
+        if (!btn) return;
+        if (this.testMode && !this.testCompleted) {
+            btn.classList.remove('hidden');
+        } else {
+            btn.classList.add('hidden');
+        }
+    }
+
+    allowRetest({ preserveStudentInfo = true } = {}) {
+        localStorage.removeItem(this.getStorageKey());
+        localStorage.removeItem(`tj_progressive_test_${location.pathname}_${this.activityTitle.replace(/\s+/g, '_')}`);
+
+        this.activeSectionIndex = 0;
+        this.testCompleted = false;
+        this.tabAwayCount = 0;
+        this.testUnlocked = true;
+        this.userAnswers = {};
+        if (!preserveStudentInfo) {
+            this.studentInfo = { nickname: '', studentId: '', homeroom: '' };
+        }
+        this.completedTimestamp = null;
+        this._isEditingStudentInfo = false;
+        this._isEvaluatingSection = false;
+        this._pendingNextSection = false;
+        this.hasSubmitted = false;
+        this._submittedViaScreenshot = false;
+        this.isSubmitting = false;
+        this.sectionResults = this.sections.map(() => ({ completed: false, passed: false, score: 0, total: 0, percentage: 0 }));
+
+        this.saveStateToLocalStorage();
+
+        const finalReport = this.shadowRoot.getElementById('finalReportContainer');
+        if (finalReport) {
+            finalReport.innerHTML = '';
+            finalReport.classList.add('hidden');
+        }
+
+        const activeContainer = this.shadowRoot.getElementById('activeSectionContainer');
+        if (activeContainer) {
+            activeContainer.classList.remove('hidden');
+        }
+
+        const sectionModal = this.shadowRoot.getElementById('sectionResultModal');
+        if (sectionModal) sectionModal.classList.remove('active');
+
+        const teacherOverlay = this.shadowRoot.getElementById('teacherLockOverlay');
+        if (teacherOverlay) teacherOverlay.classList.remove('active');
+
+        const authModal = this.shadowRoot.getElementById('teacherAuthModal');
+        if (authModal) authModal.classList.remove('active');
+
+        const startOverlay = this.shadowRoot.getElementById('startLockOverlay');
+        if (startOverlay) startOverlay.classList.remove('active');
+
+        const teacherCodeInput = this.shadowRoot.getElementById('teacherCodeInput');
+        if (teacherCodeInput) teacherCodeInput.value = '';
+
+        const modalTeacherCodeInput = this.shadowRoot.getElementById('modalTeacherCodeInput');
+        if (modalTeacherCodeInput) modalTeacherCodeInput.value = '';
+
+        const teacherCodeError = this.shadowRoot.getElementById('teacherCodeError');
+        if (teacherCodeError) teacherCodeError.classList.add('hidden');
+
+        const modalTeacherCodeError = this.shadowRoot.getElementById('modalTeacherCodeError');
+        if (modalTeacherCodeError) modalTeacherCodeError.classList.add('hidden');
+
+        this.updateTabAwayBanner();
+        this.updateTeacherHeaderButton();
+        this.renderTestUI();
+        this.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    retest(teacherCode) {
+        if (!this.validateTeacherCode(teacherCode)) {
+            return false;
+        }
+        this.allowRetest({ preserveStudentInfo: true });
+        return true;
     }
 
     _decodeHTMLEntities(str) {
@@ -224,6 +314,7 @@ class TjTest extends HTMLElement {
                     this.unlockAllSecurityOverlays();
                 }
             }
+            this.updateTeacherHeaderButton();
         });
     }
 
@@ -317,10 +408,12 @@ class TjTest extends HTMLElement {
     unlockAllSecurityOverlays() {
         const startOverlay = this.shadowRoot.getElementById('startLockOverlay');
         const teacherOverlay = this.shadowRoot.getElementById('teacherLockOverlay');
+        const authModal = this.shadowRoot.getElementById('teacherAuthModal');
         const input = this.shadowRoot.getElementById('teacherCodeInput');
         if (input) input.value = '';
         if (startOverlay) startOverlay.classList.remove('active');
         if (teacherOverlay) teacherOverlay.classList.remove('active');
+        if (authModal) authModal.classList.remove('active');
     }
 
     parseContent() {
@@ -706,22 +799,25 @@ class TjTest extends HTMLElement {
             }
         }
 
-        // Unlock Teacher button
+        // Unlock Teacher button & Reset/Re-Test button on Lockout Overlay
         const unlockTeacherBtn = shadow.getElementById('unlockTeacherBtn');
+        const retestLockoutBtn = shadow.getElementById('retestLockoutBtn');
         const teacherCodeInput = shadow.getElementById('teacherCodeInput');
         if (unlockTeacherBtn) {
             const handleTeacherUnlock = () => {
                 const input = shadow.getElementById('teacherCodeInput');
                 const val = input ? input.value.trim() : '';
-                if (input) input.value = '';
-                const cleanVal = val.toLowerCase();
-                const matchesTeacher = cleanVal === (this.teacherCode || '').trim().toLowerCase();
-                if (matchesTeacher) {
+                if (this.validateTeacherCode(val)) {
+                    if (input) input.value = '';
                     shadow.getElementById('teacherCodeError').classList.add('hidden');
                     shadow.getElementById('teacherLockOverlay').classList.remove('active');
                     this.saveStateToLocalStorage();
                 } else {
-                    shadow.getElementById('teacherCodeError').classList.remove('hidden');
+                    const err = shadow.getElementById('teacherCodeError');
+                    if (err) {
+                        err.textContent = 'Invalid teacher code.';
+                        err.classList.remove('hidden');
+                    }
                 }
             };
             unlockTeacherBtn.onclick = handleTeacherUnlock;
@@ -730,6 +826,75 @@ class TjTest extends HTMLElement {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         handleTeacherUnlock();
+                    }
+                };
+            }
+        }
+
+        if (retestLockoutBtn) {
+            retestLockoutBtn.onclick = () => {
+                const input = shadow.getElementById('teacherCodeInput');
+                const val = input ? input.value.trim() : '';
+                if (this.validateTeacherCode(val)) {
+                    if (input) input.value = '';
+                    shadow.getElementById('teacherCodeError').classList.add('hidden');
+                    this.allowRetest({ preserveStudentInfo: true });
+                } else {
+                    const err = shadow.getElementById('teacherCodeError');
+                    if (err) {
+                        err.textContent = 'Invalid teacher code. Required to authorize re-test.';
+                        err.classList.remove('hidden');
+                    }
+                }
+            };
+        }
+
+        // Teacher Header button & In-Test Authorization Modal
+        const teacherHeaderBtn = shadow.getElementById('teacherHeaderBtn');
+        const teacherAuthModal = shadow.getElementById('teacherAuthModal');
+        const cancelTeacherAuthBtn = shadow.getElementById('cancelTeacherAuthBtn');
+        const confirmTeacherRetestBtn = shadow.getElementById('confirmTeacherRetestBtn');
+        const modalTeacherCodeInput = shadow.getElementById('modalTeacherCodeInput');
+        const modalTeacherCodeError = shadow.getElementById('modalTeacherCodeError');
+
+        if (teacherHeaderBtn && teacherAuthModal) {
+            teacherHeaderBtn.onclick = () => {
+                if (modalTeacherCodeInput) modalTeacherCodeInput.value = '';
+                if (modalTeacherCodeError) modalTeacherCodeError.classList.add('hidden');
+                teacherAuthModal.classList.add('active');
+                if (modalTeacherCodeInput) modalTeacherCodeInput.focus();
+            };
+        }
+
+        if (cancelTeacherAuthBtn && teacherAuthModal) {
+            cancelTeacherAuthBtn.onclick = () => {
+                teacherAuthModal.classList.remove('active');
+                if (modalTeacherCodeInput) modalTeacherCodeInput.value = '';
+                if (modalTeacherCodeError) modalTeacherCodeError.classList.add('hidden');
+            };
+        }
+
+        if (confirmTeacherRetestBtn && teacherAuthModal) {
+            const handleModalRetest = () => {
+                const val = modalTeacherCodeInput ? modalTeacherCodeInput.value.trim() : '';
+                if (this.validateTeacherCode(val)) {
+                    if (modalTeacherCodeInput) modalTeacherCodeInput.value = '';
+                    if (modalTeacherCodeError) modalTeacherCodeError.classList.add('hidden');
+                    this.allowRetest({ preserveStudentInfo: true });
+                } else {
+                    if (modalTeacherCodeError) {
+                        modalTeacherCodeError.textContent = 'Invalid teacher code. Required to authorize re-test.';
+                        modalTeacherCodeError.classList.remove('hidden');
+                    }
+                }
+            };
+
+            confirmTeacherRetestBtn.onclick = handleModalRetest;
+            if (modalTeacherCodeInput) {
+                modalTeacherCodeInput.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleModalRetest();
                     }
                 };
             }
@@ -819,6 +984,7 @@ class TjTest extends HTMLElement {
 
     renderTestUI() {
         if (this.sections.length === 0) return;
+        this.updateTeacherHeaderButton();
         this.renderSectionStepper();
         this.renderActiveSection();
     }
@@ -1659,6 +1825,23 @@ class TjTest extends HTMLElement {
 
             ${submissionCardHTML}
 
+            ${this.testMode ? `
+            <div class="tj-teacher-retest-card">
+                <div class="tj-teacher-retest-header">
+                    <span class="tj-teacher-icon">🔐</span>
+                    <div>
+                        <h4 class="tj-teacher-retest-title">Teacher Re-Test Authorization / สำหรับครูผู้สอน</h4>
+                        <p class="tj-teacher-retest-desc">Enter the Teacher Code to authorize a full re-test for this student. All questions and scores will reset, while student information is retained.</p>
+                    </div>
+                </div>
+                <div class="tj-teacher-retest-controls">
+                    <input type="password" id="reportTeacherCodeInput" class="tj-input" placeholder="Enter Teacher Code" autocomplete="off" data-lpignore="true">
+                    <button id="reportRetestBtn" class="tj-btn tj-btn-restart" type="button">🔄 Allow Re-Test / อนุญาตให้สอบใหม่</button>
+                </div>
+                <div id="reportTeacherCodeError" class="tj-error-msg hidden">Invalid Teacher Code.</div>
+            </div>
+            ` : ''}
+
             <div class="tj-screenshot-banner">
                 <span class="tj-screenshot-icon">📸</span>
                 <span>${this.hasValidSubmissionUrl ? 'Alternatively, take' : 'Take'} a screenshot of this summary table to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน</span>
@@ -1699,6 +1882,38 @@ class TjTest extends HTMLElement {
             resubmitBtn.onclick = () => this.submitScoreReport(Boolean(this._submittedViaScreenshot));
         }
 
+        if (this.testMode) {
+            const reportRetestBtn = reportContainer.querySelector('#reportRetestBtn');
+            const reportTeacherCodeInput = reportContainer.querySelector('#reportTeacherCodeInput');
+            const reportTeacherCodeError = reportContainer.querySelector('#reportTeacherCodeError');
+
+            if (reportRetestBtn) {
+                const handleReportRetest = () => {
+                    const code = reportTeacherCodeInput ? reportTeacherCodeInput.value.trim() : '';
+                    if (this.validateTeacherCode(code)) {
+                        if (reportTeacherCodeError) reportTeacherCodeError.classList.add('hidden');
+                        if (reportTeacherCodeInput) reportTeacherCodeInput.value = '';
+                        this.allowRetest({ preserveStudentInfo: true });
+                    } else {
+                        if (reportTeacherCodeError) {
+                            reportTeacherCodeError.textContent = '❌ Invalid Teacher Code. Required to authorize re-test.';
+                            reportTeacherCodeError.classList.remove('hidden');
+                        }
+                    }
+                };
+
+                reportRetestBtn.onclick = handleReportRetest;
+                if (reportTeacherCodeInput) {
+                    reportTeacherCodeInput.onkeydown = (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleReportRetest();
+                        }
+                    };
+                }
+            }
+        }
+
         const reviewBtn = reportContainer.querySelector('#reviewAndFixBtn');
         if (reviewBtn) {
             reviewBtn.onclick = () => {
@@ -1719,6 +1934,7 @@ class TjTest extends HTMLElement {
             };
         }
 
+        this.updateTeacherHeaderButton();
         this.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -1983,6 +2199,14 @@ class TjTest extends HTMLElement {
 
         const modal = this.shadowRoot.getElementById('sectionResultModal');
         if (modal) modal.classList.remove('active');
+
+        const authModal = this.shadowRoot.getElementById('teacherAuthModal');
+        if (authModal) authModal.classList.remove('active');
+
+        const modalTeacherCodeInput = this.shadowRoot.getElementById('modalTeacherCodeInput');
+        const modalTeacherCodeError = this.shadowRoot.getElementById('modalTeacherCodeError');
+        if (modalTeacherCodeInput) modalTeacherCodeInput.value = '';
+        if (modalTeacherCodeError) modalTeacherCodeError.classList.add('hidden');
 
         // Reset input fields in startLockOverlay
         const startCodeInput = this.shadowRoot.getElementById('startCodeInput');

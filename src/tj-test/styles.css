@@ -36,6 +36,12 @@
   align-items: center;
 }
 
+.tj-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
 .tj-test-title {
   font-size: 1.4em;
   font-weight: 700;
@@ -675,6 +681,87 @@
   font-size: 0.85em;
   color: var(--tj-text-muted);
   font-style: italic;
+}
+
+/* Teacher Re-Test Section on Final Report */
+.tj-teacher-retest-card {
+  width: 100%;
+  max-width: 600px;
+  background: var(--tj-bg-alt);
+  border: 1px dashed rgba(239, 68, 68, 0.4);
+  border-radius: var(--tj-border-radius-md);
+  padding: 1.25em;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+  text-align: left;
+  margin-top: 1em;
+}
+
+.tj-teacher-retest-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85em;
+}
+
+.tj-teacher-icon {
+  font-size: 1.4em;
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tj-teacher-retest-title {
+  margin: 0;
+  font-size: 1.05em;
+  font-weight: 700;
+  color: var(--tj-text-main);
+}
+
+.tj-teacher-retest-desc {
+  margin: 0.2em 0 0 0;
+  font-size: 0.85em;
+  color: var(--tj-text-muted);
+}
+
+.tj-teacher-retest-controls {
+  display: flex;
+  gap: 0.75em;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 0.25em;
+}
+
+.tj-teacher-retest-controls .tj-input {
+  flex: 1;
+  min-width: 160px;
+  margin: 0;
+}
+
+.tj-teacher-retest-controls .tj-btn-restart {
+  width: auto;
+  padding: 0.6em 1.25em;
+  font-size: 0.9em;
+}
+
+.tj-lockout-actions {
+  display: flex;
+  gap: 0.75em;
+  width: 100%;
+  margin-top: 1em;
+}
+
+.tj-lockout-actions .tj-btn,
+.tj-lockout-actions .tj-btn-restart {
+  flex: 1;
+  margin: 0;
 }
 
 .tj-report-timestamp {

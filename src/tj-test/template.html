@@ -25,7 +25,7 @@
         <div class="tj-modal-card">
             <div class="tj-modal-icon">⚠️</div>
             <h3 class="tj-h3" style="color: var(--tj-error-color);">Test Locked</h3>
-            <p>You left the test window or refreshed the page. A teacher must enter the Teacher Code to resume your
+            <p>You left the test window or refreshed the page. A teacher must enter the Teacher Code to resume or reset your
                 test.</p>
             <div class="tj-form-group">
                 <input type="password" id="teacherCodeInput" name="tj_test_code_no_autofill" class="tj-input"
@@ -33,8 +33,28 @@
                     data-form-type="other">
             </div>
             <div id="teacherCodeError" class="tj-error-msg hidden">Invalid teacher code.</div>
-            <button id="unlockTeacherBtn" class="tj-btn tj-btn-error" style="width: 100%; margin-top: 1em;">Unlock
-                Test</button>
+            <div class="tj-lockout-actions">
+                <button id="unlockTeacherBtn" class="tj-btn tj-btn-primary" style="flex: 1;">Unlock &amp; Resume</button>
+                <button id="retestLockoutBtn" class="tj-btn tj-btn-restart" style="flex: 1;">🔄 Reset &amp; Re-Test</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Re-Test Authorization Modal (During Test / Header Action) -->
+    <div id="teacherAuthModal" class="tj-overlay">
+        <div class="tj-modal-card">
+            <div class="tj-modal-icon">🔐</div>
+            <h3 class="tj-h3">Teacher Authorization</h3>
+            <p>Enter the Teacher Code to reset this test and allow the student to re-test from the beginning.</p>
+            <div class="tj-form-group">
+                <input type="password" id="modalTeacherCodeInput" class="tj-input"
+                    placeholder="Enter Teacher Code" autocomplete="off" data-lpignore="true">
+            </div>
+            <div id="modalTeacherCodeError" class="tj-error-msg hidden">Invalid teacher code.</div>
+            <div class="tj-modal-actions" style="display: flex; gap: 0.75em; width: 100%; margin-top: 1em;">
+                <button id="cancelTeacherAuthBtn" class="tj-btn tj-btn-secondary" style="flex: 1;">Cancel</button>
+                <button id="confirmTeacherRetestBtn" class="tj-btn tj-btn-restart" style="flex: 1;">🔄 Authorize Re-Test</button>
+            </div>
         </div>
     </div>
 
@@ -62,14 +82,22 @@
     <header class="tj-header">
         <div class="tj-header-title-row">
             <h2 id="testTitle" class="tj-test-title">Test</h2>
-            <button id="voice-btn" class="tj-icon-btn hidden" title="Select Voice">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-                </svg>
-            </button>
+            <div class="tj-header-actions">
+                <button id="teacherHeaderBtn" class="tj-icon-btn hidden" title="Teacher Re-Test / Reset (Teacher Code Required)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </button>
+                <button id="voice-btn" class="tj-icon-btn hidden" title="Select Voice">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <!-- Section Stepper Navigation -->
