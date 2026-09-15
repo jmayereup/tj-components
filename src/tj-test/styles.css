@@ -562,6 +562,67 @@
   margin: 0;
 }
 
+/* Resubmit Confirmation Modal */
+.tj-resubmit-modal-card {
+  max-width: 460px;
+  gap: 1.1em;
+}
+
+.tj-resubmit-title {
+  margin: 0;
+  font-size: 1.3em;
+  font-weight: 700;
+  color: var(--tj-text-main);
+  text-align: center;
+}
+
+.tj-resubmit-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  text-align: center;
+  width: 100%;
+}
+
+.tj-resubmit-modal-text-en {
+  margin: 0;
+  font-size: 1.05em;
+  font-weight: 600;
+  color: var(--tj-text-main);
+  line-height: 1.45;
+}
+
+.tj-resubmit-modal-text-th {
+  margin: 0;
+  font-size: 1em;
+  font-weight: 500;
+  color: var(--tj-text-main);
+  line-height: 1.45;
+}
+
+.tj-resubmit-modal-subtext {
+  background: var(--tj-bg-alt);
+  border: 1px solid var(--tj-border-main);
+  border-radius: var(--tj-border-radius-md);
+  padding: 0.75em 1em;
+  margin-top: 0.35em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  text-align: center;
+  font-size: 0.88em;
+  color: var(--tj-text-muted);
+  line-height: 1.4;
+}
+
+.tj-resubmit-hint-en {
+  font-weight: 500;
+}
+
+.tj-resubmit-hint-th {
+  font-size: 0.95em;
+}
+
 /* Final Report Container */
 .tj-final-report {
   background: var(--tj-bg-card);

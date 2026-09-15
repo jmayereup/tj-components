@@ -124,6 +124,26 @@
         </div>
     </div>
 
+    <!-- Resubmit Confirmation Modal (Practice Mode) -->
+    <div id="resubmitConfirmModal" class="tj-overlay">
+        <div class="tj-modal-card tj-resubmit-modal-card">
+            <div class="tj-modal-icon">📤</div>
+            <h3 class="tj-h3 tj-resubmit-title">Already Submitted / ส่งคะแนนไปแล้ว</h3>
+            <div class="tj-resubmit-modal-body">
+                <p class="tj-resubmit-modal-text-en">You already submitted this score. Are you sure you want to send it again?</p>
+                <p class="tj-resubmit-modal-text-th">คุณได้ส่งคะแนนนี้เรียบร้อยแล้ว คุณแน่ใจหรือไม่ว่าต้องการส่งอีกครั้ง?</p>
+                <div class="tj-resubmit-modal-subtext">
+                    <span class="tj-resubmit-hint-en">Your previous score has already been recorded.</span>
+                    <span class="tj-resubmit-hint-th">ครูผู้สอนได้รับคะแนนก่อนหน้านี้ของคุณแล้ว</span>
+                </div>
+            </div>
+            <div class="tj-modal-actions" style="display: flex; gap: 0.75em; width: 100%; margin-top: 0.5em;">
+                <button id="cancelResubmitBtn" class="tj-btn tj-btn-secondary" style="flex: 1;" type="button">Cancel / ยกเลิก</button>
+                <button id="confirmResubmitBtn" class="tj-btn tj-btn-primary" style="flex: 1;" type="button">📤 Send Again / ส่งอีกครั้ง</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Final Test Placement Report Container -->
     <div id="finalReportContainer" class="tj-final-report hidden"></div>
 </div>

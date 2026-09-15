@@ -204,6 +204,9 @@ class TjTest extends HTMLElement {
         const authModal = this.shadowRoot.getElementById('teacherAuthModal');
         if (authModal) authModal.classList.remove('active');
 
+        const resubmitModal = this.shadowRoot.getElementById('resubmitConfirmModal');
+        if (resubmitModal) resubmitModal.classList.remove('active');
+
         const startOverlay = this.shadowRoot.getElementById('startLockOverlay');
         if (startOverlay) startOverlay.classList.remove('active');
 
@@ -947,6 +950,32 @@ class TjTest extends HTMLElement {
                 }
                 this.scrollIntoView({ behavior: 'smooth', block: 'start' });
             };
+        }
+
+        // Resubmit Confirmation Modal (Practice Mode)
+        const resubmitConfirmModal = shadow.getElementById('resubmitConfirmModal');
+        const cancelResubmitBtn = shadow.getElementById('cancelResubmitBtn');
+        const confirmResubmitBtn = shadow.getElementById('confirmResubmitBtn');
+
+        if (cancelResubmitBtn && resubmitConfirmModal) {
+            cancelResubmitBtn.onclick = () => {
+                resubmitConfirmModal.classList.remove('active');
+            };
+        }
+
+        if (confirmResubmitBtn && resubmitConfirmModal) {
+            confirmResubmitBtn.onclick = () => {
+                resubmitConfirmModal.classList.remove('active');
+                this.submitScoreReport(Boolean(this._pendingResubmitScreenshot), true);
+            };
+        }
+
+        if (resubmitConfirmModal) {
+            resubmitConfirmModal.addEventListener('click', (e) => {
+                if (e.target === resubmitConfirmModal) {
+                    resubmitConfirmModal.classList.remove('active');
+                }
+            });
         }
     }
 
@@ -1938,7 +1967,7 @@ class TjTest extends HTMLElement {
         this.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    async submitScoreReport(isScreenshotOnly = false) {
+    async submitScoreReport(isScreenshotOnly = false, bypassConfirm = false) {
         const nicknameElem = this.shadowRoot.getElementById('submitNicknameInput');
         const studentIdElem = this.shadowRoot.getElementById('submitStudentIdInput');
         const homeroomElem = this.shadowRoot.getElementById('submitHomeroomInput');
@@ -1965,6 +1994,16 @@ class TjTest extends HTMLElement {
 
         if (this.isSubmitting) return;
         if (this.testMode && this.hasSubmitted) return;
+
+        // In practice / non-test mode, prompt student to confirm if they have already submitted
+        if (!bypassConfirm && !this.testMode && this.hasSubmitted && !isScreenshotOnly) {
+            this._pendingResubmitScreenshot = isScreenshotOnly;
+            const resubmitModal = this.shadowRoot.getElementById('resubmitConfirmModal');
+            if (resubmitModal) {
+                resubmitModal.classList.add('active');
+                return;
+            }
+        }
 
         if (!nickname || !studentId) {
             if (msgElem) {
@@ -2202,6 +2241,9 @@ class TjTest extends HTMLElement {
 
         const authModal = this.shadowRoot.getElementById('teacherAuthModal');
         if (authModal) authModal.classList.remove('active');
+
+        const resubmitModal = this.shadowRoot.getElementById('resubmitConfirmModal');
+        if (resubmitModal) resubmitModal.classList.remove('active');
 
         const modalTeacherCodeInput = this.shadowRoot.getElementById('modalTeacherCodeInput');
         const modalTeacherCodeError = this.shadowRoot.getElementById('modalTeacherCodeError');
