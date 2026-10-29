@@ -10,33 +10,49 @@ var a = ":host{all:initial;--tj-primary:#2563eb;--tj-bg-color:#f8fafc;--tj-card-
 		e == null ? this.removeAttribute("code") : this.setAttribute("code", e);
 	}
 	constructor() {
-		super(), this.attachShadow({ mode: "open" }), this.activityData = null, this.currentPlayerId = null, this.score = 0, this.answeredCount = 0, this.totalQuestions = 0, this.isCompleted = !1, this.studentInfo = {
+		super(), this.attachShadow({ mode: "open" }), this.activityData = null, this.activities = [], this.currentActivityIndex = 0, this.activityResults = [], this.currentPlayerId = null, this.score = 0, this.answeredCount = 0, this.totalQuestions = 0, this.isCompleted = !1, this.studentInfo = {
 			nickname: "",
 			number: ""
-		}, this.submissionUrl = "", this.isSinglePlayer = !1, this.selectedVoiceName = null, this.isPlaying = !1, s._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList()), this.recordedBlobs = /* @__PURE__ */ new Map(), this.skippedRecordings = /* @__PURE__ */ new Set(), this.mediaRecorder = null, this.isRecordingId = null, this.recordingStartTime = 0, this.isPlayingRecordingId = null, this.shadowRoot.innerHTML = `
+		}, this.submissionUrl = "", this.isSubmitting = !1, this.hasSubmitted = !1, this.isSinglePlayer = !1, this.selectedVoiceName = null, this.isPlaying = !1, s._instances.push(this), window.speechSynthesis && window.speechSynthesis.addEventListener("voiceschanged", () => this._updateVoiceList()), this.recordedBlobs = /* @__PURE__ */ new Map(), this.skippedRecordings = /* @__PURE__ */ new Set(), this.mediaRecorder = null, this.isRecordingId = null, this.recordingStartTime = 0, this.isPlayingRecordingId = null, this.shadowRoot.innerHTML = `
           <style>${a}</style>
           ${o}
         `;
+	}
+	get currentActivity() {
+		return this.activities && this.activities.length > 0 ? this.activities[this.currentActivityIndex] || this.activities[0] || {} : this.activityData || {};
+	}
+	_normalizeData(e) {
+		if (!e) {
+			this.activities = [], this.activityData = {};
+			return;
+		}
+		let t = e;
+		if (typeof e == "string") try {
+			t = JSON.parse(e);
+		} catch (e) {
+			console.error("Error parsing JSON:", e);
+			return;
+		}
+		Array.isArray(t) ? (this.activities = t, this.activityData = t[0] || {}) : t && Array.isArray(t.activities) ? (this.activities = t.activities, this.activityData = t.activities[0] || {}) : t && typeof t == "object" ? (this.activities = [t], this.activityData = t) : (this.activities = [], this.activityData = {}), this.currentActivityIndex = 0, this.activityResults = [];
 	}
 	connectedCallback() {
 		let e = i(this);
 		this.submissionUrl = e.submissionUrl, requestAnimationFrame(() => {
 			let t = "";
-			if (this.config) if (typeof this.config == "object") {
-				this.activityData = this.config, this.render();
+			if (this.config) {
+				this._normalizeData(this.config), this.render();
 				return;
-			} else t = String(this.config);
-			else if (this.hasAttribute("config")) t = this.getAttribute("config");
+			} else if (this.hasAttribute("config")) t = this.getAttribute("config");
 			else if (e.dataUrl) {
 				fetch(e.dataUrl).then((e) => e.json()).then((e) => {
-					this.activityData = e, this.render();
+					this._normalizeData(e), this.render();
 				}).catch((e) => {
 					this.shadowRoot.innerHTML = `<p style="color: red;">Error loading data from URL: ${e.message}</p>`;
 				});
 				return;
 			} else this.querySelector("script[type=\"application/json\"]") ? t = this.querySelector("script[type=\"application/json\"]").textContent.trim() : (t = this.textContent.trim(), this.textContent = "");
 			try {
-				t && (this.activityData = JSON.parse(t), this.render());
+				t && (this._normalizeData(t), this.render());
 			} catch (e) {
 				this.shadowRoot.innerHTML = `<p style="color: red;">Error parsing JSON: ${e.message}</p>`;
 			}
@@ -46,122 +62,166 @@ var a = ":host{all:initial;--tj-primary:#2563eb;--tj-bg-color:#f8fafc;--tj-card-
 		this.shadowRoot.getElementById("selection-screen").style.display = "none", this.shadowRoot.getElementById("game-screen").style.display = "none", this.shadowRoot.getElementById("score-screen").style.display = "none", this.currentPlayerId === null ? this.renderSelectionScreen() : this.isCompleted ? this.renderScoreScreen() : this.renderGameScreen(), this.checkBrowserSupport();
 	}
 	renderSelectionScreen() {
-		let e = this.activityData, t = this.shadowRoot.getElementById("selection-screen");
-		t.style.display = "block", this.shadowRoot.getElementById("topic-title").textContent = e.topic, this.shadowRoot.getElementById("scenario-desc").textContent = e.scenario_description;
-		let n = this.shadowRoot.getElementById("mode-multi"), r = this.shadowRoot.getElementById("mode-single");
-		n.classList.toggle("active", !this.isSinglePlayer), r.classList.toggle("active", this.isSinglePlayer), n.onclick = () => {
+		let e = this.currentActivity || {}, t = this.shadowRoot.getElementById("selection-screen");
+		t.style.display = "block";
+		let n = e.topic || (this.activities.length > 1 ? `Information Gap (${this.activities.length} Activities)` : "Information Gap Activity");
+		this.shadowRoot.getElementById("topic-title").textContent = n, this.shadowRoot.getElementById("scenario-desc").textContent = e.scenario_description || "";
+		let r = this.shadowRoot.getElementById("mode-multi"), i = this.shadowRoot.getElementById("mode-single");
+		r.classList.toggle("active", !this.isSinglePlayer), i.classList.toggle("active", this.isSinglePlayer), r.onclick = () => {
 			this.isSinglePlayer = !1, this.render();
-		}, r.onclick = () => {
+		}, i.onclick = () => {
 			this.isSinglePlayer = !0, this.render();
 		};
-		let i = this.shadowRoot.getElementById("button-container");
-		i.innerHTML = "";
-		for (let t = 1; t <= e.player_count; t++) {
-			let e = document.createElement("button");
-			e.className = "role-btn", e.textContent = `Player ${t}`, e.onclick = () => {
-				this.currentPlayerId = t, this.calculateTotalQuestions(), this.render();
-			}, i.appendChild(e);
+		let a = e.player_count || 2;
+		this.activities.forEach((e) => {
+			e.player_count && e.player_count > a && (a = e.player_count), e.blocks && e.blocks.forEach((e) => {
+				e.text_holder_id && e.text_holder_id > a && (a = e.text_holder_id), e.questions && e.questions.forEach((e) => {
+					e.asker_id && e.asker_id > a && (a = e.asker_id);
+				});
+			});
+		});
+		let o = this.shadowRoot.getElementById("button-container");
+		o.innerHTML = "";
+		for (let e = 1; e <= a; e++) {
+			let t = document.createElement("button");
+			t.className = "role-btn", t.textContent = `Player ${e}`, t.onclick = () => {
+				this.currentPlayerId = e, this.currentActivityIndex = 0, this.activityResults = [], this.score = 0, this.answeredCount = 0, this.calculateTotalQuestions(), this.render();
+			}, o.appendChild(t);
 		}
 	}
 	calculateTotalQuestions() {
-		this.totalQuestions = 0, this.activityData.blocks.forEach((e) => {
-			e.questions.forEach((e) => {
+		this.totalQuestions = 0;
+		let e = this.currentActivity;
+		e && e.blocks && e.blocks.forEach((e) => {
+			e.questions && e.questions.forEach((e) => {
 				(e.asker_id === this.currentPlayerId || this.isSinglePlayer) && this.totalQuestions++;
 			});
 		});
 	}
 	renderGameScreen() {
-		let e = this.activityData, t = this.currentPlayerId, n = this.shadowRoot.getElementById("game-screen");
-		n.style.display = "block", this.shadowRoot.getElementById("game-topic").textContent = `${e.topic} - Player ${t}`, this.shadowRoot.getElementById("mode-badge").textContent = this.isSinglePlayer ? "Single Player" : "Collaborative", this.shadowRoot.getElementById("progress-info").textContent = `${this.answeredCount} / ${this.totalQuestions} Answered`;
-		let r = this.shadowRoot.getElementById("voice-btn");
-		this.isSinglePlayer && this._shouldShowAudioControls() ? (r.style.display = "block", r.onclick = () => this._showVoiceOverlay()) : r.style.display = "none";
-		let i = "", a = "", o = "";
-		e.blocks.forEach((e, n) => {
-			e.text_holder_id === t && (i += `<div class="info-card"><p>${e.text}</p></div>`), e.questions.forEach((r, i) => {
-				let s = `q_${n}_${i}`;
+		let e = this.currentActivity || {}, t = this.currentPlayerId, n = this.shadowRoot.getElementById("game-screen");
+		n.style.display = "block";
+		let r = this.activities.length > 1 ? `Activity ${this.currentActivityIndex + 1} of ${this.activities.length}: ${e.topic || ""} - Player ${t}` : `${e.topic || "Information Gap"} - Player ${t}`;
+		this.shadowRoot.getElementById("game-topic").textContent = r, this.shadowRoot.getElementById("mode-badge").textContent = this.isSinglePlayer ? "Single Player" : "Collaborative", this.shadowRoot.getElementById("progress-info").textContent = `${this.answeredCount} / ${this.totalQuestions} Answered`;
+		let i = this.shadowRoot.getElementById("voice-btn");
+		this.isSinglePlayer && this._shouldShowAudioControls() ? (i.style.display = "block", i.onclick = () => this._showVoiceOverlay()) : i.style.display = "none";
+		let a = "", o = "", s = "";
+		e.blocks && e.blocks.forEach((e, n) => {
+			e.text_holder_id === t && (a += `<div class="info-card"><p>${e.text}</p></div>`), e.questions && e.questions.forEach((r, i) => {
+				let a = `q_${this.currentActivityIndex}_${n}_${i}`;
 				if (r.asker_id === t) {
-					let t = r.options.map((e, t) => `
-                        <label class="mc-option" id="label_${s}_${t}">
-                          <input type="radio" name="${s}" value="${e}" data-correct="${r.correct_answer}" data-label-id="label_${s}_${t}">
-                          ${e}
-                        </label>
-                    `).join(""), n = "";
+					let t = (r.options || []).map((e, t) => `
+                                <label class="mc-option" id="label_${a}_${t}">
+                                  <input type="radio" name="${a}" value="${e}" data-correct="${r.correct_answer}" data-label-id="label_${a}_${t}">
+                                  ${e}
+                                </label>
+                            `).join(""), n = "";
 					this.isSinglePlayer && (n = `
-                            <button class="tts-btn" data-text="${e.text}" title="Listen to Partner">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                                </svg>
-                                Info
-                            </button>
-                        `), a += `
-                        <div class="question-card">
-                          <div class="question-header">
-                            <p class="question-text"><strong>Ask:</strong> "${r.question}"</p>
-                            ${n}
-                          </div>
-                          <div class="options-group">
-                            ${t}
-                          </div>
-                        </div>
-                    `;
+                                    <button class="tts-btn" data-text="${e.text}" title="Listen to Partner">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                                        </svg>
+                                        Info
+                                    </button>
+                                `), o += `
+                                <div class="question-card">
+                                  <div class="question-header">
+                                    <p class="question-text"><strong>Ask:</strong> "${r.question}"</p>
+                                    ${n}
+                                  </div>
+                                  <div class="options-group">
+                                    ${t}
+                                  </div>
+                                </div>
+                            `;
 				} else if (this.isSinglePlayer) {
-					let e = `q_verbal_${n}_${i}`;
-					o += `
-                        <div class="question-card partner-question" data-qid="${e}">
-                            <div class="question-header">
-                                <p class="question-text"><strong>Partner asks:</strong> (Answer out loud)</p>
-                                <button class="tts-btn" data-text="${r.question}" title="Hear Question">
-                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                                    </svg>
-                                    Listen
-                                </button>
-                            </div>
-                            <div class="recording-controls" id="rec-controls-${e}">
-                                ${this.renderRecordingButtons(e)}
-                            </div>
-                        </div>
-                    `;
+					let e = `q_verbal_${this.currentActivityIndex}_${n}_${i}`;
+					s += `
+                                <div class="question-card partner-question" data-qid="${e}">
+                                    <div class="question-header">
+                                        <p class="question-text"><strong>Partner asks:</strong> (Answer out loud)</p>
+                                        <button class="tts-btn" data-text="${r.question}" title="Hear Question">
+                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                                            </svg>
+                                            Listen
+                                        </button>
+                                    </div>
+                                    <div class="recording-controls" id="rec-controls-${e}">
+                                        ${this.renderRecordingButtons(e)}
+                                    </div>
+                                </div>
+                            `;
 				}
 			});
-		}), this.shadowRoot.getElementById("my-texts").innerHTML = i || "<p class=\"empty-state\">You have no texts to read. Listen to your partners.</p>", this.shadowRoot.getElementById("my-questions").innerHTML = a || "<p class=\"empty-state\">You have no questions to ask right now.</p>";
-		let s = this.shadowRoot.getElementById("partner-column"), c = this.shadowRoot.getElementById("layout-container");
-		this.isSinglePlayer && o ? (s.style.display = "block", this.shadowRoot.getElementById("partner-questions").innerHTML = o, c.classList.add("single-player-layout")) : (s.style.display = "none", c.classList.remove("single-player-layout")), this.shadowRoot.getElementById("footer-actions").style.display = this.answeredCount === this.totalQuestions && this.totalQuestions > 0 ? "flex" : "none", this.attachValidationListeners(), this.shadowRoot.querySelectorAll(".tts-btn").forEach((e) => {
+		}), this.shadowRoot.getElementById("my-texts").innerHTML = a || "<p class=\"empty-state\">You have no texts to read. Listen to your partners.</p>", this.shadowRoot.getElementById("my-questions").innerHTML = o || "<p class=\"empty-state\">You have no questions to ask right now.</p>";
+		let c = this.shadowRoot.getElementById("partner-column"), l = this.shadowRoot.getElementById("layout-container");
+		this.isSinglePlayer && s ? (c.style.display = "block", this.shadowRoot.getElementById("partner-questions").innerHTML = s, l.classList.add("single-player-layout")) : (c.style.display = "none", l.classList.remove("single-player-layout"));
+		let u = this.currentActivityIndex >= this.activities.length - 1, d = this.shadowRoot.getElementById("complete-btn");
+		d && (d.textContent = u ? "Complete & Show Score" : `Next Activity (${this.currentActivityIndex + 2} of ${this.activities.length}) →`), this.shadowRoot.getElementById("footer-actions").style.display = this.answeredCount === this.totalQuestions && this.totalQuestions > 0 ? "flex" : "none", this.attachValidationListeners(), this.shadowRoot.querySelectorAll(".tts-btn").forEach((e) => {
 			e.onclick = () => this._playTTS(e.getAttribute("data-text"));
 		}), this.shadowRoot.getElementById("complete-btn").onclick = () => {
-			this.isCompleted = !0, this.render();
+			this.activityResults[this.currentActivityIndex] = {
+				score: this.score,
+				total: this.totalQuestions,
+				topic: e.topic || `Activity ${this.currentActivityIndex + 1}`
+			}, this.currentActivityIndex < this.activities.length - 1 ? (this.currentActivityIndex++, this.score = 0, this.answeredCount = 0, this.calculateTotalQuestions(), this.render(), this.scrollIntoView({
+				behavior: "smooth",
+				block: "start"
+			})) : (this.isCompleted = !0, this.render());
 		}, this.shadowRoot.getElementById("close-voice-btn").onclick = () => this._hideVoiceOverlay(), this.shadowRoot.getElementById("voice-overlay").onclick = (e) => {
 			e.target.id === "voice-overlay" && this._hideVoiceOverlay();
 		};
 	}
 	_isLastInstance() {
 		let e = s._instances;
-		return e.length > 1 && e[e.length - 1] === this;
+		return e.length <= 1 || e[e.length - 1] === this;
 	}
 	_getCombinedScore() {
-		let e = s._instances, t = 0, n = 0, r = !0;
+		let e = s._instances, t = 0, n = 0, r = !0, i = 0;
 		return e.forEach((e) => {
-			t += e.score, n += e.totalQuestions, e.isCompleted || (r = !1);
+			e.activityResults && e.activityResults.length > 0 ? (e.activityResults.forEach((e) => {
+				t += e.score, n += e.total;
+			}), i += e.activities.length) : (t += e.score, n += e.totalQuestions, i += e.activities?.length || 1), e.isCompleted || (r = !1);
 		}), {
 			totalScore: t,
 			totalQuestions: n,
 			allDone: r,
-			count: e.length
+			count: i || e.length
 		};
 	}
 	renderScoreScreen() {
 		let e = this.shadowRoot.getElementById("score-screen");
 		e.style.display = "block";
-		let t = Math.round(this.score / this.totalQuestions * 100) || 0, n = "🎉";
-		t < 50 ? n = "💪" : t < 80 && (n = "👍"), this.shadowRoot.getElementById("final-score").textContent = `${this.score}/${this.totalQuestions}`, this.shadowRoot.getElementById("final-percent").textContent = `${t}%`, this.shadowRoot.getElementById("score-msg").textContent = `${n} ${t >= 80 ? "Excellent!" : t >= 50 ? "Good effort!" : "Keep practicing!"}`, this.shadowRoot.getElementById("score-details").textContent = `You completed the "${this.activityData.topic}" activity as Player ${this.currentPlayerId}.`;
-		let r = this._isLastInstance(), i = this.shadowRoot.getElementById("report-btn");
-		r ? (i.style.display = "inline-flex", i.onclick = () => this._showReportOverlay()) : i.style.display = "none";
-		let a = this.shadowRoot.getElementById("combined-score-area");
-		if (a.innerHTML = "", r) {
+		let t = 0, n = 0;
+		this.activityResults && this.activityResults.length > 0 ? this.activityResults.forEach((e) => {
+			t += e.score, n += e.total;
+		}) : (t = this.score, n = this.totalQuestions);
+		let r = this.activities.length > 1 ? t : this.score, i = this.activities.length > 1 ? n : this.totalQuestions, a = Math.round(r / (i || 1) * 100) || 0, o = "🎉";
+		a < 50 ? o = "💪" : a < 80 && (o = "👍"), this.shadowRoot.getElementById("final-score").textContent = `${r}/${i}`, this.shadowRoot.getElementById("final-percent").textContent = `${a}%`, this.shadowRoot.getElementById("score-msg").textContent = `${o} ${a >= 80 ? "Excellent!" : a >= 50 ? "Good effort!" : "Keep practicing!"}`;
+		let c = this.activities.length > 1 ? `You completed all ${this.activities.length} activities as Player ${this.currentPlayerId}.` : `You completed the "${this.currentActivity.topic || "Info Gap"}" activity as Player ${this.currentPlayerId}.`;
+		this.shadowRoot.getElementById("score-details").textContent = c;
+		let l = this._isLastInstance(), u = this.shadowRoot.getElementById("report-btn");
+		l ? (u.style.display = "inline-flex", u.onclick = () => this._showReportOverlay()) : u.style.display = "none";
+		let d = this.shadowRoot.getElementById("combined-score-area");
+		if (d.innerHTML = "", this.activities.length > 1 && this.activityResults.length > 0) d.innerHTML = `
+                <div class="combined-score">
+                    <div class="combined-header">📋 Activity Breakdown</div>
+                    <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                        ${this.activityResults.map((e, t) => `
+                            <div style="display: flex; justify-content: space-between; font-size: 0.95em; padding: 6px 0; border-bottom: 1px solid var(--tj-border-color, rgba(0,0,0,0.06));">
+                                <span><strong>Activity ${t + 1}:</strong> ${e.topic}</span>
+                                <span><strong>${e.score} / ${e.total}</strong> (${Math.round(e.score / (e.total || 1) * 100)}%)</span>
+                            </div>
+                        `).join("")}
+                    </div>
+                </div>
+            `;
+		else if (l && s._instances.length > 1) {
 			let e = this._getCombinedScore();
 			if (e.allDone) {
-				let t = Math.round(e.totalScore / e.totalQuestions * 100) || 0, n = "🏆";
-				t < 50 ? n = "💪" : t < 80 && (n = "⭐"), a.innerHTML = `
+				let t = Math.round(e.totalScore / (e.totalQuestions || 1) * 100) || 0, n = "🏆";
+				t < 50 ? n = "💪" : t < 80 && (n = "⭐"), d.innerHTML = `
                     <div class="combined-score">
                         <div class="combined-header">${n} Combined Score — All ${e.count} Activities</div>
                         <div class="combined-stats">
@@ -173,7 +233,7 @@ var a = ":host{all:initial;--tj-primary:#2563eb;--tj-bg-color:#f8fafc;--tj-card-
                         </div>
                     </div>
                 `;
-			} else a.innerHTML = `
+			} else d.innerHTML = `
                     <div class="combined-score combined-pending">
                         <div class="combined-header">📋 Activity Progress</div>
                         <p class="combined-note">${s._instances.filter((e) => e.isCompleted).length} of ${e.count} activities completed. Finish all to see your combined score.</p>
@@ -184,8 +244,8 @@ var a = ":host{all:initial;--tj-primary:#2563eb;--tj-bg-color:#f8fafc;--tj-card-
 			behavior: "smooth",
 			block: "start"
 		}), this.shadowRoot.getElementById("restart-btn").onclick = () => {
-			this.score = 0, this.answeredCount = 0, this.isCompleted = !1, this.currentPlayerId = null, this.render();
-		}, r && (this.shadowRoot.getElementById("generate-btn").onclick = () => this._generateReport(), this.shadowRoot.getElementById("cancel-btn").onclick = () => {
+			this.score = 0, this.answeredCount = 0, this.isCompleted = !1, this.currentPlayerId = null, this.currentActivityIndex = 0, this.activityResults = [], this.recordedBlobs.clear(), this.skippedRecordings.clear(), this.render();
+		}, l && (this.shadowRoot.getElementById("generate-btn").onclick = () => this._generateReport(), this.shadowRoot.getElementById("cancel-btn").onclick = () => {
 			this.shadowRoot.getElementById("report-overlay").style.display = "none";
 		}, this.shadowRoot.getElementById("report-overlay").onclick = (e) => {
 			e.target.id === "report-overlay" && (this.shadowRoot.getElementById("report-overlay").style.display = "none");
@@ -211,14 +271,25 @@ var a = ":host{all:initial;--tj-primary:#2563eb;--tj-bg-color:#f8fafc;--tj-card-
 			nickname: n,
 			number: r
 		};
-		let i = this._getCombinedScore(), a = Math.round(i.totalScore / i.totalQuestions * 100) || 0, o = (/* @__PURE__ */ new Date()).toLocaleString(), s = "🏆";
+		let i = this._getCombinedScore(), a = Math.round(i.totalScore / (i.totalQuestions || 1) * 100) || 0, o = (/* @__PURE__ */ new Date()).toLocaleString(), s = "🏆";
 		a < 50 ? s = "💪" : a < 80 && (s = "⭐");
-		let c = `
+		let c = this.activities.length > 1 ? this.activities[0].topic ? this.activities[0].topic.split(":")[0] : "Information Gap" : this.currentActivity.topic || "Info Gap Activity", l = "";
+		this.activityResults && this.activityResults.length > 1 && (l = `
+                <div class="rc-details" style="margin-top: 12px; border-top: 1px dashed var(--tj-border-color, #e2e8f0); padding-top: 8px;">
+                    ${this.activityResults.map((e, t) => `
+                        <div class="rc-detail-row">
+                            <span>Activity ${t + 1}: ${e.topic}</span>
+                            <span>${e.score} / ${e.total}</span>
+                        </div>
+                    `).join("")}
+                </div>
+            `);
+		let u = `
             <div class="rc-header">
                 <div class="rc-icon">📄</div>
-                <div class="rc-title">${this.activityData.topic || "Info Gap Activity"}</div>
+                <div class="rc-title">${c}</div>
                 <div class="rc-subtitle">Report Card</div>
-                <div class="rc-activity">All ${i.count} Activities</div>
+                <div class="rc-activity">${this.activities.length > 1 ? `All ${this.activities.length} Activities` : this.currentActivity.topic || ""}</div>
             </div>
             <div class="rc-student">
                 <span class="rc-label">Student</span>
@@ -236,13 +307,42 @@ var a = ":host{all:initial;--tj-primary:#2563eb;--tj-bg-color:#f8fafc;--tj-card-
                 <div class="rc-detail-row"><span>Total Correct</span><span>${i.totalScore} / ${i.totalQuestions}</span></div>
                 <div class="rc-detail-row"><span>Completed On</span><span>${o}</span></div>
             </div>
-            <div class="rc-actions">
+            ${l}
+            ${this.submissionUrl ? "\n            <div class=\"rc-submission-box\" style=\"margin-top: 16px; background: rgba(37, 99, 235, 0.05); border: 1px dashed var(--tj-border-color, #cbd5e1); text-align: center; padding: 12px; border-radius: 8px;\">\n                <input type=\"password\" id=\"report-teacher-code\" placeholder=\"Enter Submit Code (e.g. 6767)\" style=\"width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid var(--tj-border-color, #cbd5e1); border-radius: 6px; font-size: 0.9em; margin-bottom: 8px; text-align: center; background: var(--tj-card-bg, white); color: var(--tj-text-color, #1e293b);\">\n                <button class=\"rc-submit-btn\" id=\"submit-score-btn\" style=\"width: 100%; padding: 10px; background: #16a34a; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;\">Submit Score Online</button>\n            </div>\n            " : "\n            <div class=\"rc-submission-box\" style=\"margin-top: 16px; background: rgba(37, 99, 235, 0.05); border: 1px dashed var(--tj-border-color, #cbd5e1); text-align: center; padding: 12px; border-radius: 8px;\">\n                <p style=\"margin: 0; font-weight: 600; font-size: 0.9em; color: var(--tj-text-color, #1e293b);\">📸 Take a screenshot of this report to send your score to your teacher.</p>\n            </div>\n            "}
+            <div class="rc-actions" style="margin-top: 12px;">
                 <button class="rc-close-btn" id="rc-close-btn">↩ Return to Activity</button>
             </div>
-        `, l = this.shadowRoot.getElementById("initial-form"), u = this.shadowRoot.getElementById("report-area");
-		l && (l.style.display = "none"), u && (u.style.display = "block", u.innerHTML = c), this.shadowRoot.getElementById("rc-close-btn").addEventListener("click", () => {
+        `, d = this.shadowRoot.getElementById("initial-form"), f = this.shadowRoot.getElementById("report-area");
+		d && (d.style.display = "none"), f && (f.style.display = "block", f.innerHTML = u);
+		let p = this.shadowRoot.getElementById("submit-score-btn");
+		p && (p.onclick = () => this._submitScore()), this.shadowRoot.getElementById("rc-close-btn").addEventListener("click", () => {
 			this.shadowRoot.getElementById("report-overlay").style.display = "none";
 		});
+	}
+	async _submitScore() {
+		if (this.isSubmitting || this.hasSubmitted) return;
+		let e = this.shadowRoot.getElementById("submit-score-btn"), t = e ? e.textContent : "Submit Score Online", n = this.shadowRoot.getElementById("report-teacher-code"), r = n ? n.value.trim() : "";
+		if (this.code && r !== this.code) {
+			alert("Invalid or missing Submit Code. Please take a screenshot of this report and show it to your teacher instead.");
+			return;
+		}
+		this.isSubmitting = !0, e && (e.textContent = "Submitting...", e.disabled = !0);
+		let i = this._getCombinedScore(), a = Math.round(i.totalScore / (i.totalQuestions || 1) * 100) || 0, o = this.activities.length > 1 ? this.activities[0].topic ? this.activities[0].topic.split(":")[0] : "Information Gap" : this.currentActivity.topic || "Activity", s = {
+			nickname: this.studentInfo.nickname,
+			studentId: this.studentInfo.number,
+			quizName: "Info Gap - " + o,
+			score: a,
+			total: 100
+		};
+		try {
+			await fetch(this.submissionUrl, {
+				method: "POST",
+				mode: "no-cors",
+				body: JSON.stringify(s)
+			}), this.hasSubmitted = !0, this.isSubmitting = !1, alert("Score successfully submitted!"), e && (e.textContent = "Submitted ✓", e.disabled = !0, e.style.background = "#64748b");
+		} catch (n) {
+			console.error("Error submitting score:", n), alert("There was an error submitting your score. Please try again."), e && (e.textContent = t, e.disabled = !1), this.isSubmitting = !1;
+		}
 	}
 	attachValidationListeners() {
 		this.shadowRoot.querySelectorAll("input[type=\"radio\"]").forEach((e) => {
