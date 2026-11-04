@@ -1,4 +1,5 @@
 import { config, resolveComponentParams } from '../tj-config.js';
+import { getBestVoice, shouldShowAudioControls } from '../audio-utils.js';
 
 class TjGrammarHearts extends HTMLElement {
   get code() {
@@ -53,6 +54,12 @@ class TjGrammarHearts extends HTMLElement {
     this.missedQuestions = [];
     this.isRetryPhase = false;
     this.totalQuestionsInRound = 0;
+
+    // TTS state
+    this.isPlaying = false;
+    this.utterance = null;
+    this.selectedVoiceName = null;
+    this._onVoicesChanged = null;
   }
 
   connectedCallback() {
@@ -71,12 +78,29 @@ class TjGrammarHearts extends HTMLElement {
       document.head.appendChild(script);
     }
 
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      this._onVoicesChanged = () => {
+        if (window.speechSynthesis) window.speechSynthesis.getVoices();
+      };
+      window.speechSynthesis.addEventListener('voiceschanged', this._onVoicesChanged);
+      window.speechSynthesis.getVoices();
+      setTimeout(() => window.speechSynthesis && window.speechSynthesis.getVoices(), 500);
+      setTimeout(() => window.speechSynthesis && window.speechSynthesis.getVoices(), 1500);
+    }
+
     // Use setTimeout to ensure children are parsed
     requestAnimationFrame(async () => {
       await this.loadData();
       this.ensureMarked();
       this.render();
     });
+  }
+
+  disconnectedCallback() {
+    this.stopTTS();
+    if (typeof window !== 'undefined' && window.speechSynthesis && this._onVoicesChanged) {
+      window.speechSynthesis.removeEventListener('voiceschanged', this._onVoicesChanged);
+    }
   }
 
   ensureMarked() {
@@ -217,6 +241,7 @@ class TjGrammarHearts extends HTMLElement {
   }
 
   prepRound() {
+    this.stopTTS();
     this.continuesCount = 0;
     this.missedQuestions = [];
     this.isRetryPhase = false;
@@ -298,6 +323,7 @@ class TjGrammarHearts extends HTMLElement {
   }
 
   resetQuestionState() {
+    this.stopTTS();
     this.isAnswered = false;
     this.isCorrect = false;
     this.answerFeedback = '';
@@ -305,6 +331,93 @@ class TjGrammarHearts extends HTMLElement {
     this.userAnswer = '';
     this.selectedScrambleIndices = [];
     this.scrambledWords = [];
+  }
+
+  _getBestVoice(lang) {
+    return getBestVoice(window.speechSynthesis, lang);
+  }
+
+  stopTTS() {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    this.isPlaying = false;
+    this.utterance = null;
+    this._updateTTSButton(false);
+  }
+
+  _updateTTSButton(isPlaying) {
+    const btn = this.shadowRoot.querySelector('.scramble-tts-btn, .tts-btn');
+    if (!btn) return;
+    if (isPlaying) {
+      btn.classList.add('playing');
+      btn.setAttribute('aria-label', 'Stop listening');
+      btn.setAttribute('title', 'Stop listening');
+      const label = btn.querySelector('.tts-label');
+      if (label) label.textContent = 'Listening...';
+    } else {
+      btn.classList.remove('playing');
+      btn.setAttribute('aria-label', 'Listen to sentence');
+      btn.setAttribute('title', 'Listen to sentence');
+      const label = btn.querySelector('.tts-label');
+      if (label) label.textContent = 'Listen';
+    }
+  }
+
+  _playTTS(text) {
+    if (!window.speechSynthesis) return;
+
+    // Toggle: if currently playing, stop
+    if (this.isPlaying) {
+      this.stopTTS();
+      return;
+    }
+
+    const q = this.currentPool[this.currentIndex];
+    const sentence = text || (q ? (q.sentence || q.question || '') : '');
+    const cleanText = sentence
+      .replace(/\*\*/g, '')
+      .replace(/[*_~`]/g, '')
+      .trim();
+    if (!cleanText) return;
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    const lang = this.getAttribute('lang') || this.getAttribute('language') || 'en-US';
+    utterance.lang = lang;
+    utterance.rate = 0.85;
+
+    const voices = window.speechSynthesis.getVoices();
+    let voice = voices.find(v => v.name === this.selectedVoiceName);
+    if (!voice) {
+      voice = this._getBestVoice(lang);
+    }
+    if (voice) {
+      utterance.voice = voice;
+    }
+
+    utterance.onstart = () => {
+      this.isPlaying = true;
+      this._updateTTSButton(true);
+    };
+
+    utterance.onend = () => {
+      this.isPlaying = false;
+      this._updateTTSButton(false);
+    };
+
+    utterance.onerror = (e) => {
+      this.isPlaying = false;
+      this._updateTTSButton(false);
+    };
+
+    this.utterance = utterance;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  playScrambleTTS(text) {
+    this._playTTS(text);
   }
 
   _normalizeText(text) {
@@ -319,6 +432,7 @@ class TjGrammarHearts extends HTMLElement {
 
   handleAnswer(answer) {
     if (this.isAnswered) return;
+    this.stopTTS();
 
     this.userAnswer = answer;
     const q = this.currentPool[this.currentIndex];
@@ -403,6 +517,7 @@ class TjGrammarHearts extends HTMLElement {
   }
 
   continuePlaying() {
+    this.stopTTS();
     this.continuesCount = (this.continuesCount || 0) + 1;
     this.hearts = this.maxHearts;
     this.gameState = 'playing';
@@ -579,6 +694,22 @@ class TjGrammarHearts extends HTMLElement {
             --gh-card-bg: #1e293b;
             --gh-card-border: #475569;
           }
+
+          .scramble-tts-btn {
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            border-color: rgba(59, 130, 246, 0.35);
+          }
+          .scramble-tts-btn:hover {
+            background: rgba(59, 130, 246, 0.25);
+            border-color: rgba(59, 130, 246, 0.5);
+          }
+          .scramble-tts-btn.playing {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
+          }
         }
 
         .container {
@@ -745,13 +876,81 @@ class TjGrammarHearts extends HTMLElement {
           -webkit-text-fill-color: transparent;
         }
 
+        .instruction-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 0.5em;
+          margin-bottom: 0.75em;
+          flex-wrap: wrap;
+        }
+
         .instruction {
           font-size: 0.9em;
           font-weight: 600;
           color: var(--gh-text-muted);
-          margin-bottom: 0.5em;
           text-transform: uppercase;
           letter-spacing: 0.05em;
+          display: flex;
+          align-items: center;
+          gap: 0.5em;
+          margin-bottom: 0;
+        }
+
+        .scramble-tts-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 14px;
+          background: #eff6ff;
+          color: #2563eb;
+          border: 1px solid #bfdbfe;
+          border-radius: 9999px;
+          font-size: 0.85em;
+          font-weight: 600;
+          font-family: inherit;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+          user-select: none;
+        }
+
+        .scramble-tts-btn:hover {
+          background: #dbeafe;
+          border-color: #93c5fd;
+          transform: translateY(-1px);
+        }
+
+        .scramble-tts-btn:active {
+          transform: translateY(0);
+        }
+
+        .scramble-tts-btn.playing {
+          background: #2563eb;
+          color: #ffffff;
+          border-color: #1d4ed8;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+          animation: ttsPulse 1.4s infinite ease-in-out;
+        }
+
+        .scramble-tts-btn svg {
+          width: 16px;
+          height: 16px;
+          flex-shrink: 0;
+          transition: transform 0.2s ease;
+        }
+
+        .scramble-tts-btn.playing svg {
+          transform: scale(1.1);
+        }
+
+        @keyframes ttsPulse {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.03);
+          }
         }
 
         .hint-content {
@@ -1235,9 +1434,19 @@ class TjGrammarHearts extends HTMLElement {
         </div>
 
         <div class="card ${this.isAnswered ? 'answered' : ''}">
-          <div class="instruction">
-            ${this.getInstruction(q)}
-            ${this.isRetryPhase ? `<span class="badge retry-badge">⚠️ Prior Mistake</span>` : ''}
+          <div class="instruction-row">
+            <div class="instruction">
+              ${this.getInstruction(q)}
+              ${this.isRetryPhase ? `<span class="badge retry-badge">⚠️ Prior Mistake</span>` : ''}
+            </div>
+            ${q.type === 'scramble' && shouldShowAudioControls(window.speechSynthesis) ? `
+              <button class="scramble-tts-btn ${this.isPlaying ? 'playing' : ''}" type="button" aria-label="${this.isPlaying ? 'Stop listening' : 'Listen to sentence'}" title="${this.isPlaying ? 'Stop listening' : 'Listen to sentence'}" onclick="this.getRootNode().host._playTTS()">
+                <svg class="tts-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+                <span class="tts-label">${this.isPlaying ? 'Listening...' : 'Listen'}</span>
+              </button>
+            ` : ''}
           </div>
           ${this.renderMainText(q)}
           ${this.renderQuestion(q)}

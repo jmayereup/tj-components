@@ -1,8 +1,9 @@
-import { resolveComponentParams as e } from "./tj-config.js";
+import { getBestVoice as e, shouldShowAudioControls as t } from "./audio-utils.js";
+import { resolveComponentParams as n } from "./tj-config.js";
 //#region src/tj-grammar-hearts/index.js
-var t = class extends HTMLElement {
+var r = class extends HTMLElement {
 	get code() {
-		return e(this).teacherCode;
+		return n(this).teacherCode;
 	}
 	set code(e) {
 		e == null ? this.removeAttribute("code") : this.setAttribute("code", e);
@@ -16,17 +17,22 @@ var t = class extends HTMLElement {
 			number: "",
 			homeroom: "",
 			teacherCode: ""
-		}, this.activityTitle = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = "", this.isSubmitting = !1, this.hasSubmitted = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0;
+		}, this.activityTitle = "Grammar Practice", this.formError = "", this.submissionError = "", this.gameState = "hint", this.isHintOpen = !1, this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.scrambledWords = [], this.selectedScrambleIndices = [], this.submissionUrl = "", this.isSubmitting = !1, this.hasSubmitted = !1, this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0, this.isPlaying = !1, this.utterance = null, this.selectedVoiceName = null, this._onVoicesChanged = null;
 	}
 	connectedCallback() {
-		let t = e(this);
-		if (this.submissionUrl = t.submissionUrl, this.maxHearts = parseInt(this.getAttribute("hearts")) || 3, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 5, this.hearts = this.maxHearts, window.marked === void 0) {
+		let e = n(this);
+		if (this.submissionUrl = e.submissionUrl, this.maxHearts = parseInt(this.getAttribute("hearts")) || 3, this.questionsPerRound = parseInt(this.getAttribute("round-size")) || 5, this.hearts = this.maxHearts, window.marked === void 0) {
 			let e = document.createElement("script");
 			e.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js", e.async = !0, document.head.appendChild(e);
 		}
-		requestAnimationFrame(async () => {
+		typeof window < "u" && window.speechSynthesis && (this._onVoicesChanged = () => {
+			window.speechSynthesis && window.speechSynthesis.getVoices();
+		}, window.speechSynthesis.addEventListener("voiceschanged", this._onVoicesChanged), window.speechSynthesis.getVoices(), setTimeout(() => window.speechSynthesis && window.speechSynthesis.getVoices(), 500), setTimeout(() => window.speechSynthesis && window.speechSynthesis.getVoices(), 1500)), requestAnimationFrame(async () => {
 			await this.loadData(), this.ensureMarked(), this.render();
 		});
+	}
+	disconnectedCallback() {
+		this.stopTTS(), typeof window < "u" && window.speechSynthesis && this._onVoicesChanged && window.speechSynthesis.removeEventListener("voiceschanged", this._onVoicesChanged);
 	}
 	ensureMarked() {
 		if (!window.marked) {
@@ -41,26 +47,26 @@ var t = class extends HTMLElement {
 	}
 	async loadData() {
 		try {
-			let t = e(this);
-			this.submissionUrl = t.submissionUrl;
-			let n = "";
+			let e = n(this);
+			this.submissionUrl = e.submissionUrl;
+			let t = "";
 			if (this.config) if (typeof this.config == "object") {
 				this._processParsedData(this.config);
 				return;
-			} else n = String(this.config);
-			else if (this.hasAttribute("config")) n = this.getAttribute("config");
-			else if (t.dataUrl) try {
-				let e = await (await fetch(t.dataUrl)).json();
-				this._processParsedData(e);
+			} else t = String(this.config);
+			else if (this.hasAttribute("config")) t = this.getAttribute("config");
+			else if (e.dataUrl) try {
+				let t = await (await fetch(e.dataUrl)).json();
+				this._processParsedData(t);
 				return;
 			} catch (e) {
 				console.error("Failed to fetch remote JSON for grammar-hearts", e), this.shadowRoot.innerHTML = "<div class=\"error-msg\">Error loading grammar data from URL.</div>";
 				return;
 			}
-			else n = this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.querySelector("script[type=\"text/plain\"]") ? this.querySelector("script[type=\"text/plain\"]").textContent.trim() : this.querySelector("script") ? this.querySelector("script").textContent.trim() : this.textContent.trim();
-			if (!n) return;
-			n = this._decodeHTMLEntities(n);
-			let r = n.replace(/"((?:\\.|[^"\\])*)"/gs, (e, t) => "\"" + t.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + "\""), i = JSON.parse(r);
+			else t = this.querySelector("script[type=\"application/json\"]") ? this.querySelector("script[type=\"application/json\"]").textContent.trim() : this.querySelector("script[type=\"text/plain\"]") ? this.querySelector("script[type=\"text/plain\"]").textContent.trim() : this.querySelector("script") ? this.querySelector("script").textContent.trim() : this.textContent.trim();
+			if (!t) return;
+			t = this._decodeHTMLEntities(t);
+			let r = t.replace(/"((?:\\.|[^"\\])*)"/gs, (e, t) => "\"" + t.replace(/\n/g, "\\n").replace(/\r/g, "\\r") + "\""), i = JSON.parse(r);
 			this._processParsedData(i), this.innerHTML = "";
 		} catch (e) {
 			console.error("Failed to parse JSON for grammar-hearts", e), this.shadowRoot.innerHTML = "<div class=\"error-msg\">Error loading grammar data. Please ensure your JSON is correctly formatted.</div>";
@@ -79,7 +85,7 @@ var t = class extends HTMLElement {
 		return n > t && (t = n), t * 1e3 + r;
 	}
 	prepRound() {
-		if (this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0, !this.questions || this.questions.length === 0) {
+		if (this.stopTTS(), this.continuesCount = 0, this.missedQuestions = [], this.isRetryPhase = !1, this.totalQuestionsInRound = 0, !this.questions || this.questions.length === 0) {
 			this.currentPool = [], this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.resetQuestionState();
 			return;
 		}
@@ -104,14 +110,55 @@ var t = class extends HTMLElement {
 		this.currentPool = o, this.totalQuestionsInRound = o ? o.length : 0, this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.formError = "", this.submissionError = "", this.resetQuestionState();
 	}
 	resetQuestionState() {
-		this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.selectedScrambleIndices = [], this.scrambledWords = [];
+		this.stopTTS(), this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.selectedScrambleIndices = [], this.scrambledWords = [];
+	}
+	_getBestVoice(t) {
+		return e(window.speechSynthesis, t);
+	}
+	stopTTS() {
+		typeof window < "u" && window.speechSynthesis && window.speechSynthesis.cancel(), this.isPlaying = !1, this.utterance = null, this._updateTTSButton(!1);
+	}
+	_updateTTSButton(e) {
+		let t = this.shadowRoot.querySelector(".scramble-tts-btn, .tts-btn");
+		if (t) if (e) {
+			t.classList.add("playing"), t.setAttribute("aria-label", "Stop listening"), t.setAttribute("title", "Stop listening");
+			let e = t.querySelector(".tts-label");
+			e && (e.textContent = "Listening...");
+		} else {
+			t.classList.remove("playing"), t.setAttribute("aria-label", "Listen to sentence"), t.setAttribute("title", "Listen to sentence");
+			let e = t.querySelector(".tts-label");
+			e && (e.textContent = "Listen");
+		}
+	}
+	_playTTS(e) {
+		if (!window.speechSynthesis) return;
+		if (this.isPlaying) {
+			this.stopTTS();
+			return;
+		}
+		let t = this.currentPool[this.currentIndex], n = (e || t && (t.sentence || t.question) || "").replace(/\*\*/g, "").replace(/[*_~`]/g, "").trim();
+		if (!n) return;
+		window.speechSynthesis.cancel();
+		let r = new SpeechSynthesisUtterance(n), i = this.getAttribute("lang") || this.getAttribute("language") || "en-US";
+		r.lang = i, r.rate = .85;
+		let a = window.speechSynthesis.getVoices().find((e) => e.name === this.selectedVoiceName);
+		a ||= this._getBestVoice(i), a && (r.voice = a), r.onstart = () => {
+			this.isPlaying = !0, this._updateTTSButton(!0);
+		}, r.onend = () => {
+			this.isPlaying = !1, this._updateTTSButton(!1);
+		}, r.onerror = (e) => {
+			this.isPlaying = !1, this._updateTTSButton(!1);
+		}, this.utterance = r, window.speechSynthesis.speak(r);
+	}
+	playScrambleTTS(e) {
+		this._playTTS(e);
 	}
 	_normalizeText(e) {
 		return typeof e == "string" ? e.trim().toLowerCase().replace(/['’‘]/g, "'").replace(/["“”]/g, "\"").replace(/\s+/g, " ") : String(e || "");
 	}
 	handleAnswer(e) {
 		if (this.isAnswered) return;
-		this.userAnswer = e;
+		this.stopTTS(), this.userAnswer = e;
 		let t = this.currentPool[this.currentIndex], n = !1;
 		if (t.type === "multiple-choice") n = e === t.correctIndex;
 		else if (t.type === "fill-in-the-blank") {
@@ -143,7 +190,7 @@ var t = class extends HTMLElement {
 		this.prepRound(), this.gameState = "playing", this.render();
 	}
 	continuePlaying() {
-		this.continuesCount = (this.continuesCount || 0) + 1, this.hearts = this.maxHearts, this.gameState = "playing", this.currentIndex++, this.currentIndex >= this.currentPool.length ? !this.isRetryPhase && this.missedQuestions.length > 0 ? (this.currentPool = [...this.missedQuestions], this.missedQuestions = [], this.currentIndex = 0, this.isRetryPhase = !0, this.resetQuestionState()) : this.gameState = "form" : this.resetQuestionState(), this.render();
+		this.stopTTS(), this.continuesCount = (this.continuesCount || 0) + 1, this.hearts = this.maxHearts, this.gameState = "playing", this.currentIndex++, this.currentIndex >= this.currentPool.length ? !this.isRetryPhase && this.missedQuestions.length > 0 ? (this.currentPool = [...this.missedQuestions], this.missedQuestions = [], this.currentIndex = 0, this.isRetryPhase = !0, this.resetQuestionState()) : this.gameState = "form" : this.resetQuestionState(), this.render();
 	}
 	getAdjustedScore() {
 		let e = (this.continuesCount || 0) * this.maxHearts;
@@ -212,7 +259,7 @@ var t = class extends HTMLElement {
         <div class="version-text">v1.1</div>
       `;
 		else if (this.gameState === "playing") {
-			let t = this.currentPool[this.currentIndex], n = (this.currentIndex + 1) / this.currentPool.length * 100;
+			let n = this.currentPool[this.currentIndex], r = (this.currentIndex + 1) / this.currentPool.length * 100;
 			e = `
         <div class="header">
           <div class="header-top-row">
@@ -230,18 +277,28 @@ var t = class extends HTMLElement {
           </div>
           <div class="progress-bar-container">
             <div class="progress-bar-track">
-              <div class="progress-bar-fill" style="width: ${n}%"></div>
+              <div class="progress-bar-fill" style="width: ${r}%"></div>
             </div>
           </div>
         </div>
 
         <div class="card ${this.isAnswered ? "answered" : ""}">
-          <div class="instruction">
-            ${this.getInstruction(t)}
-            ${this.isRetryPhase ? "<span class=\"badge retry-badge\">⚠️ Prior Mistake</span>" : ""}
+          <div class="instruction-row">
+            <div class="instruction">
+              ${this.getInstruction(n)}
+              ${this.isRetryPhase ? "<span class=\"badge retry-badge\">⚠️ Prior Mistake</span>" : ""}
+            </div>
+            ${n.type === "scramble" && t(window.speechSynthesis) ? `
+              <button class="scramble-tts-btn ${this.isPlaying ? "playing" : ""}" type="button" aria-label="${this.isPlaying ? "Stop listening" : "Listen to sentence"}" title="${this.isPlaying ? "Stop listening" : "Listen to sentence"}" onclick="this.getRootNode().host._playTTS()">
+                <svg class="tts-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.26 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+                <span class="tts-label">${this.isPlaying ? "Listening..." : "Listen"}</span>
+              </button>
+            ` : ""}
           </div>
-          ${this.renderMainText(t)}
-          ${this.renderQuestion(t)}
+          ${this.renderMainText(n)}
+          ${this.renderQuestion(n)}
           
           ${this.isAnswered ? `
             <div class="feedback-box ${this.isCorrect ? "success" : "error"}">
@@ -400,6 +457,22 @@ var t = class extends HTMLElement {
             --gh-identity-border: rgba(255,255,255,0.1);
             --gh-card-bg: #1e293b;
             --gh-card-border: #475569;
+          }
+
+          .scramble-tts-btn {
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            border-color: rgba(59, 130, 246, 0.35);
+          }
+          .scramble-tts-btn:hover {
+            background: rgba(59, 130, 246, 0.25);
+            border-color: rgba(59, 130, 246, 0.5);
+          }
+          .scramble-tts-btn.playing {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
           }
         }
 
@@ -567,13 +640,81 @@ var t = class extends HTMLElement {
           -webkit-text-fill-color: transparent;
         }
 
+        .instruction-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 0.5em;
+          margin-bottom: 0.75em;
+          flex-wrap: wrap;
+        }
+
         .instruction {
           font-size: 0.9em;
           font-weight: 600;
           color: var(--gh-text-muted);
-          margin-bottom: 0.5em;
           text-transform: uppercase;
           letter-spacing: 0.05em;
+          display: flex;
+          align-items: center;
+          gap: 0.5em;
+          margin-bottom: 0;
+        }
+
+        .scramble-tts-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 14px;
+          background: #eff6ff;
+          color: #2563eb;
+          border: 1px solid #bfdbfe;
+          border-radius: 9999px;
+          font-size: 0.85em;
+          font-weight: 600;
+          font-family: inherit;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+          user-select: none;
+        }
+
+        .scramble-tts-btn:hover {
+          background: #dbeafe;
+          border-color: #93c5fd;
+          transform: translateY(-1px);
+        }
+
+        .scramble-tts-btn:active {
+          transform: translateY(0);
+        }
+
+        .scramble-tts-btn.playing {
+          background: #2563eb;
+          color: #ffffff;
+          border-color: #1d4ed8;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+          animation: ttsPulse 1.4s infinite ease-in-out;
+        }
+
+        .scramble-tts-btn svg {
+          width: 16px;
+          height: 16px;
+          flex-shrink: 0;
+          transition: transform 0.2s ease;
+        }
+
+        .scramble-tts-btn.playing svg {
+          transform: scale(1.1);
+        }
+
+        @keyframes ttsPulse {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.03);
+          }
         }
 
         .hint-content {
@@ -1091,5 +1232,5 @@ var t = class extends HTMLElement {
 		this.isHintOpen = !this.isHintOpen, this.render();
 	}
 };
-customElements.get("tj-grammar-hearts") || customElements.define("tj-grammar-hearts", t), customElements.get("grammar-hearts") || customElements.define("grammar-hearts", class extends t {});
+customElements.get("tj-grammar-hearts") || customElements.define("tj-grammar-hearts", r), customElements.get("grammar-hearts") || customElements.define("grammar-hearts", class extends r {});
 //#endregion
