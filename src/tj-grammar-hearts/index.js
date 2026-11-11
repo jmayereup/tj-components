@@ -188,24 +188,128 @@ class TjGrammarHearts extends HTMLElement {
   }
 
   _processParsedData(data) {
-      // If data is an array, take the first element (common format for other extensions)
-      if (Array.isArray(data)) {
-        data = data[0];
-      }
+    if (!data) return;
 
-      if (data.title) {
-        this.activityTitle = data.title;
-      }
-
-      if (data.hint) {
-        this.grammarHint = data.hint;
-      }
-
-      if (data.questions && Array.isArray(data.questions)) {
-        this.questions = data.questions;
-      }
-
+    // Detect if this is an array of questions directly (rare edge case from AI)
+    if (Array.isArray(data) && data.length > 0 && (data[0].type || data[0].question || data[0].sentence)) {
+      this.questions = data;
       this.prepRound();
+      return;
+    }
+
+    // Determine parts list:
+    // 1. Array of part objects: [ { title, hint, questions }, ... ]
+    // 2. Object with parts/sections: { title, parts: [ ... ] } or { title, sections: [ ... ] }
+    // 3. Single part object: { title, hint, questions }
+    let parts = [];
+    let rootTitle = '';
+
+    if (Array.isArray(data)) {
+      parts = data;
+    } else if (typeof data === 'object') {
+      if (Array.isArray(data.parts)) {
+        parts = data.parts;
+        rootTitle = data.title || '';
+      } else if (Array.isArray(data.sections)) {
+        parts = data.sections;
+        rootTitle = data.title || '';
+      } else {
+        parts = [data];
+      }
+    }
+
+    if (parts.length === 0) return;
+
+    // Case 1: Single part
+    if (parts.length === 1) {
+      const single = parts[0] || {};
+      if (single.title || rootTitle) {
+        this.activityTitle = single.title || rootTitle;
+      }
+      if (single.hint) {
+        this.grammarHint = typeof single.hint === 'string'
+          ? { summary: this.activityTitle || 'Grammar Focus', content: single.hint }
+          : single.hint;
+      }
+      if (single.questions && Array.isArray(single.questions)) {
+        this.questions = single.questions;
+      }
+      this.prepRound();
+      return;
+    }
+
+    // Case 2: Multi-part structure
+    const allQuestions = [];
+    const hintSections = [];
+    const topicSummaries = [];
+
+    parts.forEach((part, partIdx) => {
+      const partNum = partIdx + 1;
+      const partTitle = part.title || `Part ${partNum}`;
+      
+      // Extract clean topic name for title synthesis (remove "Part N:", "Section N:" etc.)
+      const cleanTopic = partTitle
+        .replace(/^(?:part|section|unit|lesson)\s*\d+[:.\s-]*/i, '')
+        .trim();
+      if (cleanTopic) {
+        topicSummaries.push(cleanTopic);
+      } else if (part.hint && part.hint.summary) {
+        topicSummaries.push(part.hint.summary);
+      }
+
+      // Format hint content for this part
+      let partHintContent = '';
+      let partHintSummary = part.hint?.summary || partTitle;
+      if (part.hint) {
+        if (typeof part.hint === 'string') {
+          partHintContent = part.hint.trim();
+        } else if (part.hint.content) {
+          partHintContent = part.hint.content.trim();
+        }
+      }
+
+      if (partHintContent) {
+        hintSections.push(`### ${partTitle}\n\n${partHintContent}`);
+      }
+
+      // Collect questions and tag them with part metadata
+      if (part.questions && Array.isArray(part.questions)) {
+        part.questions.forEach(q => {
+          allQuestions.push({
+            ...q,
+            _partIndex: partIdx,
+            _partTitle: partTitle,
+            _partSummary: partHintSummary
+          });
+        });
+      }
+    });
+
+    // Derive activityTitle if not explicitly set on root
+    if (rootTitle) {
+      this.activityTitle = rootTitle;
+    } else if (topicSummaries.length > 0) {
+      if (topicSummaries.length <= 2) {
+        this.activityTitle = topicSummaries.join(' & ');
+      } else if (topicSummaries.length <= 3) {
+        this.activityTitle = `${topicSummaries[0]}, ${topicSummaries[1]} & ${topicSummaries[2]}`;
+      } else {
+        this.activityTitle = `${topicSummaries[0]}, ${topicSummaries[1]} + ${topicSummaries.length - 2} more`;
+      }
+    } else {
+      this.activityTitle = `Grammar Practice (${parts.length} Parts)`;
+    }
+
+    // Combined grammar hint
+    this.grammarHint = {
+      summary: topicSummaries.length <= 3 && topicSummaries.length > 0
+        ? topicSummaries.join(' / ')
+        : `Comprehensive Guide (${parts.length} Parts)`,
+      content: hintSections.join('\n\n---\n\n')
+    };
+
+    this.questions = allQuestions;
+    this.prepRound();
   }
 
   // Simple Markdown-to-HTML helper
@@ -257,18 +361,50 @@ class TjGrammarHearts extends HTMLElement {
       return;
     }
 
-    // 1. Group questions by type
-    const groups = {};
-    for (const q of this.questions) {
-      if (!groups[q.type]) {
-        groups[q.type] = [];
-      }
-      groups[q.type].push(q);
-    }
+    // 1. Group questions by type and part for balanced representation
+    const hasParts = this.questions.some(q => q._partIndex !== undefined);
 
-    // 2. Shuffle each group's questions
-    for (const type in groups) {
-      groups[type].sort(() => 0.5 - Math.random());
+    const groups = {};
+    if (hasParts) {
+      // Group by type, then within each type group questions by part
+      const typePartMap = {};
+      for (const q of this.questions) {
+        const type = q.type || 'unknown';
+        const pIdx = q._partIndex || 0;
+        if (!typePartMap[type]) typePartMap[type] = {};
+        if (!typePartMap[type][pIdx]) typePartMap[type][pIdx] = [];
+        typePartMap[type][pIdx].push(q);
+      }
+
+      // For each type, shuffle each part's questions, then interleave parts
+      for (const type in typePartMap) {
+        const partsForType = Object.keys(typePartMap[type]).map(Number).sort((a, b) => a - b);
+        for (const p of partsForType) {
+          typePartMap[type][p].sort(() => 0.5 - Math.random());
+        }
+
+        const interleaved = [];
+        let maxPartLen = Math.max(...partsForType.map(p => typePartMap[type][p].length));
+        for (let i = 0; i < maxPartLen; i++) {
+          for (const p of partsForType) {
+            if (i < typePartMap[type][p].length) {
+              interleaved.push(typePartMap[type][p][i]);
+            }
+          }
+        }
+        groups[type] = interleaved;
+      }
+    } else {
+      for (const q of this.questions) {
+        if (!groups[q.type]) {
+          groups[q.type] = [];
+        }
+        groups[q.type].push(q);
+      }
+      // Shuffle each group's questions
+      for (const type in groups) {
+        groups[type].sort(() => 0.5 - Math.random());
+      }
     }
 
     // 3. Round-robin selection to balance types
@@ -957,6 +1093,23 @@ class TjGrammarHearts extends HTMLElement {
           line-height: 1.6;
           color: var(--gh-explanation-color);
           margin-bottom: 2em;
+          max-height: 60vh;
+          overflow-y: auto;
+          padding-right: 0.5em;
+        }
+
+        .hint-content h3 {
+          margin: 1.25em 0 0.5em 0;
+          font-size: 1.15em;
+          color: var(--gh-text);
+          border-left: 3px solid #3b82f6;
+          padding-left: 0.5em;
+        }
+
+        .hint-content hr {
+          border: none;
+          border-top: 1px dashed var(--gh-card-border);
+          margin: 1.5em 0;
         }
 
         .btn {
@@ -1128,7 +1281,8 @@ class TjGrammarHearts extends HTMLElement {
         }
 
         .hint-drawer.open {
-          max-height: 500px;
+          max-height: 450px;
+          overflow-y: auto;
           padding: 1em;
           border-top: 1px solid var(--gh-card-border);
         }

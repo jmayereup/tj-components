@@ -73,7 +73,38 @@ var r = class extends HTMLElement {
 		}
 	}
 	_processParsedData(e) {
-		Array.isArray(e) && (e = e[0]), e.title && (this.activityTitle = e.title), e.hint && (this.grammarHint = e.hint), e.questions && Array.isArray(e.questions) && (this.questions = e.questions), this.prepRound();
+		if (!e) return;
+		if (Array.isArray(e) && e.length > 0 && (e[0].type || e[0].question || e[0].sentence)) {
+			this.questions = e, this.prepRound();
+			return;
+		}
+		let t = [], n = "";
+		if (Array.isArray(e) ? t = e : typeof e == "object" && (Array.isArray(e.parts) ? (t = e.parts, n = e.title || "") : Array.isArray(e.sections) ? (t = e.sections, n = e.title || "") : t = [e]), t.length === 0) return;
+		if (t.length === 1) {
+			let e = t[0] || {};
+			(e.title || n) && (this.activityTitle = e.title || n), e.hint && (this.grammarHint = typeof e.hint == "string" ? {
+				summary: this.activityTitle || "Grammar Focus",
+				content: e.hint
+			} : e.hint), e.questions && Array.isArray(e.questions) && (this.questions = e.questions), this.prepRound();
+			return;
+		}
+		let r = [], i = [], a = [];
+		t.forEach((e, t) => {
+			let n = t + 1, o = e.title || `Part ${n}`, s = o.replace(/^(?:part|section|unit|lesson)\s*\d+[:.\s-]*/i, "").trim();
+			s ? a.push(s) : e.hint && e.hint.summary && a.push(e.hint.summary);
+			let c = "", l = e.hint?.summary || o;
+			e.hint && (typeof e.hint == "string" ? c = e.hint.trim() : e.hint.content && (c = e.hint.content.trim())), c && i.push(`### ${o}\n\n${c}`), e.questions && Array.isArray(e.questions) && e.questions.forEach((e) => {
+				r.push({
+					...e,
+					_partIndex: t,
+					_partTitle: o,
+					_partSummary: l
+				});
+			});
+		}), n ? this.activityTitle = n : a.length > 0 ? a.length <= 2 ? this.activityTitle = a.join(" & ") : a.length <= 3 ? this.activityTitle = `${a[0]}, ${a[1]} & ${a[2]}` : this.activityTitle = `${a[0]}, ${a[1]} + ${a.length - 2} more` : this.activityTitle = `Grammar Practice (${t.length} Parts)`, this.grammarHint = {
+			summary: a.length <= 3 && a.length > 0 ? a.join(" / ") : `Comprehensive Guide (${t.length} Parts)`,
+			content: i.join("\n\n---\n\n")
+		}, this.questions = r, this.prepRound();
 	}
 	parseMD(e) {
 		return window.marked === void 0 ? e.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>").replace(/\n/g, "<br>") : window.marked.parse(e);
@@ -89,25 +120,40 @@ var r = class extends HTMLElement {
 			this.currentPool = [], this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.resetQuestionState();
 			return;
 		}
-		let e = {};
-		for (let t of this.questions) e[t.type] || (e[t.type] = []), e[t.type].push(t);
-		for (let t in e) e[t].sort(() => .5 - Math.random());
-		let t = [], n = Object.keys(e), r = Math.min(this.questionsPerRound, this.questions.length), i = [...n].sort(() => .5 - Math.random()), a = {};
-		for (let e of n) a[e] = 0;
-		for (; t.length < r;) {
-			let n = !1;
-			for (let o of i) {
-				if (t.length >= r) break;
-				a[o] < e[o].length && (t.push(e[o][a[o]]), a[o]++, n = !0);
+		let e = this.questions.some((e) => e._partIndex !== void 0), t = {};
+		if (e) {
+			let e = {};
+			for (let t of this.questions) {
+				let n = t.type || "unknown", r = t._partIndex || 0;
+				e[n] || (e[n] = {}), e[n][r] || (e[n][r] = []), e[n][r].push(t);
 			}
-			if (!n) break;
+			for (let n in e) {
+				let r = Object.keys(e[n]).map(Number).sort((e, t) => e - t);
+				for (let t of r) e[n][t].sort(() => .5 - Math.random());
+				let i = [], a = Math.max(...r.map((t) => e[n][t].length));
+				for (let t = 0; t < a; t++) for (let a of r) t < e[n][a].length && i.push(e[n][a][t]);
+				t[n] = i;
+			}
+		} else {
+			for (let e of this.questions) t[e.type] || (t[e.type] = []), t[e.type].push(e);
+			for (let e in t) t[e].sort(() => .5 - Math.random());
 		}
-		let o = [...t], s = this._getShuffleScore(o);
+		let n = [], r = Object.keys(t), i = Math.min(this.questionsPerRound, this.questions.length), a = [...r].sort(() => .5 - Math.random()), o = {};
+		for (let e of r) o[e] = 0;
+		for (; n.length < i;) {
+			let e = !1;
+			for (let r of a) {
+				if (n.length >= i) break;
+				o[r] < t[r].length && (n.push(t[r][o[r]]), o[r]++, e = !0);
+			}
+			if (!e) break;
+		}
+		let s = [...n], c = this._getShuffleScore(s);
 		for (let e = 0; e < 200; e++) {
-			let e = [...t].sort(() => .5 - Math.random()), n = this._getShuffleScore(e);
-			n < s && (s = n, o = e);
+			let e = [...n].sort(() => .5 - Math.random()), t = this._getShuffleScore(e);
+			t < c && (c = t, s = e);
 		}
-		this.currentPool = o, this.totalQuestionsInRound = o ? o.length : 0, this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.formError = "", this.submissionError = "", this.resetQuestionState();
+		this.currentPool = s, this.totalQuestionsInRound = s ? s.length : 0, this.currentIndex = 0, this.hearts = this.maxHearts, this.score = 0, this.gameState = "hint", this.formError = "", this.submissionError = "", this.resetQuestionState();
 	}
 	resetQuestionState() {
 		this.stopTTS(), this.isAnswered = !1, this.isCorrect = !1, this.answerFeedback = "", this.answerExplanation = "", this.userAnswer = "", this.selectedScrambleIndices = [], this.scrambledWords = [];
@@ -721,6 +767,23 @@ var r = class extends HTMLElement {
           line-height: 1.6;
           color: var(--gh-explanation-color);
           margin-bottom: 2em;
+          max-height: 60vh;
+          overflow-y: auto;
+          padding-right: 0.5em;
+        }
+
+        .hint-content h3 {
+          margin: 1.25em 0 0.5em 0;
+          font-size: 1.15em;
+          color: var(--gh-text);
+          border-left: 3px solid #3b82f6;
+          padding-left: 0.5em;
+        }
+
+        .hint-content hr {
+          border: none;
+          border-top: 1px dashed var(--gh-card-border);
+          margin: 1.5em 0;
         }
 
         .btn {
@@ -892,7 +955,8 @@ var r = class extends HTMLElement {
         }
 
         .hint-drawer.open {
-          max-height: 500px;
+          max-height: 450px;
+          overflow-y: auto;
           padding: 1em;
           border-top: 1px solid var(--gh-card-border);
         }
