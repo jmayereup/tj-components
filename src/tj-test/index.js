@@ -64,8 +64,7 @@ class TjTest extends HTMLElement {
                this.getAttribute('teacher_code') || 
                this.getAttribute('reset-code') || 
                this.getAttribute('reset_code') || 
-               resolveComponentParams(this).teacherCode || 
-               resolveComponentParams(this).resetCode || 
+               config.resetCode || 
                '7676';
     }
 
@@ -121,6 +120,8 @@ class TjTest extends HTMLElement {
         this._pendingNextSection = false;
         this._visibilityHandler = null;
         this._blurHandler = null;
+        this._voicesChangedHandler = null;
+        this._securityListenersAttached = false;
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -134,6 +135,7 @@ class TjTest extends HTMLElement {
                     this.lockStartOverlay();
                     this.setupSecurityListeners();
                 } else {
+                    this.setupSecurityListeners();
                     this.unlockAllSecurityOverlays();
                 }
             }
@@ -179,6 +181,7 @@ class TjTest extends HTMLElement {
         this._pendingNextSection = false;
         this.hasSubmitted = false;
         this._submittedViaScreenshot = false;
+        this._lastEnteredSubmitCode = '';
         this.isSubmitting = false;
         this.sectionResults = this.sections.map(() => ({ completed: false, passed: false, score: 0, total: 0, percentage: 0 }));
 
@@ -297,7 +300,8 @@ class TjTest extends HTMLElement {
             this.parseContent();
 
             if (window.speechSynthesis) {
-                window.speechSynthesis.onvoiceschanged = () => this._updateVoiceList();
+                this._voicesChangedHandler = () => this._updateVoiceList();
+                window.speechSynthesis.addEventListener('voiceschanged', this._voicesChangedHandler);
                 this._updateVoiceList();
             }
 
@@ -329,6 +333,13 @@ class TjTest extends HTMLElement {
         if (this._blurHandler) {
             window.removeEventListener('blur', this._blurHandler);
             this._blurHandler = null;
+        }
+        if (this._voicesChangedHandler && window.speechSynthesis) {
+            window.speechSynthesis.removeEventListener('voiceschanged', this._voicesChangedHandler);
+            this._voicesChangedHandler = null;
+        }
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
         }
     }
 
@@ -378,11 +389,20 @@ class TjTest extends HTMLElement {
         if (this.testMode) {
             this.setAttribute('translate', 'no');
             this.classList.add('notranslate');
+        } else {
+            this.removeAttribute('translate');
+            this.classList.remove('notranslate');
+        }
 
-            this.shadowRoot.addEventListener('contextmenu', (e) => e.preventDefault());
-            this.shadowRoot.addEventListener('copy', (e) => e.preventDefault());
-            this.shadowRoot.addEventListener('cut', (e) => e.preventDefault());
-            this.shadowRoot.addEventListener('paste', (e) => e.preventDefault());
+        if (!this._securityListenersAttached && this.shadowRoot) {
+            this._securityListenersAttached = true;
+            const blockIfTestMode = (e) => {
+                if (this.testMode) e.preventDefault();
+            };
+            this.shadowRoot.addEventListener('contextmenu', blockIfTestMode);
+            this.shadowRoot.addEventListener('copy', blockIfTestMode);
+            this.shadowRoot.addEventListener('cut', blockIfTestMode);
+            this.shadowRoot.addEventListener('paste', blockIfTestMode);
         }
     }
 
@@ -532,7 +552,15 @@ class TjTest extends HTMLElement {
         // Parse first section line for overall test title if present
         let firstBlock = rawSections[0];
         const lines = firstBlock.split('\n').map(l => l.trim()).filter(Boolean);
-        if (lines.length > 0 && !lines[0].startsWith('section') && !lines[0].startsWith('text') && !lines[0].startsWith('questions')) {
+        const firstLineLower = (lines[0] || '').toLowerCase();
+        const firstIsBlockHeader = firstLineLower.startsWith('section') ||
+                                   firstLineLower.startsWith('text') ||
+                                   firstLineLower.startsWith('questions') ||
+                                   firstLineLower.startsWith('vocab') ||
+                                   firstLineLower.startsWith('cloze') ||
+                                   firstLineLower.startsWith('instruction') ||
+                                   firstLineLower.startsWith('direction');
+        if (lines.length > 0 && !firstIsBlockHeader) {
             this.activityTitle = lines[0];
             const titleElem = this.shadowRoot.getElementById('testTitle');
             if (titleElem) titleElem.textContent = this.activityTitle;
@@ -544,7 +572,8 @@ class TjTest extends HTMLElement {
         for (let i = 0; i < rawSections.length; i++) {
             const block = rawSections[i];
             const blockLines = block.split('\n');
-            const headerLine = (blockLines[0] || '').trim().toLowerCase();
+            const rawHeaderLine = (blockLines[0] || '').trim();
+            const headerLine = rawHeaderLine.toLowerCase();
             const bodyContent = blockLines.slice(1).join('\n');
 
             const isKnownType = headerLine.startsWith('section') || 
@@ -556,8 +585,8 @@ class TjTest extends HTMLElement {
                                 headerLine.startsWith('direction');
 
             if (headerLine.startsWith('section')) {
-                const titleMatch = headerLine.match(/title=["']([^"']+)["']/i);
-                const instructionsMatch = headerLine.match(/(?:instructions|instruction|directions|direction)=["']([^"']+)["']/i);
+                const titleMatch = rawHeaderLine.match(/title=["']([^"']+)["']/i);
+                const instructionsMatch = rawHeaderLine.match(/(?:instructions|instruction|directions|direction)=["']([^"']+)["']/i);
 
                 const title = titleMatch ? titleMatch[1] : `Section ${defaultSectionIndex}`;
                 const instructions = instructionsMatch ? instructionsMatch[1] : '';
@@ -631,7 +660,7 @@ class TjTest extends HTMLElement {
 
         // Helper to strip option letter/number prefix e.g. "a. ", "b) ", "(c) ", "1. "
         const stripOptPrefix = (str) => {
-            return str.replace(/^(?:\([a-fA-F0-9\d]+\)|[a-fA-F0-9\d]+[\.\)])\s*/, '').trim();
+            return str.replace(/^(?:\((?:[a-fA-F]|\d{1,2})\)|(?:[a-fA-F]|\d{1,2})[\.\)])\s*/, '').trim();
         };
 
         const cleanOptions = rawOptions.map(opt => stripOptPrefix(opt));
@@ -641,7 +670,7 @@ class TjTest extends HTMLElement {
         if (rawAnswer) {
             const strippedRawAns = stripOptPrefix(rawAnswer);
             // 1. Direct match with a clean option
-            const directMatch = cleanOptions.find(opt => opt.toLowerCase() === strippedRawAns.toLowerCase());
+            const directMatch = strippedRawAns ? cleanOptions.find(opt => opt.toLowerCase() === strippedRawAns.toLowerCase()) : undefined;
             if (directMatch !== undefined) {
                 answerText = directMatch;
             } else {
@@ -650,10 +679,10 @@ class TjTest extends HTMLElement {
                 if (origIdx !== -1) {
                     answerText = cleanOptions[origIdx];
                 } else {
-                    // 3. Check if rawAnswer is a single letter (e.g. 'a', 'b', 'c', 'd')
-                    const letterMatch = rawAnswer.match(/^[a-fA-F]$/i);
+                    // 3. Check if rawAnswer is a single letter or prefix (e.g. 'a', 'a.', 'b)', '(c)')
+                    const letterMatch = rawAnswer.match(/^\(?([a-fA-F])\)?[\.\)]?$/i);
                     if (letterMatch) {
-                        const charCode = letterMatch[0].toLowerCase().charCodeAt(0);
+                        const charCode = letterMatch[1].toLowerCase().charCodeAt(0);
                         const idx = charCode - 97; // 'a' -> 0, 'b' -> 1, etc.
                         if (idx >= 0 && idx < cleanOptions.length) {
                             answerText = cleanOptions[idx];
@@ -692,6 +721,7 @@ class TjTest extends HTMLElement {
         const lines = text.split('\n');
         const questions = [];
         let currentQ = null;
+        let lastField = null;
 
         for (const line of lines) {
             const trimmed = line.trim();
@@ -707,6 +737,7 @@ class TjTest extends HTMLElement {
                 }
                 const sitVal = trimmed.replace(/^(S:|Situation:)/i, '').trim();
                 currentQ.s = currentQ.s ? `${currentQ.s}\n${sitVal}` : sitVal;
+                lastField = 's';
             } else if (trimmed.startsWith('Q:') || trimmed.startsWith('Q.')) {
                 if (currentQ && currentQ.q) {
                     questions.push(this.normalizeQuestion(currentQ));
@@ -717,14 +748,20 @@ class TjTest extends HTMLElement {
                 }
                 const qVal = trimmed.substring(2).trim();
                 currentQ.q = currentQ.q ? `${currentQ.q}\n${qVal}` : qVal;
+                lastField = 'q';
             } else if (trimmed.startsWith('A:') && currentQ) {
                 const ansText = trimmed.substring(2).trim();
                 const isCorrect = ansText.includes('[correct]');
                 const cleanAns = ansText.replace('[correct]', '').trim();
                 currentQ.o.push(cleanAns);
                 if (isCorrect) currentQ.a = cleanAns;
+                lastField = 'a';
             } else if (trimmed.startsWith('E:') && currentQ) {
-                currentQ.e = trimmed.substring(2).trim();
+                const expVal = trimmed.substring(2).trim();
+                currentQ.e = currentQ.e ? `${currentQ.e}\n${expVal}` : expVal;
+                lastField = 'e';
+            } else if (currentQ && lastField === 'e') {
+                currentQ.e += '\n' + trimmed;
             } else if (currentQ && currentQ.o.length === 0 && !currentQ.a) {
                 if (currentQ.q) {
                     currentQ.q += '\n' + trimmed;
@@ -996,7 +1033,7 @@ class TjTest extends HTMLElement {
             btn.type = 'button';
             btn.className = `voice-option-btn ${this.selectedVoiceName === voice.name ? 'active' : ''}`;
 
-            let innerHTML = `<span>${voice.name}</span>`;
+            let innerHTML = `<span>${this.escapeHtml(voice.name)}</span>`;
             if (bestVoice && voice.name === bestVoice.name) {
                 innerHTML += `<span class="badge">Best</span>`;
             }
@@ -1057,6 +1094,9 @@ class TjTest extends HTMLElement {
             if (isUnlocked && idx !== this.activeSectionIndex) {
                 item.style.cursor = 'pointer';
                 item.addEventListener('click', () => {
+                    if (window.speechSynthesis) {
+                        window.speechSynthesis.cancel();
+                    }
                     this.activeSectionIndex = idx;
                     if (!this.testMode) {
                         this.testCompleted = false;
@@ -1066,7 +1106,7 @@ class TjTest extends HTMLElement {
                 });
             }
 
-            item.innerHTML = `${icon} <span>${sec.title}</span>`;
+            item.innerHTML = `${icon} <span>${this.escapeHtml(sec.title)}</span>`;
             stepperContainer.appendChild(item);
         });
     }
@@ -1118,7 +1158,7 @@ class TjTest extends HTMLElement {
             section.passages.forEach((p) => {
                 const passageBox = document.createElement('div');
                 passageBox.className = 'tj-passage-box';
-                passageBox.innerHTML = `<div>${p.text.replace(/\n/g, '<br>')}</div>`;
+                passageBox.innerHTML = `<div>${this.escapeHtml(p.text).replace(/\n/g, '<br>')}</div>`;
 
                 if (this.tts || p.explicitTTS) {
                     const voiceBtnHost = this.shadowRoot.getElementById('voice-btn');
@@ -1180,7 +1220,7 @@ class TjTest extends HTMLElement {
 
                 const optionsHtml = allDefs.map(d => `<option value="${this.escapeHtml(d)}" ${savedDef === d ? 'selected' : ''}>${this.escapeHtml(d)}</option>`).join('');
                 tr.innerHTML = `
-                    <td class="tj-vocab-td" style="font-weight: 600;">${v.word}</td>
+                    <td class="tj-vocab-td" style="font-weight: 600;">${this.escapeHtml(v.word)}</td>
                     <td class="tj-vocab-td">
                         <select class="tj-vocab-select ${feedbackClass}" data-word="${this.escapeHtml(v.word)}" data-vkey="${vKey}" ${isTestModeLocked ? 'disabled' : ''}>
                             <option value="">-- Choose Definition --</option>
@@ -1231,17 +1271,22 @@ class TjTest extends HTMLElement {
                 }
 
                 let clozeIndex = 0;
-                let replacedText = clozeData.text.replace(/\*([^*]+)\*/g, (match, word) => {
-                    const cKey = `cloze_${section.index}_${cIdx}_${clozeIndex}`;
-                    const savedVal = (this.userAnswers && this.userAnswers[cKey]) || '';
-                    let feedbackClass = '';
-                    if (isCompleted && !this.testMode && savedVal) {
-                        feedbackClass = savedVal.trim().toLowerCase() === word.trim().toLowerCase() ? 'correct' : 'incorrect';
+                const clozeParts = (clozeData.text || '').split(/(\*[^*]+\*)/g);
+                let replacedText = clozeParts.map((part) => {
+                    if (part.startsWith('*') && part.endsWith('*') && part.length > 2) {
+                        const word = part.slice(1, -1);
+                        const cKey = `cloze_${section.index}_${cIdx}_${clozeIndex}`;
+                        const savedVal = (this.userAnswers && this.userAnswers[cKey]) || '';
+                        let feedbackClass = '';
+                        if (isCompleted && !this.testMode && savedVal) {
+                            feedbackClass = savedVal.trim().toLowerCase() === word.trim().toLowerCase() ? 'correct' : 'incorrect';
+                        }
+                        const inputHtml = `<input type="text" class="tj-cloze-input ${feedbackClass}" data-cloze-idx="${clozeIndex}" data-ckey="${cKey}" data-target="${this.escapeHtml(word)}" value="${this.escapeHtml(savedVal)}" ${isTestModeLocked ? 'disabled' : ''}>`;
+                        clozeIndex++;
+                        return inputHtml;
                     }
-                    const inputHtml = `<input type="text" class="tj-cloze-input ${feedbackClass}" data-cloze-idx="${clozeIndex}" data-ckey="${cKey}" data-target="${this.escapeHtml(word)}" value="${this.escapeHtml(savedVal)}" ${isTestModeLocked ? 'disabled' : ''}>`;
-                    clozeIndex++;
-                    return inputHtml;
-                });
+                    return this.escapeHtml(part).replace(/\n/g, '<br>');
+                }).join('');
 
                 clozeBox.innerHTML = `
                     <h4 style="margin-top: 0; color: var(--tj-text-main); margin-bottom: 0.75em;">Fill in the Blanks</h4>
@@ -1591,6 +1636,9 @@ class TjTest extends HTMLElement {
         } else {
             this._pendingNextSection = false;
             this.testCompleted = true;
+            if (!this.completedTimestamp) {
+                this.completedTimestamp = new Date().toISOString();
+            }
             this.showResultModal(passed, percentage, section.passPercentageLabel);
         }
 
@@ -1687,7 +1735,7 @@ class TjTest extends HTMLElement {
 
             return `
                 <tr>
-                    <td style="font-weight: 600;">${sec.title}</td>
+                    <td style="font-weight: 600;">${this.escapeHtml(sec.title)}</td>
                     <td>${res.score} / ${res.total}</td>
                     <td>${res.percentage}%</td>
                     <td>${passReqLabel}</td>
@@ -1776,6 +1824,7 @@ class TjTest extends HTMLElement {
                             ${isScreenshot ? '📸 Update Score for Screenshot' : '📤 Resubmit Updated Score'}
                         </button>
                     </div>
+                    <div id="submitStatusMsg" class="tj-error-msg hidden" style="margin-top: 0.5em;"></div>
                     ` : `
                     <div class="tj-testmode-locked-note">
                         🔒 Test mode assessment completed. Submission is final.
@@ -1979,8 +2028,8 @@ class TjTest extends HTMLElement {
 
         // If not already submitted, read from form inputs
         if (!this.hasSubmitted) {
-            if (nicknameElem && nicknameElem.value.trim()) nickname = nicknameElem.value.trim();
-            if (studentIdElem && studentIdElem.value.trim()) studentId = studentIdElem.value.trim();
+            if (nicknameElem) nickname = nicknameElem.value.trim();
+            if (studentIdElem) studentId = studentIdElem.value.trim();
             if (homeroomElem) homeroom = homeroomElem.value.trim();
         }
         // If already submitted, student identity is permanently locked to prevent sending under a friend's name
@@ -2158,7 +2207,8 @@ class TjTest extends HTMLElement {
             studentInfo: this.studentInfo,
             completedTimestamp: this.completedTimestamp,
             hasSubmitted: this.hasSubmitted,
-            submittedViaScreenshot: this._submittedViaScreenshot
+            submittedViaScreenshot: this._submittedViaScreenshot,
+            lastEnteredSubmitCode: this._lastEnteredSubmitCode || ''
         };
         try {
             localStorage.setItem(this.getStorageKey(), JSON.stringify(data));
@@ -2176,8 +2226,13 @@ class TjTest extends HTMLElement {
 
     restoreState(saved) {
         if (!saved) return;
-        this.activeSectionIndex = saved.activeSectionIndex || 0;
-        this.sectionResults = saved.sectionResults || this.sectionResults;
+        const maxIdx = Math.max(0, this.sections.length - 1);
+        this.activeSectionIndex = Math.max(0, Math.min(saved.activeSectionIndex || 0, maxIdx));
+        if (Array.isArray(saved.sectionResults)) {
+            this.sectionResults = this.sections.map((_, idx) =>
+                saved.sectionResults[idx] || { completed: false, passed: false, score: 0, total: 0, percentage: 0 }
+            );
+        }
         this.testCompleted = saved.testCompleted || false;
         this.tabAwayCount = saved.tabAwayCount || 0;
         this.testUnlocked = saved.testUnlocked || false;
@@ -2186,6 +2241,7 @@ class TjTest extends HTMLElement {
         this.completedTimestamp = saved.completedTimestamp || null;
         this.hasSubmitted = saved.hasSubmitted || false;
         this._submittedViaScreenshot = saved.submittedViaScreenshot || false;
+        this._lastEnteredSubmitCode = saved.lastEnteredSubmitCode || '';
 
         if (this.testMode && !this.testCompleted) {
             if (this.testUnlocked) {
@@ -2222,6 +2278,7 @@ class TjTest extends HTMLElement {
         this._pendingNextSection = false;
         this.hasSubmitted = false;
         this._submittedViaScreenshot = false;
+        this._lastEnteredSubmitCode = '';
         this.isSubmitting = false;
         this.sectionResults = this.sections.map(() => ({ completed: false, passed: false, score: 0, total: 0, percentage: 0 }));
 
@@ -2238,6 +2295,9 @@ class TjTest extends HTMLElement {
 
         const modal = this.shadowRoot.getElementById('sectionResultModal');
         if (modal) modal.classList.remove('active');
+
+        const teacherOverlay = this.shadowRoot.getElementById('teacherLockOverlay');
+        if (teacherOverlay) teacherOverlay.classList.remove('active');
 
         const authModal = this.shadowRoot.getElementById('teacherAuthModal');
         if (authModal) authModal.classList.remove('active');

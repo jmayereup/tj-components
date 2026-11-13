@@ -290,12 +290,18 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 	}
 	parseCloze(e, t = null) {
 		if (!e) return;
-		let n = e.match(/\*([^*]+)\*/g), r = [];
-		n && (r = n.map((e) => e.replace(/\*/g, "")), t && r.length > t && (this.shuffleArray(r), r = r.slice(0, t))), this.clozeSections.push({
+		let n = e.match(/\*([^*]+)\*/g), r = n ? n.map((e) => e.replace(/\*/g, "")) : [], i = {
 			text: e,
-			words: r,
+			allWords: r,
+			maxBlanks: t,
+			words: [],
 			sectionId: this.clozeSections.length
-		}), console.log("Cloze section parsed. Total words available:", n ? n.length : 0, "Words to remove:", r.length, "Max blanks:", t);
+		};
+		this._selectClozeWords(i), this.clozeSections.push(i), console.log("Cloze section parsed. Total words available:", r.length, "Words to remove:", i.words.length, "Max blanks:", t);
+	}
+	_selectClozeWords(e) {
+		let t = e.allWords || [], n = e.maxBlanks, r = [...t];
+		n && r.length > n && (this.shuffleArray(r), r = r.slice(0, n)), e.words = r;
 	}
 	parseQuestions(e, t = null) {
 		if (!e) return [];
@@ -694,7 +700,7 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 			console.error("generateQuiz failed: dynamicContent element not found in shadow DOM");
 			return;
 		}
-		console.log("generateQuiz called, questions total:", this.totalQuestions), t.innerHTML = "", this.score = 0, this.questionsAnswered = 0, this.userQuestionAnswers = {}, e.disabled = !0;
+		console.log("generateQuiz called, questions total:", this.totalQuestions), t.innerHTML = "", this.score = 0, this.questionsAnswered = 0, this.userQuestionAnswers = {}, this.clozeAnswers = {}, this.clozeScore = 0, this.clozeSubmitted = !1, e.disabled = !0;
 		let n = [], r = 0, i = 0;
 		this.orderedSections.forEach((e) => {
 			if (e.type === "audio") {
@@ -725,7 +731,7 @@ var i = "<div class=\"quiz-wrapper notranslate\" translate=\"no\">\n    <div id=
 				e && this.renderVocabInline(e, t, r - 1);
 			} else if (e.type === "cloze") {
 				let e = this.clozeSections[i++];
-				e && this.renderClozeInline(e, t, i - 1);
+				e && (this._selectClozeWords(e), this.renderClozeInline(e, t, i - 1));
 			} else if (e.type === "questions") {
 				let { card: r, content: i } = this.createSectionCard("Comprehension Questions", { cardClasses: ["questions-card"] }), a = document.createElement("p");
 				if (a.className = "reading-instructions instruction", a.textContent = "Read each question and select the best answer from the choices below.", i.appendChild(a), t.appendChild(r), e.questions && e.questions.length > 0) {

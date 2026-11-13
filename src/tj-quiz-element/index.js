@@ -580,25 +580,34 @@ class TjQuizElement extends HTMLElement {
 
         // Extract words marked with asterisks
         const asteriskMatches = clozeSection.match(/\*([^*]+)\*/g);
-        let clozeWords = [];
-        if (asteriskMatches) {
-            clozeWords = asteriskMatches.map(match => match.replace(/\*/g, ''));
+        const allWords = asteriskMatches
+            ? asteriskMatches.map(match => match.replace(/\*/g, ''))
+            : [];
 
-            // If maxBlanks is specified, randomly select that many words to remove
-            if (maxBlanks && clozeWords.length > maxBlanks) {
-                this.shuffleArray(clozeWords);
-                clozeWords = clozeWords.slice(0, maxBlanks);
-            }
-        }
+        const clozeData = {
+            text: clozeSection,
+            allWords,
+            maxBlanks,
+            words: [],
+            sectionId: this.clozeSections.length
+        };
+        this._selectClozeWords(clozeData);
 
         // Add this cloze section to the array
-        this.clozeSections.push({
-            text: clozeSection,
-            words: clozeWords,
-            sectionId: this.clozeSections.length
-        });
+        this.clozeSections.push(clozeData);
 
-        console.log('Cloze section parsed. Total words available:', asteriskMatches ? asteriskMatches.length : 0, 'Words to remove:', clozeWords.length, 'Max blanks:', maxBlanks);
+        console.log('Cloze section parsed. Total words available:', allWords.length, 'Words to remove:', clozeData.words.length, 'Max blanks:', maxBlanks);
+    }
+
+    _selectClozeWords(clozeData) {
+        const allWords = clozeData.allWords || [];
+        const maxBlanks = clozeData.maxBlanks;
+        let selected = [...allWords];
+        if (maxBlanks && selected.length > maxBlanks) {
+            this.shuffleArray(selected);
+            selected = selected.slice(0, maxBlanks);
+        }
+        clozeData.words = selected;
     }
 
     parseQuestions(questionsSection, maxQuestions = null) {
@@ -1618,6 +1627,9 @@ class TjQuizElement extends HTMLElement {
         this.score = 0;
         this.questionsAnswered = 0;
         this.userQuestionAnswers = {};
+        this.clozeAnswers = {};
+        this.clozeScore = 0;
+        this.clozeSubmitted = false;
         checkScoreButton.disabled = true;
 
         // Render sections in original order using orderedSections
@@ -1697,6 +1709,7 @@ class TjQuizElement extends HTMLElement {
             } else if (sec.type === 'cloze') {
                 const clozeData = this.clozeSections[clozeRenderIndex++];
                 if (clozeData) {
+                    this._selectClozeWords(clozeData);
                     this.renderClozeInline(clozeData, dynamicContent, clozeRenderIndex - 1);
                 }
             } else if (sec.type === 'questions') {
