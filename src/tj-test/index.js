@@ -1815,7 +1815,9 @@ class TjTest extends HTMLElement {
                     <div class="tj-verified-status">
                         ${isScreenshot 
                             ? '📸 Report card verified! Take a screenshot of this summary to send to your teacher. / แคปหน้าจอผลการเรียนนี้ส่งให้ครูผู้สอน'
-                            : '✓ Score report successfully submitted and recorded.'}
+                            : (this.hasValidSubmissionUrl
+                                ? '✓ Score report successfully submitted and recorded.'
+                                : '✓ Score report verified via code (no online spreadsheet URL configured).')}
                     </div>
                     ${!this.testMode ? `
                     <div class="tj-resubmit-row">
@@ -2095,6 +2097,8 @@ class TjTest extends HTMLElement {
         this.isSubmitting = true;
         this._lastEnteredSubmitCode = enteredCode;
         this._submittedViaScreenshot = isScreenshotOnly;
+        if (msgElem) msgElem.classList.add('hidden');
+        const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="tj-spinner"></span>Saving...';
@@ -2122,20 +2126,36 @@ class TjTest extends HTMLElement {
                 mode: this.testMode ? 'test' : 'practice'
             };
 
-            try {
-                const rawSubmissionUrl = this.submissionUrl || resolveComponentParams(this).submissionUrl;
-                const submissionUrl = (rawSubmissionUrl || '').trim();
-                if (submissionUrl && !submissionUrl.includes('YOUR_GAS_URL') && !submissionUrl.includes('YOUR_SCRIPT_ID')) {
-                    await fetch(submissionUrl, {
+            const rawSubmissionUrl = this.submissionUrl || resolveComponentParams(this).submissionUrl;
+            const submissionUrl = (rawSubmissionUrl || '').trim();
+            if (submissionUrl && !submissionUrl.includes('YOUR_GAS_URL') && !submissionUrl.includes('YOUR_SCRIPT_ID')) {
+                try {
+                    const body = JSON.stringify(payload);
+                    const fetchOptions = {
                         method: 'POST',
                         mode: 'no-cors',
-                        body: JSON.stringify(payload)
-                    });
-                } else {
-                    console.log(`[${this.testMode ? 'Test' : 'Practice'}] Score report logged via code:`, payload);
+                        body
+                    };
+                    if (body.length < 60000) {
+                        fetchOptions.keepalive = true;
+                    }
+                    await fetch(submissionUrl, fetchOptions);
+                } catch (err) {
+                    console.error('Score submission failed:', err, payload);
+                    this.isSubmitting = false;
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnHtml;
+                    }
+                    if (msgElem) {
+                        msgElem.classList.remove('hidden');
+                        msgElem.style.color = 'var(--tj-error-color)';
+                        msgElem.textContent = '❌ Network error: Could not send score to the spreadsheet. Please try again or take a screenshot.';
+                    }
+                    return;
                 }
-            } catch (err) {
-                console.log('Submission payload error/fallback:', err, payload);
+            } else {
+                console.log(`[${this.testMode ? 'Test' : 'Practice'}] Score report logged via code (no submission URL):`, payload);
             }
         }
 
