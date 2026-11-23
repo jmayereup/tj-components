@@ -4,7 +4,7 @@ import fs from 'fs';
 
 // Get all tj-*.js files and directories with index.js from src/ as entry points
 const entries = {};
-const srcDir = resolve(__dirname, 'src');
+const srcDir = resolve(import.meta.dirname, 'src');
 
 fs.readdirSync(srcDir).forEach((item) => {
   const itemPath = resolve(srcDir, item);
@@ -39,9 +39,9 @@ export default defineConfig({
         {
           name: 'copy-html',
           closeBundle() {
-            const distDir = resolve(__dirname, 'dist');
+            const distDir = resolve(import.meta.dirname, 'dist');
             const demoDir = resolve(distDir, 'demo');
-            const srcDir = resolve(__dirname, 'src');
+            const srcDir = resolve(import.meta.dirname, 'src');
 
             // Ensure demo directory exists
             if (!fs.existsSync(demoDir)) {
@@ -51,7 +51,7 @@ export default defineConfig({
             // 1. Copy root HTML files
             const rootFiles = ['index.html', 'builder.html', 'test-config.html', 'test-config2.html'];
             rootFiles.forEach(file => {
-              const srcPath = resolve(__dirname, file);
+              const srcPath = resolve(import.meta.dirname, file);
               if (fs.existsSync(srcPath)) {
                 let content = fs.readFileSync(srcPath, 'utf-8');
                 
@@ -74,7 +74,7 @@ export default defineConfig({
             });
 
             // 2. Copy school HTML files to dist/school/
-            const schoolDir = resolve(__dirname, 'school');
+            const schoolDir = resolve(import.meta.dirname, 'school');
             const distSchoolDir = resolve(distDir, 'school');
             if (fs.existsSync(schoolDir)) {
               if (!fs.existsSync(distSchoolDir)) {

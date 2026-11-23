@@ -4,7 +4,7 @@ A collection of premium, interactive web components for language learning, desig
 
 ## CDN & Quick Start
 
-You can use these components directly without downloading them by linking to the GitHub Pages CDN:
+You can use these components directly without downloading them by linking to the Cloudflare Pages CDN:
 
 ```html
 <!-- Components -->
@@ -424,8 +424,8 @@ When embedding components (especially `<tj-quiz-element>`) inside **[Google Site
 
 ## 🛠️ Developer Guide: Updating the CDN
 
-To update the components served via the GitHub Pages CDN:
+To update the components served via the Cloudflare Pages CDN:
 
-1.  **Build**: Run `npm run build` to generate the production files in the `dist/` directory.
-2.  **Commit**: Ensure the `dist/` folder is committed to your repository.
-3.  **Push**: Push your changes to GitHub. The new versions will be available via the CDN URLs.
+1.  **Test Locally (Optional)**: Run `npm run build` (or `npm run dev`) to verify your changes locally. The `dist/` directory is excluded by `.gitignore`.
+2.  **Commit & Push**: Commit and push your source changes to GitHub.
+3.  **Automatic Deploy**: Cloudflare Pages automatically runs `npm run build` after every commit and deploys the updated `dist/` files to the CDN URLs.

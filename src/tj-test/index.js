@@ -120,6 +120,8 @@ class TjTest extends HTMLElement {
         this._pendingNextSection = false;
         this._visibilityHandler = null;
         this._blurHandler = null;
+        this._focusHandler = null;
+        this._blurTimeout = null;
         this._voicesChangedHandler = null;
         this._securityListenersAttached = false;
     }
@@ -171,6 +173,8 @@ class TjTest extends HTMLElement {
         this.testCompleted = false;
         this.tabAwayCount = 0;
         this.testUnlocked = true;
+        this.isVisibilityLocked = false;
+        this._clearPendingBlurLock();
         this.userAnswers = {};
         if (!preserveStudentInfo) {
             this.studentInfo = { nickname: '', studentId: '', homeroom: '' };
@@ -247,21 +251,42 @@ class TjTest extends HTMLElement {
         return txt.value;
     }
 
+    _clearPendingBlurLock() {
+        if (this._blurTimeout) {
+            clearTimeout(this._blurTimeout);
+            this._blurTimeout = null;
+        }
+    }
+
     connectedCallback() {
         this._visibilityHandler = () => {
             if (document.hidden) {
+                this._clearPendingBlurLock();
                 this._handleScreenLeft();
             }
         };
         this._blurHandler = () => {
-            setTimeout(() => {
+            if (!this.testMode || this.testCompleted || !this.testUnlocked) return;
+            // Ignore focus loss while a native <select> picker is active (common on iOS Safari)
+            const activeEl = this.shadowRoot ? this.shadowRoot.activeElement : document.activeElement;
+            if (activeEl && activeEl.tagName === 'SELECT') return;
+
+            this._clearPendingBlurLock();
+            this._blurTimeout = setTimeout(() => {
+                this._blurTimeout = null;
+                const currentActive = this.shadowRoot ? this.shadowRoot.activeElement : document.activeElement;
+                if (currentActive && currentActive.tagName === 'SELECT') return;
                 if (!document.hasFocus() || document.hidden) {
                     this._handleScreenLeft();
                 }
-            }, 150);
+            }, 2000);
+        };
+        this._focusHandler = () => {
+            this._clearPendingBlurLock();
         };
         document.addEventListener('visibilitychange', this._visibilityHandler);
         window.addEventListener('blur', this._blurHandler);
+        window.addEventListener('focus', this._focusHandler);
 
         requestAnimationFrame(async () => {
             const resolved = resolveComponentParams(this);
@@ -326,6 +351,7 @@ class TjTest extends HTMLElement {
     }
 
     disconnectedCallback() {
+        this._clearPendingBlurLock();
         if (this._visibilityHandler) {
             document.removeEventListener('visibilitychange', this._visibilityHandler);
             this._visibilityHandler = null;
@@ -333,6 +359,10 @@ class TjTest extends HTMLElement {
         if (this._blurHandler) {
             window.removeEventListener('blur', this._blurHandler);
             this._blurHandler = null;
+        }
+        if (this._focusHandler) {
+            window.removeEventListener('focus', this._focusHandler);
+            this._focusHandler = null;
         }
         if (this._voicesChangedHandler && window.speechSynthesis) {
             window.speechSynthesis.removeEventListener('voiceschanged', this._voicesChangedHandler);
@@ -420,6 +450,8 @@ class TjTest extends HTMLElement {
     }
 
     lockTeacherOverlay() {
+        this.isVisibilityLocked = true;
+        this._clearPendingBlurLock();
         const overlay = this.shadowRoot.getElementById('teacherLockOverlay');
         const input = this.shadowRoot.getElementById('teacherCodeInput');
         if (input) input.value = '';
@@ -429,6 +461,8 @@ class TjTest extends HTMLElement {
     }
 
     unlockAllSecurityOverlays() {
+        this.isVisibilityLocked = false;
+        this._clearPendingBlurLock();
         const startOverlay = this.shadowRoot.getElementById('startLockOverlay');
         const teacherOverlay = this.shadowRoot.getElementById('teacherLockOverlay');
         const authModal = this.shadowRoot.getElementById('teacherAuthModal');
@@ -848,6 +882,8 @@ class TjTest extends HTMLElement {
                 const input = shadow.getElementById('teacherCodeInput');
                 const val = input ? input.value.trim() : '';
                 if (this.validateTeacherCode(val)) {
+                    this.isVisibilityLocked = false;
+                    this._clearPendingBlurLock();
                     if (input) input.value = '';
                     shadow.getElementById('teacherCodeError').classList.add('hidden');
                     shadow.getElementById('teacherLockOverlay').classList.remove('active');
@@ -2223,6 +2259,7 @@ class TjTest extends HTMLElement {
             testCompleted: this.testCompleted,
             tabAwayCount: this.tabAwayCount,
             testUnlocked: this.testUnlocked,
+            isVisibilityLocked: this.isVisibilityLocked,
             userAnswers: this.userAnswers,
             studentInfo: this.studentInfo,
             completedTimestamp: this.completedTimestamp,
@@ -2256,6 +2293,7 @@ class TjTest extends HTMLElement {
         this.testCompleted = saved.testCompleted || false;
         this.tabAwayCount = saved.tabAwayCount || 0;
         this.testUnlocked = saved.testUnlocked || false;
+        this.isVisibilityLocked = Boolean(saved.isVisibilityLocked);
         this.userAnswers = saved.userAnswers || {};
         this.studentInfo = saved.studentInfo || { nickname: '', studentId: '', homeroom: '' };
         this.completedTimestamp = saved.completedTimestamp || null;
@@ -2265,7 +2303,9 @@ class TjTest extends HTMLElement {
 
         if (this.testMode && !this.testCompleted) {
             if (this.testUnlocked) {
-                this.tabAwayCount++;
+                if (!this.isVisibilityLocked) {
+                    this.tabAwayCount++;
+                }
                 this.updateTabAwayBanner();
                 this.lockTeacherOverlay();
                 this.saveStateToLocalStorage();
@@ -2290,6 +2330,8 @@ class TjTest extends HTMLElement {
         this.testCompleted = false;
         this.tabAwayCount = 0;
         this.testUnlocked = false;
+        this.isVisibilityLocked = false;
+        this._clearPendingBlurLock();
         this.userAnswers = {};
         this.studentInfo = { nickname: '', studentId: '', homeroom: '' };
         this.completedTimestamp = null;
