@@ -1,9 +1,14 @@
 /**
  * TJ Components - Gemini Link Tip Module
- * Provides a warning tip dialog when opening custom Gemini Gems for the first time.
+ * Provides a warning/instructions dialog when opening custom Gemini Gems or Skills.
  */
 
-const STORAGE_KEY = 'tj_gemini_tip_dismissed';
+const STORAGE_KEY_GEM = 'tj_gemini_tip_dismissed';
+const STORAGE_KEY_SKILL = 'tj_gemini_skill_tip_dismissed';
+
+function isGeminiSkillUrl(url) {
+    return typeof url === 'string' && url.includes('/customize/skills/');
+}
 
 const STYLES = `
 .tj-gemini-tip-backdrop {
@@ -244,6 +249,7 @@ const STYLES = `
 
 let modalElement = null;
 let targetGeminiUrl = '';
+let currentIsSkill = false;
 
 function injectStyles() {
     if (document.getElementById('tj-gemini-tip-styles')) return;
@@ -273,17 +279,8 @@ function createModal() {
                 <h3 class="tj-gemini-tip-title" id="tj-gemini-tip-title">Google Gemini Login Required</h3>
             </div>
             <div class="tj-gemini-tip-body">
-                <p>If you aren't currently logged into <strong>Google Gemini</strong> in this browser, this link will open a regular Gemini chat instead of launching the custom Gem.</p>
-                <div class="tj-gemini-tip-steps">
-                    <div class="tj-gemini-tip-step">
-                        <span class="step-num">1</span>
-                        <span>Log in to Gemini in this browser.</span>
-                    </div>
-                    <div class="tj-gemini-tip-step">
-                        <span class="step-num">2</span>
-                        <span>Click the Gemini link again to open the Gem.</span>
-                    </div>
-                </div>
+                <p id="tj-gemini-tip-intro"></p>
+                <div class="tj-gemini-tip-steps" id="tj-gemini-tip-steps"></div>
                 <label class="tj-gemini-tip-checkbox-label">
                     <input type="checkbox" id="tj-gemini-tip-dont-show" />
                     <span>Don't show this message again</span>
@@ -304,14 +301,19 @@ function createModal() {
     const btnContinue = backdrop.querySelector('#tj-gemini-tip-continue');
     const chkDontShow = backdrop.querySelector('#tj-gemini-tip-dont-show');
 
-    const handleDismiss = () => {
+    const saveDismissed = () => {
         if (chkDontShow.checked) {
             try {
-                localStorage.setItem(STORAGE_KEY, 'true');
+                const key = currentIsSkill ? STORAGE_KEY_SKILL : STORAGE_KEY_GEM;
+                localStorage.setItem(key, 'true');
             } catch (e) {
                 console.warn('TJ Gemini Tip: LocalStorage write failed', e);
             }
         }
+    };
+
+    const handleDismiss = () => {
+        saveDismissed();
         closeModal();
     };
 
@@ -331,13 +333,7 @@ function createModal() {
     });
 
     btnContinue.addEventListener('click', () => {
-        if (chkDontShow.checked) {
-            try {
-                localStorage.setItem(STORAGE_KEY, 'true');
-            } catch (e) {
-                console.warn('TJ Gemini Tip: LocalStorage write failed', e);
-            }
-        }
+        saveDismissed();
         closeModal();
         if (targetGeminiUrl) {
             window.open(targetGeminiUrl, '_blank', 'noopener,noreferrer');
@@ -350,8 +346,54 @@ function createModal() {
 
 function showModal(url) {
     targetGeminiUrl = url;
+    currentIsSkill = isGeminiSkillUrl(url);
     const modal = createModal();
+
+    const titleEl = modal.querySelector('#tj-gemini-tip-title');
+    const introEl = modal.querySelector('#tj-gemini-tip-intro');
+    const stepsEl = modal.querySelector('#tj-gemini-tip-steps');
     const chkDontShow = modal.querySelector('#tj-gemini-tip-dont-show');
+
+    if (currentIsSkill) {
+        if (titleEl) titleEl.textContent = 'Using a Google Gemini Skill';
+        if (introEl) {
+            introEl.innerHTML = 'Make sure you are logged into <strong>Google Gemini</strong> in this browser. When the Skill opens, you may need to activate it before starting:';
+        }
+        if (stepsEl) {
+            stepsEl.innerHTML = `
+                <div class="tj-gemini-tip-step">
+                    <span class="step-num">1</span>
+                    <span>Log in to Google Gemini in this browser (if needed, log in and click the link again).</span>
+                </div>
+                <div class="tj-gemini-tip-step">
+                    <span class="step-num">2</span>
+                    <span>Click the <strong>3 dots (⋯)</strong> button in the top-right corner of the skill page.</span>
+                </div>
+                <div class="tj-gemini-tip-step">
+                    <span class="step-num">3</span>
+                    <span>Choose <strong>Use now</strong> to start using the skill.</span>
+                </div>
+            `;
+        }
+    } else {
+        if (titleEl) titleEl.textContent = 'Google Gemini Login Required';
+        if (introEl) {
+            introEl.innerHTML = "If you aren't currently logged into <strong>Google Gemini</strong> in this browser, this link will open a regular Gemini chat instead of launching the custom Gem.";
+        }
+        if (stepsEl) {
+            stepsEl.innerHTML = `
+                <div class="tj-gemini-tip-step">
+                    <span class="step-num">1</span>
+                    <span>Log in to Gemini in this browser.</span>
+                </div>
+                <div class="tj-gemini-tip-step">
+                    <span class="step-num">2</span>
+                    <span>Click the Gemini link again to open the Gem.</span>
+                </div>
+            `;
+        }
+    }
+
     if (chkDontShow) chkDontShow.checked = false;
     modal.classList.add('open');
 }
@@ -363,15 +405,16 @@ function closeModal() {
 }
 
 /**
- * Opens a Gemini URL. If user hasn't dismissed the login tip notice, shows tip modal first.
+ * Opens a Gemini URL. If user hasn't dismissed the tip notice, shows tip modal first.
  * @param {string} url - The target Gemini URL
  */
 export function openGeminiUrlWithTip(url) {
     if (!url) return;
 
+    const storageKey = isGeminiSkillUrl(url) ? STORAGE_KEY_SKILL : STORAGE_KEY_GEM;
     let isDismissed = false;
     try {
-        isDismissed = localStorage.getItem(STORAGE_KEY) === 'true';
+        isDismissed = localStorage.getItem(storageKey) === 'true';
     } catch (e) {
         console.warn('TJ Gemini Tip: LocalStorage read failed', e);
     }

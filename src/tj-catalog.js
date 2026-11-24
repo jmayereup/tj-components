@@ -189,7 +189,7 @@ export const COMPONENT_CATALOG = [
         tagName: 'tj-test',
         name: 'Test',
         icon: '📈',
-        geminiUrl: 'https://gemini.google.com/gem/1GR1C-bhcrWfUS79b0SA1Llna4NiWaCef?usp=sharing',
+        geminiUrl: 'https://gemini.google.com/customize/skills/d/1GR1C-bhcrWfUS79b0SA1Llna4NiWaCef?usp=sharing',
         demoUrl: 'src/tj-test/test-progressive.html',
         description: 'Multi-stage level placement test powered by JSON configuration where students unlock subsequent levels by meeting target score cutoffs.',
         demoContent: `<tj-test pass-threshold="75%">

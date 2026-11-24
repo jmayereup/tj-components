@@ -169,6 +169,7 @@ class TjBuilder extends HTMLElement {
         this.titleGeminiConvert = this.shadowRoot.getElementById('title-gemini-convert');
         this.titleGeminiCreate = this.shadowRoot.getElementById('title-gemini-create');
         this.btnOpenGeminiOverlay = this.shadowRoot.getElementById('btn-open-gemini-overlay');
+        this.geminiSkillTip = this.shadowRoot.getElementById('gemini-skill-tip');
         this.parseStatusBadge = this.shadowRoot.getElementById('parse-status-badge');
 
         this.box2UnlockCodeContainer = this.shadowRoot.getElementById('box2-unlock-code-container');
@@ -229,15 +230,26 @@ class TjBuilder extends HTMLElement {
         const item = getComponentByTag(selectedType);
         if (!item) return;
 
+        const isSkill = !!(item.geminiUrl && item.geminiUrl.includes('/customize/skills/'));
+
         if (this.geminiOverlayTitle) {
             this.geminiOverlayTitle.textContent = `Create or Convert ${item.name} with Gemini`;
         }
         if (this.geminiOverlayDesc) {
-            this.geminiOverlayDesc.textContent = `Use our custom Gemini Gem to convert existing test materials or generate brand-new ${item.name} content automatically.`;
+            this.geminiOverlayDesc.textContent = isSkill
+                ? `Use our custom Gemini Skill to convert existing test materials or generate brand-new ${item.name} content automatically.`
+                : `Use our custom Gemini Gem to convert existing test materials or generate brand-new ${item.name} content automatically.`;
         }
         if (item.geminiUrl) {
             if (this.btnGeminiConvert) this.btnGeminiConvert.href = item.geminiUrl;
             if (this.btnGeminiCreate) this.btnGeminiCreate.href = item.geminiUrl;
+        }
+        if (this.btnOpenGeminiOverlay) {
+            this.btnOpenGeminiOverlay.textContent = isSkill ? '✨ Gemini Skill ↗' : '✨ Gemini Gem ↗';
+            this.btnOpenGeminiOverlay.title = isSkill ? 'Open Gemini Skill link' : 'Open Gemini Gem link';
+        }
+        if (this.geminiSkillTip) {
+            this.geminiSkillTip.style.display = isSkill ? 'block' : 'none';
         }
         if (this.titleGeminiConvert) {
             this.titleGeminiConvert.textContent = `Convert Documents ↗`;
