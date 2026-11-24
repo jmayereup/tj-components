@@ -1,4 +1,4 @@
-// Centralized Component Catalog & Gemini Gem Registry
+// Centralized Component Catalog & Gemini Skill Registry
 
 export const SAMPLE_QUIZ_MD = `---
 text
@@ -94,7 +94,9 @@ export const COMPONENT_CATALOG = [
         tagName: 'grammar-hearts',
         name: 'Grammar Hearts',
         icon: '❤️',
-        geminiUrl: 'https://gemini.google.com/gem/d8664c27f003',
+        geminiUrl: 'https://gemini.google.com/customize/skills/d/1rogDQVpq5H1JDyvweY2pgS9fMFow8Gwg?usp=sharing',
+        geminiSkillHandle: '@tj-grammar-hearts',
+        geminiGemFallbackUrl: 'https://gemini.google.com/gem/d8664c27f003',
         demoUrl: 'src/tj-grammar-hearts/test-grammar.html',
         description: 'Gamified grammar practice with lives, multiple-choice, and sentence scrambling challenges.',
         demoContent: `<grammar-hearts hearts="3" round-size="10">
@@ -120,7 +122,8 @@ export const COMPONENT_CATALOG = [
         tagName: 'tj-info-gap',
         name: 'Info Gap',
         icon: '👥',
-        geminiUrl: 'https://gemini.google.com/gem/c4ce1f63dfd9',
+        geminiUrl: 'https://gemini.google.com/customize/skills/d/1bdsM9tYk1Qb4lcCsnPVOTK1FR_37HYnX?usp=sharing',
+        geminiGemFallbackUrl: 'https://gemini.google.com/gem/c4ce1f63dfd9',
         demoUrl: 'src/tj-info-gap/test-info-gap.html',
         description: 'Collaborative multi-player activity for communication practice or single-player mode with AI partner.',
         demoContent: `<tj-info-gap>
@@ -167,7 +170,8 @@ export const COMPONENT_CATALOG = [
         tagName: 'tj-speed-review',
         name: 'Speed Review',
         icon: '🏎️',
-        geminiUrl: 'https://gemini.google.com/gem/5a7412981b90',
+        geminiUrl: 'https://gemini.google.com/customize/skills/d/1Be2077injvU0WTLgG3-tVSabtt-RQcE3?usp=sharing',
+        geminiGemFallbackUrl: 'https://gemini.google.com/gem/5a7412981b90',
         demoUrl: 'src/tj-speed-review/test-speed.html',
         description: 'Fast-paced review game where students score points based on how quickly they can answer questions.',
         demoContent: `<tj-speed-review>
@@ -190,6 +194,7 @@ export const COMPONENT_CATALOG = [
         name: 'Test',
         icon: '📈',
         geminiUrl: 'https://gemini.google.com/customize/skills/d/1GR1C-bhcrWfUS79b0SA1Llna4NiWaCef?usp=sharing',
+        geminiGemFallbackUrl: 'https://gemini.google.com/gem/1GR1C-bhcrWfUS79b0SA1Llna4NiWaCef?usp=sharing',
         demoUrl: 'src/tj-test/test-progressive.html',
         description: 'Multi-stage level placement test powered by JSON configuration where students unlock subsequent levels by meeting target score cutoffs.',
         demoContent: `<tj-test pass-threshold="75%">

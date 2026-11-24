@@ -58,18 +58,18 @@ TJ Components are designed with a **Zero-Data Retention & Privacy-First Architec
 ---
 
 
-## ✨ Gemini Gems (AI Content Generators)
+## ✨ Gemini Skills & Gems (AI Content Generators)
 
-You can use these custom Google Gemini Gems to automatically generate formatted JSON or Markdown content for components directly from your lesson plans, reading passages, or vocabulary lists:
+You can use these custom Google Gemini Skills (and legacy Gems) to automatically generate formatted JSON or Markdown content for components directly from your lesson plans, reading passages, or vocabulary lists:
 
-| Component | Component Tag | Gemini Gem AI Generator Link |
+| Component | Component Tag | Gemini AI Generator Link |
 | :--- | :--- | :--- |
 | **LBL Reader** | `<lbl-reader>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/9dfd58f9fc59) |
-| **Grammar Hearts** | `<grammar-hearts>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/d8664c27f003) |
-| **Info Gap** | `<tj-info-gap>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/c4ce1f63dfd9) |
+| **Grammar Hearts** | `<grammar-hearts>` | [Open Gemini Skill ↗](https://gemini.google.com/customize/skills/d/1rogDQVpq5H1JDyvweY2pgS9fMFow8Gwg?usp=sharing) |
+| **Info Gap** | `<tj-info-gap>` | [Open Gemini Skill ↗](https://gemini.google.com/customize/skills/d/1bdsM9tYk1Qb4lcCsnPVOTK1FR_37HYnX?usp=sharing) |
 | **Listening** | `<tj-listening>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/a282ff7b4b26) |
-| **Speed Review** | `<tj-speed-review>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/5a7412981b90) |
-| **Test** | `<tj-test>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/1GR1C-bhcrWfUS79b0SA1Llna4NiWaCef?usp=sharing) |
+| **Speed Review** | `<tj-speed-review>` | [Open Gemini Skill ↗](https://gemini.google.com/customize/skills/d/1Be2077injvU0WTLgG3-tVSabtt-RQcE3?usp=sharing) |
+| **Test** | `<tj-test>` | [Open Gemini Skill ↗](https://gemini.google.com/customize/skills/d/1GR1C-bhcrWfUS79b0SA1Llna4NiWaCef?usp=sharing) |
 | **Chapter Book** | `<tj-chapter-book>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/209dda1b768d) |
 | **Pronunciation** | `<tj-pronunciation>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/d45e00c6dcb5) |
 | **Quiz Element (Legacy)** | `<tj-quiz-element>` | [Open Gemini Gem ↗](https://gemini.google.com/gem/4bbfe190f849) |

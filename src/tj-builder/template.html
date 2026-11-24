@@ -18,8 +18,8 @@
                 <span class="panel-subtitle">Auto-saved</span>
             </div>
             <div class="settings-summary-badge" id="settings-summary-badge">
-                Start/Submit: <strong id="badge-start-code">1234</strong><span id="badge-teacher-code-wrapper"> &nbsp;|&nbsp; Reset/Unlock: <strong
-                    id="badge-teacher-code">7676</strong></span>
+                Start/Submit: <strong id="badge-start-code">1234</strong><span id="badge-teacher-code-wrapper">
+                    &nbsp;|&nbsp; Reset/Unlock: <strong id="badge-teacher-code">7676</strong></span>
             </div>
         </summary>
         <div class="settings-grid">
@@ -62,19 +62,14 @@
                             <option value="tj-test" selected>📈&nbsp;&nbsp;Assessment Test</option>
                             <option value="tj-info-gap">👥&nbsp;&nbsp;Information Gap</option>
                             <option value="tj-speed-review">🏎️&nbsp;&nbsp;Speed Review</option>
-                            <option value="tj-chapter-book">📚&nbsp;&nbsp;Chapter Book</option>
                             <option value="tj-grammar-hearts">❤️&nbsp;&nbsp;Grammar Activity</option>
-                            <option value="tj-listening">🎧&nbsp;&nbsp;Listening Activity</option>
-                            <option value="tj-pronunciation">🗣️&nbsp;&nbsp;Pronunciation</option>
-                            <option value="tj-reader">📖&nbsp;&nbsp;Standard Reader</option>
-                            <option value="tj-quiz-element">📝&nbsp;&nbsp;Quiz [Legacy]</option>
                         </select>
                     </div>
                     <div class="header-right-actions">
                         <button type="button" class="btn-text-action" id="btn-load-demo"
                             title="Load Guide Demo for selected component">⚡ Load Demo</button>
                         <button type="button" class="btn-text-action" id="btn-open-gemini-overlay"
-                            title="Open Gemini Gem link">✨ Gemini Gem ↗</button>
+                            title="Open Gemini Skill link">✨ Gemini Skill ↗</button>
                         <button type="button" class="btn-paste-clipboard" id="btn-paste-clipboard">📋 Paste</button>
                     </div>
                 </div>
@@ -108,14 +103,22 @@
                                     class="gemini-feature-card btn-gemini-action" id="btn-gemini-create">
                                     <span class="feature-icon">✨</span>
                                     <div class="feature-text-group">
-                                        <span class="feature-title" id="title-gemini-create">Create from Scratch ↗</span>
+                                        <span class="feature-title" id="title-gemini-create">Create from Scratch
+                                            ↗</span>
                                         <span class="feature-desc">Prompt Gemini to generate brand-new questions,
                                             passages, or exercises from scratch.</span>
                                     </div>
                                 </a>
                             </div>
                             <div class="gemini-skill-tip" id="gemini-skill-tip" style="display: none;">
-                                💡 <strong>Tip:</strong> When the Gemini Skill opens, you may need to click the <strong>3 dots (⋯)</strong> and choose <strong>Use now</strong> to start.
+                                <div>💡 <strong>Tip:</strong> After opening the Gemini Skill, click the <strong>right
+                                        arrow (&rarr;)</strong> to close it, open a new Gemini chat, and type <strong
+                                        id="gemini-skill-handle">@tj-test</strong> to access the skill.</div>
+                                <div class="gemini-gem-fallback" id="gemini-gem-fallback" style="display: none;">
+                                    ⚠️ Fallback: <a href="#" target="_blank" rel="noopener noreferrer"
+                                        id="link-gemini-gem-fallback">Use the legacy Gemini Gem ↗</a> <span
+                                        class="fallback-warning">(may be discontinued by Google soon)</span>.
+                                </div>
                             </div>
                             <div class="overlay-footer-note">
                                 <span>Or paste formatted Markdown / JSON into the editor below</span>
@@ -192,7 +195,8 @@
 
                         <!-- Duplicated Pass Threshold for tj-test -->
                         <div id="box2-threshold-container" class="box2-threshold-panel" style="display: none;">
-                            <label for="box2-test-threshold-mode" class="box2-threshold-label">Pass Threshold Requirement</label>
+                            <label for="box2-test-threshold-mode" class="box2-threshold-label">Pass Threshold
+                                Requirement</label>
                             <div class="box2-threshold-row">
                                 <select id="box2-test-threshold-mode" class="box2-select">
                                     <option value="disabled">Disabled (No minimum score)</option>
@@ -217,11 +221,13 @@
                         </button>
 
                         <div class="action-buttons-row">
-                            <button type="button" class="btn-secondary-action btn-save-html" id="btn-save-html" title="Download standalone HTML file">
+                            <button type="button" class="btn-secondary-action btn-save-html" id="btn-save-html"
+                                title="Download standalone HTML file">
                                 <span class="btn-icon">💾</span>
                                 <span class="btn-text">Save as HTML</span>
                             </button>
-                            <button type="button" class="btn-secondary-action btn-open-html" id="btn-open-html" title="Import HTML file">
+                            <button type="button" class="btn-secondary-action btn-open-html" id="btn-open-html"
+                                title="Import HTML file">
                                 <span class="btn-icon">📂</span>
                                 <span class="btn-text">Open HTML</span>
                             </button>
@@ -237,9 +243,9 @@
                     <div class="export-tip">
                         <span class="tip-icon">💡</span>
                         <span class="tip-text">Paste the embed code into your website.<br>
-                            <a href="https://sites.google.com"
-                                target="_blank" rel="noopener noreferrer">Google Sites</a> &bull; <a href="https://youtu.be/bazjwznb7CY"
-                                target="_blank" rel="noopener noreferrer">Video Tutorial</a></span>
+                            <a href="https://sites.google.com" target="_blank" rel="noopener noreferrer">Google
+                                Sites</a> &bull; <a href="https://youtu.be/bazjwznb7CY" target="_blank"
+                                rel="noopener noreferrer">Video Tutorial</a></span>
                     </div>
 
                     <div class="embed-code-preview-box">

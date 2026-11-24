@@ -260,7 +260,7 @@ export function showBuilderInstructionsTip() {
             <div class="tj-builder-tip-step-list">
                 <div class="tj-builder-tip-step-item">
                     <span class="tj-builder-tip-step-num">1</span>
-                    <span><strong>Select Component:</strong> Choose your component type and then click <em>✨ Gemini Gem ↗</em> to generate or convert content.</span>
+                    <span><strong>Select Component:</strong> Choose your component type and then click <em>✨ Gemini Skill ↗</em> to generate or convert content.</span>
                 </div>
                 <div class="tj-builder-tip-step-item">
                     <span class="tj-builder-tip-step-num">2</span>

@@ -150,6 +150,31 @@ const STYLES = `
     margin-top: 2px;
 }
 
+.tj-gemini-tip-fallback {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 8px;
+    padding: 0.65rem 0.85rem;
+    margin-bottom: 1rem;
+    font-size: 0.82rem;
+    color: #fde68a;
+    line-height: 1.45;
+}
+
+.tj-gemini-tip-fallback a {
+    color: #fef3c7;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.tj-gemini-tip-fallback a:hover {
+    color: #ffffff;
+}
+
+.tj-gemini-tip-fallback span {
+    color: #cbd5e1;
+}
+
 .tj-gemini-tip-checkbox-label {
     display: flex;
     align-items: center;
@@ -281,6 +306,7 @@ function createModal() {
             <div class="tj-gemini-tip-body">
                 <p id="tj-gemini-tip-intro"></p>
                 <div class="tj-gemini-tip-steps" id="tj-gemini-tip-steps"></div>
+                <div class="tj-gemini-tip-fallback" id="tj-gemini-tip-fallback" style="display: none;"></div>
                 <label class="tj-gemini-tip-checkbox-label">
                     <input type="checkbox" id="tj-gemini-tip-dont-show" />
                     <span>Don't show this message again</span>
@@ -344,20 +370,22 @@ function createModal() {
     return modalElement;
 }
 
-function showModal(url) {
+function showModal(url, options = {}) {
     targetGeminiUrl = url;
     currentIsSkill = isGeminiSkillUrl(url);
+    const skillHandle = options.skillHandle || '@tj-test';
     const modal = createModal();
 
     const titleEl = modal.querySelector('#tj-gemini-tip-title');
     const introEl = modal.querySelector('#tj-gemini-tip-intro');
     const stepsEl = modal.querySelector('#tj-gemini-tip-steps');
+    const fallbackEl = modal.querySelector('#tj-gemini-tip-fallback');
     const chkDontShow = modal.querySelector('#tj-gemini-tip-dont-show');
 
     if (currentIsSkill) {
         if (titleEl) titleEl.textContent = 'Using a Google Gemini Skill';
         if (introEl) {
-            introEl.innerHTML = 'Make sure you are logged into <strong>Google Gemini</strong> in this browser. When the Skill opens, you may need to activate it before starting:';
+            introEl.innerHTML = 'Make sure you are logged into <strong>Google Gemini</strong> in this browser. Once the Skill opens, follow these steps to use it:';
         }
         if (stepsEl) {
             stepsEl.innerHTML = `
@@ -367,13 +395,21 @@ function showModal(url) {
                 </div>
                 <div class="tj-gemini-tip-step">
                     <span class="step-num">2</span>
-                    <span>Click the <strong>3 dots (⋯)</strong> button in the top-right corner of the skill page.</span>
+                    <span>Click the <strong>right arrow (&rarr;)</strong> to close the skill, then open a new Gemini chat.</span>
                 </div>
                 <div class="tj-gemini-tip-step">
                     <span class="step-num">3</span>
-                    <span>Choose <strong>Use now</strong> to start using the skill.</span>
+                    <span>In the new chat, type <strong><code>${skillHandle}</code></strong> to access the skill.</span>
                 </div>
             `;
+        }
+        if (fallbackEl) {
+            if (options.fallbackGemUrl) {
+                fallbackEl.innerHTML = `⚠️ Fallback: <a href="${options.fallbackGemUrl}" target="_blank" rel="noopener noreferrer">Open legacy Gemini Gem ↗</a> <span>(warning: Google may discontinue Gems soon)</span>.`;
+                fallbackEl.style.display = 'block';
+            } else {
+                fallbackEl.style.display = 'none';
+            }
         }
     } else {
         if (titleEl) titleEl.textContent = 'Google Gemini Login Required';
@@ -392,6 +428,9 @@ function showModal(url) {
                 </div>
             `;
         }
+        if (fallbackEl) {
+            fallbackEl.style.display = 'none';
+        }
     }
 
     if (chkDontShow) chkDontShow.checked = false;
@@ -407,8 +446,9 @@ function closeModal() {
 /**
  * Opens a Gemini URL. If user hasn't dismissed the tip notice, shows tip modal first.
  * @param {string} url - The target Gemini URL
+ * @param {Object} [options] - Optional settings (e.g. { skillHandle: '@tj-test' })
  */
-export function openGeminiUrlWithTip(url) {
+export function openGeminiUrlWithTip(url, options = {}) {
     if (!url) return;
 
     const storageKey = isGeminiSkillUrl(url) ? STORAGE_KEY_SKILL : STORAGE_KEY_GEM;
@@ -422,15 +462,15 @@ export function openGeminiUrlWithTip(url) {
     if (isDismissed) {
         window.open(url, '_blank', 'noopener,noreferrer');
     } else {
-        showModal(url);
+        showModal(url, options);
     }
 }
 
-// Auto-intercept any Gemini links clicked in the main document
+// Auto-intercept any Gemini links clicked in the main document (excluding links inside the tip modal itself)
 if (typeof document !== 'undefined') {
     document.addEventListener('click', (e) => {
         const link = e.target.closest('a[href*="gemini.google.com"]');
-        if (link) {
+        if (link && !link.closest('#tj-gemini-tip-modal')) {
             e.preventDefault();
             openGeminiUrlWithTip(link.href);
         }

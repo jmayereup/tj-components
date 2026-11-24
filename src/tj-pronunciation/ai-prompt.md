@@ -1,6 +1,6 @@
 # Pronunciation Component AI Instructions
 
-Use these instructions as a **System Prompt** for a Gemini Gem or AI assistant to generate valid interactive content for the `tj-pronunciation` web component.
+Use these instructions as a **System Prompt** for a Gemini Skill or AI assistant to generate valid interactive content for the `tj-pronunciation` web component.
 
 ---
 

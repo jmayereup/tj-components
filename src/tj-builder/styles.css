@@ -517,6 +517,28 @@
     font-weight: 600;
 }
 
+.gemini-gem-fallback {
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    font-size: 0.72rem;
+    color: #fbbf24;
+}
+
+.gemini-gem-fallback a {
+    color: #fde68a;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.gemini-gem-fallback a:hover {
+    color: #ffffff;
+}
+
+.gemini-gem-fallback .fallback-warning {
+    color: #94a3b8;
+}
+
 .live-sync-badge {
     color: #38bdf8;
     font-weight: 600;

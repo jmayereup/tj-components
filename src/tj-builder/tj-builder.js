@@ -170,6 +170,9 @@ class TjBuilder extends HTMLElement {
         this.titleGeminiCreate = this.shadowRoot.getElementById('title-gemini-create');
         this.btnOpenGeminiOverlay = this.shadowRoot.getElementById('btn-open-gemini-overlay');
         this.geminiSkillTip = this.shadowRoot.getElementById('gemini-skill-tip');
+        this.geminiSkillHandle = this.shadowRoot.getElementById('gemini-skill-handle');
+        this.geminiGemFallback = this.shadowRoot.getElementById('gemini-gem-fallback');
+        this.linkGeminiGemFallback = this.shadowRoot.getElementById('link-gemini-gem-fallback');
         this.parseStatusBadge = this.shadowRoot.getElementById('parse-status-badge');
 
         this.box2UnlockCodeContainer = this.shadowRoot.getElementById('box2-unlock-code-container');
@@ -250,6 +253,19 @@ class TjBuilder extends HTMLElement {
         }
         if (this.geminiSkillTip) {
             this.geminiSkillTip.style.display = isSkill ? 'block' : 'none';
+        }
+        if (this.geminiSkillHandle && item.tagName) {
+            this.geminiSkillHandle.textContent = item.geminiSkillHandle || `@${item.tagName}`;
+        }
+        if (this.geminiGemFallback) {
+            if (isSkill && item.geminiGemFallbackUrl) {
+                this.geminiGemFallback.style.display = 'block';
+                if (this.linkGeminiGemFallback) {
+                    this.linkGeminiGemFallback.href = item.geminiGemFallbackUrl;
+                }
+            } else {
+                this.geminiGemFallback.style.display = 'none';
+            }
         }
         if (this.titleGeminiConvert) {
             this.titleGeminiConvert.textContent = `Convert Documents ↗`;
@@ -530,7 +546,10 @@ class TjBuilder extends HTMLElement {
             const selectedType = this.selectComponentType?.value;
             const item = getComponentByTag(selectedType);
             if (item && item.geminiUrl) {
-                openGeminiUrlWithTip(item.geminiUrl);
+                openGeminiUrlWithTip(item.geminiUrl, {
+                    skillHandle: item.geminiSkillHandle || `@${item.tagName}`,
+                    fallbackGemUrl: item.geminiGemFallbackUrl
+                });
             }
         });
 
@@ -540,11 +559,23 @@ class TjBuilder extends HTMLElement {
             const url = btn.getAttribute('href');
             if (url && url !== '#') {
                 e.preventDefault();
-                openGeminiUrlWithTip(url);
+                const selectedType = this.selectComponentType?.value;
+                const item = getComponentByTag(selectedType);
+                openGeminiUrlWithTip(url, item ? {
+                    skillHandle: item.geminiSkillHandle || `@${item.tagName}`,
+                    fallbackGemUrl: item.geminiGemFallbackUrl
+                } : undefined);
             }
         };
         this.btnGeminiConvert?.addEventListener('click', handleGeminiCardClick);
         this.btnGeminiCreate?.addEventListener('click', handleGeminiCardClick);
+        this.linkGeminiGemFallback?.addEventListener('click', (e) => {
+            const url = e.currentTarget.getAttribute('href');
+            if (url && url !== '#') {
+                e.preventDefault();
+                openGeminiUrlWithTip(url);
+            }
+        });
 
         // Component selector change (at top of Box 1)
         this.selectComponentType?.addEventListener('change', () => {
@@ -727,7 +758,10 @@ class TjBuilder extends HTMLElement {
             this.inputCharCount.textContent = `${this.inputGemini.value.length.toLocaleString()} chars`;
         }
         if (this.selectComponentType) {
-            this.selectComponentType.value = this._getCleanTagName(componentType);
+            const cleanType = this._getCleanTagName(componentType);
+            if (Array.from(this.selectComponentType.options).some(opt => opt.value === cleanType)) {
+                this.selectComponentType.value = cleanType;
+            }
         }
         this._checkOverlayVisibility();
         this._handleParseInput();
@@ -855,19 +889,11 @@ class TjBuilder extends HTMLElement {
             // Auto-detect JSON component type if tag wasn't explicitly present
             if (!tagMatch) {
                 if (jsonObject.gaps) detectedType = 'tj-info-gap';
-                else if (jsonObject.chapters) detectedType = 'tj-chapter-book';
                 else if (jsonObject.deck || jsonObject.cards) detectedType = 'tj-speed-review';
-                else if (jsonObject.targetWords || jsonObject.words || jsonObject.activities) detectedType = 'tj-pronunciation';
                 else if (jsonObject.heart || jsonObject.grammar || jsonObject.hearts || jsonObject.questions) detectedType = 'tj-grammar-hearts';
-                else if (jsonObject.audio || jsonObject.lessons || jsonObject.audioSrc) detectedType = 'tj-listening';
-                else if (jsonObject.passages || jsonObject.pages || Array.isArray(jsonObject)) detectedType = 'tj-reader';
             }
         } catch (e) {
             isJson = false;
-            // If raw contains section headers like --- text or --- questions, target is tj-quiz-element
-            if (!tagMatch && content.includes('---')) {
-                detectedType = 'tj-quiz-element';
-            }
         }
 
         detectedType = this._getCleanTagName(detectedType);
@@ -881,7 +907,9 @@ class TjBuilder extends HTMLElement {
             markdownAst: (!isJson && detectedType === 'tj-quiz-element') ? this._parseMarkdownAst(content) : null
         };
 
-        if (this.selectComponentType) this.selectComponentType.value = detectedType;
+        if (this.selectComponentType && Array.from(this.selectComponentType.options).some(opt => opt.value === detectedType)) {
+            this.selectComponentType.value = detectedType;
+        }
         if (this.badgeDetected) this.badgeDetected.textContent = detectedType;
 
         this._updateGeminiOverlay();
