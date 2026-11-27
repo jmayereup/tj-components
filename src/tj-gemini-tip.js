@@ -383,9 +383,9 @@ function showModal(url, options = {}) {
     const chkDontShow = modal.querySelector('#tj-gemini-tip-dont-show');
 
     if (currentIsSkill) {
-        if (titleEl) titleEl.textContent = 'Using a Google Gemini Skill';
+        if (titleEl) titleEl.textContent = 'One-Time Setup: Install Gemini Skill';
         if (introEl) {
-            introEl.innerHTML = 'Make sure you are logged into <strong>Google Gemini</strong> in this browser. Once the Skill opens, follow these steps to use it:';
+            introEl.innerHTML = 'Make sure you are logged into <strong>Google Gemini</strong> in this browser. Do a quick one-time install so you can access this skill from any chat:';
         }
         if (stepsEl) {
             stepsEl.innerHTML = `
@@ -395,11 +395,11 @@ function showModal(url, options = {}) {
                 </div>
                 <div class="tj-gemini-tip-step">
                     <span class="step-num">2</span>
-                    <span>Click the <strong>right arrow (&rarr;)</strong> to close the skill, then open a new Gemini chat.</span>
+                    <span>After the shared skill opens, click the <strong>three dots (&#8942;)</strong> in the upper right corner to install it.</span>
                 </div>
                 <div class="tj-gemini-tip-step">
                     <span class="step-num">3</span>
-                    <span>In the new chat, type <strong><code>${skillHandle}</code></strong> to access the skill.</span>
+                    <span>Once installed, open any Gemini chat and type <strong><code>${skillHandle}</code></strong> (using the <strong>@</strong> symbol) to access the skill anytime.</span>
                 </div>
             `;
         }
